@@ -1,0 +1,59 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  page-navigation: true
+  title: "BIOS 6312 - Spring 2024"
+  description: "Homepage for BIOS 6312 - Modern Regression at Vanderbilt University, Spring 2024."
+  site-url: "https://bios6312.github.io/website/"
+
+  repo-url: https://github.com/bios6312/website
+  repo-actions: [edit, issue]
+
+  open-graph: true
+
+  page-footer:
+    right: "This page is built with [Quarto](https://quarto.org/)."
+    left: "&copy; Copyright 2024, James C Slaughter"
+    background: "#D9E3E4"
+
+  sidebar:
+    background: "#D9E3E4"
+    logo: "images/logo.png"
+    pinned: true
+    align: center
+    style: "docked"
+    search: true
+    collapse-level: 1
+    contents:
+      - section: "Course Notes"
+        contents:
+          - href: notes/Lec01.Introduction.qmd
+          - text: Introduction
+      - section: "Supplemental notes"
+        contents:
+          - href: supplemental/slr-derivations.qmd
+            text: SLR derivations
+          - href: supplemental/model-diagnostics-matrix.qmd
+            text: Model diagnostics
+          - href: supplemental/mlr-matrix.qmd
+            text: MLR matrix notation
+          - href: supplemental/log-transformations.qmd
+            text: Log transformations
+          - href: supplemental/model-selection-criteria.qmd
+            text: Model selection criteria
+
+format:
+  html:
+    theme:
+      light: [cosmo, theme.scss]
+      dark: [cosmo, theme-dark.scss]
+    mainfont: "Atkinson Hyperlegible"
+    code-copy: true
+    code-overflow: wrap
+    toc: true
+
+freeze: auto
+
+editor: visual
