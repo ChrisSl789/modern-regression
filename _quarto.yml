@@ -29,6 +29,7 @@ website:
       - section: "Course Introduction"
         contents:
           - href: notes/Lec01.Introduction.qmd
+          - href: syllabus.qmd
       - section: "Course Notes"
         contents:
           - href: notes/Lec02.review.qmd
