@@ -1,6 +1,6 @@
 ---
-title: "Confouding, Effect Modification, and Precision"
-subtitle: "Lecture 05"
+title: "Confouding, Effect Modification, and Mediation"
+subtitle: "Lecture 06"
 author: "Chris Slaughter"
 footer: "Bios 6312"
 format:
@@ -70,13 +70,13 @@ editor:
 
 -   How to select $\theta$? In order of importance\...
 
-   1.  Scientific (clinical) importance. May be based on current state of
+1.  Scientific (clinical) importance. May be based on current state of
     knowledge
 
-   2.  Is $\theta$ likely to vary across the predictor of interest? Impacts
+2.  Is $\theta$ likely to vary across the predictor of interest? Impacts
     the ability to detect a difference, if it exists.
 
-   3.  Statistical precision. Only relevant if all other factors are equal.
+3.  Statistical precision. Only relevant if all other factors are equal.
 
 -   Statistics is concerned with making inference about population
     parameters, ($\theta$), based on a sample of data
@@ -96,44 +96,53 @@ B, C) designed to lower cholesterol compared to baseline. Assume a 10
 unit drop in cholesterol (relative to baseline) is clinically
 meaningful.
 
-| Trial | Drug | Pts  | Mean diff | Std dev | Std error | 95% CI for diff | p-value |
-|:------|:-----|:-----|:----------|:--------|:----------|:----------------|:--------|
-| 1     | A    | 30   | -30       | 191.7   | 49.5      | [-129, 69]      | 0.55    |
-| 2     | A    | 1000 | -30       | 223.6   | 10        | [-49.6, -10.4]  | 0.002   |
-| 3     | B    | 40   | -20       | 147.6   | 33        | [-85, 45]       | 0.55    |
-| 4     | B    | 4000 | -2        | 147.6   | 3.3       | [-8.5, 4.5]     | 0.54    |
-| 5     | C    | 5000 | -6        | 100.0   | 2         | [-9.9, -2.1]    | 0.002   |
+| Trial | Drug | Pts  | Mean diff | Std dev | Std error | 95% CI for diff  | p-value |
+|:------|:-----|:-----|:----------|:--------|:----------|:-----------------|:--------|
+| 1     | A    | 30   | -30       | 191.7   | 49.5      | \[-129, 69\]     | 0.55    |
+| 2     | A    | 1000 | -30       | 223.6   | 10        | \[-49.6, -10.4\] | 0.002   |
+| 3     | B    | 40   | -20       | 147.6   | 33        | \[-85, 45\]      | 0.55    |
+| 4     | B    | 4000 | -2        | 147.6   | 3.3       | \[-8.5, 4.5\]    | 0.54    |
+| 5     | C    | 5000 | -6        | 100.0   | 2         | \[-9.9, -2.1\]   | 0.002   |
 
+-   Compare the results of the different trials with respect to the
+    sample size, mean difference, etc.
 
-* Compare the results of the different trials with respect to the sample
-size, mean difference, etc.
+    -   Which drug is effective at reducing cholesterol?
 
-   * Which drug is effective at reducing cholesterol?
+    -   Why is study 4 more informative than study 3 (even though the
+        $p$ values are similar)?
 
-   * Why is study 4 more informative than study 3 (even though the $p$ values
-are similar)?
+    -   Key points
 
-   * Key points
-      * Hypothesis tests and $p$-values can often be insufficient to make proper
-decisions. The confidence interval provides more useful information.
-      * Narrower confidence intervals (more precise estimates) allow for scientific conclusion regardless of the $p$ value
-      
+        -   Hypothesis tests and $p$-values can often be insufficient to
+            make proper decisions. The confidence interval provides more
+            useful information.
+        -   Narrower confidence intervals (more precise estimates) allow
+            for scientific conclusion regardless of the $p$ value
+
 ### Precision variables and regression modeling
 
-* Pure precision variables are associated with the outcome only
+-   Pure precision variables are associated with the outcome only
 
-   * That is, no association (in the sample) with the predictor of interest
-   
-* In a randomized trial where random treatment assignment is the predictor of interest it may be possible to have a pure precision variable by using stratified randomization
-   * Stratified randomization can guarantee that there is no correlation between the precision variable and treatment group assignment
+    -   That is, no association (in the sample) with the predictor of
+        interest
 
-* In observational research, there may be some correlation between the precision variable and the predictor of interest
-   * May act more like a confounder in these cases, depending on the size of the association
+-   In a randomized trial where random treatment assignment is the
+    predictor of interest it may be possible to have a pure precision
+    variable by using stratified randomization
+
+    -   Stratified randomization can guarantee that there is no
+        correlation between the precision variable and treatment group
+        assignment
+
+-   In observational research, there may be some correlation between the
+    precision variable and the predictor of interest
+
+    -   May act more like a confounder in these cases, depending on the
+        size of the association
 
 ```{mermaid}
 flowchart LR
   X[Predictor\nof interest] --> Y[Outcome]
   W[Precision] --> Y[Outcome]
 ```
-
-

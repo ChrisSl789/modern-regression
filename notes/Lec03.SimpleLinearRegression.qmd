@@ -3,9 +3,9 @@ title: "Simple Linear Regression"
 subtitle: "Lecture 03"
 author: "Chris Slaughter"
 footer: "Bios 6312"
+date: last-modified
 format:
   html:
-    self-contained: true
     number-sections: true
     number-depth: 4
     anchor-sections: true

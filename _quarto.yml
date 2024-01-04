@@ -20,17 +20,24 @@ website:
 
   sidebar:
     background: "#D9E3E4"
-    logo: "images/logo.png"
     pinned: true
     align: center
     style: "docked"
     search: true
     collapse-level: 1
     contents:
-      - section: "Course Notes"
+      - section: "Course Introduction"
         contents:
           - href: notes/Lec01.Introduction.qmd
-          - text: Introduction
+      - section: "Course Notes"
+        contents:
+          - href: notes/Lec02.review.qmd
+          - href: notes/Lec03.SimpleLinearRegression.qmd
+          - href: notes/Lec04.Logistic.qmd
+          - href: notes/Lec05.Precision.qmd
+      - section: "Labs"
+        contents: 
+          - href: labs/quarto-intro.qmd
       - section: "Supplemental notes"
         contents:
           - href: supplemental/slr-derivations.qmd

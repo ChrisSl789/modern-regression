@@ -1,11 +1,10 @@
 ---
-title: "Introduction and Review"
+title: "Review of Key Concepts"
 subtitle: "Lecture 02"
 author: "Chris Slaughter"
 footer: "Bios 6312"
 format:
   html:
-    self-contained: true
     number-sections: true
     number-depth: 4
     anchor-sections: true
@@ -103,11 +102,11 @@ tab1 <- matrix(c(3,0,2,5),nrow=2, dimnames=list(c("E+","E-"),c("D+","D-")))
 tab1
 ```
 
-- The number of E+ and E- were fixed by design (5 each).  The random variables are the number of subjects (out of 5) who are D+.
+-   The number of E+ and E- were fixed by design (5 each). The random variables are the number of subjects (out of 5) who are D+.
 
-- The scientific question of interest there an association between exposure and increased (or decreased) risk of disease?
+-   The scientific question of interest there an association between exposure and increased (or decreased) risk of disease?
 
-- Our analysis plan should take into account the fact that we have a samll sample size.  For illustration, I will consider both a Bayesian and frequentist approach so the methods can be compared.
+-   Our analysis plan should take into account the fact that we have a samll sample size. For illustration, I will consider both a Bayesian and frequentist approach so the methods can be compared.
 
 #### Frequentist analysis
 
@@ -156,11 +155,14 @@ p(\theta_2 | X_2) \propto p(X_2|\theta_2) \times \pi(\theta_2) \\
 p(\theta_2 | X_2) \sim Beta(X_2+a_2, (5-X_2) + b_2)
 $$
 
--   For the prior distributions, we choose $a_1 = a_2 = 0.5$ and $b_1 = b_2 = 2$.  That is, the prior parameters are the same for $\theta_1$ and $\theta_2$ with prior mean 0.20.^[Mean of Beta(a,b) is a/(a+b)]  
+-   For the prior distributions, we choose $a_1 = a_2 = 0.5$ and $b_1 = b_2 = 2$. That is, the prior parameters are the same for $\theta_1$ and $\theta_2$ with prior mean 0.20.[^2]
 
-- The prior and posterior distributions for $\theta_1$ and $\theta_2$ are summarized below
-   - The distribution for the Exposed is shifted to the right (relative to the prior) because 3/5 subjects were D+
-   - The distribution for the Unexposed is shifted to the left (relative to the prior) because 0/5 subjects were D+
+-   The prior and posterior distributions for $\theta_1$ and $\theta_2$ are summarized below
+
+    -   The distribution for the Exposed is shifted to the right (relative to the prior) because 3/5 subjects were D+
+    -   The distribution for the Unexposed is shifted to the left (relative to the prior) because 0/5 subjects were D+
+
+[^2]: Mean of Beta(a,b) is a/(a+b)
 
 ```{r}
 # Prior parameters
@@ -174,8 +176,7 @@ plot(function(x) dbeta(x,a+0,b+5), add=TRUE, col='blue')
 legend("topright",inset=.05,c("Prior distribution","Posterior for theta_1 (Exposed)","Posterior for theta_2 (Unexposed)"), col=c("Black","Red","Blue"), lty=1)
 ```
 
-- Our scientific question of interest was to compare the disease rates in the exposed versus the unexposed.  This was parameterized as a risk difference, $\theta = \theta_1 - \theta_2$.  One could derive the distribution for the difference in two beta random variables for the analytical solution.  Instead, I will estimate an approximate numerical solution and summarize the posterior distribution of theta using the 2.5th, 50th, 97.5th quantiles and the posterior mean.
-
+-   Our scientific question of interest was to compare the disease rates in the exposed versus the unexposed. This was parameterized as a risk difference, $\theta = \theta_1 - \theta_2$. One could derive the distribution for the difference in two beta random variables for the analytical solution. Instead, I will estimate an approximate numerical solution and summarize the posterior distribution of theta using the 2.5th, 50th, 97.5th quantiles and the posterior mean.
 
 ```{r}
 set.seed(1234)
