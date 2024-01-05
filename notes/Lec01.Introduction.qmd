@@ -8,7 +8,8 @@ format:
     theme: slides.scss
     transition: fade
     slide-number: true
-    self-contained: true
+    embed-resources: true
+    standalone: true
 ---
 
 ```{r setup, message=FALSE, warning=FALSE, include=FALSE}

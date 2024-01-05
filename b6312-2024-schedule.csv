@@ -3,26 +3,26 @@ Week,Day,Date,Topic,Notes/Lab,Supplemental,Homework
 1,3,2024/01/09,"Review of Key Concepts","Chap 2",,
 1,5,2024/01/11,"Simple Linear Regression","Chap 3 ",,
 2,2,2024/01/15,"Martin Luther King, Jr Holiday","no class",,
-2,3,2024/01/16,"Simple Linear Regression","Chap 3 / Lab1",,
-2,5,2024/01/18,"Simple Linear Regression","Chap 3 ",,"HW 1"
+2,3,2024/01/16,"Simple Linear Regression","Chap 3 / Lab1",,"HW 1"
+2,5,2024/01/18,"Simple Linear Regression","Chap 3 ",,
 3,2,2024/01/22,"Linear regression model assumptions","Lab 2",,
-3,3,2024/01/23,"Finish simple linear regression","Chap 3",,
-3,5,2024/01/25,"Simple Logistic Regression","Chap 4",,"HW2; HW 1 Due"
+3,3,2024/01/23,"Finish simple linear regression","Chap 3",,"HW2; HW 1 Due"
+3,5,2024/01/25,"Simple Logistic Regression","Chap 4",,
 4,2,2024/01/29,"Logistic Regression Lab","Lab 3",,
-4,3,2024/01/30,"Simple Logistic Regression","Chap 4",,
-4,5,2024/02/01,"Precision","Chap 5",,"HW3; HW 2 Due"
+4,3,2024/01/30,"Simple Logistic Regression","Chap 4",,"HW3; HW 2 Due"
+4,5,2024/02/01,Precision,"Chap 5",,
 5,2,2024/02/05,"Precision and adjustment for baseline","Lab 4",,
-5,3,2024/02/06,"Confounding and Effect Modification","Chap 6",,
-5,5,2024/02/08,"Multivariable Models","Chap 6",,"HW 3 due; HW 4"
+5,3,2024/02/06,"Confounding and Effect Modification","Chap 6",,"HW4; HW 3 Due"
+5,5,2024/02/08,"Multivariable Models","Chap 6",,
 6,2,2024/02/12,"   Lab",,,
-6,3,2024/02/13,"Multivariable Models","Chap 7",,
-6,5,2024/02/15,"Time to event models","Chap 7",,"HW 4 due"
+6,3,2024/02/13,"Multivariable Models","Chap 7",,"HW 4 due"
+6,5,2024/02/15,"Time to event models","Chap 7",,
 7,2,2024/02/19,Review,,,
-7,3,2024/02/20,"Midterm Exam (in class)",,,
-7,5,2024/02/22,"Linear model estimation",,,"HW 5"
+7,3,2024/02/20,"Midterm Exam (in class)",,,"HW 5"
+7,5,2024/02/22,"Linear model estimation",,,
 8,2,2024/02/26,"  Lab",,,
-8,3,2024/02/27,"Linear model estimation",,,
-8,5,2024/02/29,"Modeling effect modificiaton",,,"HW 5 due; HW 6"
+8,3,2024/02/27,"Linear model estimation",,,"HW 5 due; HW 6"
+8,5,2024/02/29,"Modeling effect modificiaton",,,
 9,2,2024/03/04,"   Lab",,,
 9,3,2024/03/05,"Modeling effect modificiaton",,,
 9,5,2024/03/07,"Regression models for nominal, ordinal, and count outcomes",,,

@@ -2,16 +2,6 @@
 title: "Syllabus"
 ---
 
-## Course Desscriptions
-
-### BIOS 6312
-
-This is the second in a two-course series designed for students who seek to develop skills in modern biostatistical reasoning and data analysis. Students learn modern regression analysis and modeling building techniques from an applied perspective. Theoretical principles will be demonstrated with real-world examples from biomedical studies. This course requires substantial statistical computing in software packages and focuses on R; familiarity with R or proficiency in another high-level statistical program (e.g. Stata) is required. The course covers regression modeling for continuous outcomes, including simple linear regression, multiple linear regression, and analysis of variance with one-way, two-way, three-way, and analysis of covariance models. This is a brief introduction to models for binary outcomes (logistic models), ordinal outcomes (proportional odds models), count outcomes (Poisson/negative binomial models), and time to event outcomes (Kaplan-Meier curves, Cox proportional hazard modeling). Incorporated into the presentation of these models are subtopic topics such as regression diagnostics, nonparametric regression, splines, data reduction techniques, model validation, parametric bootstrapping, and a brief introduction to methods for handling missing Students are required to take 6312L concurrently. Prerequisite: Biostatistics 6311 or equivalent; familiarity with STATA and R software packages. SPRING.
-
-### BIOS 6312L
-
-This is a discussion section/lab for Modern Regression Analysis. Students will review relevant theory and work on applications as a group. Computing solutions and extensions will be emphasized. Students are required to take 6312 concurrently.
-
 
 ## Course Goals
 
@@ -38,3 +28,13 @@ This is a discussion section/lab for Modern Regression Analysis. Students will r
 -   Understanding model assumptions and the impact of assumptions on interpretation
 -   Model Checking: diagnostics, transformations, influential observations, lack-of-fit test
 
+
+## Course Descriptions
+
+### BIOS 6312
+
+This is the second in a two-course series designed for students who seek to develop skills in modern biostatistical reasoning and data analysis. Students learn modern regression analysis and modeling building techniques from an applied perspective. Theoretical principles will be demonstrated with real-world examples from biomedical studies. This course requires substantial statistical computing in software packages and focuses on R; familiarity with R or proficiency in another high-level statistical program (e.g. Stata) is required. The course covers regression modeling for continuous outcomes, including simple linear regression, multiple linear regression, and analysis of variance with one-way, two-way, three-way, and analysis of covariance models. This is a brief introduction to models for binary outcomes (logistic models), ordinal outcomes (proportional odds models), count outcomes (Poisson/negative binomial models), and time to event outcomes (Kaplan-Meier curves, Cox proportional hazard modeling). Incorporated into the presentation of these models are subtopic topics such as regression diagnostics, nonparametric regression, splines, data reduction techniques, model validation, parametric bootstrapping, and a brief introduction to methods for handling missing Students are required to take 6312L concurrently. Prerequisite: Biostatistics 6311 or equivalent; familiarity with STATA and R software packages. SPRING.
+
+### BIOS 6312L
+
+This is a discussion section/lab for Modern Regression Analysis. Students will review relevant theory and work on applications as a group. Computing solutions and extensions will be emphasized. Students are required to take 6312 concurrently.

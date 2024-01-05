@@ -4,7 +4,7 @@ title: "Bios 6312: Modern Regression"
 
 This page contains an outline of the topics, content, and assignments for the semester. Note that this schedule will be updated as the semester progresses, with all changes documented here.
 
-Schedule current as of  updated `r format(Sys.time(), "%a %b %d %X %Y")`
+Schedule updated `r format(Sys.time(), "%a %b %d %X %Y")`
 
 ```{r}
 #| echo: false

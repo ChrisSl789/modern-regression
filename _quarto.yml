@@ -26,11 +26,14 @@ website:
     search: true
     collapse-level: 1
     contents:
-      - section: "Course Introduction"
+      - section: "Course Information"
         contents:
           - href: notes/Lec01.Introduction.qmd
+            text: "Introductory Slides"
           - href: syllabus.qmd
           - href: computing.qmd
+          - href: index.qmd
+            text: "Schedule"
       - section: "Course Notes"
         contents:
           - href: notes/Lec02.review.qmd

@@ -5,7 +5,8 @@ author: "Chris Slaughter"
 footer: "Bios 6312"
 format:
   html:
-    self-contained: true
+    embed-resources: true
+    standalone: true
     number-sections: true
     number-depth: 4
     anchor-sections: true
