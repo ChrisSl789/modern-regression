@@ -1,0 +1,58 @@
+---
+title: "Computing"
+---
+
+## R
+
+Course notes and primary examples are based on R. I used the following version of R to build the course notes
+
+```{r}
+R.version$version.string
+```
+
+It is best to be using the latest version of R.
+
+## Rstudio
+
+Current versions of RStudio support editing and preview of Quarto documents. 
+
+To efficiently use Quarto within RStudio it is **strongly** recommended that you use the [latest release](https://posit.co/download/rstudio-desktop/) of RStudio.  You need to be using RStudio (v2023.06) or later.
+
+You can download RStudio from <https://posit.co/download/rstudio-desktop/>.
+
+
+## Quarto
+
+Quarto is a multi-language, next generation version of R Markdown from RStudio, with many new features and capabilities. Like R Markdown, Quarto uses [Knitr](https://yihui.org/knitr/) to execute R code, and is therefore able to render most existing Rmd files without modification.
+
+To use Quarto with R, you should install the **rmarkdown** R package:
+
+``` r
+install.packages("rmarkdown")
+```
+
+Installation of the **rmarkdown** package will also install the **knitr** package so you will have everything required to render documents containing R code.
+
+
+## R packages
+
+There are many ways to achieve the same results in R. To create the notes, I utilize base R and a variety of different packages that provide one way of obtaining the results. The packages needed used to create the notes are listed at the beggining of each set of notes.
+
+If you do not have the packages installed, they will need to be installed first to recreate the analyses in the notes.  The packages I use and demonstrate may not be unique.  Other packages may do something similar and allow you to arrive at the same final answer.
+
+
+``` r
+install.packages("rms")
+```
+
+After installation, you can load the package
+
+``` r
+library("rms")
+```
+
+## Stata
+
+Stata also should be able to conduct all of these analyses necessary for this course. The main advantage to Stata is that its syntax is relatively straightforward. It also has a menu system that can be used to create code and make the analysis reproducible through .do files.
+
+[UCLA Statistical Methods and Data Analytics](stats.oarc.ucla.edu/stata) maintain a good website for those interested in learning more about the capabilities of Stata

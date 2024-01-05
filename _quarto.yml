@@ -30,6 +30,7 @@ website:
         contents:
           - href: notes/Lec01.Introduction.qmd
           - href: syllabus.qmd
+          - href: computing.qmd
       - section: "Course Notes"
         contents:
           - href: notes/Lec02.review.qmd
