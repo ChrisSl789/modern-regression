@@ -20,194 +20,213 @@ options(
 
 ```
 
-
 # Course Details
-
 
 ## Course Team
 
-
 ### Instructor
 
-* Chris Slaughter 
-   - james.c.slaughter@vumc.org (best)
-   - james.c.slaughter@vanderbilt.edu (checked ~ weekly)
-   - Office: 2525 West End, 11-127
+-   Chris Slaughter
+    -   james.c.slaughter\@vumc.org (best)
+    -   james.c.slaughter\@vanderbilt.edu (checked \~ weekly)
+    -   Office: 2525 West End, 11-127
 
 <br/>
 
 ### TA
 
-* 
+-   Bailu (Lucy) Yan
+    -   bailu.yan\@vanderbilt.edu
 
 ## Course website(s)
 
-* ADD site web page information
-  - HTML, PDF, and qmds of Slides
-  - Readings
-  - Links to course tools
+-   <https://chrissl789.github.io/modern-regression/>
 
-* Brightspace (ADD link)
-  - Announcements
-  - Submit homework
-  - Gradebook
-  - FERPA compliance
-     - The Family Educational Rights and Privacy Act (FERPA) is a federal law enacted in 1974 that protects the privacy of student education records.
-  
+    -   Course notes
+        -   HTML, PDF, Quarto (.qmd)
+    -   Daily schedule
+    -   Links to course tools
 
+-   [Brightspace](https://brightspace.vanderbilt.edu)
+
+    -   Announcements
+    -   Submit homework
+    -   Gradebook
+    -   FERPA compliance
+        -   The Family Educational Rights and Privacy Act (FERPA) is a federal law enacted in 1974 that protects the privacy of student education records.
 
 ## Course Timetable
 
-* Lectures (weekly) 
-  - Tuesdays, 10:30 - 11:50 am - 2525 WEA, Room 11105
-  - Thursdays, 10:30 - 11:50 am - 2525 WEA, Room 11105
-  
+-   Lectures (weekly)
+    -   Tuesdays, 10:30 - 11:50 am - 2525 WEA, Room 11105
+    -   Thursdays, 10:30 - 11:50 am - 2525 WEA, Room 11105
+
 <br/>
-  
-* Labs (weekly)
-  - Mondays, 1:00 to 1:55 pm - 2525 WEA, Room 11105
-  
+
+-   Labs (weekly)
+    -   Mondays, 1:00 to 1:50 pm - 2525 WEA, Room 11105
 
 ## Software -- R
 
-* Primary software package will be R
-  - Free
-  - Most adaptable statistical package
-  - Used by the majority of academic Biostatisticians
-  - [Rstudio](https://posit.co/downloads/) IDE used to work with R
-  - Rstudio includes Quarto, the latest and greatest tool for rendering markdown documents
+-   Primary software package will be R
+    -   Free
+    -   Most adaptable statistical package
+    -   Used by the majority of academic Biostatisticians
+    -   [Rstudio](https://posit.co/downloads/) IDE used to work with R
+    -   Rstudio includes Quarto, the latest and greatest tool for rendering markdown documents
 
 ## Software -- Rstudio and Quarto
 
-* Course notes rendered using Quarto with R code integrated
-  - [Quarto](https://quarto.org) allows for creating dynamic content using embedded R (or other software) code
-  - Will allow you to see all code used to generate notes
-     - I will highlight important R code
-  - I am still learning Quarto, so it has more features than I will likely use
-* Qauarto covered in first lab, next week
+-   Course notes rendered using Quarto with R code integrated
+    -   [Quarto](https://quarto.org) allows for creating dynamic content using embedded R (or other software) code
+    -   Will allow you to see all code used to generate notes
+        -   I will highlight important R code
+    -   I am still learning Quarto, so it has more features than I will likely use
+-   Quarto introduction covered in first lab
 
 ## Software -- Stata
-  
-* Secondary software package will be Stata
-  - My second favorite statistical package
-  - Relatively easy syntax
-  - Designed for people who know statistics, but don't want to write basic functions
-  - Not integrated with Quarto
-     - I will provide a list of equivalent Stata commands in labs and lectures, but usually not produce the output
+
+-   Secondary software package will be Stata
+    -   My second favorite statistical package
+    -   Relatively easy syntax
+    -   Designed for people who know statistics, but don't want to write basic functions
+    -   Not integrated with Quarto
+        -   I will provide a list of equivalent Stata commands in labs and lectures, but usually not produce the output
 
 ## Generative AI (e.g. ChatGPT)
 
-* Two definitions of generative AI, from ChatGPT 3.5
-  - Generative AI is a type of artificial intelligence that can create new, original content by learning patterns from existing data and using them to generate new outputs.
-  - Generative AI refers to the use of machine learning algorithms to generate new and original content, such as images, text, and music.
-* I prefer to use the [tools available to VUMC](https://www.vumc.org/dbmi/GenerativeAI)
-* As with any tool, use with caution
-  - Help with generating code, or converting code between languages
-  - Help with writing interpretations in more easily understood language
-  - The prompt that you use matters.  Also, identical prompts at different times can give different answers
-  
+-   Two definitions of generative AI, from ChatGPT 3.5
+    -   Generative AI is a type of artificial intelligence that can create new, original content by learning patterns from existing data and using them to generate new outputs.
+    -   Generative AI refers to the use of machine learning algorithms to generate new and original content, such as images, text, and music.
+-   I prefer to use the [tools available to VUMC](https://www.vumc.org/dbmi/GenerativeAI)
+-   As with any tool, use with caution
+    -   Help with generating code, or converting code between languages
+    -   Help with writing interpretations in more easily understood language
+    -   The prompt that you use matters. Also, identical prompts at different times can give different answers
 
 ## Guiding Principles
 
-* Alternative course title: How to Use Statistics to Answer Scientific Questions (part 2)
-  + Put science before statistics
-  + Emphasize parameter estimates and confidence intervals (credible intervals, likelihood intervals) over hypothesis testing and p-values 
-    - The End of Statistical Significance (Jonathan Sterne)
-    - What's Wrong with P-Values (Bland, Altman)
-    - Key difference between scientific/clinical significance and statistical significance
-* This is a course in Biostatistics, not coding in R/Stata
-  + I will show you how to get an interpret the key statistics, but not interpret every number of the Stata output
-  + Often there is more than one way to arrive at identical final answers
+-   Alternative course title: How to Use Statistics to Answer Scientific Questions (part 2)
+    -   Put science before statistics
+    -   Emphasize parameter estimates and confidence intervals (credible intervals, likelihood intervals) over hypothesis testing and p-values
+        -   The End of Statistical Significance (Jonathan Sterne)
+        -   What's Wrong with P-Values (Bland, Altman)
+        -   Key difference between scientific/clinical significance and statistical significance
+-   This is a course in Biostatistics, not coding in R/Stata
+    -   I will show you how to get an interpret the key statistics, but not interpret every number on output
+    -   Often there is more than one way to arrive at identical final answers
 
 ## Example: Clinical vs Scientific significance
 
-* 5 clinical trials conducted to determine if drug A, B, or C lowers cholesterol
-* Assume that a decrease of 10 mg/dl or more is important to clinicians
-* Study design
-  + Cholesterol measured at baseline, subjects take drug for 1 month, Cholesterol measured at 1 month
-  + Change in cholesterol is the outcome of interest
+-   5 clinical trials conducted to determine if drug A, B, or C lowers cholesterol
+-   Assume that a decrease of 10 mg/dl or more is important to clinicians
+-   Study design
+    -   Cholesterol measured at baseline, subjects take drug for 1 month, Cholesterol measured at 1 month
+    -   Change in cholesterol is the outcome of interest
 
-| Trial | Drug | Pts | Mean diff | Std dev | Std error | 95% CI for diff | p-value |
-|-------|------|------|-----------|---------|-----------|----------------|---------|
-| 1 | A | 30 | -30 | 191.7 | 49.5 | [-129, 69] | 0.55 |
-| 2 | A | 1000 | -30 | 223.6 | 10 | [-49.6, -10.4] | 0.002 |
-| 3 | B | 40 | -20 | 147.6 | 33 | [-85, 45] | 0.55 |
-| 4 | B | 4000 | -2 | 147.6 | 3.3 | [-8.5, 4.5] | 0.54 |
-| 5 | C | 5000 | -6 | 100.0 | 2 | [-9.9, -2.1] | 0.002 |
+| Trial | Drug | Pts  | Mean diff | Std dev | Std error | 95% CI for diff  | p-value |
+|-------|------|------|-----------|---------|-----------|------------------|---------|
+| 1     | A    | 30   | -30       | 191.7   | 49.5      | \[-129, 69\]     | 0.55    |
+| 2     | A    | 1000 | -30       | 223.6   | 10        | \[-49.6, -10.4\] | 0.002   |
+| 3     | B    | 40   | -20       | 147.6   | 33        | \[-85, 45\]      | 0.55    |
+| 4     | B    | 4000 | -2        | 147.6   | 3.3       | \[-8.5, 4.5\]    | 0.54    |
+| 5     | C    | 5000 | -6        | 100.0   | 2         | \[-9.9, -2.1\]   | 0.002   |
 
 # Grading and Evaluation
 
 ## Evaluation components and grade percentages
 
-* Midterm (25\%)
-* Final Exam (25\%)
-* Homework and quizzes (25\%)
-* Project (25\%)
-* Class participation
-* This is a 4-credit course.  Your lab and lecture grades will be the same
+-   Midterm (30%)
+-   Take Home Exam (30%)
+-   Final Exam (30%)
+-   Homework (10%)
+-   Class participation
+-   This is a 4-credit course. Your lab and lecture grades will be the same
 
 ## Homework
 
-* Up to 1 per week (probably 6 or 7 total)
-* Will focus on real data analysis and interpretation with some mathematical derivations of important quantities
-* Questions will focus on specific analyses, with questions stated in as scientific terms as possible
-* Work handed in should address the scientific questions
-   - Format Table and Figures
-   - No raw, unformatted output
-* Keys will be provided shortly after the homework is turned in
-   - No late homework accepted after the key is posted
-* Answers in keys may go beyond what is expected of your homework and present concepts in more detail. You are responsible for any material in the keys for exams.
-* You may discuss the homework with others in the class, but the work you turn in should be your own
-* Use Brightspace to turn in homeworks and receive feedback and grade
+-   Up to 1 per week (probably 6 or 7 total)
+-   Will focus on real data analysis and interpretation with some mathematical derivations of important quantities
+-   Questions will focus on specific analyses, with questions stated in as scientific terms as possible
+-   Work handed in should address the scientific questions
+    -   Format Table and Figures
+-   Keys will be provided shortly after the homework is turned in
+    -   No late homework accepted after the key is posted
+-   Answers in keys may go beyond what is expected of your homework and present concepts in more detail. You are responsible for any material in the keys for exams.
+-   You may discuss the homework with others in the class, but the work you turn in should be your own
+-   Use Brightspace to turn in homeworks and receive feedback and grade
 
-## Exams
+## In Class Exams
 
-* Exams: Midterm and Final in class
-  - Focus on understanding concepts, not memorizing formulas
-  - I will provide an example midterm and final
-  - For midterm, you will be allowed 1 page of your own notes
-  - For final, you will be allowed 2 pages of your own notes
-* Quizzes
-  - At my discretion will may have 10-minute quiz in lab
+-   Midterm and Final in class
+    -   Focus on understanding concepts, not memorizing formulas
+    -   I will provide an example midterm and final
+    -   For midterm, you will be allowed 1 page of your own notes
+    -   For final, you will be allowed 2 pages of your own notes
+-   All output will be provide for you to interpret
 
-## Project
+## Take Home Exam
 
-* Detailed analysis of a dataset
-  - Prepare a 4-10 page reporting of your results (excluding tables and figures)
-  - Will be assigned at mid-point of course; more details at that time
+-   Will be given approximately mid point between Midterm and Final
+-   Demonstrate ability to obtain results through software and interpret findings
+-   One day to complete and turn in
+    -   Likely will be a Monday with no lab scheduled for that day
+-   Practice for applied portion of first year comprehensive exams
+-   Similar to Homework, but work should be your own
 
 # Course Materials
 
 ## Course notes
 
-* Course notes will be the primary source
-* Available on web page: ADD LINK
-* Daily class schedule including notes for that day
-* Notes will be updated throughout semester
+-   Course notes will be the primary source
+-   Available on web page
+-   Daily class schedule will indicate notes being covered
+-   Notes will be updated throughout semester
 
 ## Recommended Textbook: Regression Methods in Biostatistics
 
-* Vittinghoff, Glidden, Shiboski, and McCulloch
-* Pros
-   + Covers applied linear, logistic, survival, and repeated measures regression
-   + Biomedical orientation
-* Cons
-   + Does not discuss robust standard errors, which I will use almost exclusively
-   + Emphasizes model diagnostics more that I will
-   + Does not cover Bayesian approaches
-   + Does not cover matrix algebra
-   + Little theory and mathematical derivation
+-   Vittinghoff, Glidden, Shiboski, and McCulloch
+-   Pros
+    -   Covers applied linear, logistic, survival, and repeated measures regression
+    -   Biomedical orientation
+-   Cons
+    -   Does not discuss robust standard errors, which I will use almost exclusively
+    -   Emphasizes model diagnostics more that I will
+    -   Does not cover Bayesian approaches
+    -   Does not cover matrix algebra
+    -   Little theory and mathematical derivation
 
 ## Additional textbooks
 
-* Weisberg, Applied Linear Regression
-  + Uses matrix notation and appropriate level of statistical theory for this course
-  + Poor for applied data analysis.  Earlier version limited to linear models, no Bayesian approaches
-* Bayesian Regression textbook
-  + Newer text that I am still evaluating
-  + Provides a Bayesian approach to fitting the models we discuss
-* I will give recommended readings throughout the semester
-* If the course notes and book differ, go with the notes
+-   Weisberg, Applied Linear Regression
+    -   Uses matrix notation and appropriate level of statistical theory for this course
+    -   Poor for applied data analysis. Earlier version limited to linear models, no Bayesian approaches. Newer version is more comprehensive.
+-   Wakefield, Bayesian and Frequentist Regression Methods
+    -   Newer text that I am still evaluating
+    -   Provides a Bayesian approach to fitting the models we discuss
+-   I will give recommended readings throughout the semester
+-   If the course notes and book differ, go with the notes
 
+## Supplemental Material
 
+-   As needed, I will post supplemental material on the course web page or on Brightspace
 
+    -   I prefer the course web page, if possible
+
+    -   Brightspace will be used if necessary
+
+-    Relevant supplemental material will be noted on course schedule
+
+## Getting started
+
+-   To do on your own by Thursday...
+
+    -   Download and install new versions of R and Rstudio
+
+        -   Details on course web page, computing
+
+-   I would like everyone (including Stata users) to be able to Render a basic Quarto document
+
+-   Plan to start discussing Quarto next Tuesday
+
+    -   It is difficult to anticipate all issues that might arise, so I would like to resolve any major software issues before then

@@ -3,6 +3,7 @@ title: "Review of Key Concepts"
 subtitle: "Lecture 02"
 author: "Chris Slaughter"
 footer: "Bios 6312"
+date: last-modified
 format:
   html:
     embed-resources: true
@@ -30,14 +31,18 @@ execute:
    message: false
 ---
 
+```{r}
+library(Exact)
+```
+
 ## Samples from populations
 
 -   Scientific hypotheses concern a population
     -   Do *teenagers* learn math more quickly using the Singapore Method?
     -   Will *people with heart disease* live longer if they are prescribed medication X?
-    -   *Teenagers* and *people with heart disease*, are the populations of interest. However, it is rare that we can ever study the entire population
-    -   The purpose of inferential statistics is to make valid inference about a populations based on a sample from that population
-    -   We commonly make inference about population parameters
+-   *Teenagers* and *people with heart disease*, are the populations of interest. However, it is rare that we can ever study the entire population
+-   The purpose of inferential statistics is to make valid inference about a populations based on a sample from that population
+    -   We commonly make inference about population parameters such as the mean, median, probability, odds, etc.
 
 ## Inference and variability
 
@@ -70,7 +75,7 @@ execute:
 -   Refinement 1: Do people who take aspirin not have heart attacks?
     -   This is problematic because it is *deterministic*. Some people will have heart attacks even if they take aspirin because there is variability across subjects.
 -   Refinement 2: Do people who take aspirin tend to have fewer heart attacks?
-    -   This refinement acknowledges variablity in response across subjects, but lacks a control group. We would need to know how many heart attacks they would have otherwise
+    -   This refinement acknowledges variability in response across subjects, but lacks a control group. We would need to know how many heart attacks they would have otherwise
 -   Final refinement: Is the incidence of heart attacks less in people who take aspirin than those who do not?
 -   Basic science: Is the incidence less by *any* amount?
 -   Clinical science: Is the incidence less by a *clinically relevant* amount?
@@ -79,7 +84,7 @@ execute:
 ## Associations between variables
 
 -   An association exists between two variables if their probability distributions are not independent
--   For random variables $X$ and $Y$ with joint probabilty density function (pdf) $f(x,y)$, marginal pdfs $f_X(x)$ and $f_Y(y)$, and conditional pdfs $f(x | y)$ and $f(y | x)$
+-   For random variables $X$ and $Y$ with joint probability density function (pdf) $f(x,y)$, marginal pdfs $f_X(x)$ and $f_Y(y)$, and conditional pdfs $f(x | y)$ and $f(y | x)$
 
 $$f(x,y) = f_X(x)*f_Y(y)$$ $$f(x | y) = f_X(x)$$ $$f(y | x) = f_Y(y)$$
 
@@ -89,11 +94,12 @@ $$f(x,y) = f_X(x)*f_Y(y)$$ $$f(x | y) = f_X(x)$$ $$f(y | x) = f_Y(y)$$
     -   Yes, but it is very difficult
     -   Two variables can be associated in many different ways. It is hard to examine every characteristic of a distribution across groups
 -   Conversely, we can show associations as soon as we establish some information that one variable provides about the other
-    -   Negative studies (e.g. studies with p $>$ 0.05 or CI that contains the null value)
-    -   Absence of evidence is not the same as evidence of absence
+    -   Negative studies (e.g. studies with p $>$ 0.05 or CI that contains the null value) are sometimes misinterpreted as being evidence of no association
+        -   However, "Absence of evidence is not the same as evidence of absence"
     -   To make negative studies meaningful, we must\...
         -   Specify the type of association that we are looking for (e.g. mean, median)
         -   Quantify the amount of uncertainty that might differ across groups
+            -   If the uncertainty is small enough, we can conclude there is no evidence for a meaningful difference
 
 ### Example: Inference about an association between exposure (E) and disease (D)
 
@@ -108,7 +114,7 @@ tab1
 
 -   The scientific question of interest there an association between exposure and increased (or decreased) risk of disease?
 
--   Our analysis plan should take into account the fact that we have a samll sample size. For illustration, I will consider both a Bayesian and frequentist approach so the methods can be compared.
+-   Our analysis plan should take into account the fact that we have a small sample size. For illustration, I will consider both a Bayesian and frequentist approach so the methods can be compared.
 
 #### Frequentist analysis
 
@@ -117,7 +123,6 @@ tab1
 [^1]: A multinomial model would assume the total sample size is fixed, which is a common design but not appropriate here. Fisher's exact test assumes that both the row and columns margins are fixed, which is rarely found in practice.
 
 ```{r}
-library(Exact)
 exact.test(tab1, model="binomial", conf.int = TRUE, to.plot=FALSE)
 ```
 
@@ -134,8 +139,8 @@ exact.test(tab1, model="binomial", conf.int = TRUE, to.plot=FALSE)
 -   A Bayesian analysis requires specifying appropriate prior distributions for our parameter. Let $\theta_1 = \textrm{Pr(D+|E+)}$, $\theta_2 = \textrm{Pr(D+|E-)}$, and $\theta = \theta_1 - \theta_2$.
 -   Assume these prior distribution
 
-$$\pi(\theta_1) \sim Beta(a_1,b_1) \\
-\pi(\theta_2) \sim Beta(a_2,b_2)$$
+$$\pi(\theta_1) \sim Beta(a_1,b_1)$$
+$$\pi(\theta_2) \sim Beta(a_2,b_2)$$
 
 -   We also have to specify the likelihood the number of subjects (out of 5) who are diseased in the Exposed group and the number of subjects who are diseased in the Unexposed group. Note that this is the same binomial likelihood that is assumed in the frequentist approach above.
 
@@ -144,17 +149,21 @@ $$X_1 \sim Bin(5, \theta_1) \\ X_2 \sim Bin(5, \theta_2)$$
 -   Using Bayes Rule, the posterior distribution is proportional to the likelihood multiplied by the prior distribution
 
 $$
-p(\theta_1 | X_1) \propto p(X_1|\theta_1) \times \pi(\theta_1) \\
-\vdots \\
-p(\theta_1 | X_1) \sim Beta(X_1+a_1, (5-X_1) + b_1)
+\begin{split}
+p(\theta_1 | X_1) &\propto p(X_1|\theta_1) \times \pi(\theta_1) \\
+&\vdots& \\
+p(\theta_1 | X_1) &\sim Beta(X_1+a_1, (5-X_1) + b_1)
+\end{split}
 $$
 
 and
 
 $$
-p(\theta_2 | X_2) \propto p(X_2|\theta_2) \times \pi(\theta_2) \\
-\vdots \\
-p(\theta_2 | X_2) \sim Beta(X_2+a_2, (5-X_2) + b_2)
+\begin{split}
+p(\theta_2 | X_2) & \propto p(X_2|\theta_2) \times \pi(\theta_2) \\
+& \vdots \\
+p(\theta_2 | X_2) & \sim Beta(X_2+a_2, (5-X_2) + b_2)
+\end{split}
 $$
 
 -   For the prior distributions, we choose $a_1 = a_2 = 0.5$ and $b_1 = b_2 = 2$. That is, the prior parameters are the same for $\theta_1$ and $\theta_2$ with prior mean 0.20.[^2]
@@ -171,7 +180,7 @@ $$
 a <- .5
 b <- 2
 
-a/(a+b)
+a/(a+b) # Prior mean
 plot(function(x) dbeta(x,a,b), xlab="Theta_1 or Theta_2", ylab="Density")
 plot(function(x) dbeta(x,a+3,b+2), add=TRUE, col='red')
 plot(function(x) dbeta(x,a+0,b+5), add=TRUE, col='blue')
@@ -195,8 +204,9 @@ legend("topleft",inset=0.05, c("Prior","Posterior"), col=c("Black","Red"), lty=1
 
 -   When you perform many hypothesis tests, your chance of making a type 1 error increases
 
-    -   Type 1 error: Probability of rejecting the null hypothesis when the null hypothesis is true
-    -   Probability of declaring a "statistically significant difference" when, in truth, there is no difference
+    -   Type 1 error
+        -   Probability of rejecting the null hypothesis when the null hypothesis is true
+        -   Probability of declaring a "statistically significant difference" when, in truth, there is no difference
 
 -   Consider the follow hypothetical example
 
@@ -242,10 +252,10 @@ $$\textrm{Pr}(\textrm{do not reject } H1_0, H2_0, \ldots, Hn_0 | \textrm{ all } 
 
 $$
 \begin{split}
-\textrm{Means} & \rightarrow & \textrm{ Linear regression}\\
-\textrm{Odds} & \rightarrow & \textrm{ Logistic regression}\\
-\textrm{Rates} & \rightarrow & \textrm{ Poisson regression}\\
-\textrm{Hazards} & \rightarrow & \textrm{ Cox (proportional hazards) regression}\\
+\textrm{Means} & \rightarrow  \textrm{ Linear regression}\\
+\textrm{Odds} & \rightarrow  \textrm{ Logistic regression}\\
+\textrm{Rates} & \rightarrow  \textrm{ Poisson regression}\\
+\textrm{Hazards} & \rightarrow  \textrm{ Cox (proportional hazards) regression}\\
 \end{split}
 $$
 
@@ -254,22 +264,31 @@ $$
 
 $$
 \begin{split}
-\textrm{2-sample t-test} & \rightarrow & \textrm{ Linear regression}\\
-\textrm{Pearson } \chi^2 \textrm{ test} & \rightarrow & \textrm{ Logistic regression}\\
-\textrm{Wilcoxon signed-rank test} & \rightarrow & \textrm{ Propotional odds regression}\\
+\textrm{2-sample t-test} & \rightarrow \textrm{ Linear regression}\\
+\textrm{Pearson } \chi^2 \textrm{ test} & \rightarrow \textrm{ Logistic regression}\\
+\textrm{Wilcoxon signed-rank test} & \rightarrow \textrm{ Propotional odds regression}\\
 \end{split}
 $$
 
 -   We will learn how to adjust for additional variables using a regression model
+
     -   Confounders
     -   Effect modifiers
     -   Precision variables
+
 -   When building a multivariable regression model, many possible choices along the way
+
     -   Which covariates to include?
     -   What model provides the best fit to the data?
     -   Does the model satisfy underlying assumptions?
     -   etc.
--   Theme of this course: When building a multivariable model, data driven decisions lead to multiple comparisons problem. Instead, I will emphasize
+
+-   Theme of this course
+
+    -   When building a multivariable model, data driven decisions lead to multiple comparisons problem.
+
+-   Instead, I will emphasize
+
     -   Putting science before statistics. Decide the scientific question first, propose a model that answers that scientific question.
     -   Regression models that are robust to distributional assumptions (relieving the need for extensive model checking)
-    -   Detailed, pre-specified analysis plans. Lay out the process for conducting your analysis before loooking at the data to avoid data-driven decision making.
+    -   Detailed, pre-specified analysis plans. Lay out the process for conducting your analysis before looking at the data to avoid data-driven decision making.

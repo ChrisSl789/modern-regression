@@ -18,10 +18,10 @@ Week,Day,Date,Topic,Notes/Lab,Supplemental,Homework
 6,3,2024/02/13,"Multivariable Models","Chap 7",,"HW 4 due"
 6,5,2024/02/15,"Time to event models","Chap 7",,
 7,2,2024/02/19,Review,,,
-7,3,2024/02/20,"Midterm Exam (in class)",,,"HW 5"
+7,3,2024/02/20,"Midterm Exam (in class)",,,Exam
 7,5,2024/02/22,"Linear model estimation",,,
 8,2,2024/02/26,"  Lab",,,
-8,3,2024/02/27,"Linear model estimation",,,"HW 5 due; HW 6"
+8,3,2024/02/27,"Linear model estimation",,,
 8,5,2024/02/29,"Modeling effect modificiaton",,,
 9,2,2024/03/04,"   Lab",,,
 9,3,2024/03/05,"Modeling effect modificiaton",,,
@@ -32,7 +32,7 @@ Week,Day,Date,Topic,Notes/Lab,Supplemental,Homework
 11,2,2024/03/18,"  Lab",,,
 11,3,2024/03/19,"ANOVA and Model Choice",,,
 11,5,2024/03/21,"ANOVA and Model Choice",,,
-12,2,2024/03/25,"   Lab",,,
+12,2,2024/03/25,"   No Lab",,,"Take Home Exam"
 12,3,2024/03/26,"Regression Based Prediction",,,
 12,5,2024/03/28,"Regression Based Prediction",,,
 13,2,2024/04/01,"  Lab",,,
@@ -43,5 +43,5 @@ Week,Day,Date,Topic,Notes/Lab,Supplemental,Homework
 14,5,2024/04/11,"Flexible models for dose-response",,,
 15,2,2024/04/15,"  Lab",,,
 15,3,2024/04/16,Review,,,
-15,5,2024/04/18,"Final Exam (in class)",,,
-16,2,2024/04/22,"No class; take home exam due",,,
+15,5,2024/04/18,"Final Exam (in class)",,,Exam
+16,2,2024/04/22,"Go over final exam",,,
