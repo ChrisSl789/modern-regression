@@ -285,10 +285,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#r" id="toc-r" class="nav-link active" data-scroll-target="#r">R</a></li>
   <li><a href="#rstudio" id="toc-rstudio" class="nav-link" data-scroll-target="#rstudio">Rstudio</a></li>
   <li><a href="#quarto" id="toc-quarto" class="nav-link" data-scroll-target="#quarto">Quarto</a></li>
-  <li><a href="#r-packages" id="toc-r-packages" class="nav-link" data-scroll-target="#r-packages">R packages</a></li>
+  <li><a href="#r-packages" id="toc-r-packages" class="nav-link" data-scroll-target="#r-packages">R packages</a>
+  <ul class="collapse">
+  <li><a href="#installing-and-loading-r-packages" id="toc-installing-and-loading-r-packages" class="nav-link" data-scroll-target="#installing-and-loading-r-packages">Installing and loading R packages</a></li>
+  </ul></li>
   <li><a href="#stata" id="toc-stata" class="nav-link" data-scroll-target="#stata">Stata</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/bios6312/website/edit/main/computing.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/bios6312/website/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="github.com/chrissl789/modern-regression/edit/main/computing.qmd" class="toc-action">Edit this page</a></p><p><a href="github.com/chrissl789/modern-regression/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -336,15 +339,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="r-packages" class="level2">
 <h2 class="anchored" data-anchor-id="r-packages">R packages</h2>
 <p>There are many ways to achieve the same results in R. To create the notes, I utilize base R and a variety of different packages that provide one way of obtaining the results. The packages needed used to create the notes are listed at the beggining of each set of notes.</p>
-<p>If you do not have the packages installed, they will need to be installed first to recreate the analyses in the notes. The packages I use and demonstrate may not be unique. Other packages may do something similar and allow you to arrive at the same final answer.</p>
+<p>If you do not have the packages I used installed, they will need to be installed first to recreate the analyses in the notes. The packages I use and demonstrate may not be unique. Other packages may do something similar and allow you to arrive at the same final answer.</p>
+<section id="installing-and-loading-r-packages" class="level3">
+<h3 class="anchored" data-anchor-id="installing-and-loading-r-packages">Installing and loading R packages</h3>
+<p>The simplest way to install an R packages is to use the install.package function. For example,</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"rms"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>After installation, you can load the package</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"rms"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Some packages install smoothly, others can generate errors if necessary dependencies are not installed. I will add known issues and solutions to this document as needed throughout the course.</p>
+</section>
 </section>
 <section id="stata" class="level2">
 <h2 class="anchored" data-anchor-id="stata">Stata</h2>
 <p>Stata also should be able to conduct all of these analyses necessary for this course. The main advantage to Stata is that its syntax is relatively straightforward. It also has a menu system that can be used to create code and make the analysis reproducible through .do files.</p>
 <p><a href="stats.oarc.ucla.edu/stata">UCLA Statistical Methods and Data Analytics</a> maintain a good website for those interested in learning more about the capabilities of Stata</p>
+<p>There is a Statamarkdown package under development that allows for Stata code to be used in Quarto. I do not have wide experience with this package, but more information is available at <a href="https://github.com/hemken/Statamarkdown" class="uri">https://github.com/hemken/Statamarkdown</a>. It is of no use if you do not have Stata installed.</p>
 
 
 </section>

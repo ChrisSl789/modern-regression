@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Chris Slaughter">
-<meta name="dcterms.date" content="2024-01-05">
+<meta name="dcterms.date" content="2024-01-07">
 
 <title>BIOS 6312 - Spring 2024 - Review of Key Concepts</title>
 <style>
@@ -4150,7 +4150,7 @@ vertical-align: -.125em;
   <li><a href="#multiple-comparisons" id="toc-multiple-comparisons" class="nav-link" data-scroll-target="#multiple-comparisons"><span class="toc-section-number">5</span>  Multiple comparisons</a></li>
   <li><a href="#regression" id="toc-regression" class="nav-link" data-scroll-target="#regression"><span class="toc-section-number">6</span>  Regression</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/bios6312/website/edit/main/notes/Lec02.review.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/bios6312/website/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="github.com/chrissl789/modern-regression/edit/main/notes/Lec02.review.qmd" class="toc-action">Edit this page</a></p><p><a href="github.com/chrissl789/modern-regression/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
 </nav>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
@@ -4178,7 +4178,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">January 5, 2024</p>
+      <p class="date">January 7, 2024</p>
     </div>
   </div>
     
@@ -5013,159 +5013,158 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb14-145"><a href="#cb14-145" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>A Bayesian analysis requires specifying appropriate prior distributions for our parameter. Let $\theta_1 = \textrm{Pr(D+|E+)}$, $\theta_2 = \textrm{Pr(D+|E-)}$, and $\theta = \theta_1 - \theta_2$.</span>
 <span id="cb14-146"><a href="#cb14-146" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Assume these prior distribution</span>
 <span id="cb14-147"><a href="#cb14-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-148"><a href="#cb14-148" aria-hidden="true" tabindex="-1"></a>$$\pi(\theta_1) \sim Beta(a_1,b_1)$$</span>
-<span id="cb14-149"><a href="#cb14-149" aria-hidden="true" tabindex="-1"></a>$$\pi(\theta_2) \sim Beta(a_2,b_2)$$</span>
-<span id="cb14-150"><a href="#cb14-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-151"><a href="#cb14-151" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>We also have to specify the likelihood the number of subjects (out of 5) who are diseased in the Exposed group and the number of subjects who are diseased in the Unexposed group. Note that this is the same binomial likelihood that is assumed in the frequentist approach above.</span>
-<span id="cb14-152"><a href="#cb14-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-153"><a href="#cb14-153" aria-hidden="true" tabindex="-1"></a>$$X_1 \sim Bin(5, \theta_1) <span class="sc">\\</span> X_2 \sim Bin(5, \theta_2)$$</span>
-<span id="cb14-154"><a href="#cb14-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-155"><a href="#cb14-155" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Using Bayes Rule, the posterior distribution is proportional to the likelihood multiplied by the prior distribution</span>
-<span id="cb14-156"><a href="#cb14-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-157"><a href="#cb14-157" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb14-158"><a href="#cb14-158" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
-<span id="cb14-159"><a href="#cb14-159" aria-hidden="true" tabindex="-1"></a>p(\theta_1 | X_1) &amp;\propto p(X_1|\theta_1) \times \pi(\theta_1) <span class="sc">\\</span></span>
-<span id="cb14-160"><a href="#cb14-160" aria-hidden="true" tabindex="-1"></a>&amp;\vdots&amp; <span class="sc">\\</span></span>
-<span id="cb14-161"><a href="#cb14-161" aria-hidden="true" tabindex="-1"></a>p(\theta_1 | X_1) &amp;\sim Beta(X_1+a_1, (5-X_1) + b_1)</span>
-<span id="cb14-162"><a href="#cb14-162" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
-<span id="cb14-163"><a href="#cb14-163" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb14-164"><a href="#cb14-164" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-165"><a href="#cb14-165" aria-hidden="true" tabindex="-1"></a>and</span>
-<span id="cb14-166"><a href="#cb14-166" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-167"><a href="#cb14-167" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb14-168"><a href="#cb14-168" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
-<span id="cb14-169"><a href="#cb14-169" aria-hidden="true" tabindex="-1"></a>p(\theta_2 | X_2) &amp; \propto p(X_2|\theta_2) \times \pi(\theta_2) <span class="sc">\\</span></span>
-<span id="cb14-170"><a href="#cb14-170" aria-hidden="true" tabindex="-1"></a>&amp; \vdots <span class="sc">\\</span></span>
-<span id="cb14-171"><a href="#cb14-171" aria-hidden="true" tabindex="-1"></a>p(\theta_2 | X_2) &amp; \sim Beta(X_2+a_2, (5-X_2) + b_2)</span>
-<span id="cb14-172"><a href="#cb14-172" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
-<span id="cb14-173"><a href="#cb14-173" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb14-174"><a href="#cb14-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-175"><a href="#cb14-175" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>For the prior distributions, we choose $a_1 = a_2 = 0.5$ and $b_1 = b_2 = 2$. That is, the prior parameters are the same for $\theta_1$ and $\theta_2$ with prior mean 0.20.<span class="ot">[^2]</span></span>
-<span id="cb14-176"><a href="#cb14-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-177"><a href="#cb14-177" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The prior and posterior distributions for $\theta_1$ and $\theta_2$ are summarized below</span>
-<span id="cb14-178"><a href="#cb14-178" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-179"><a href="#cb14-179" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The distribution for the Exposed is shifted to the right (relative to the prior) because 3/5 subjects were D+</span>
-<span id="cb14-180"><a href="#cb14-180" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The distribution for the Unexposed is shifted to the left (relative to the prior) because 0/5 subjects were D+</span>
-<span id="cb14-181"><a href="#cb14-181" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-182"><a href="#cb14-182" aria-hidden="true" tabindex="-1"></a><span class="ot">[^2]: </span>Mean of Beta(a,b) is a/(a+b)</span>
-<span id="cb14-183"><a href="#cb14-183" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-186"><a href="#cb14-186" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb14-187"><a href="#cb14-187" aria-hidden="true" tabindex="-1"></a><span class="co"># Prior parameters</span></span>
-<span id="cb14-188"><a href="#cb14-188" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> .<span class="dv">5</span></span>
-<span id="cb14-189"><a href="#cb14-189" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb14-190"><a href="#cb14-190" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-191"><a href="#cb14-191" aria-hidden="true" tabindex="-1"></a>a<span class="sc">/</span>(a<span class="sc">+</span>b) <span class="co"># Prior mean</span></span>
-<span id="cb14-192"><a href="#cb14-192" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="cf">function</span>(x) <span class="fu">dbeta</span>(x,a,b), <span class="at">xlab=</span><span class="st">&quot;Theta_1 or Theta_2&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;Density&quot;</span>)</span>
-<span id="cb14-193"><a href="#cb14-193" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="cf">function</span>(x) <span class="fu">dbeta</span>(x,a<span class="sc">+</span><span class="dv">3</span>,b<span class="sc">+</span><span class="dv">2</span>), <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">col=</span><span class="st">&#39;red&#39;</span>)</span>
-<span id="cb14-194"><a href="#cb14-194" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="cf">function</span>(x) <span class="fu">dbeta</span>(x,a<span class="sc">+</span><span class="dv">0</span>,b<span class="sc">+</span><span class="dv">5</span>), <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">col=</span><span class="st">&#39;blue&#39;</span>)</span>
-<span id="cb14-195"><a href="#cb14-195" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;topright&quot;</span>,<span class="at">inset=</span>.<span class="dv">05</span>,<span class="fu">c</span>(<span class="st">&quot;Prior distribution&quot;</span>,<span class="st">&quot;Posterior for theta_1 (Exposed)&quot;</span>,<span class="st">&quot;Posterior for theta_2 (Unexposed)&quot;</span>), <span class="at">col=</span><span class="fu">c</span>(<span class="st">&quot;Black&quot;</span>,<span class="st">&quot;Red&quot;</span>,<span class="st">&quot;Blue&quot;</span>), <span class="at">lty=</span><span class="dv">1</span>)</span>
-<span id="cb14-196"><a href="#cb14-196" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb14-197"><a href="#cb14-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-198"><a href="#cb14-198" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Our scientific question of interest was to compare the disease rates in the exposed versus the unexposed. This was parameterized as a risk difference, $\theta = \theta_1 - \theta_2$. One could derive the distribution for the difference in two beta random variables for the analytical solution. Instead, I will estimate an approximate numerical solution and summarize the posterior distribution of theta using the 2.5th, 50th, 97.5th quantiles and the posterior mean.</span>
-<span id="cb14-199"><a href="#cb14-199" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-202"><a href="#cb14-202" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb14-203"><a href="#cb14-203" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
-<span id="cb14-204"><a href="#cb14-204" aria-hidden="true" tabindex="-1"></a>beta.diff.posterior <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="dv">10000</span>,a<span class="sc">+</span><span class="dv">3</span>,b<span class="sc">+</span><span class="dv">2</span>) <span class="sc">-</span> <span class="fu">rbeta</span>(<span class="dv">10000</span>,a<span class="sc">+</span><span class="dv">0</span>,b<span class="sc">+</span><span class="dv">5</span>)</span>
-<span id="cb14-205"><a href="#cb14-205" aria-hidden="true" tabindex="-1"></a>beta.diff.prior <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="dv">10000</span>,a,b) <span class="sc">-</span> <span class="fu">rbeta</span>(<span class="dv">10000</span>,a,b)</span>
-<span id="cb14-206"><a href="#cb14-206" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(beta.diff.posterior, <span class="fu">c</span>(.<span class="dv">025</span>, .<span class="dv">5</span>, .<span class="dv">975</span>))</span>
-<span id="cb14-207"><a href="#cb14-207" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(beta.diff.posterior)</span>
-<span id="cb14-208"><a href="#cb14-208" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">density</span>(beta.diff.prior), <span class="at">main=</span><span class="st">&quot;&quot;</span>, <span class="at">xlab=</span><span class="st">&quot;Theta = Theta_1 - Theta_2&quot;</span>)</span>
-<span id="cb14-209"><a href="#cb14-209" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">density</span>(beta.diff.posterior), <span class="at">col=</span><span class="st">&quot;Red&quot;</span>)</span>
-<span id="cb14-210"><a href="#cb14-210" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;topleft&quot;</span>,<span class="at">inset=</span><span class="fl">0.05</span>, <span class="fu">c</span>(<span class="st">&quot;Prior&quot;</span>,<span class="st">&quot;Posterior&quot;</span>), <span class="at">col=</span><span class="fu">c</span>(<span class="st">&quot;Black&quot;</span>,<span class="st">&quot;Red&quot;</span>), <span class="at">lty=</span><span class="dv">1</span>)</span>
-<span id="cb14-211"><a href="#cb14-211" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb14-212"><a href="#cb14-212" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-213"><a href="#cb14-213" aria-hidden="true" tabindex="-1"></a><span class="fu">## Multiple comparisons</span></span>
-<span id="cb14-214"><a href="#cb14-214" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-215"><a href="#cb14-215" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>When you perform many hypothesis tests, your chance of making a type 1 error increases</span>
-<span id="cb14-216"><a href="#cb14-216" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-217"><a href="#cb14-217" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Type 1 error</span>
-<span id="cb14-218"><a href="#cb14-218" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Probability of rejecting the null hypothesis when the null hypothesis is true</span>
-<span id="cb14-219"><a href="#cb14-219" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Probability of declaring a &quot;statistically significant difference&quot; when, in truth, there is no difference</span>
-<span id="cb14-220"><a href="#cb14-220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-221"><a href="#cb14-221" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Consider the follow hypothetical example</span>
-<span id="cb14-222"><a href="#cb14-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-223"><a href="#cb14-223" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>An investigator decides to examine an association between eating red meat and cancer</span>
-<span id="cb14-224"><a href="#cb14-224" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The investigator collects clinical data on a cohort of individuals who eat red meat and a cohort who does not eat red meat</span>
-<span id="cb14-225"><a href="#cb14-225" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>In the analysis, the investigator compares incidence rates between the two groups</span>
-<span id="cb14-226"><a href="#cb14-226" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Also makes comparisons stratified by gender, race, and lifestyle factors</span>
-<span id="cb14-227"><a href="#cb14-227" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>In summary, the investigator claims &quot;The research study uncovered a significant association between consuming red meat and the incidence of lung cancer in non-smoking males (p $&lt;$ 0.05)&quot; (No significant associations were found in any other subgroup.)</span>
-<span id="cb14-228"><a href="#cb14-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-229"><a href="#cb14-229" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Two possible conclusions</span>
-<span id="cb14-230"><a href="#cb14-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-231"><a href="#cb14-231" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Conclusion 1: There is an association between consuming red meat and cancer in non-smoking men</span>
-<span id="cb14-232"><a href="#cb14-232" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Conclusion 2: This finding is a type 1 error</span>
-<span id="cb14-233"><a href="#cb14-233" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Which do you suspect is the truth?</span>
-<span id="cb14-234"><a href="#cb14-234" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-235"><a href="#cb14-235" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Probability of multiple comparisons</span>
-<span id="cb14-236"><a href="#cb14-236" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-237"><a href="#cb14-237" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>For a null hypothesis $H_0$ that is true, and a test performed at significance level $\alpha$</span>
-<span id="cb14-238"><a href="#cb14-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-239"><a href="#cb14-239" aria-hidden="true" tabindex="-1"></a>$$\textrm{Pr}(\textrm{reject } H_0 | H_0 \textrm{ is true}) = \alpha$$</span>
-<span id="cb14-240"><a href="#cb14-240" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-241"><a href="#cb14-241" aria-hidden="true" tabindex="-1"></a>$$\textrm{Pr}(\textrm{do not reject } H_0 | H_0 \textrm{ is true}) = 1 - \alpha$$</span>
-<span id="cb14-242"><a href="#cb14-242" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-243"><a href="#cb14-243" aria-hidden="true" tabindex="-1"></a>Next suppose that $n$ independent hypothesis tests ($H1_0, H2_0, \ldots, Hn_0$) are performed at level $\alpha$ and all $n$ null hypotheses are true</span>
-<span id="cb14-244"><a href="#cb14-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-245"><a href="#cb14-245" aria-hidden="true" tabindex="-1"></a>$$\textrm{Pr}(\textrm{do not reject } H1_0, H2_0, \ldots, Hn_0 | \textrm{ all } Hi_0 \textrm{ are true}) = (1 - \alpha)^n$$</span>
-<span id="cb14-246"><a href="#cb14-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-247"><a href="#cb14-247" aria-hidden="true" tabindex="-1"></a>::: center</span>
-<span id="cb14-248"><a href="#cb14-248" aria-hidden="true" tabindex="-1"></a>| n             |  1   |  2   |  4   |  8   |  12  |  16  |  20  |  30  |</span>
-<span id="cb14-249"><a href="#cb14-249" aria-hidden="true" tabindex="-1"></a>|:--------------|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|</span>
-<span id="cb14-250"><a href="#cb14-250" aria-hidden="true" tabindex="-1"></a>| $(1 - .05)^n$ | 0.95 | 0.90 | 0.81 | 0.66 | 0.54 | 0.44 | 0.36 | 0.22 |</span>
-<span id="cb14-251"><a href="#cb14-251" aria-hidden="true" tabindex="-1"></a>| $(1 - .01)^n$ | 0.99 | 0.98 | 0.96 | 0.92 | 0.89 | 0.85 | 0.82 | 0.74 |</span>
-<span id="cb14-252"><a href="#cb14-252" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb14-253"><a href="#cb14-253" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-254"><a href="#cb14-254" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>If 30 independent trials are performed at $\alpha=0.05$ and all null hypotheses are true, the probability of falsely rejecting at least one null hypothesis is $78\%$! We are very likely to make a mistake.</span>
-<span id="cb14-255"><a href="#cb14-255" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Choosing a smaller $\alpha = 0.01$ helps, but the probability of at least one type 1 error is still $26\%$ for 30 tests</span>
-<span id="cb14-256"><a href="#cb14-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-257"><a href="#cb14-257" aria-hidden="true" tabindex="-1"></a><span class="fu">## Regression</span></span>
-<span id="cb14-258"><a href="#cb14-258" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-259"><a href="#cb14-259" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>This semester, I will introduce several regression models</span>
-<span id="cb14-260"><a href="#cb14-260" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-261"><a href="#cb14-261" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Which regression model you choose to use is based on the parameter being compared across groups</span>
-<span id="cb14-262"><a href="#cb14-262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-263"><a href="#cb14-263" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb14-264"><a href="#cb14-264" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
-<span id="cb14-265"><a href="#cb14-265" aria-hidden="true" tabindex="-1"></a>\textrm{Means} &amp; \rightarrow  \textrm{ Linear regression}<span class="sc">\\</span></span>
-<span id="cb14-266"><a href="#cb14-266" aria-hidden="true" tabindex="-1"></a>\textrm{Odds} &amp; \rightarrow  \textrm{ Logistic regression}<span class="sc">\\</span></span>
-<span id="cb14-267"><a href="#cb14-267" aria-hidden="true" tabindex="-1"></a>\textrm{Rates} &amp; \rightarrow  \textrm{ Poisson regression}<span class="sc">\\</span></span>
-<span id="cb14-268"><a href="#cb14-268" aria-hidden="true" tabindex="-1"></a>\textrm{Hazards} &amp; \rightarrow  \textrm{ Cox (proportional hazards) regression}<span class="sc">\\</span></span>
-<span id="cb14-269"><a href="#cb14-269" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
-<span id="cb14-270"><a href="#cb14-270" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb14-271"><a href="#cb14-271" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-272"><a href="#cb14-272" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>In Bios 6311, we discussed how to examine association between an outcome and a predictor of interest (POI)</span>
-<span id="cb14-273"><a href="#cb14-273" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Regression models generalize two sample tests</span>
-<span id="cb14-274"><a href="#cb14-274" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-275"><a href="#cb14-275" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb14-276"><a href="#cb14-276" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
-<span id="cb14-277"><a href="#cb14-277" aria-hidden="true" tabindex="-1"></a>\textrm{2-sample t-test} &amp; \rightarrow \textrm{ Linear regression}<span class="sc">\\</span></span>
-<span id="cb14-278"><a href="#cb14-278" aria-hidden="true" tabindex="-1"></a>\textrm{Pearson } \chi^2 \textrm{ test} &amp; \rightarrow \textrm{ Logistic regression}<span class="sc">\\</span></span>
-<span id="cb14-279"><a href="#cb14-279" aria-hidden="true" tabindex="-1"></a>\textrm{Wilcoxon signed-rank test} &amp; \rightarrow \textrm{ Propotional odds regression}<span class="sc">\\</span></span>
-<span id="cb14-280"><a href="#cb14-280" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
-<span id="cb14-281"><a href="#cb14-281" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb14-282"><a href="#cb14-282" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-283"><a href="#cb14-283" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>We will learn how to adjust for additional variables using a regression model</span>
-<span id="cb14-284"><a href="#cb14-284" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-285"><a href="#cb14-285" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Confounders</span>
-<span id="cb14-286"><a href="#cb14-286" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Effect modifiers</span>
-<span id="cb14-287"><a href="#cb14-287" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Precision variables</span>
-<span id="cb14-288"><a href="#cb14-288" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-289"><a href="#cb14-289" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>When building a multivariable regression model, many possible choices along the way</span>
-<span id="cb14-290"><a href="#cb14-290" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-291"><a href="#cb14-291" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Which covariates to include?</span>
-<span id="cb14-292"><a href="#cb14-292" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>What model provides the best fit to the data?</span>
-<span id="cb14-293"><a href="#cb14-293" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Does the model satisfy underlying assumptions?</span>
-<span id="cb14-294"><a href="#cb14-294" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>etc.</span>
-<span id="cb14-295"><a href="#cb14-295" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-296"><a href="#cb14-296" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Theme of this course</span>
-<span id="cb14-297"><a href="#cb14-297" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-298"><a href="#cb14-298" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When building a multivariable model, data driven decisions lead to multiple comparisons problem.</span>
-<span id="cb14-299"><a href="#cb14-299" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-300"><a href="#cb14-300" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Instead, I will emphasize</span>
-<span id="cb14-301"><a href="#cb14-301" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-302"><a href="#cb14-302" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Putting science before statistics. Decide the scientific question first, propose a model that answers that scientific question.</span>
-<span id="cb14-303"><a href="#cb14-303" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Regression models that are robust to distributional assumptions (relieving the need for extensive model checking)</span>
-<span id="cb14-304"><a href="#cb14-304" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Detailed, pre-specified analysis plans. Lay out the process for conducting your analysis before looking at the data to avoid data-driven decision making.</span>
+<span id="cb14-148"><a href="#cb14-148" aria-hidden="true" tabindex="-1"></a>$$\pi(\theta_1) \sim Beta(a_1,b_1)$$ $$\pi(\theta_2) \sim Beta(a_2,b_2)$$</span>
+<span id="cb14-149"><a href="#cb14-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-150"><a href="#cb14-150" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>We also have to specify the likelihood the number of subjects (out of 5) who are diseased in the Exposed group and the number of subjects who are diseased in the Unexposed group. Note that this is the same binomial likelihood that is assumed in the frequentist approach above.</span>
+<span id="cb14-151"><a href="#cb14-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-152"><a href="#cb14-152" aria-hidden="true" tabindex="-1"></a>$$X_1 \sim Bin(5, \theta_1) <span class="sc">\\</span> X_2 \sim Bin(5, \theta_2)$$</span>
+<span id="cb14-153"><a href="#cb14-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-154"><a href="#cb14-154" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Using Bayes Rule, the posterior distribution is proportional to the likelihood multiplied by the prior distribution</span>
+<span id="cb14-155"><a href="#cb14-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-156"><a href="#cb14-156" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb14-157"><a href="#cb14-157" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
+<span id="cb14-158"><a href="#cb14-158" aria-hidden="true" tabindex="-1"></a>p(\theta_1 | X_1) &amp;\propto p(X_1|\theta_1) \times \pi(\theta_1) <span class="sc">\\</span></span>
+<span id="cb14-159"><a href="#cb14-159" aria-hidden="true" tabindex="-1"></a>&amp;\vdots&amp; <span class="sc">\\</span></span>
+<span id="cb14-160"><a href="#cb14-160" aria-hidden="true" tabindex="-1"></a>p(\theta_1 | X_1) &amp;\sim Beta(X_1+a_1, (5-X_1) + b_1)</span>
+<span id="cb14-161"><a href="#cb14-161" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
+<span id="cb14-162"><a href="#cb14-162" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb14-163"><a href="#cb14-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-164"><a href="#cb14-164" aria-hidden="true" tabindex="-1"></a>and</span>
+<span id="cb14-165"><a href="#cb14-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-166"><a href="#cb14-166" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb14-167"><a href="#cb14-167" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
+<span id="cb14-168"><a href="#cb14-168" aria-hidden="true" tabindex="-1"></a>p(\theta_2 | X_2) &amp; \propto p(X_2|\theta_2) \times \pi(\theta_2) <span class="sc">\\</span></span>
+<span id="cb14-169"><a href="#cb14-169" aria-hidden="true" tabindex="-1"></a>&amp; \vdots <span class="sc">\\</span></span>
+<span id="cb14-170"><a href="#cb14-170" aria-hidden="true" tabindex="-1"></a>p(\theta_2 | X_2) &amp; \sim Beta(X_2+a_2, (5-X_2) + b_2)</span>
+<span id="cb14-171"><a href="#cb14-171" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
+<span id="cb14-172"><a href="#cb14-172" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb14-173"><a href="#cb14-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-174"><a href="#cb14-174" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>For the prior distributions, we choose $a_1 = a_2 = 0.5$ and $b_1 = b_2 = 2$. That is, the prior parameters are the same for $\theta_1$ and $\theta_2$ with prior mean 0.20.<span class="ot">[^2]</span></span>
+<span id="cb14-175"><a href="#cb14-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-176"><a href="#cb14-176" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The prior and posterior distributions for $\theta_1$ and $\theta_2$ are summarized below</span>
+<span id="cb14-177"><a href="#cb14-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-178"><a href="#cb14-178" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The distribution for the Exposed is shifted to the right (relative to the prior) because 3/5 subjects were D+</span>
+<span id="cb14-179"><a href="#cb14-179" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The distribution for the Unexposed is shifted to the left (relative to the prior) because 0/5 subjects were D+</span>
+<span id="cb14-180"><a href="#cb14-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-181"><a href="#cb14-181" aria-hidden="true" tabindex="-1"></a><span class="ot">[^2]: </span>Mean of Beta(a,b) is a/(a+b)</span>
+<span id="cb14-182"><a href="#cb14-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-185"><a href="#cb14-185" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb14-186"><a href="#cb14-186" aria-hidden="true" tabindex="-1"></a><span class="co"># Prior parameters</span></span>
+<span id="cb14-187"><a href="#cb14-187" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> .<span class="dv">5</span></span>
+<span id="cb14-188"><a href="#cb14-188" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb14-189"><a href="#cb14-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-190"><a href="#cb14-190" aria-hidden="true" tabindex="-1"></a>a<span class="sc">/</span>(a<span class="sc">+</span>b) <span class="co"># Prior mean</span></span>
+<span id="cb14-191"><a href="#cb14-191" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="cf">function</span>(x) <span class="fu">dbeta</span>(x,a,b), <span class="at">xlab=</span><span class="st">&quot;Theta_1 or Theta_2&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;Density&quot;</span>)</span>
+<span id="cb14-192"><a href="#cb14-192" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="cf">function</span>(x) <span class="fu">dbeta</span>(x,a<span class="sc">+</span><span class="dv">3</span>,b<span class="sc">+</span><span class="dv">2</span>), <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">col=</span><span class="st">&#39;red&#39;</span>)</span>
+<span id="cb14-193"><a href="#cb14-193" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="cf">function</span>(x) <span class="fu">dbeta</span>(x,a<span class="sc">+</span><span class="dv">0</span>,b<span class="sc">+</span><span class="dv">5</span>), <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">col=</span><span class="st">&#39;blue&#39;</span>)</span>
+<span id="cb14-194"><a href="#cb14-194" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;topright&quot;</span>,<span class="at">inset=</span>.<span class="dv">05</span>,<span class="fu">c</span>(<span class="st">&quot;Prior distribution&quot;</span>,<span class="st">&quot;Posterior for theta_1 (Exposed)&quot;</span>,<span class="st">&quot;Posterior for theta_2 (Unexposed)&quot;</span>), <span class="at">col=</span><span class="fu">c</span>(<span class="st">&quot;Black&quot;</span>,<span class="st">&quot;Red&quot;</span>,<span class="st">&quot;Blue&quot;</span>), <span class="at">lty=</span><span class="dv">1</span>)</span>
+<span id="cb14-195"><a href="#cb14-195" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-196"><a href="#cb14-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-197"><a href="#cb14-197" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Our scientific question of interest was to compare the disease rates in the exposed versus the unexposed. This was parameterized as a risk difference, $\theta = \theta_1 - \theta_2$. One could derive the distribution for the difference in two beta random variables for the analytical solution. Instead, I will estimate an approximate numerical solution and summarize the posterior distribution of theta using the 2.5th, 50th, 97.5th quantiles and the posterior mean.</span>
+<span id="cb14-198"><a href="#cb14-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-201"><a href="#cb14-201" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb14-202"><a href="#cb14-202" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb14-203"><a href="#cb14-203" aria-hidden="true" tabindex="-1"></a>beta.diff.posterior <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="dv">10000</span>,a<span class="sc">+</span><span class="dv">3</span>,b<span class="sc">+</span><span class="dv">2</span>) <span class="sc">-</span> <span class="fu">rbeta</span>(<span class="dv">10000</span>,a<span class="sc">+</span><span class="dv">0</span>,b<span class="sc">+</span><span class="dv">5</span>)</span>
+<span id="cb14-204"><a href="#cb14-204" aria-hidden="true" tabindex="-1"></a>beta.diff.prior <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="dv">10000</span>,a,b) <span class="sc">-</span> <span class="fu">rbeta</span>(<span class="dv">10000</span>,a,b)</span>
+<span id="cb14-205"><a href="#cb14-205" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(beta.diff.posterior, <span class="fu">c</span>(.<span class="dv">025</span>, .<span class="dv">5</span>, .<span class="dv">975</span>))</span>
+<span id="cb14-206"><a href="#cb14-206" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(beta.diff.posterior)</span>
+<span id="cb14-207"><a href="#cb14-207" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">density</span>(beta.diff.prior), <span class="at">main=</span><span class="st">&quot;&quot;</span>, <span class="at">xlab=</span><span class="st">&quot;Theta = Theta_1 - Theta_2&quot;</span>)</span>
+<span id="cb14-208"><a href="#cb14-208" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">density</span>(beta.diff.posterior), <span class="at">col=</span><span class="st">&quot;Red&quot;</span>)</span>
+<span id="cb14-209"><a href="#cb14-209" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;topleft&quot;</span>,<span class="at">inset=</span><span class="fl">0.05</span>, <span class="fu">c</span>(<span class="st">&quot;Prior&quot;</span>,<span class="st">&quot;Posterior&quot;</span>), <span class="at">col=</span><span class="fu">c</span>(<span class="st">&quot;Black&quot;</span>,<span class="st">&quot;Red&quot;</span>), <span class="at">lty=</span><span class="dv">1</span>)</span>
+<span id="cb14-210"><a href="#cb14-210" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-211"><a href="#cb14-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-212"><a href="#cb14-212" aria-hidden="true" tabindex="-1"></a><span class="fu">## Multiple comparisons</span></span>
+<span id="cb14-213"><a href="#cb14-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-214"><a href="#cb14-214" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>When you perform many hypothesis tests, your chance of making a type 1 error increases</span>
+<span id="cb14-215"><a href="#cb14-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-216"><a href="#cb14-216" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Type 1 error</span>
+<span id="cb14-217"><a href="#cb14-217" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Probability of rejecting the null hypothesis when the null hypothesis is true</span>
+<span id="cb14-218"><a href="#cb14-218" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Probability of declaring a &quot;statistically significant difference&quot; when, in truth, there is no difference</span>
+<span id="cb14-219"><a href="#cb14-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-220"><a href="#cb14-220" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Consider the follow hypothetical example</span>
+<span id="cb14-221"><a href="#cb14-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-222"><a href="#cb14-222" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>An investigator decides to examine an association between eating red meat and cancer</span>
+<span id="cb14-223"><a href="#cb14-223" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The investigator collects clinical data on a cohort of individuals who eat red meat and a cohort who does not eat red meat</span>
+<span id="cb14-224"><a href="#cb14-224" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>In the analysis, the investigator compares incidence rates between the two groups</span>
+<span id="cb14-225"><a href="#cb14-225" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Also makes comparisons stratified by gender, race, and lifestyle factors</span>
+<span id="cb14-226"><a href="#cb14-226" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>In summary, the investigator claims &quot;The research study uncovered a significant association between consuming red meat and the incidence of lung cancer in non-smoking males (p $&lt;$ 0.05)&quot; (No significant associations were found in any other subgroup.)</span>
+<span id="cb14-227"><a href="#cb14-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-228"><a href="#cb14-228" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Two possible conclusions</span>
+<span id="cb14-229"><a href="#cb14-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-230"><a href="#cb14-230" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Conclusion 1: There is an association between consuming red meat and cancer in non-smoking men</span>
+<span id="cb14-231"><a href="#cb14-231" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Conclusion 2: This finding is a type 1 error</span>
+<span id="cb14-232"><a href="#cb14-232" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Which do you suspect is the truth?</span>
+<span id="cb14-233"><a href="#cb14-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-234"><a href="#cb14-234" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Probability of multiple comparisons</span>
+<span id="cb14-235"><a href="#cb14-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-236"><a href="#cb14-236" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>For a null hypothesis $H_0$ that is true, and a test performed at significance level $\alpha$</span>
+<span id="cb14-237"><a href="#cb14-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-238"><a href="#cb14-238" aria-hidden="true" tabindex="-1"></a>$$\textrm{Pr}(\textrm{reject } H_0 | H_0 \textrm{ is true}) = \alpha$$</span>
+<span id="cb14-239"><a href="#cb14-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-240"><a href="#cb14-240" aria-hidden="true" tabindex="-1"></a>$$\textrm{Pr}(\textrm{do not reject } H_0 | H_0 \textrm{ is true}) = 1 - \alpha$$</span>
+<span id="cb14-241"><a href="#cb14-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-242"><a href="#cb14-242" aria-hidden="true" tabindex="-1"></a>Next suppose that $n$ independent hypothesis tests ($H1_0, H2_0, \ldots, Hn_0$) are performed at level $\alpha$ and all $n$ null hypotheses are true</span>
+<span id="cb14-243"><a href="#cb14-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-244"><a href="#cb14-244" aria-hidden="true" tabindex="-1"></a>$$\textrm{Pr}(\textrm{do not reject } H1_0, H2_0, \ldots, Hn_0 | \textrm{ all } Hi_0 \textrm{ are true}) = (1 - \alpha)^n$$</span>
+<span id="cb14-245"><a href="#cb14-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-246"><a href="#cb14-246" aria-hidden="true" tabindex="-1"></a>::: center</span>
+<span id="cb14-247"><a href="#cb14-247" aria-hidden="true" tabindex="-1"></a>| n             |  1   |  2   |  4   |  8   |  12  |  16  |  20  |  30  |</span>
+<span id="cb14-248"><a href="#cb14-248" aria-hidden="true" tabindex="-1"></a>|:--------------|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|</span>
+<span id="cb14-249"><a href="#cb14-249" aria-hidden="true" tabindex="-1"></a>| $(1 - .05)^n$ | 0.95 | 0.90 | 0.81 | 0.66 | 0.54 | 0.44 | 0.36 | 0.22 |</span>
+<span id="cb14-250"><a href="#cb14-250" aria-hidden="true" tabindex="-1"></a>| $(1 - .01)^n$ | 0.99 | 0.98 | 0.96 | 0.92 | 0.89 | 0.85 | 0.82 | 0.74 |</span>
+<span id="cb14-251"><a href="#cb14-251" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb14-252"><a href="#cb14-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-253"><a href="#cb14-253" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>If 30 independent trials are performed at $\alpha=0.05$ and all null hypotheses are true, the probability of falsely rejecting at least one null hypothesis is $78\%$! We are very likely to make a mistake.</span>
+<span id="cb14-254"><a href="#cb14-254" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Choosing a smaller $\alpha = 0.01$ helps, but the probability of at least one type 1 error is still $26\%$ for 30 tests</span>
+<span id="cb14-255"><a href="#cb14-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-256"><a href="#cb14-256" aria-hidden="true" tabindex="-1"></a><span class="fu">## Regression</span></span>
+<span id="cb14-257"><a href="#cb14-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-258"><a href="#cb14-258" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>This semester, I will introduce several regression models</span>
+<span id="cb14-259"><a href="#cb14-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-260"><a href="#cb14-260" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Which regression model you choose to use is based on the parameter being compared across groups</span>
+<span id="cb14-261"><a href="#cb14-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-262"><a href="#cb14-262" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb14-263"><a href="#cb14-263" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
+<span id="cb14-264"><a href="#cb14-264" aria-hidden="true" tabindex="-1"></a>\textrm{Means} &amp; \rightarrow  \textrm{ Linear regression}<span class="sc">\\</span></span>
+<span id="cb14-265"><a href="#cb14-265" aria-hidden="true" tabindex="-1"></a>\textrm{Odds} &amp; \rightarrow  \textrm{ Logistic regression}<span class="sc">\\</span></span>
+<span id="cb14-266"><a href="#cb14-266" aria-hidden="true" tabindex="-1"></a>\textrm{Rates} &amp; \rightarrow  \textrm{ Poisson regression}<span class="sc">\\</span></span>
+<span id="cb14-267"><a href="#cb14-267" aria-hidden="true" tabindex="-1"></a>\textrm{Hazards} &amp; \rightarrow  \textrm{ Cox (proportional hazards) regression}<span class="sc">\\</span></span>
+<span id="cb14-268"><a href="#cb14-268" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
+<span id="cb14-269"><a href="#cb14-269" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb14-270"><a href="#cb14-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-271"><a href="#cb14-271" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>In Bios 6311, we discussed how to examine association between an outcome and a predictor of interest (POI)</span>
+<span id="cb14-272"><a href="#cb14-272" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Regression models generalize two sample tests</span>
+<span id="cb14-273"><a href="#cb14-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-274"><a href="#cb14-274" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb14-275"><a href="#cb14-275" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
+<span id="cb14-276"><a href="#cb14-276" aria-hidden="true" tabindex="-1"></a>\textrm{2-sample t-test} &amp; \rightarrow \textrm{ Linear regression}<span class="sc">\\</span></span>
+<span id="cb14-277"><a href="#cb14-277" aria-hidden="true" tabindex="-1"></a>\textrm{Pearson } \chi^2 \textrm{ test} &amp; \rightarrow \textrm{ Logistic regression}<span class="sc">\\</span></span>
+<span id="cb14-278"><a href="#cb14-278" aria-hidden="true" tabindex="-1"></a>\textrm{Wilcoxon signed-rank test} &amp; \rightarrow \textrm{ Propotional odds regression}<span class="sc">\\</span></span>
+<span id="cb14-279"><a href="#cb14-279" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
+<span id="cb14-280"><a href="#cb14-280" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb14-281"><a href="#cb14-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-282"><a href="#cb14-282" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>We will learn how to adjust for additional variables using a regression model</span>
+<span id="cb14-283"><a href="#cb14-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-284"><a href="#cb14-284" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Confounders</span>
+<span id="cb14-285"><a href="#cb14-285" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Effect modifiers</span>
+<span id="cb14-286"><a href="#cb14-286" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Precision variables</span>
+<span id="cb14-287"><a href="#cb14-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-288"><a href="#cb14-288" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>When building a multivariable regression model, many possible choices along the way</span>
+<span id="cb14-289"><a href="#cb14-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-290"><a href="#cb14-290" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Which covariates to include?</span>
+<span id="cb14-291"><a href="#cb14-291" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>What model provides the best fit to the data?</span>
+<span id="cb14-292"><a href="#cb14-292" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Does the model satisfy underlying assumptions?</span>
+<span id="cb14-293"><a href="#cb14-293" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>etc.</span>
+<span id="cb14-294"><a href="#cb14-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-295"><a href="#cb14-295" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Theme of this course</span>
+<span id="cb14-296"><a href="#cb14-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-297"><a href="#cb14-297" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When building a multivariable model, data driven decisions lead to multiple comparisons problem.</span>
+<span id="cb14-298"><a href="#cb14-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-299"><a href="#cb14-299" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Instead, I will emphasize</span>
+<span id="cb14-300"><a href="#cb14-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-301"><a href="#cb14-301" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Putting science before statistics. Decide the scientific question first, propose a model that answers that scientific question.</span>
+<span id="cb14-302"><a href="#cb14-302" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Regression models that are robust to distributional assumptions (relieving the need for extensive model checking)</span>
+<span id="cb14-303"><a href="#cb14-303" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Detailed, pre-specified analysis plans. Lay out the process for conducting your analysis before looking at the data to avoid data-driven decision making.</span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

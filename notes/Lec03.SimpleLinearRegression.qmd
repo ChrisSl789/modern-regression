@@ -194,6 +194,9 @@ ggplot(plotdata, aes(x=age, y=chol)) + geom_point() + ylab("Cholesterol") + xlab
 
     -   $E[\textrm{Chol} | \textrm{Age}] = 190 + 0.50 \times \textrm{Age}$
 
+    -   Data were generated using this model (estimates, below, will be
+        different)
+
 #### Frequentist Estimates and Interpretation
 
 -   Raw, unformatted estimates, model summary, and confidence intervals
@@ -205,7 +208,7 @@ summary(m.chol)
 confint.default(m.chol, "age") # Based on asymptotic Normality
 ```
 
-$E[\textrm{Chol} | \textrm{Age}] = 190.7 + 0.471 \times \textrm{Age}$
+$E[\textrm{Chol} | \textrm{Age}] = 203.2 + 0.32 \times \textrm{Age}$
 
 -   Using finalfit to create a nicer output table of the coefficients
     and confidence intervals
@@ -573,8 +576,6 @@ $E[{\boldsymbol{Y}}] = {\boldsymbol{X}}{\boldsymbol{\beta}}$
 -   Example analysis conducted in class involving BMI (response) with
     gender (predictor 1) and age (predictor 2)
 
--   Stata and R code to reproduce the same analysis are provided below
-
 -   This is "Lab 1" and will serve as an example of how future labs will
     proceed
 
@@ -859,27 +860,28 @@ gglm(model.y4)
 
 : Assumption Holds (Yes/No)
 
-+--------------------+--------------------+--------------------+
-| $\hat{\beta}$      | $\                 | $\hat{\textrm{Var  |
-|                    | hat{\textrm{Var}}_ | }}_R(\hat{\beta})$ |
-|                    | {NR}(\hat{\beta})$ |                    |
-+====================+====================+====================+
-| Y                  | Y                  | Y                  |
-+--------------------+--------------------+--------------------+
-| Y                  | M^2^               | M^2^               |
-+--------------------+--------------------+--------------------+
-| Y                  | N                  | Y                  |
-+--------------------+--------------------+--------------------+
-| Y                  | N                  | M^2^               |
-+--------------------+--------------------+--------------------+
-| M^1^               | N                  | M^3^               |
-+--------------------+--------------------+--------------------+
-| M^1^               | N                  | M^2,3^             |
-+--------------------+--------------------+--------------------+
-| M^1^               | N                  | M^2^               |
-+--------------------+--------------------+--------------------+
-| M^1^               | N                  | M^2,3^             |
-+--------------------+--------------------+--------------------+
++-------------------+-------------------+-------------------+
+| $\hat{\beta}$     | $\                | $\                |
+|                   | hat               | hat{\textrm{Var } |
+|                   | {\textrm{Var}}_ { | }_R(\hat{\beta})$ |
+|                   | NR}(\hat{\beta})$ |                   |
++===================+===================+===================+
+| Y                 | Y                 | Y                 |
++-------------------+-------------------+-------------------+
+| Y                 | M^2^              | M^2^              |
++-------------------+-------------------+-------------------+
+| Y                 | N                 | Y                 |
++-------------------+-------------------+-------------------+
+| Y                 | N                 | M^2^              |
++-------------------+-------------------+-------------------+
+| M^1^              | N                 | M^3^              |
++-------------------+-------------------+-------------------+
+| M^1^              | N                 | M^2,3^            |
++-------------------+-------------------+-------------------+
+| M^1^              | N                 | M^2^              |
++-------------------+-------------------+-------------------+
+| M^1^              | N                 | M^2,3^            |
++-------------------+-------------------+-------------------+
 
 : Valid Inference (Yes/No/Maybe)
 
@@ -1124,31 +1126,38 @@ robcov(ols(y2 ~ x, data=regassumptions, x=TRUE))
 \newcommand\seb0{{\hat{\textrm{se}}(\hat{\beta_0})}}
 \newcommand\seb1{\hat{\textrm{se}}(\hat{\beta_1})}
 ```
-+----------------+-----------+-----------+-----------+-----------+
-| Model          | Classical | Robust    | Classical | Robust \| |
-|                | Intercept | Intercept | Slope     | Slope     |
-+================+===========+===========+===========+===========+
-| Age -          |           |           |           |           |
-| Cholesterol    |           |           |           |           |
-|                |           |           |           |           |
-| Assumptions    |           |           |           |           |
-| hold           |           |           |           |           |
-+----------------+-----------+-----------+-----------+-----------+
-| Scenario 1     |           |           |           |           |
-|                |           |           |           |           |
-| Assumptions    |           |           |           |           |
-| hold           |           |           |           |           |
-+----------------+-----------+-----------+-----------+-----------+
-| Scenario 3     |           |           |           |           |
-|                |           |           |           |           |
-| Increasing     |           |           |           |           |
-| variance       |           |           |           |           |
-+----------------+-----------+-----------+-----------+-----------+
-| Scenario 2     |           |           |           |           |
-|                |           |           |           |           |
-| Skewed         |           |           |           |           |
-| variance       |           |           |           |           |
-+----------------+-----------+-----------+-----------+-----------+
++-----------+-----------+-----------+-----------+-----------+
+| Model     | Classical | Robust    | Classical | Robust \| |
+|           | Intercept | Intercept | Slope     | Slope     |
++===========+===========+===========+===========+===========+
+| Age -     |           |           |           |           |
+| Ch        |           |           |           |           |
+| olesterol |           |           |           |           |
+|           |           |           |           |           |
+| As        |           |           |           |           |
+| sumptions |           |           |           |           |
+| hold      |           |           |           |           |
++-----------+-----------+-----------+-----------+-----------+
+| Scenario  |           |           |           |           |
+| 1         |           |           |           |           |
+|           |           |           |           |           |
+| As        |           |           |           |           |
+| sumptions |           |           |           |           |
+| hold      |           |           |           |           |
++-----------+-----------+-----------+-----------+-----------+
+| Scenario  |           |           |           |           |
+| 3         |           |           |           |           |
+|           |           |           |           |           |
+| I         |           |           |           |           |
+| ncreasing |           |           |           |           |
+| variance  |           |           |           |           |
++-----------+-----------+-----------+-----------+-----------+
+| Scenario  |           |           |           |           |
+| 2         |           |           |           |           |
+|           |           |           |           |           |
+| Skewed    |           |           |           |           |
+| variance  |           |           |           |           |
++-----------+-----------+-----------+-----------+-----------+
 
 : Comparison of standard error estimates
 

@@ -220,13 +220,28 @@ ul.task-list li input[type="checkbox"] {
   <ul>
   <li><a href="#course-goals" id="toc-course-goals" class="nav-link active" data-scroll-target="#course-goals">Course Goals</a></li>
   <li><a href="#topics-of-discussion" id="toc-topics-of-discussion" class="nav-link" data-scroll-target="#topics-of-discussion">Topics of Discussion</a></li>
-  <li><a href="#course-descriptions" id="toc-course-descriptions" class="nav-link" data-scroll-target="#course-descriptions">Course Descriptions</a>
+  <li><a href="#course-description" id="toc-course-description" class="nav-link" data-scroll-target="#course-description">Course Description</a>
   <ul class="collapse">
   <li><a href="#bios-6312" id="toc-bios-6312" class="nav-link" data-scroll-target="#bios-6312">BIOS 6312</a></li>
   <li><a href="#bios-6312l" id="toc-bios-6312l" class="nav-link" data-scroll-target="#bios-6312l">BIOS 6312L</a></li>
   </ul></li>
+  <li><a href="#course-materials" id="toc-course-materials" class="nav-link" data-scroll-target="#course-materials">Course Materials</a>
+  <ul class="collapse">
+  <li><a href="#course-notes" id="toc-course-notes" class="nav-link" data-scroll-target="#course-notes">Course notes</a></li>
+  <li><a href="#textbooks" id="toc-textbooks" class="nav-link" data-scroll-target="#textbooks">Textbooks</a></li>
+  </ul></li>
+  <li><a href="#grading-and-evaluation" id="toc-grading-and-evaluation" class="nav-link" data-scroll-target="#grading-and-evaluation">Grading and Evaluation</a>
+  <ul class="collapse">
+  <li><a href="#evaluation-components-and-grade-percentages" id="toc-evaluation-components-and-grade-percentages" class="nav-link" data-scroll-target="#evaluation-components-and-grade-percentages">Evaluation components and grade percentages</a></li>
+  <li><a href="#homework" id="toc-homework" class="nav-link" data-scroll-target="#homework">Homework</a></li>
+  <li><a href="#in-class-exams" id="toc-in-class-exams" class="nav-link" data-scroll-target="#in-class-exams">In Class Exams</a></li>
+  <li><a href="#take-home-exam" id="toc-take-home-exam" class="nav-link" data-scroll-target="#take-home-exam">Take Home Exam</a></li>
+  </ul></li>
+  <li><a href="#expectations-and-policies" id="toc-expectations-and-policies" class="nav-link" data-scroll-target="#expectations-and-policies">Expectations and Policies</a></li>
+  <li><a href="#accommodations" id="toc-accommodations" class="nav-link" data-scroll-target="#accommodations">Accommodations</a></li>
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"></a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/bios6312/website/edit/main/syllabus.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/bios6312/website/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="github.com/chrissl789/modern-regression/edit/main/syllabus.qmd" class="toc-action">Edit this page</a></p><p><a href="github.com/chrissl789/modern-regression/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -263,31 +278,159 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li>Bayesian and Frequentist approaches to fitting regression models</li>
 <li>Linear regression</li>
-<li>Matrix Algebra and important results of random vectors</li>
-<li>Precision, effect modification, and confounding</li>
-<li>Specification Issues in Regression Models: ANCOVA, ANOVA, Multicollinearity</li>
-<li>Multivariable Regression</li>
-<li>Model selection</li>
-<li>Case Studies Regression</li>
-<li>Logistic Regression</li>
-<li>Poisson Regression</li>
+<li>Logistic regression</li>
+<li>Poisson regression</li>
 <li>Survival models, primarily Cox Regression</li>
+<li>Multinomial and ordinal logistic regression</li>
+<li>Multivariable Regression</li>
+<li>Matrix algebra and important results of random vectors</li>
+<li>Precision, effect modification, and confounding</li>
+<li>Specification issues in regression models</li>
+<li>Model selection</li>
+<li>Case Studies</li>
 <li>Understanding model assumptions and the impact of assumptions on interpretation</li>
 <li>Model Checking: diagnostics, transformations, influential observations, lack-of-fit test</li>
 </ul>
 </section>
-<section id="course-descriptions" class="level2">
-<h2 class="anchored" data-anchor-id="course-descriptions">Course Descriptions</h2>
+<section id="course-description" class="level2">
+<h2 class="anchored" data-anchor-id="course-description">Course Description</h2>
 <section id="bios-6312" class="level3">
 <h3 class="anchored" data-anchor-id="bios-6312">BIOS 6312</h3>
-<p>This is the second in a two-course series designed for students who seek to develop skills in modern biostatistical reasoning and data analysis. Students learn modern regression analysis and modeling building techniques from an applied perspective. Theoretical principles will be demonstrated with real-world examples from biomedical studies. This course requires substantial statistical computing in software packages and focuses on R; familiarity with R or proficiency in another high-level statistical program (e.g.&nbsp;Stata) is required. The course covers regression modeling for continuous outcomes, including simple linear regression, multiple linear regression, and analysis of variance with one-way, two-way, three-way, and analysis of covariance models. This is a brief introduction to models for binary outcomes (logistic models), ordinal outcomes (proportional odds models), count outcomes (Poisson/negative binomial models), and time to event outcomes (Kaplan-Meier curves, Cox proportional hazard modeling). Incorporated into the presentation of these models are subtopic topics such as regression diagnostics, nonparametric regression, splines, data reduction techniques, model validation, parametric bootstrapping, and a brief introduction to methods for handling missing Students are required to take 6312L concurrently. Prerequisite: Biostatistics 6311 or equivalent; familiarity with STATA and R software packages. SPRING.</p>
+<p>This is the second in a two-course series designed for students who seek to develop skills in modern biostatistical reasoning and data analysis. Students learn modern regression analysis and modeling building techniques from an applied perspective. Theoretical principles will be demonstrated with real-world examples from biomedical studies. This course requires substantial statistical computing in software packages and focuses on R; familiarity with R or proficiency in another high-level statistical program (e.g.&nbsp;Stata) is required. The course covers regression modeling for continuous outcomes, including simple linear regression, multiple linear regression, and analysis of variance with one-way, two-way, three-way, and analysis of covariance models. This is a brief introduction to models for binary outcomes (logistic models), ordinal outcomes (proportional odds models), count outcomes (Poisson/negative binomial models), and time to event outcomes (Kaplan-Meier curves, Cox proportional hazard modeling). Incorporated into the presentation of these models are subtopic topics such as regression diagnostics, nonparametric regression, splines, data reduction techniques, model validation, parametric bootstrapping, and a brief introduction to methods for handling missing data. Students are required to take 6312L concurrently. Prerequisite: Biostatistics 6311 or equivalent; familiarity with R or Stata software packages. SPRING.</p>
 </section>
 <section id="bios-6312l" class="level3">
 <h3 class="anchored" data-anchor-id="bios-6312l">BIOS 6312L</h3>
 <p>This is a discussion section/lab for Modern Regression Analysis. Students will review relevant theory and work on applications as a group. Computing solutions and extensions will be emphasized. Students are required to take 6312 concurrently.</p>
-
-
 </section>
+</section>
+<section id="course-materials" class="level2">
+<h2 class="anchored" data-anchor-id="course-materials">Course Materials</h2>
+<section id="course-notes" class="level3">
+<h3 class="anchored" data-anchor-id="course-notes">Course notes</h3>
+<ul>
+<li>Course notes will be the primary source</li>
+<li>Available on web page</li>
+<li>Daily class schedule will indicate notes being covered</li>
+<li>Notes will be updated throughout semester</li>
+</ul>
+</section>
+<section id="textbooks" class="level3">
+<h3 class="anchored" data-anchor-id="textbooks">Textbooks</h3>
+<ul>
+<li><p>There are no required textbooks for this course</p></li>
+<li><p>The following are provided as references that are at an appropriate level for this course</p>
+<ul>
+<li><p>Regression Methods in Biostatistics. Vittinghoff, Glidden, Shiboski, and McCulloch</p></li>
+<li><p>Applied Liner Regression. Weisberg.</p></li>
+<li><p>Bayesian and Frequentist Regression Methods. Wakefield</p></li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="grading-and-evaluation" class="level2">
+<h2 class="anchored" data-anchor-id="grading-and-evaluation">Grading and Evaluation</h2>
+<section id="evaluation-components-and-grade-percentages" class="level3">
+<h3 class="anchored" data-anchor-id="evaluation-components-and-grade-percentages">Evaluation components and grade percentages</h3>
+<ul>
+<li>Midterm (25%)</li>
+<li>Take Home Exam (25%)</li>
+<li>Final Exam (25%)</li>
+<li>Homework (25%)</li>
+<li>Class participation</li>
+<li>This is a 4-credit course. Your lab and lecture grades will be the same</li>
+</ul>
+</section>
+<section id="homework" class="level3">
+<h3 class="anchored" data-anchor-id="homework">Homework</h3>
+<ul>
+<li>Up to 1 per week (probably 6 or 7 total)</li>
+<li>Will focus on real data analysis and interpretation with some mathematical derivations of important quantities</li>
+<li>Questions will focus on specific analyses, with questions stated in as scientific terms as possible</li>
+<li>Work handed in should address the scientific questions
+<ul>
+<li>Format Table and Figures</li>
+</ul></li>
+<li>Keys will be provided shortly after the homework is turned in
+<ul>
+<li>No late homework accepted after the key is posted</li>
+</ul></li>
+<li>Answers in keys may go beyond what is expected of your homework and present concepts in more detail. You are responsible for any material in the keys for exams.</li>
+<li>You may discuss the homework with others in the class, but the work you turn in should be your own</li>
+<li>Use Brightspace to turn in homeworks and receive feedback and grade</li>
+</ul>
+</section>
+<section id="in-class-exams" class="level3">
+<h3 class="anchored" data-anchor-id="in-class-exams">In Class Exams</h3>
+<ul>
+<li>Midterm and Final in class
+<ul>
+<li>Focus on understanding concepts, not memorizing formulas</li>
+<li>I will provide an example midterm and final</li>
+<li>For midterm, you will be allowed 1 page of your own notes</li>
+<li>For final, you will be allowed 2 pages of your own notes</li>
+</ul></li>
+<li>All output will be provide for you to interpret</li>
+</ul>
+</section>
+<section id="take-home-exam" class="level3">
+<h3 class="anchored" data-anchor-id="take-home-exam">Take Home Exam</h3>
+<ul>
+<li>Will be given approximately mid point between Midterm and Final</li>
+<li>Demonstrate ability to obtain results through software and interpret findings</li>
+<li>One day to complete and turn in
+<ul>
+<li>Likely will be a Monday with no lab scheduled for that day</li>
+</ul></li>
+<li>Similar to Homework, but work must be your own</li>
+</ul>
+</section>
+</section>
+<section id="expectations-and-policies" class="level2">
+<h2 class="anchored" data-anchor-id="expectations-and-policies">Expectations and Policies</h2>
+<ul>
+<li><p>Expecations you can have of me</p>
+<ul>
+<li><p>You should expect me to provide feedback on homeworks and exams in a timely fashion</p></li>
+<li><p>You should expect me to be responsive to your questions and concerns. If you have emailed me and not received a response with 24 hours, please feel free to email again. It is best to use my VUMC rather than Vanderbilt email address.</p></li>
+</ul></li>
+<li><p>Attendance. The course is offered in-person. If you expect to be absent, please let me know and make plans to catch up. Class will start on time.</p></li>
+<li><p>Collaboration</p>
+<ul>
+<li><p>Discussing course content is highly encouraged</p></li>
+<li><p>Collaborating on homeworks is highly encouraged, but you need to turn in your own assignment written in your own words</p></li>
+<li><p>Exams (take home and in class) are individual effort</p></li>
+</ul></li>
+<li><p>Academic honesty</p>
+<ul>
+<li><p>Students are expected to follow the Vanderbilt Honor Code</p></li>
+<li><p>"Vanderbilt University students pursue all academic endeavors with integrity. They conduct themselves honorably, professionally and respectfully in all realms of their studies in order to promote and secure an atmosphere of dignity and trust. The keystone of our honor system is self-regulation, which requires cooperation and support from each member of the University community."</p></li>
+</ul></li>
+<li><p>Late work</p>
+<ul>
+<li><p>While I expect that work will be turned in on time, things can happen to interrupt your schedule</p></li>
+<li><p>My goal is to provide sufficient time for completing all assignments</p></li>
+<li><p>If you anticipate a problem with a due date, it is best to let me know sooner (e.g.&nbsp;when a homework is assigned) rather than later</p></li>
+<li><p>Late homeworks will be accepted on a case by case basis. No late homeworks will be accepted after the key is provided.</p></li>
+</ul></li>
+<li><p>Voicing concerns and evaluations</p>
+<ul>
+<li><p>Please feel free to bring up any concerns you have about the course material, how it is being presented, or how you are being evaluated at any time during the semester. I want you to know that your voice will be heard.</p></li>
+<li><p>Please complete the end of course evaluations. They are a valuable resource for me and help to guide changes from year to year. I read all comments and will take them seriously. Comments about what worked well as well as constructive criticism are appreciated</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="accommodations" class="level2">
+<h2 class="anchored" data-anchor-id="accommodations">Accommodations</h2>
+<ul>
+<li><p>If you have established accommodations with Disability Services, I should receive an email notifying me of the request.</p></li>
+<li><p>Please communicate with me at your earliest convenience so we can discuss specific actions to address your needs. I will make every effort to accommodate reasonable requests.</p></li>
+<li><p>If you need to contact disability services to establish service, the address is <a href="https://www.vanderbilt.edu/eeo/disability_services/contact_us.php" class="uri">https://www.vanderbilt.edu/eeo/disability_services/contact_us.php</a></p></li>
+</ul>
+</section>
+<section id="section" class="level2">
+<h2 class="anchored" data-anchor-id="section"></h2>
+
+
 </section>
 
 </main> <!-- /main -->

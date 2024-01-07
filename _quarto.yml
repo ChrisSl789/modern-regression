@@ -6,9 +6,9 @@ website:
   page-navigation: true
   title: "BIOS 6312 - Spring 2024"
   description: "Homepage for BIOS 6312 - Modern Regression at Vanderbilt University, Spring 2024."
-  site-url: "https://bios6312.github.io/website/"
+  site-url: "https://chrissl789.github.io/modern-regression/"
 
-  repo-url: https://github.com/bios6312/website
+  repo-url: github.com/chrissl789/modern-regression
   repo-actions: [edit, issue]
 
   open-graph: true

@@ -139,8 +139,7 @@ exact.test(tab1, model="binomial", conf.int = TRUE, to.plot=FALSE)
 -   A Bayesian analysis requires specifying appropriate prior distributions for our parameter. Let $\theta_1 = \textrm{Pr(D+|E+)}$, $\theta_2 = \textrm{Pr(D+|E-)}$, and $\theta = \theta_1 - \theta_2$.
 -   Assume these prior distribution
 
-$$\pi(\theta_1) \sim Beta(a_1,b_1)$$
-$$\pi(\theta_2) \sim Beta(a_2,b_2)$$
+$$\pi(\theta_1) \sim Beta(a_1,b_1)$$ $$\pi(\theta_2) \sim Beta(a_2,b_2)$$
 
 -   We also have to specify the likelihood the number of subjects (out of 5) who are diseased in the Exposed group and the number of subjects who are diseased in the Unexposed group. Note that this is the same binomial likelihood that is assumed in the frequentist approach above.
 

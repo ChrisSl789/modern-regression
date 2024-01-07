@@ -136,10 +136,10 @@ options(
 
 ## Evaluation components and grade percentages
 
--   Midterm (30%)
--   Take Home Exam (30%)
--   Final Exam (30%)
--   Homework (10%)
+-   Midterm (25%)
+-   Take Home Exam (25%)
+-   Final Exam (25%)
+-   Homework (25%)
 -   Class participation
 -   This is a 4-credit course. Your lab and lecture grades will be the same
 
@@ -215,7 +215,7 @@ options(
 
     -   Brightspace will be used if necessary
 
--    Relevant supplemental material will be noted on course schedule
+-   Relevant supplemental material will be noted on course schedule
 
 ## Getting started
 
