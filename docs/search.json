@@ -186,7 +186,7 @@
     "href": "syllabus.html#accommodations",
     "title": "Syllabus",
     "section": "Accommodations",
-    "text": "Accommodations\n\nIf you have established accommodations with Disability Services, I should receive an email notifying me of the request.\nPlease communicate with me at your earliest convenience so we can discuss specific actions to address your needs. I will make every effort to accommodate reasonable requests.\nIf you need to contact disability services to establish service, the address is https://www.vanderbilt.edu/eeo/disability_services/contact_us.php"
+    "text": "Accommodations\n\nI encourage students who encounter accessibility challenges to communicate with me regardless of whether they are registered with Equal Opportunity and Access\nPlease communicate with me at your earliest convenience so we can discuss specific actions to address your needs. I will make every effort to accommodate reasonable requests.\nIf you have established accommodations with Equal Opportunity and Access, I will receive an email notifying me of the request.\nIf you need to contact Equal Opportunity and Access to establish service, the address is https://www.vanderbilt.edu/eeo/disability_services/contact_us.php"
   },
   {
     "objectID": "LICENSE.html#creative-commons-attribution-sharealike-4.0-international-public-license",
@@ -236,6 +236,13 @@
     "title": "Lab 1: Linear regression",
     "section": "",
     "text": "Labs will begin with loading necessary packages (for R users). If this is the first time using these packages, they will need to be installed prior to being loaded.\nLab instructions follow in numbered steps. In general, you will need to add code (Insert… Code Cell… R), run it to obtain output, and provide an interpretation of the results. It is not enough to provide output without interpretation.\nWe will cover Parts 1 and 2 in one day. Part 3 will be revisited after we have covered more of the simple linear regression notes."
+  },
+  {
+    "objectID": "labs/lab1-linearregression.html#learning-objectives",
+    "href": "labs/lab1-linearregression.html#learning-objectives",
+    "title": "Lab 1: Linear regression",
+    "section": "Learning objectives",
+    "text": "Learning objectives\n\nBe able to fit and interpret frequentist and Bayesian simple linear regression models\nCompare the results to those that would be obtained using a 2-sample t-test\nCompare the results of robust versus classical standard error estimates for the frequentist approach"
   },
   {
     "objectID": "labs/lab1-linearregression.html#load-r-packages",
