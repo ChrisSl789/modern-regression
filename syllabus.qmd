@@ -2,7 +2,6 @@
 title: "Syllabus BIOS 6312"
 author: Chris Slaughter
 date: last-modified
-toc: true
 format:
   html: default
   pdf: default
