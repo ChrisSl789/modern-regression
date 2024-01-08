@@ -1,5 +1,12 @@
 ---
-title: "Syllabus"
+title: "Syllabus BIOS 6312"
+author: Chris Slaughter
+date: last-modified
+toc: true
+format:
+  html: default
+  pdf: default
+format-links: [pdf]
 ---
 
 ## Course Goals
@@ -148,4 +155,4 @@ This is a discussion section/lab for Modern Regression Analysis. Students will r
 
 -   If you have established accommodations with Equal Opportunity and Access, I will receive an email notifying me of the request.
 
--   If you need to contact Equal Opportunity and Access to establish service, the address is https://www.vanderbilt.edu/eeo/disability_services/contact_us.php
+-   If you need to contact Equal Opportunity and Access to establish service, the address is <https://www.vanderbilt.edu/eeo/disability_services/contact_us.php>
