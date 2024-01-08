@@ -1,0 +1,8 @@
+---
+title: "Lab Template"
+author: "Author"
+format:
+  html:
+    code-tools: true
+editor: visual
+---

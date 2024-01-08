@@ -807,7 +807,7 @@ curves of the data are non-parallel
 
 Graphical techniques difficult in other settings
 
-\![image\](./effectmod/effmodplot.pdf)
+!\[image\](./effectmod/effmodplot.pdf)
 
 \### Confounders
 
@@ -825,7 +825,7 @@ Distribution of POI differs across strata
 
 Unadjusted and adjusted analyses give different estimates
 
-\![image\](./effectmod/confoundplot.pdf)
+!\[image\](./effectmod/confoundplot.pdf)
 
 \### Precision Variables
 
@@ -845,4 +845,4 @@ Unadjusted and adjusted analyses give similar estimates but with smaller
 
 standard errors
 
-\![image\](./effectmod/precisionplot.pdf)
+!\[image\](./effectmod/precisionplot.pdf)

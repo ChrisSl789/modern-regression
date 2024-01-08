@@ -43,6 +43,7 @@ website:
       - section: "Labs"
         contents: 
           - href: labs/quarto-intro.qmd
+          - href: labs/lab1-linearregression.qmd
       - section: "Supplemental notes"
         contents:
           - href: supplemental/slr-derivations.qmd

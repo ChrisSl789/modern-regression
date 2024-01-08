@@ -122,7 +122,7 @@ This is a discussion section/lab for Modern Regression Analysis. Students will r
 
     -   Students are expected to follow the Vanderbilt Honor Code
 
-    -   \"Vanderbilt University students pursue all academic endeavors with integrity. They conduct themselves honorably, professionally and respectfully in all realms of their studies in order to promote and secure an atmosphere of dignity and trust. The keystone of our honor system is self-regulation, which requires cooperation and support from each member of the University community.\"
+    -   "Vanderbilt University students pursue all academic endeavors with integrity. They conduct themselves honorably, professionally and respectfully in all realms of their studies in order to promote and secure an atmosphere of dignity and trust. The keystone of our honor system is self-regulation, which requires cooperation and support from each member of the University community."
 
 -   Late work
 
@@ -142,10 +142,10 @@ This is a discussion section/lab for Modern Regression Analysis. Students will r
 
 ## Accommodations
 
--   If you have established accommodations with Disability Services, I should receive an email notifying me of the request.
+-   I encourage students who encounter accessibility challenges to communicate with me regardless of whether they are registered with Equal Opportunity and Access
 
 -   Please communicate with me at your earliest convenience so we can discuss specific actions to address your needs. I will make every effort to accommodate reasonable requests.
 
--   If you need to contact disability services to establish service, the address is <https://www.vanderbilt.edu/eeo/disability_services/contact_us.php>
+-   If you have established accommodations with Equal Opportunity and Access, I will receive an email notifying me of the request.
 
-## 
+-   If you need to contact Equal Opportunity and Access to establish service, the address is https://www.vanderbilt.edu/eeo/disability_services/contact_us.php

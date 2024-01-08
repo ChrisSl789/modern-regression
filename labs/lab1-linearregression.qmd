@@ -1,0 +1,71 @@
+---
+title: "Lab 1: Linear regression"
+author: "Author"
+format:
+  html:
+    code-tools: true
+editor: visual
+---
+
+## General Instructions
+
+Labs will begin with loading necessary packages (for R users). If this is the first time using these packages, they will need to be installed prior to being loaded.
+
+Lab instructions follow in numbered steps. In general, you will need to add code (Insert... Code Cell... R), run it to obtain output, and provide an interpretation of the results. It is not enough to provide output without interpretation.
+
+We will cover Parts 1 and 2 in one day. Part 3 will be revisited after we have covered more of the simple linear regression notes.
+
+## Learning objectives
+
+1.  Be able to fit and interpret frequentist and Bayesian simple linear regression models
+2.  Compare the results to those that would be obtained using a 2-sample t-test
+3.  Compare the results of robust versus classical standard error estimates for the frequentist approach
+
+## Load R packages
+
+Load the following packages for use in this lab.
+
+```{r}
+library(rms)
+library(rstanarm)
+```
+
+### 1. Read in dataset
+
+We will be using the inflammation dataset. Full [documentation](https://biostat.app.vumc.org/wiki/pub/Main/CourseBios312/inflamm.pdf) is available
+
+The data is available as [tab delimited](https://biostat.app.vumc.org/wiki/pub/Main/CourseBios312/inflamm.txt) or [Stata format](https://biostat.app.vumc.org/wiki/pub/Main/CourseBios312/inflamm.dta)
+
+### 2. Perform basic descriptive statistics for variables of interest
+
+We will only be considering the three variables: age, male, and bmi
+
+-   Male is coded as 0 for female and 1 for male. Create a factor variable (R) or label (Stata) this variable accordingly
+
+## Part 1: BMI and gender (classical standard error estimate)
+
+### 1. Create and describe a plot of BMI by gender
+
+### 2. Fit a simple linear regression model of BMI (outcome) on gender (predictor) using a frequentist approach
+
+### 3. Conduct an (equal-variance) t-test of BMI by gender. Compare to the output of the linear regression model
+
+### 4. Fit a Bayesian linear regression model of BMI (outcome) on gender (predictor).  Use the default priors.
+
+## Part 2: BMI and age
+
+### 1. Create and describe a plot of BMI by age
+
+### 2. Fit a simple linear regression model of BMI (outcome) on age (predictor) using a frequentist approach
+
+### 3.  Interpret the slope and corresponding 95% confidence interval
+
+### 4. What is the estimate association for a 5-year increase in age?  A 10-year increase in age?  Give the confidence interval for each.
+
+### 5. Fit a similar Bayesian linear regression model and interpret the results.
+
+## Part 3: BMI and gender, robust standard error
+
+We will complete this part after covering robust standard errors in the notes
+
+### 1.  Fit a regression using the robust standard error estimate.  Compare the results from this regression model to a t-test assuming unequal variance between group.
