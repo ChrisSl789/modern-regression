@@ -289,6 +289,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
    
   <ul>
   <li><a href="#general-instructions" id="toc-general-instructions" class="nav-link active" data-scroll-target="#general-instructions">General Instructions</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning objectives</a></li>
   <li><a href="#load-r-packages" id="toc-load-r-packages" class="nav-link" data-scroll-target="#load-r-packages">Load R packages</a>
   <ul class="collapse">
   <li><a href="#read-in-dataset" id="toc-read-in-dataset" class="nav-link" data-scroll-target="#read-in-dataset">1. Read in dataset</a></li>
@@ -346,6 +347,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Labs will begin with loading necessary packages (for R users). If this is the first time using these packages, they will need to be installed prior to being loaded.</p>
 <p>Lab instructions follow in numbered steps. In general, you will need to add code (Insert… Code Cell… R), run it to obtain output, and provide an interpretation of the results. It is not enough to provide output without interpretation.</p>
 <p>We will cover Parts 1 and 2 in one day. Part 3 will be revisited after we have covered more of the simple linear regression notes.</p>
+</section>
+<section id="learning-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="learning-objectives">Learning objectives</h2>
+<ol type="1">
+<li>Be able to fit and interpret frequentist and Bayesian simple linear regression models</li>
+<li>Compare the results to those that would be obtained using a 2-sample t-test</li>
+<li>Compare the results of robust versus classical standard error estimates for the frequentist approach</li>
+</ol>
 </section>
 <section id="load-r-packages" class="level2">
 <h2 class="anchored" data-anchor-id="load-r-packages">Load R packages</h2>
@@ -763,54 +772,60 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>We will cover Parts 1 and 2 in one day. Part 3 will be revisited after we have covered more of the simple linear regression notes.</span>
 <span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a><span class="fu">## Load R packages</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a><span class="fu">## Learning objectives</span></span>
 <span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>Load the following packages for use in this lab.</span>
-<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rms)</span>
-<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstanarm)</span>
-<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1. Read in dataset</span></span>
-<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a>We will be using the inflammation dataset. Full <span class="co">[</span><span class="ot">documentation</span><span class="co">](https://biostat.app.vumc.org/wiki/pub/Main/CourseBios312/inflamm.pdf)</span> is available</span>
-<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a>The data is available as <span class="co">[</span><span class="ot">tab delimited</span><span class="co">](https://biostat.app.vumc.org/wiki/pub/Main/CourseBios312/inflamm.txt)</span> or <span class="co">[</span><span class="ot">Stata format</span><span class="co">](https://biostat.app.vumc.org/wiki/pub/Main/CourseBios312/inflamm.dta)</span></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>Be able to fit and interpret frequentist and Bayesian simple linear regression models</span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>Compare the results to those that would be obtained using a 2-sample t-test</span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>Compare the results of robust versus classical standard error estimates for the frequentist approach</span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a><span class="fu">## Load R packages</span></span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>Load the following packages for use in this lab.</span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rms)</span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstanarm)</span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2. Perform basic descriptive statistics for variables of interest</span></span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1. Read in dataset</span></span>
 <span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a>We will only be considering the three variables: age, male, and bmi</span>
+<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a>We will be using the inflammation dataset. Full <span class="co">[</span><span class="ot">documentation</span><span class="co">](https://biostat.app.vumc.org/wiki/pub/Main/CourseBios312/inflamm.pdf)</span> is available</span>
 <span id="cb20-38"><a href="#cb20-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-39"><a href="#cb20-39" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Male is coded as 0 for female and 1 for male. Create a factor variable (R) or label (Stata) this variable accordingly</span>
+<span id="cb20-39"><a href="#cb20-39" aria-hidden="true" tabindex="-1"></a>The data is available as <span class="co">[</span><span class="ot">tab delimited</span><span class="co">](https://biostat.app.vumc.org/wiki/pub/Main/CourseBios312/inflamm.txt)</span> or <span class="co">[</span><span class="ot">Stata format</span><span class="co">](https://biostat.app.vumc.org/wiki/pub/Main/CourseBios312/inflamm.dta)</span></span>
 <span id="cb20-40"><a href="#cb20-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-41"><a href="#cb20-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## Part 1: BMI and gender (classical standard error estimate)</span></span>
+<span id="cb20-41"><a href="#cb20-41" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2. Perform basic descriptive statistics for variables of interest</span></span>
 <span id="cb20-42"><a href="#cb20-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-43"><a href="#cb20-43" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1. Create and describe a plot of BMI by gender</span></span>
+<span id="cb20-43"><a href="#cb20-43" aria-hidden="true" tabindex="-1"></a>We will only be considering the three variables: age, male, and bmi</span>
 <span id="cb20-44"><a href="#cb20-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-45"><a href="#cb20-45" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2. Fit a simple linear regression model of BMI (outcome) on gender (predictor) using a frequentist approach</span></span>
+<span id="cb20-45"><a href="#cb20-45" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Male is coded as 0 for female and 1 for male. Create a factor variable (R) or label (Stata) this variable accordingly</span>
 <span id="cb20-46"><a href="#cb20-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-47"><a href="#cb20-47" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3. Conduct an (equal-variance) t-test of BMI by gender. Compare to the output of the linear regression model</span></span>
+<span id="cb20-47"><a href="#cb20-47" aria-hidden="true" tabindex="-1"></a><span class="fu">## Part 1: BMI and gender (classical standard error estimate)</span></span>
 <span id="cb20-48"><a href="#cb20-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-49"><a href="#cb20-49" aria-hidden="true" tabindex="-1"></a><span class="fu">### 4. Fit a Bayesian linear regression model of BMI (outcome) on gender (predictor).  Use the default priors.</span></span>
+<span id="cb20-49"><a href="#cb20-49" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1. Create and describe a plot of BMI by gender</span></span>
 <span id="cb20-50"><a href="#cb20-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-51"><a href="#cb20-51" aria-hidden="true" tabindex="-1"></a><span class="fu">## Part 2: BMI and age</span></span>
+<span id="cb20-51"><a href="#cb20-51" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2. Fit a simple linear regression model of BMI (outcome) on gender (predictor) using a frequentist approach</span></span>
 <span id="cb20-52"><a href="#cb20-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-53"><a href="#cb20-53" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1. Create and describe a plot of BMI by age</span></span>
+<span id="cb20-53"><a href="#cb20-53" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3. Conduct an (equal-variance) t-test of BMI by gender. Compare to the output of the linear regression model</span></span>
 <span id="cb20-54"><a href="#cb20-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-55"><a href="#cb20-55" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2. Fit a simple linear regression model of BMI (outcome) on age (predictor) using a frequentist approach</span></span>
+<span id="cb20-55"><a href="#cb20-55" aria-hidden="true" tabindex="-1"></a><span class="fu">### 4. Fit a Bayesian linear regression model of BMI (outcome) on gender (predictor).  Use the default priors.</span></span>
 <span id="cb20-56"><a href="#cb20-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-57"><a href="#cb20-57" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.  Interpret the slope and corresponding 95% confidence interval</span></span>
+<span id="cb20-57"><a href="#cb20-57" aria-hidden="true" tabindex="-1"></a><span class="fu">## Part 2: BMI and age</span></span>
 <span id="cb20-58"><a href="#cb20-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-59"><a href="#cb20-59" aria-hidden="true" tabindex="-1"></a><span class="fu">### 4. What is the estimate association for a 5-year increase in age?  A 10-year increase in age?  Give the confidence interval for each.</span></span>
+<span id="cb20-59"><a href="#cb20-59" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1. Create and describe a plot of BMI by age</span></span>
 <span id="cb20-60"><a href="#cb20-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-61"><a href="#cb20-61" aria-hidden="true" tabindex="-1"></a><span class="fu">### 5. Fit a similar Bayesian linear regression model and interpret the results.</span></span>
+<span id="cb20-61"><a href="#cb20-61" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2. Fit a simple linear regression model of BMI (outcome) on age (predictor) using a frequentist approach</span></span>
 <span id="cb20-62"><a href="#cb20-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-63"><a href="#cb20-63" aria-hidden="true" tabindex="-1"></a><span class="fu">## Part 3: BMI and gender, robust standard error</span></span>
+<span id="cb20-63"><a href="#cb20-63" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.  Interpret the slope and corresponding 95% confidence interval</span></span>
 <span id="cb20-64"><a href="#cb20-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-65"><a href="#cb20-65" aria-hidden="true" tabindex="-1"></a>We will complete this part after covering robust standard errors in the notes</span>
+<span id="cb20-65"><a href="#cb20-65" aria-hidden="true" tabindex="-1"></a><span class="fu">### 4. What is the estimate association for a 5-year increase in age?  A 10-year increase in age?  Give the confidence interval for each.</span></span>
 <span id="cb20-66"><a href="#cb20-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-67"><a href="#cb20-67" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1.  Fit a regression using the robust standard error estimate.  Compare the results from this regression model to a t-test assuming unequal variance between group.</span></span>
+<span id="cb20-67"><a href="#cb20-67" aria-hidden="true" tabindex="-1"></a><span class="fu">### 5. Fit a similar Bayesian linear regression model and interpret the results.</span></span>
+<span id="cb20-68"><a href="#cb20-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-69"><a href="#cb20-69" aria-hidden="true" tabindex="-1"></a><span class="fu">## Part 3: BMI and gender, robust standard error</span></span>
+<span id="cb20-70"><a href="#cb20-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-71"><a href="#cb20-71" aria-hidden="true" tabindex="-1"></a>We will complete this part after covering robust standard errors in the notes</span>
+<span id="cb20-72"><a href="#cb20-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-73"><a href="#cb20-73" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1.  Fit a regression using the robust standard error estimate.  Compare the results from this regression model to a t-test assuming unequal variance between group.</span></span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
