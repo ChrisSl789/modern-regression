@@ -130,6 +130,20 @@ This is a discussion section/lab for Modern Regression Analysis. Students will r
 
     -   "Vanderbilt University students pursue all academic endeavors with integrity. They conduct themselves honorably, professionally and respectfully in all realms of their studies in order to promote and secure an atmosphere of dignity and trust. The keystone of our honor system is self-regulation, which requires cooperation and support from each member of the University community."
 
+-   Use of generative AI algorithms such as ChatGPT
+
+    -   You are free to use generative AI in your work, however you **must**
+
+        -   Cite any text that AI generated (even if you edited it) with a bibliographic entry indicating the name and version of the AI model that you used, the date and time it was used, and the exact query or prompt to generate the results
+
+        -   Cite as above any code that was generated for you. I recommend that you do not use it to blindly write code for you. Doing so will probably be more work than simply writing the code yourself. You must verify any code that is generated for you is accurate and answers the question in the assignment instructions.
+
+    -   I recommend using Vanderbilt or VUMC resources
+
+        -   <https://www.vanderbilt.edu/generative-ai/>
+
+        -   <https://www.vumc.org/dbmi/GenerativeAI>
+
 -   Late work
 
     -   While I expect that work will be turned in on time, things can happen to interrupt your schedule

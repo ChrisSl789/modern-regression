@@ -143,7 +143,8 @@ $$\pi(\theta_1) \sim Beta(a_1,b_1)$$ $$\pi(\theta_2) \sim Beta(a_2,b_2)$$
 
 -   We also have to specify the likelihood the number of subjects (out of 5) who are diseased in the Exposed group and the number of subjects who are diseased in the Unexposed group. Note that this is the same binomial likelihood that is assumed in the frequentist approach above.
 
-$$X_1 \sim Bin(5, \theta_1) \\ X_2 \sim Bin(5, \theta_2)$$
+$$X_1 \sim Bin(5, \theta_1)$$
+$$X_2 \sim Bin(5, \theta_2)$$
 
 -   Using Bayes Rule, the posterior distribution is proportional to the likelihood multiplied by the prior distribution
 
