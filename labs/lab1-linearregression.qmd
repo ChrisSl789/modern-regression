@@ -50,7 +50,7 @@ We will only be considering the three variables: age, male, and bmi
 
 ### 3. Conduct an (equal-variance) t-test of BMI by gender. Compare to the output of the linear regression model
 
-### 4. Fit a Bayesian linear regression model of BMI (outcome) on gender (predictor).  Use the default priors.
+### 4. Fit a Bayesian linear regression model of BMI (outcome) on gender (predictor). Use the default priors.
 
 ## Part 2: BMI and age
 
@@ -58,9 +58,9 @@ We will only be considering the three variables: age, male, and bmi
 
 ### 2. Fit a simple linear regression model of BMI (outcome) on age (predictor) using a frequentist approach
 
-### 3.  Interpret the slope and corresponding 95% confidence interval
+### 3. Interpret the slope and corresponding 95% confidence interval
 
-### 4. What is the estimate association for a 5-year increase in age?  A 10-year increase in age?  Give the confidence interval for each.
+### 4. What is the estimate association for a 5-year increase in age? A 10-year increase in age? Give the confidence interval for each.
 
 ### 5. Fit a similar Bayesian linear regression model and interpret the results.
 
@@ -68,4 +68,4 @@ We will only be considering the three variables: age, male, and bmi
 
 We will complete this part after covering robust standard errors in the notes
 
-### 1.  Fit a regression using the robust standard error estimate.  Compare the results from this regression model to a t-test assuming unequal variance between group.
+### 1. Fit a regression using the robust standard error estimate. Compare the results from this regression model to a t-test assuming unequal variance between group.

@@ -123,7 +123,12 @@ tab1
 [^1]: A multinomial model would assume the total sample size is fixed, which is a common design but not appropriate here. Fisher's exact test assumes that both the row and columns margins are fixed, which is rarely found in practice.
 
 ```{r}
+# For comparing proportions
 exact.test(tab1, model="binomial", conf.int = TRUE, to.plot=FALSE)
+
+# For confidnece intervals in each group
+binom.test(x=3,n=5)
+binom.test(x=0,n=5)
 ```
 
 -   How would you summarize the results of the study examining the association between E and D? Critique the following
@@ -132,7 +137,7 @@ exact.test(tab1, model="binomial", conf.int = TRUE, to.plot=FALSE)
 
     -   Answer 2: Since the p-value is greater than 0.05, we lack evidence to conclude that there is an association between exposure E and disease D.
 
-    -   Answer 3: We observed incidence rates of 60% in the exposed (95% CI: \[15%, 95%\]) and 0% in the unexposed (95% CI: \[0%, 52%\]). The precision of the study was not adequate to demonstrate that such a large difference in incidence rates would be unlikely in the absence of a true association.
+    -   Answer 3: We observed incidence rates of 60% in the exposed (95% CI: \[15%, 95%\]) and 0% in the unexposed (95% CI: \[0%, 52%\]). The precision of the study was not adequate to demonstrate that such a large difference in incidence rates would be unlikely in the absence of a true association. We estimated a 60% difference in the probability of disease between exposure group (95% CI: \[0% to 92%\].
 
 #### Bayesian approach to 2x2 table analysis
 
@@ -143,8 +148,7 @@ $$\pi(\theta_1) \sim Beta(a_1,b_1)$$ $$\pi(\theta_2) \sim Beta(a_2,b_2)$$
 
 -   We also have to specify the likelihood the number of subjects (out of 5) who are diseased in the Exposed group and the number of subjects who are diseased in the Unexposed group. Note that this is the same binomial likelihood that is assumed in the frequentist approach above.
 
-$$X_1 \sim Bin(5, \theta_1)$$
-$$X_2 \sim Bin(5, \theta_2)$$
+$$X_1 \sim Bin(5, \theta_1)$$ $$X_2 \sim Bin(5, \theta_2)$$
 
 -   Using Bayes Rule, the posterior distribution is proportional to the likelihood multiplied by the prior distribution
 
@@ -199,6 +203,18 @@ plot(density(beta.diff.prior), main="", xlab="Theta = Theta_1 - Theta_2")
 lines(density(beta.diff.posterior), col="Red")
 legend("topleft",inset=0.05, c("Prior","Posterior"), col=c("Black","Red"), lty=1)
 ```
+
+-   Bayesian Interpretation
+
+    -   *A priori*, we assumed the probability of disease in the exposed and unexposed groups was 20%, as represented by independent Beta(0.5, 2) distributions. We were interested in estimating the difference in the risk of disease, exposed versus unexposed. Given the data, the posterior mean probability of disease was 40% higher in the exposed group with a 95% credible interval from 2.5% to 76% higher.
+
+-   Comparison of Bayesian approach to frequentist approach
+
+    -   Here the sample size is small, so the prior distribution has an impact on the findings. If you believe the prior is appropriate, then this impact is appropriate. If you believe the prior is inappropriate, then the results should be calculated under different prior assumptions. It is good practice to consider a range of reasonable prior assumptions (which I have not done here) and evaluate the impact on the findings.
+
+    -   The mean estimate of the difference between groups (40% Bayesian, 60% frequentist) differ because of the Bayesian priors used. This is an example of *shrinkage*-- the Bayesian estimate is a weighted average of the the prior (0%, no effect) and the data (60%) while the frequentist estimate puts all of the weight on the observed data (60%).
+
+    -   The Bayesian credible interval is tighter than the Frequentist confidence interval. Again, this is due the prior distribution being included in the Bayesian calculation. If you feel the prior is appropriate, then this narrowing of the credible interval is also appropriate. As sample size increases, the two approaches would become more similar.
 
 ## Multiple comparisons
 

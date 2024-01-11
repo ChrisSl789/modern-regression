@@ -56,6 +56,8 @@ website:
             text: Log transformations
           - href: supplemental/model-selection-criteria.qmd
             text: Model selection criteria
+          - href: supplemental/ReviewMatrixAlgebra.pdf
+            text: Matrix algebra review
 
 format:
   html:

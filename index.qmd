@@ -1,8 +1,13 @@
 ---
 title: "Bios 6312: Modern Regression"
+date: last-modified
 ---
 
 This page contains an outline of the topics, content, and assignments for the semester. Note that this schedule will be updated as the semester progresses, with all changes documented here.
+
+-   Notes and Lab refer to course notes
+
+-   RMB is Regression Methods in Biostatistics
 
 Schedule updated `r format(Sys.time(), "%a %b %d %X %Y")`
 

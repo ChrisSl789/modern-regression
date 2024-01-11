@@ -33,6 +33,16 @@ editor:
     wrap: 72
 ---
 
+```{r}
+library(rstanarm)
+library(bayesplot)
+library(finalfit)
+library(dplyr)
+library(rms)
+library(ggplot2)
+library(gglm)
+```
+
 ## General Regression Setting
 
 ### Two variable setting
@@ -94,7 +104,6 @@ plotdata <- data.frame(age=c(63, 63, rep(65:80,15), rep(81:85,10), 86,86,86, 87,
                        chol=NA)
 plotdata$chol <- 190 + .5*plotdata$age + rnorm(length(plotdata$age), 0, 15)
 
-library(ggplot2)
 ggplot(plotdata, aes(x=age, y=chol)) + geom_point() + ylab("Cholesterol") + xlab("Age (years)") + theme_bw()
 ```
 
@@ -197,8 +206,8 @@ ggplot(plotdata, aes(x=age, y=chol)) + geom_point() + ylab("Cholesterol") + xlab
 
     -   $E[\textrm{Chol} | \textrm{Age}] = 190 + 0.50 \times \textrm{Age}$
 
-    -   Data were generated using this model (estimates, below, will be
-        different)
+    -   Note that data were generated using this model. Estimates,
+        below, will be different.
 
 #### Frequentist Estimates and Interpretation
 
@@ -223,9 +232,6 @@ mykable = function(x){
 }
 
 
-library(finalfit)
-library(dplyr)
-library(rms)
 explanatory = c("age")
 dependent = 'chol'
 
@@ -263,9 +269,6 @@ plotdata %>%
 -   Output from Bayesian linear regression
 
 ```{r}
-library(rstanarm)
-library(bayesplot)
-
 fit1 <- stan_glm(chol ~ age,
                  data=plotdata, family=gaussian(),
                  seed=1234,
@@ -298,7 +301,8 @@ prior_summary(fit1, digits = 2)
 
 [^1]: Query "Explain how a slope from simple linear regression is
     interpreted using language a college graduate could understand.
-    Provide a Bayesian and Frequentist interpretation."
+    Provide a Bayesian and Frequentist interpretation." VUMC aiChat
+    tool, GPT-4. Retrieved 12/28/2023.
 
 ::: {.classname style="color: gray"}
 In simple linear regression, the slope (often denoted as "b" or "beta")
@@ -331,6 +335,35 @@ variable on average. A credible interval, say a 95% credible interval of
 of the slope falls within this range, given our prior and the observed
 data.
 :::
+
+-   When to use Bayesian or frequentist approaches to estimation[^2]
+
+    -   On many occasions, if one is careful in execution, both
+        approaches to analysis will yield essentially equivalent
+        inference
+
+    -   For small sample sizes, Bayesian approaches with carefully
+        considered priors are often the only way to go because it is
+        difficult to obtain well-calibrated frequentist intervals
+
+    -   For medium to large samples, unless there is strong prior
+        information that one wants to incorporate, robust frequentist
+        estimation using sandwich estimation is very appealing because
+        its consistency is guaranteed under mild conditions
+
+    -   For highly complex models, a Bayesian approach is often the most
+        convenient way to formulate the model, and computation under the
+        Bayesian approach is the most straightforward
+
+    -   In summary, in many instances carefully considered Bayesian and
+        frequentist approach will lead to similar scientific
+        conclusions. My goal is describe the advantages and shortcoming
+        of each approach, but a strong recommendation of one over the
+        other is not given as there is often no reason for stating a
+        preference.
+
+[^2]: Wakefield, Jon. Bayesian and Frequentist Regression Methods.
+    Section 1.6, Executive Summary
 
 ### Uses of Regression
 
@@ -746,8 +779,6 @@ ggplot(regassumptions, aes(x=x, y=y1)) + geom_point() + geom_smooth(method="lm")
 ```{r}
 #| label: fig-assumptions-true-diag
 #| fig-cap: Diagnostic plots where assumptions of Normality, linearity, homoskedasticity all hold
- 
-library(gglm) # Load gglm
 model.y1 <- lm(y1 ~ x, data = regassumptions)
 gglm(model.y1)
 ```
@@ -863,16 +894,26 @@ gglm(model.y4)
 
 : Assumption Holds (Yes/No)
 
-| $\hat{\beta}$ | $\hat {\t extrm{Var}}_ { N R}(\hat{\beta})$ | $\hat {\textrm{Var } } _R(\hat{\beta})$ |
-|---------------|---------------------------------------------|-----------------------------------------|
-| Y             | Y                                           | Y                                       |
-| Y             | M^2^                                        | M^2^                                    |
-| Y             | N                                           | Y                                       |
-| Y             | N                                           | M^2^                                    |
-| M^1^          | N                                           | M^3^                                    |
-| M^1^          | N                                           | M^2,3^                                  |
-| M^1^          | N                                           | M^2^                                    |
-| M^1^          | N                                           | M^2,3^                                  |
++---------------+----------------------------+-------------------------+
+| $\hat{\beta}$ | $\hat {\textrm{V           | $\hat {\textrm{V        |
+|               | ar}}_ { N R}(\hat{\beta})$ | ar } } _R(\hat{\beta})$ |
++===============+============================+=========================+
+| Y             | Y                          | Y                       |
++---------------+----------------------------+-------------------------+
+| Y             | M^2^                       | M^2^                    |
++---------------+----------------------------+-------------------------+
+| Y             | N                          | Y                       |
++---------------+----------------------------+-------------------------+
+| Y             | N                          | M^2^                    |
++---------------+----------------------------+-------------------------+
+| M^1^          | N                          | M^3^                    |
++---------------+----------------------------+-------------------------+
+| M^1^          | N                          | M^2,3^                  |
++---------------+----------------------------+-------------------------+
+| M^1^          | N                          | M^2^                    |
++---------------+----------------------------+-------------------------+
+| M^1^          | N                          | M^2,3^                  |
++---------------+----------------------------+-------------------------+
 
 : Valid Inference (Yes/No/Maybe)
 
@@ -1117,34 +1158,34 @@ robcov(ols(y2 ~ x, data=regassumptions, x=TRUE))
 \newcommand\seb0{{\hat{\textrm{se}}(\hat{\beta_0})}}
 \newcommand\seb1{\hat{\textrm{se}}(\hat{\beta_1})}
 ```
-+-------------+-------------+-------------+-------------+-------------+
-| Model       | C lassical  | Robust I    | C lassical  | Robust \|   |
-|             | I ntercept  | ntercept    | Slope       | Slope       |
-+=============+=============+=============+=============+=============+
-| Age - Ch o  |             |             |             |             |
-| lesterol    |             |             |             |             |
-|             |             |             |             |             |
-| As s        |             |             |             |             |
-| umptions    |             |             |             |             |
-| hold        |             |             |             |             |
-+-------------+-------------+-------------+-------------+-------------+
-| Scenario 1  |             |             |             |             |
-|             |             |             |             |             |
-| As s        |             |             |             |             |
-| umptions    |             |             |             |             |
-| hold        |             |             |             |             |
-+-------------+-------------+-------------+-------------+-------------+
-| Scenario 3  |             |             |             |             |
-|             |             |             |             |             |
-| I n         |             |             |             |             |
-| creasing    |             |             |             |             |
-| variance    |             |             |             |             |
-+-------------+-------------+-------------+-------------+-------------+
-| Scenario 2  |             |             |             |             |
-|             |             |             |             |             |
-| Skewed      |             |             |             |             |
-| variance    |             |             |             |             |
-+-------------+-------------+-------------+-------------+-------------+
++------------+------------+------------+------------+------------+
+| Model      | Classical  | Robust     | Classical  | Robust     |
+|            | Intercept  | Intercept  | Slope      | Slope      |
++============+============+============+============+============+
+| Age-ch     |            |            |            |            |
+| olesterol: |            |            |            |            |
+| All        |            |            |            |            |
+| A          |            |            |            |            |
+| ssumptions |            |            |            |            |
+| hold       |            |            |            |            |
++------------+------------+------------+------------+------------+
+| Scenario   |            |            |            |            |
+| 1:         |            |            |            |            |
+| A          |            |            |            |            |
+| ssumptions |            |            |            |            |
+| hold       |            |            |            |            |
++------------+------------+------------+------------+------------+
+| Scenario   |            |            |            |            |
+| 3:         |            |            |            |            |
+| Increasing |            |            |            |            |
+| variance   |            |            |            |            |
++------------+------------+------------+------------+------------+
+| Scenario   |            |            |            |            |
+| 2:         |            |            |            |            |
+|            |            |            |            |            |
+| Skewed     |            |            |            |            |
+| variance   |            |            |            |            |
++------------+------------+------------+------------+------------+
 
 : Comparison of standard error estimates
 
@@ -1178,7 +1219,7 @@ robcov(ols(y2 ~ x, data=regassumptions, x=TRUE))
 
         -   Summarize the results
 
-        -   Approach will be covered in a lab
+        -   Approach will be covered in a future lab
 
 ## Linear Regression and Correlation
 
