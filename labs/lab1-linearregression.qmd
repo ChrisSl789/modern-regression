@@ -46,11 +46,11 @@ We will only be considering the three variables: age, male, and bmi
 
 ### 1. Create and describe a plot of BMI by gender
 
-### 2. Fit a simple linear regression model of BMI (outcome) on gender (predictor) using a frequentist approach
+### 2. Fit a simple linear regression model of BMI (outcome) on gender (predictor) using a frequentist approach.
 
 ### 3. Conduct an (equal-variance) t-test of BMI by gender. Compare to the output of the linear regression model
 
-### 4. Fit a Bayesian linear regression model of BMI (outcome) on gender (predictor). Use the default priors.
+### 4. Fit a Bayesian linear regression model of BMI (outcome) on gender (predictor). Use the default priors.  Compare the results.
 
 ## Part 2: BMI and age
 

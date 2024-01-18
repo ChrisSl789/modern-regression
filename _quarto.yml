@@ -32,6 +32,7 @@ website:
             text: "Introductory Slides"
           - href: syllabus.qmd
           - href: computing.qmd
+          - href: officehours.qmd
           - href: index.qmd
             text: "Schedule"
       - section: "Course Notes"
