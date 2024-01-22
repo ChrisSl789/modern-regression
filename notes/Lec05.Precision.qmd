@@ -398,7 +398,7 @@ legend("top", c("sigma = 1.0","sigma = 1.2"), lty=1:2, inset=0.05)
 
 -   Difference of independent means
 
--   Obsevations no longer identicaly distributed, just independent.
+-   Observations no longer identically distributed, just independent.
     Group 1 has a different mean and variance than group 2
 
     -   $\textrm{ind } Y_{ij} \sim (\mu_j, \sigma_j^2), j = 1, 2; i = 1, \ldots, n_j$
@@ -428,7 +428,7 @@ legend("top", c("sigma = 1.0","sigma = 1.2"), lty=1:2, inset=0.05)
 -   Example: Case-control study where finding cases is
     difficult/expensive but finding controls is easy/cheap
 
-    -   Often quoted little benefit beyon $r = 5$. That is, little
+    -   Often quoted little benefit beyond $r = 5$. That is, little
         benefit in having more than 5 times as many controls as cases
 
 ```{r}

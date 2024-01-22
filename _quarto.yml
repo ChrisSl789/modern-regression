@@ -45,6 +45,9 @@ website:
         contents: 
           - href: labs/quarto-intro.qmd
           - href: labs/lab1-linearregression.qmd
+          - href: labs/lab2-linearassumptions.qmd
+          - href: https://vanderbilt.box.com/s/rpftvmc9vua2w3gz3jy16phlnsojs6on
+            text: "Box folder with .qmd files"
       - section: "Supplemental notes"
         contents:
           - href: supplemental/slr-derivations.qmd

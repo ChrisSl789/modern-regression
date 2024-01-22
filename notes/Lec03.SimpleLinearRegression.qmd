@@ -28,8 +28,8 @@ format:
 execute:
    warning: false
    message: false
-editor: 
-  markdown: 
+editor:
+  markdown:
     wrap: 72
 ---
 
@@ -457,7 +457,7 @@ $0.05$.
     -   Log transformation of the response corresponds to modeling the
         geometric mean
 
-    -   Notation: Is is extremely common to use $Y$ to denote the
+    -   Notation: It is extremely common to use $Y$ to denote the
         response variable when discussing general methods
 
 -   Predictor
@@ -720,7 +720,7 @@ $E[{\boldsymbol{Y}}] = {\boldsymbol{X}}{\boldsymbol{\beta}}$
     the aforementioned statistical inference about *associations*.
     However \...
 
--   Valid statistical inference (CIs, p-values) about *means responses
+-   Valid statistical inference (CIs, p-values) about *mean responses
     in specific groups* requires a further assumption
 
 -   Assumption 4: Adequacy of the linear model
@@ -896,7 +896,7 @@ gglm(model.y4)
 
 +----------------+---------------------------+------------------------+
 | $\hat{\beta}$  | $\hat{\textrm             | $\hat{\textrm{         |
-|                | {Var}}_{NR}(\hat{\beta})$ | Var}} _R(\hat{\beta})$ |
+|                | {Var}}_{NR}(\hat{\beta})$ | Var}}_R(\hat{\beta})$  |
 +================+===========================+========================+
 | Y              | Y                         | Y                      |
 +----------------+---------------------------+------------------------+
@@ -924,6 +924,7 @@ $\hat{\textrm{Var}}_{NR}(\hat{\beta})$ and the robust variance is
 $\hat{\textrm{Var}}_R(\hat{\beta})$
 :::
 
+-   ^1^ First-order trend, if appropriate
 -   ^2^ Approximately valid under large sample sizes
 -   ^3^ If $X$ is random, but not if $X$ is fixed
 
@@ -1158,35 +1159,35 @@ robcov(ols(y2 ~ x, data=regassumptions, x=TRUE))
 \newcommand\seb0{{\hat{\textrm{se}}(\hat{\beta_0})}}
 \newcommand\seb1{\hat{\textrm{se}}(\hat{\beta_1})}
 ```
-+-----------+-----------+-----------+-----------+-----------+
-| Model     | Classical | Robust    | Classical | Robust    |
-|           | Intercept | Intercept | Slope     | Slope     |
-+===========+===========+===========+===========+===========+
-| Age-cho   |           |           |           |           |
-| lesterol: |           |           |           |           |
-| All       |           |           |           |           |
-| As        |           |           |           |           |
-| sumptions |           |           |           |           |
-| hold      |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+
-| Scenario  |           |           |           |           |
-| 1:        |           |           |           |           |
-| As        |           |           |           |           |
-| sumptions |           |           |           |           |
-| hold      |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+
-| Scenario  |           |           |           |           |
-| 3:        |           |           |           |           |
-| I         |           |           |           |           |
-| ncreasing |           |           |           |           |
-| variance  |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+
-| Scenario  |           |           |           |           |
-| 2:        |           |           |           |           |
-|           |           |           |           |           |
-| Skewed    |           |           |           |           |
-| variance  |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+
++------------+-----------+-----------+-----------+-----------+
+| Model      | Classical | Robust    | Classical | Robust    |
+|            | Intercept | Intercept | Slope     | Slope     |
++============+===========+===========+===========+===========+
+| Age-chol   |           |           |           |           |
+| All        |           |           |           |           |
+| Assump.    |           |           |           |           |
+| hold       |           |           |           |           |
+|            |           |           |           |           |
+|            |           |           |           |           |
++------------+-----------+-----------+-----------+-----------+
+| Scenario 1 |           |           |           |           |
+| Assump     |           |           |           |           |
+| hold       |           |           |           |           |
+|            |           |           |           |           |
+|            |           |           |           |           |
++------------+-----------+-----------+-----------+-----------+
+| Scenario 3 |           |           |           |           |
+| Increase   |           |           |           |           |
+| Variance   |           |           |           |           |
+|            |           |           |           |           |
+|            |           |           |           |           |
++------------+-----------+-----------+-----------+-----------+
+| Scenario 2 |           |           |           |           |
+| Skewed     |           |           |           |           |
+| Variance   |           |           |           |           |
+|            |           |           |           |           |
+|            |           |           |           |           |
++------------+-----------+-----------+-----------+-----------+
 
 : Comparison of standard error estimates
 

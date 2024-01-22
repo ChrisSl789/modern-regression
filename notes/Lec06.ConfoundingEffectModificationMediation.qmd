@@ -32,8 +32,6 @@ editor:
     wrap: 72
 ---
 
-## 
-
 ## Overview
 
 ### Scientific questions
@@ -123,7 +121,7 @@ editor:
 | Diff      | -0.29 | -0.43 | -0.3   | -0.4   |
 | Ratio     | 0.71  | 0.72  | 0.70   | 0.73   |
 
--   Yes for difference, not really for ratio
+-   Effect modification for difference, not really for ratio
 
     -   True for Mean or median
 
@@ -154,404 +152,412 @@ editor:
 | Diff     | -0.02      | -0.17      | -0.02 | -0.50 |
 | Ratio    | 0.50       | 0.67       | 0.50  | 0.50  |
 
--   Proportion: Yes for ratio, yes for difference
+-   Effect Modficiation?
 
--   Odds: Yes for difference, no for ratio
+    -   Proportion: Yes for ratio, yes for difference
+
+    -   Odds: Yes for difference, no for ratio
 
 #### Example 5: CHD by current smoking (modified by gender?)
 
-Women Men Women Men
+|          |            |            |       |      |
+|----------|------------|------------|-------|------|
+|          | Proportion | Proportion | Odds  | Odds |
+|          | Women      | Men        | Women | Men  |
+| No Smoke | 0.18       | 0.26       | 0.22  | 0.36 |
+| Smoke    | 0.05       | 0.24       | 0.05  | 0.32 |
+| Diff     | 0.13       | 0.02       | 0.17  | 0.03 |
+| Ratio    | 3.60       | 1.08       | 4.17  | 1.11 |
 
-No Smoke 0.18 0.26 0.22 0.35
+-   Effect Modfication?
 
-Smoke 0.05 0.24 0.05 0.32
+    -   Proportion: Yes for ratio, yes for difference
 
-Diff 0.13 0.02 0.17 0.03
-
-Ratio 3.60 1.08 4.17 1.11
-
-\-\-\-\-\-\-\-\-\-- \-\-\-\-\-\-- \-\-\-\-\-- \-\-\-\-\-\-- \-\-\-\-\--
-
-Proportion: Yes for ratio, yes for difference
-
-Odds: Yes for difference, yes for ratio
+    -   Odds: Yes for difference, yes for ratio
 
 #### Example 6: CHD by ever smoke (modified by gender?)
 
-\-\-\-\-\-\-- \-\-\-\-\-\-- \-\-\-\-\-\-- \-\-\-\-\-\-- \-\-\-\-\-\--
+|             |            |            |       |       |
+|-------------|------------|------------|-------|-------|
+|             | Proportion | Proportion | Odds  | Odds  |
+|             | Women      | Men        | Women | Men   |
+| Never Smoke | 0.16       | 0.25       | 0.19  | 0.33  |
+| Ever Smoke  | 0.16       | 0.26       | 0.19  | 0.35  |
+| Diff        | 0.00       | -0.01      | 0.00  | -0.02 |
+| Ratio       | 1.00       | 0.96       | 1.00  | 0.95  |
 
-Women Men Women Men
+-   Effect Modfication?
 
-Never 0.16 0.25 0.19 0.33
+    -   Proportion: No for ratio, no for difference
 
-Ever 0.16 0.26 0.19 0.35
+    -   Odds: No for difference, no for ratio
 
-Diff 0.00 -0.01 0.00 -0.02
+#### Summary comments on examples
 
-Ratio 1.00 0.96 1.00 0.95
+-   If there is an effect, will see effect modification on at least one
+    of the difference and ratio scale
 
-\-\-\-\-\-\-- \-\-\-\-\-\-- \-\-\-\-\-\-- \-\-\-\-\-\-- \-\-\-\-\-\--
+-   If there is no effect (example 6), will see no effect modification
+    on both difference and ratio scale
 
-Proportion: No for ratio, no for difference
+-   In real world, will usually see effect modification on both scales.
+    The real question is the effect modification scientifically
+    meaningful.
 
-Odds: No for difference, no for ratio
+    -   If we find there is important effect modification, science will
+        go forward estimating effects separately
 
-Summary comments on examples
+    -   Models with interaction terms are useful for testing if effect
+        modification is present (statistically)
 
-If there is an effect, will see effect modification on at least one of
+<!-- -->
 
-the difference and ratio scale
+-   Aside: Be careful when comparing two ratios
 
-If there is no effect (example 6), will see no effect modification on
+    -   How close are two ratios?
 
-both difference and ratio scale
+        -   0.20 and 0.25 VERSUS 5.0 and 4.0?
 
-In real world, will usually see effect modification on both scales. The
+        -   0.10 and 0.15 VERSUS 10.0 and 6.7?
 
-real question is the effect modification scientifically meaningful.
+    -   Compare the ratio of ratios, not the difference
 
-If we find there is important effect modification, science will go
+    -   We might consider ratios to be more different when both ratios
+        are $>1$ than when both are $<1$. But, that would be wrong.
 
-forward estimating effects separately
+### Analysis of Effect Modification
 
-Models with interaction terms are useful for testing if effect
+-   When the scientific question involves effect modification
 
-modification is present (statistically)
+    -   Conduct analysis within each stratum separately
 
-Aside: Be careful with ratios
+    -   If we want to estimate the degree of effect modification or test
+        its existence, use a regression model including
 
-How close are two ratios?
+        -   Predictor of interest (main effect)
 
-0.20 and 0.25 VERSUS 5.0 and 4.0?
+        -   Effect modifying variable (main effect)
 
-0.10 and 0.15 VERSUS 10.0 and 6.7?
+        -   A covariate modeling the interaction (usually a product)
 
-We might consider ratios to be more different when both ratios are \$\>
-1\$
+    #### Impact of ignoring effect modification
 
-than when both are \$\< 1\$. But, that would be wrong.
+    -   By design or mistake, we sometimes do not model effect
+        modification
 
-\### Analysis of Effect Modification
+    -   Might perform
 
-When the scientific question involves effect modification
+        -   Unadjusted analysis: POI only
 
-Conduct analysis within each stratum separately
+        -   Adjusted analysis: POI and third variable, but no
+            interaction term
 
-If we want to estimate the degree of effect modification or test its
+    -   If effect modification exists, an unadjusted analysis will give
+        different results according to the association between the POI
+        and effect modifier in the sample
 
-existence, use a regression model including
+-   If the POI and the effect modifier are not associated
 
-Predictor of interest (main effect)
+    -   Unadjusted analysis tends toward an (approximate) weighted
+        average of the stratum specific effects
 
-Effect modifying variable (main effect)
+        -   With means, exactly a weighted average
 
-A covariate modeling the interaction (usually a product)
+        -   With odds and hazards, an approximate weighted average
+            (because they are non-linear functions of the mean)
 
-Ignoring effect modification
+-   If the POI and the effect modifier are associated in the sample
 
-By design or mistake, we sometimes do not model effect modification
+    -   The "average" effect is confounded and thus unreliable
+        (variables can be both effect modifiers and confounders)
 
-Might perform
+-   If effect modification exists, an analysis adjusting only for the
+    third variable (but no interaction) will tend toward a weighted
+    average of the stratum specific effects
 
-Unadjusted analysis: POI only
+    -   Hence, an association in one stratum and not the other will make
+        an adjusted analysis look like an association (provide the
+        sample size is large enough)
 
-Adjusted analysis: POI and third variable, but no interaction term
+## Confounding
 
-If effect modification exists, an unadjusted analysis will give
+### Simpson's Paradox
 
-different results according to the association between the POI and
+-   Confounding has its roots in Simpson's Paradox
 
-effect modifier in the sample
+-   Given binary variables $Y$ (response), $X$ (POI), and $Z$ (strata)
+    it is possible to have ...
 
-If the POI and the effect modifier are not associated
+$$\textrm{Pr}(Y=1 | X=1, Z=1) > \textrm{Pr}(Y=1 | X=0, Z=1)$$
+$$\textrm{Pr}(Y=1 | X=1, Z=0) > \textrm{Pr}(Y=1 | X=0, Z=0)$$
 
-Unadjusted analysis tends toward an (approximate) weighted average of
+... but to also have ...
 
-the stratum specific effects
+$$\textrm{Pr}(Y=1 | X=1) < \textrm{Pr}(Y=1 | X=0)$$
 
-With means, exactly a weighted average
+#### Example: Probability of death (Y) at two hospitals (X) stratified by poor patient condition (Z)
 
-With odds and hazards, an approximate weighted average (because they are
+-   Question: Which hospital do you want to be treated at?
+    -   Consider the results overall (averaging over Z) and conditional
+        on Z below
 
-non-linear functions of the mean)
+| Overall    | Died | Survived | Death Rate |
+|------------|------|----------|------------|
+| Hospital A | 16   | 784      | 2.0%       |
+| Hospital B | 63   | 2037     | 3.0%       |
 
-If the POI and the effect modifier are associated in the sample
+| Good Condition | Died | Survived | Death Rate |
+|----------------|------|----------|------------|
+| Hospital A     | 8    | 592      | 1.3%       |
+| Hospital B     | 6    | 594      | 1.0%       |
 
-The "average" effect is confounded and thus unreliable
+| Poor Condition | Died | Survived | Death Rate |
+|----------------|------|----------|------------|
+| Hospital A     | 8    | 192      | 4.0%       |
+| Hospital B     | 57   | 1443     | 3.8%       |
 
-(variables can be both effect modifiers and confounders)
+-   Ignoring condition, Hospital B has a **higher** death rather.
+    However, within both poor and good condition, Hospital B has a
+    **lower** death rate.
 
-If effect modification exists, an analysis adjusting only for the third
+    -   Poor condition is a confounder. Hospital B has more subjects
+        with poor condition and subjects with poor condition have a
+        higher death rate.
 
-variable (but no interaction) will tend toward a weighted average of the
+### Definition of Confounding
 
-stratum specific effects
+-   The association between a predictor of interest and the response is
+    confounded by a third variable if
 
-Hence, an association in one stratum and not the other will make an
+    -   The third variable is associated with the predictor of interest
+        in the sample, AND
 
-adjusted analysis look like an association (provide the sample size is
+    -   The third variable is associated with the response
 
-large enough)
+        -   Causally (in truth)
 
-Confounding
+        -   In groups that are homogeneous with respect to the predictor
+            of interest
 
-\-\-\-\-\-\-\-\-\-\--
+        -   Not in the causal pathway of interest
 
-\### Simpson's Paradox
+-   We must consider our belief about the causal relationships among the
+    measured variables
 
-Confounding has its roots in Simpson's Paradox
+    -   There is no statistical test for causality
 
-Given binary variables \$Y\$ (response), \$X\$ (POI), and \$Z\$ (strata)
-it is
+    -   Inference about causation comes only from the study design
 
-possible to have \\...
+    -   BUT, consideration of the causal relationships helps us to
+        decide which statistical questions to answer
 
-\$\\textrm{Pr}(Y=1 \| X=1, Z=1) \> \\textrm{Pr}(Y=1 \| X=0, Z=1)\$
+-   Classic confounder
 
-\$\\textrm{Pr}(Y=1 \| X=1, Z=0) \> \\textrm{Pr}(Y=1 \| X=0, Z=0)\$
-
-\\... but to have \\...
-
-\$\\textrm{Pr}(Y=1 \| X=1) \< \\textrm{Pr}(Y=1 \| X=0)\$
-
-\### Definition of Confounding
-
-The association between a predictor of interest and the response is
-
-confounded by a third variable if
-
-The third variable is associated with the predictor of interest in the
-
-sample, AND
-
-The third variable is associated with the response
-
-Causally (in truth)
-
-In groups that are homogeneous with respect to the predictor of interest
-
-Not in the causal pathway of interest
-
-We must consider our belief about the causal relationships among the
-
-measured variables
-
-There is no statistical test for causality
-
-Inference about causation comes only from the study design
-
-BUT, consideration of the causal relationships helps us to decide which
-
-statistical questions to answer
-
-Classic confounder
-
-A clear case of confounding occurs when some third variable is a "cause"
-
-of both the POI and response
+    -   A clear case of confounding occurs when some third variable is a
+        "cause" of both the POI and response
 
 We generally adjust for such a confounder
 
-Example: Ice cream (POI), murder rate (outcome), and temperature
+#### Directed Acyclyic Graph
 
-(confounder) in New York City during the summer
+```{mermaid}
+flowchart LR
+  X[Predictor\nof interest] -- Causal? --> Y[Outcome]
+  X[Predictor\nof interest] <-- Association --> Z[Confounder]
+  Z[Confounder] -- Causal --> Y[Outcome]
+```
 
-Directed Acyclyic Graph:
+-   Example: Ice cream (POI), murder rate (outcome), and temperature
+    (confounder) in New York City during the summer
 
-Causal pathways
+```{mermaid}
+flowchart LR
+  X[Ice Cream] -- Causal? --> Y[Murder Rate]
+  X[Ice Cream] <-- Association --> Z[Air temperature]
+  Z[Air temperature] -- Causal --> Y[Murder Rate]
+```
 
-A variable in the causal pathway of interest is not a confounder
+#### Causal pathways
 
-We would not adjust for such a variable
+##### A variable in the causal pathway of interest
 
-If we did adjust, we would lose ability to detect associations between
+-   Not a confounder, so we would not adjust for such a variable
 
-the POI and the outcome
+-   If we did adjust, we would lose ability to detect associations
+    between the POI and the outcome
 
-Example: Second hand smoke (POI), stunted growth (confounder), FEV1
+-   Example: Second hand smoke (POI), stunted growth (confounder), FEV1
+    (outcome)
 
-(outcome)
+    -   Scientific question is about the impact of smoking on lung
+        function
 
-Scientific question is about the impact of smoking on lung function
+        -   Stunted growth addresses lung anatomy, not lung function,
+            which we don't care about it
 
-Stunted growth addresses lung anatomy, not lung function, which we don't
+```{mermaid}
+flowchart LR
+  X[Second hand smoke] --> Y[FEV1]
+  X[Second hand smoke] --> Z[Stuntend growth]
+  Z[Stunted growth] --> Y[FEV1]
+```
 
-care about it
+##### A variable in the causal pathway *not* of interest
 
-Directed Acyclyic Graph:
+-   However, we want to adjust for a variable in a causal pathway that
+    is not of interest
+    -   Example: Work stress causing ulcers by hormonal effects versus
+        alcoholism
+    -   Directed Acyclyic Graph
+        -   We can adjust for alcoholism to estimate the path through
+            horomonal effects
+        -   Alternatively, we can adjust for hormonal effects to
+            estimate the effect through alcoholism
 
-We want to adjust for a variable in a causal pathway not of interest
+```{mermaid}
+flowchart LR
+  X[Work stress] --> W[Hormonal Effects]
+  X[Work Stress] --> Z[Alcholism]
+  W[Hormonal Effects] --> Y[Ulcers]
+  Z[Alcholism] --> Y[Ulcers]
+```
 
-Example: Work stress causing ulcers by hormonal effects versus
+##### Surrogate for response
 
-alcoholism
+-   Adjustment for a surrogate is a bad idea
 
-Directed Acyclyic Graph:
+-   As the name implies, surrogates are a substitute for the response
+    variable
 
-Surrogate for response
+-   Directed Acyclyic Graph where forced vital capacity (FVC) is a
+    surrogate for forced exp
 
-Adjustment for a surrogate is a bad idea
+```{mermaid}
+flowchart LR
+  X[Second hand smoke] --> Z[FVC]
+  Z[FVC] --> Y[FEV1]
+```
 
-As the name implies, surrogates are a substitute for the response
+##### Many other (complicated) patterns possible
 
-variable
+-   Greenland, Pearl, and Robins. Causal Diagrams for Epidemiologic
+    Research. Epidemiology. (1999) <http://www.jstor.org/stable/3702180>
+-   <https://www.dagitty.net/>
 
-Directed Acyclyic Graph:
+### Diagnosing Confounding
 
-Complicated causal pathway (M shape)
+-   Confounding typically produces a difference between unadjusted and
+    adjusted analyses
 
-There is no confounding in this diagram
+-   This symptom is not proof of confounding
 
-However, adjustment for the observable surrogate would produce a
+-   Such a difference can occur when there is no confounding
 
-spurious association
+-   Symptom is more indicative of confounding when modeling means
+    (linear regression) than when modeling odds (logistic regression) or
+    hazards (Cox, proportional hazards regression)
 
-Example: Smoking marijuana (POI), heart attack (Response), some
+-   Estimates of association from unadjusted analysis are markedly
+    different from estimates of association from adjusted analysis
 
-laboratory measurement (surrogate)
+-   Association within each stratum is similar to each other, but
+    different from the association in the combined data
 
-Latent variable A: Some (genetic, environmental?) characteristic that
+-   In linear regression, differences between adjusted and unadjusted
+    analyses are diagnostic of confounding
 
-makes you more likely to smoke marijuana and increases the lab value
+-   Precision variables tend to change standard errors, but not slope
+    estimates
 
-Latent variable B: Having cardiovascular disease may elevate both the
+-   Effect modification would show differences between adjusted analysis
+    and unadjusted analysis, but would also show different associations
+    in the strata
 
-lab measurement and risk for heart attack
+-   More difficult to diagnosis confounding with non-linear functions of
+    the mean
 
-Directed Acyclyic Graph:
+-   Common non-linear functions: Odds (odds ratios), hazards (hazard
+    ratios)
 
-Greenland, Pearl, and Robins. Causal Diagrams for Epidemiologic
+-   May show the symptoms of confounding when confounding is not present
 
-Research. Epidemiology. (1999)
+-   Adjusting for precision variables can appear to be confounding
 
-\<http://www.jstor.org/stable/3702180\>
+-   In logistic and PH regression, difference between adjusted and
+    unadjusted analyses are more difficult to judge
 
-\### Diagnosing Confounding
+-   Comparison in more homogeneous groups (i.e. after adjustment for a
+    precision variable) will drive slope estimates away from the null
 
-Confounding typically produces a difference between unadjusted and
+-   Example: Suppose you have a sample where 50% of the subjects die
 
-adjusted analyses
+-   What is the variability?
 
-This symptom is not proof of confounding
+-   We can reduce this variability by changing $p$, the probability of
+    death
 
-Such a difference can occur when there is no confounding
+-   Estimate $p$ in different stratum. One stratum may have a higher
+    $p$, another a lower $p$.
 
-Symptom is more indicative of confounding when modeling means (linear
+-   By making the estimate more precise, we have also impacted the mean
 
-regression) than when modeling odds (logistic regression) or hazards
+## Precision Variables
 
-(Cox, proportional hazards regression)
+### Overview
 
-Estimates of association from unadjusted analysis are markedly different
+-   Sometimes the scientific question to be answered is chosen based on
+    which questions can be answered most precisely
 
-from estimates of association from adjusted analysis
+-   In general, questions can be answered more precisely when the within
+    group distribution is less variable
 
-Association within each stratum is similar to each other, but different
+-   Comparing groups that are similar with respect to other important
+    risk factors decreases variability
 
-from the association in the combined data
+-   The precision variability is independent of the cause of the
+    response
 
-In linear regression, differences between adjusted and unadjusted
+-   If we adjust for such a variable, we tend to gain precision
 
-analyses are diagnostic of confounding
+-   Directed Acyclyic Graph:
 
-Precision variables tend to change standard errors, but not slope
+```{mermaid}
+flowchart LR
+  X[Predictor] --> Y[Outcome]
+  Z[Precision] --> Y[Outcome]
+```
 
-estimates
+-   Standard errors are the key to precision
 
-Effect modification would show differences between adjusted analysis and
+-   Greater precision is achieved with smaller standard errors
 
-unadjusted analysis, but would also show different associations in the
+-   Standard errors are decreased by either increasing $V$ or decreasing
+    \$n\$
 
-strata
+-   Typically: $se(\hat{\theta}) = \sqrt{\frac{V}{n}}$
 
-More difficult to diagnosis confounding with non-linear functions of the
+-   Width of CI:
+    $2 \times (\textrm{crit value}) \times se(\hat{\theta})$
 
-mean
+-   Test statistic:
+    $Z = \frac{\hat{\theta} - \theta_0}{se(\hat{\theta})}$
 
-Common non-linear functions: Odds (odds ratios), hazards (hazard ratios)
+-   Options for increasing precision
 
-May show the symptoms of confounding when confounding is not present
+-   Increase sample size
 
-Adjusting for precision variables can appear to be confounding
+-   Decrease \$V\$
 
-In logistic and PH regression, difference between adjusted and
+-   (Decrease confidence level)
 
-unadjusted analyses are more difficult to judge
+### Adjusting for Precision Variables
 
-Comparison in more homogeneous groups (i.e. after adjustment for a
-
-precision variable) will drive slope estimates away from the null
-
-Example: Suppose you have a sample where 50% of the subjects die
-
-What is the variability?
-
-We can reduce this variability by changing \$p\$, the probability of
-death
-
-Estimate \$p\$ in different stratum. One stratum may have a higher
-\$p\$,
-
-another a lower \$p\$.
-
-By making the estimate more precise, we have also impacted the mean
-
-Precision Variables
-
-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
-
-\### Overview
-
-Sometimes the scientific question to be answered is chosen based on
-
-which questions can be answered most precisely
-
-In general, questions can be answered more precisely when the within
-
-group distribution is less variable
-
-Comparing groups that are similar with respect to other important risk
-
-factors decreases variability
-
-The precision variability is independent of the cause of the response
-
-If we adjust for such a variable, we tend to gain precision
-
-Directed Acyclyic Graph:
-
-Standard errors are the key to precision
-
-Greater precision is achieved with smaller standard errors
-
-Standard errors are decreased by either increasing \$V\$ or decreasing
-\$n\$
-
-Typically: \$se(\\hat{\\theta}) = \\sqrt{\\frac{V}{n}}\$
-
-Width of CI: \$2 \\times (\\textrm{crit value}) \\times
-se(\\hat{\\theta})\$
-
-Test statistic: \$Z = \\frac{\\hat{\\theta} -
-\\theta_0}{se(\\hat{\\theta})}\$
-
-Options for increasing precision
-
-Increase sample size
-
-Decrease \$V\$
-
-(Decrease confidence level)
-
-\### Adjusting for Precision Variables
-
-\#### Precision for Difference of Independent Means
+#### Precision for Difference of Independent Means
 
 Independent observations where group 1 has a different mean and variance
-
 than group 2
 
-\$\\textrm{ind } Y\_{ij} \\sim (\\mu_j, \\sigma_j\^2), j = 1, 2; i = 1,
+\$\textrm{ind } Y\_{ij} \\sim (\\mu_j, \\sigma_j\^2), j = 1, 2; i = 1,
 \\ldots, n_j\$
 
 \$n = n_1 + n_2\$; \$r = n_1 / n_2\$
