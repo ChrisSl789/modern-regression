@@ -1415,8 +1415,7 @@ fisher.z.inv(fisher.z(0.7283)+c(-1.96, 1.96)*fisher.z.se(13))
 
     -   Restate the model as log link for geometric mean
 
-    -   Model:
-        $\textrm{log GM}[Y_i | X_i] = \beta_0 + \beta_1 \times X_i$
+-   Model: $\textrm{log GM}[Y_i | X_i] = \beta_0 + \beta_1 \times X_i$
 
     -   When $X_i = 0$: $\textrm{log GM}[Y_i | X_i = 0] = \beta_0$
 
