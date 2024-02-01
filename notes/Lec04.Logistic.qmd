@@ -756,13 +756,12 @@ exp(5*posterior_interval(fit2, prob = 0.95))[2,] # 95% credible interval
     estimated using a Bayesian logistic regression model. The model did
     not adjust for other covariates and assumed a logit link function
     and Binomial likelihood. We assumed a weakly informative prior
-    distribution for the log odd of the association between survival and
-    age (Normal prior with mean 0 and scale 0.17 for $\beta_1$).
-    Conditional on the data, the posterior mean estimate indicates that
-    comparing two subjects who differ in age by 5 years, the younger
-    subject has a 1.04 fold increased odds of survival compared to the
-    older subject. A 95% credible for this posterior odds ratio is from
-    1.00 to 1.09.
+    distribution for the log odds of survival given age (Normal prior
+    with mean 0 and scale 0.17 for $\beta_1$). Conditional on the data,
+    the posterior mean estimate indicates that comparing two subjects
+    who differ in age by 5 years, the younger subject has a 1.04 fold
+    increased odds of survival compared to the older subject. A 95%
+    credible for this posterior odds ratio is from 1.00 to 1.09.
 
 -   Note that this model does not consider gender, so it is averaging
     over the males and females. We will revisits this analysis where the
