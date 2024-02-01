@@ -626,29 +626,30 @@ titanic %>%
 
 #### Bayesian Estimates and Interpretation
 
--   Bayesian approach to the logistic model requires specifying
+-   Bayesian approach to the logistic model requires specifying the
+    model, prior distributions, and the likelihood
 
-    -   The model
+-   The model
 
     -   e.g. a model for the log odds of survival that is linear in the
         parameters with an intercept and slope for age
 
-    -   Prior distributions on parameters
+-   Prior distributions on parameters
 
-        -   For the simple logistic regression model, we have parameters
-            $\beta_0$, and $\beta_1$.
+    -   For the simple logistic regression model, we have parameters
+        $\beta_0$, and $\beta_1$.
 
-        -   For now, we will use default prior distributions that are
-            are intended to be *weakly informative* in that they provide
-            moderate regularization and help stabilize computation. See
-            the [STAN
-            documentation](https://mc-stan.org/rstanarm/reference/priors.html)
-            for more details
+    -   For now, we will use default prior distributions that are are
+        intended to be *weakly informative* in that they provide
+        moderate regularization and help stabilize computation. See the
+        [STAN
+        documentation](https://mc-stan.org/rstanarm/reference/priors.html)
+        for more details
 
-        -   Appropriate priors can be based on scientific considerations
+    -   Appropriate priors can be based on scientific considerations
 
-        -   Sensitivity analyses can evaluate the the robustness of
-            finding to different prior assumptions
+    -   Sensitivity analyses can evaluate the the robustness of finding
+        to different prior assumptions
 
 -   The likelihood
 
@@ -662,9 +663,15 @@ $$\binom{n}{y} \pi^{y} (1 - \pi)^{n - y},$$
     $\eta = \alpha + \mathbf{x}^\top \boldsymbol{\beta}$ is a linear
     predictor
 
+```{=html}
+<!-- -->
+```
 -   For a sample of size $N$, the likelihood of the entire sample is the
     product of $N$ individual likelihood contributions.
 
+```{=html}
+<!-- -->
+```
 -   Because $\pi$ is a probability, for a binomial model the *link*
     function $g$ maps between the unit interval (the support of $\pi$)
     and the set of all real numbers $\mathbb{R}$. When applied to a
@@ -718,9 +725,8 @@ prior_summary(fit2, digits = 2)
     -   Slope for age is of primary scientific importance
 
     -   *A priori* we assume that no association between age and
-        cholesterol. Specifically, we assumed a Normal prior with
-        location (mean) of 0 and scale (standard devation) of 0.17 for
-        $\beta_1$.
+        survival. Specifically, we assumed a Normal prior with location
+        (mean) of 0 and scale (standard devation) of 0.17 for $\beta_1$.
 
     -   Conditional on the data, we estimate that for every 1 year
         increase in age, the log odds of decreases by -0.0079 (95%
@@ -734,12 +740,33 @@ prior_summary(fit2, digits = 2)
 exp(coef(fit2)["age"]) # Posterior Odds Ratio
 exp(posterior_interval(fit2, prob = 0.95)) # 95% credible interval
 
-# 5 year change in age
+# 5 year increase in age
 exp(5*coef(fit2)["age"]) # Posterior Odds Ratio
 exp(5*posterior_interval(fit2, prob = 0.95))[2,] # 95% credible interval
 
+# Could also flip (invert) these odds ratios to interpret as decrease in age being associated with increased survival
+# 5 year decrease in age
+1/exp(5*coef(fit2)["age"]) # Posterior Odds Ratio
+1/exp(5*posterior_interval(fit2, prob = 0.95))[2,] # 95% credible interval
+
 
 ```
+
+-   The association between age and probability of survival was
+    estimated using a Bayesian logistic regression model. The model did
+    not adjust for other covariates and assumed a logit link function
+    and Binomial likelihood. We assumed a weakly informative prior
+    distribution for the log odd of the association between survival and
+    age (Normal prior with mean 0 and scale 0.17 for $\beta_1$).
+    Conditional on the data, the posterior mean estimate indicates that
+    comparing two subjects who differ in age by 5 years, the younger
+    subject has a 1.04 fold increased odds of survival compared to the
+    older subject. A 95% credible for this posterior odds ratio is from
+    1.00 to 1.09.
+
+-   Note that this model does not consider gender, so it is averaging
+    over the males and females. We will revisits this analysis where the
+    age effect is analyzed separately in males and females.
 
 ## Inference with Logistic Regression
 
@@ -773,25 +800,26 @@ exp(5*posterior_interval(fit2, prob = 0.95))[2,] # 95% credible interval
     -   Robust standard errors: Correlated observations within
         identified clusters
 
-    -   Assumption 3: Assumptions about variance of observations within
-        groups
+-   Assumption 3: Assumptions about variance of observations within
+    groups
 
--   Classical regression: Mean-variance relationship for binary data
+    -   Classical regression: Mean-variance relationship for binary data
 
-    -   Classical logistic regression estimates SE using model based
-        estimates
+        -   Classical logistic regression estimates SE using model based
+            estimates
 
-    -   Hence in order to satisfy this requirement, linearity of log
-        odds across groups must hold
+        -   Hence in order to satisfy this requirement, linearity of log
+            odds across groups must hold
 
--   Robust standard errors
+    -   Robust standard errors
 
-    -   Allows unequal variance across groups
+        -   Allows unequal variance across groups
 
-    -   Hence, do not need linearity of log odds across groups to hold
+        -   Hence, do not need linearity of log odds across groups to
+            hold
 
-    -   Valid statistical inference (CIs, p-values) about *odds of
-        response in specific groups* requires a further assumption
+        -   Valid statistical inference (CIs, p-values) about *odds of
+            response in specific groups* requires a further assumption
 
 -   Assumption 4: Adequacy of the linear model
 
@@ -799,10 +827,10 @@ exp(5*posterior_interval(fit2, prob = 0.95))[2,] # 95% credible interval
         neighboring groups, and we are assuming a straight line
         relationship, the straight line needs to be true
 
-    -   Needed for either classical or robust standard errors
+        -   Needed for either classical or robust standard errors
 
-    -   Note that we can model transformations of the measured predictor
-        if we feel a straight line is not appropriate
+        -   Note that we can model transformations of the measured
+            predictor if we feel a straight line is not appropriate
 
     -   Inference about *individual observations* (prediction intervals,
         P-values) in specific groups requires no further assumptions
@@ -865,19 +893,20 @@ with(titanic,
 -   We could describe the observed differences in two way, both being
     correct
 
--   Gender modifies the age effect
+    -   Gender modifies the age effect
 
-    -   In males, the probability of survival worsened with age while in
-        female the probabilty of survival improved with age
-    -   Emphasizes that the female age slope is positive while the male
-        age slope is negative
+        -   In males, the probability of survival worsened with age
+            while in female the probability of survival improved with
+            age
+        -   Emphasizes that the female age slope is positive while the
+            male age slope is negative
 
--   Age modifies the gender effect
+    -   Age modifies the gender effect
 
-    -   The survival rates of male and females were more similar at
-        younger ages than older ages
-    -   Could specify the odds ratio of survival comparing females to
-        males at specific ages
+        -   The survival rates of male and females were more similar at
+            younger ages than older ages
+        -   Could specify the odds ratio of survival comparing females
+            to males at specific ages
 
 ### Stratified analysis by sex
 
@@ -911,7 +940,7 @@ exp(5*confint.default(fit.titanic.male,"age"))
 
 ### Effect modification using interaction terms
 
--   Instead of fitting two seaparte models for male and females, we
+-   Instead of fitting two separate models for male and females, we
     could estimate all parameters in a single regression model
     -   Let $p_i$ be the probability of survival for passenger $i$ and
         $\textrm{logit}(p)= \textrm{log}\left(\frac{p}{1-p}\right)$
@@ -919,11 +948,11 @@ exp(5*confint.default(fit.titanic.male,"age"))
     -   Let $X_{2i}$ be an indicator variable for female sex. $X_{2i}=1$
         if a subject is female and $X_{2i} = 0$ if a subject is male
 
-$$\textrm{logit}(p | X_{1i},X_{2i}) = \beta_0 + \beta_1 * X_{1i} + \beta_{2i} * X_{2i} + \beta_3*X_{1i}*X_{2i}$$
+$$\textrm{logit}(p_i | X_{1i},X_{2i}) = \beta_0 + \beta_1 * X_{1i} + \beta_{2i} * X_{2i} + \beta_3*X_{1i}*X_{2i}$$
 
 -   In males, $X_{2i} = 0$, this model reduces to
 
-$$\textrm{logit}(p | X_{1i}, X_{2i}=0) = \beta_0 + \beta_1 * X_{1i}$$
+$$\textrm{logit}(p_i | X_{1i}, X_{2i}=0) = \beta_0 + \beta_1 * X_{1i}$$
 
 -   In females, $X_{2i} = 1$, this model can be expressed as
 
