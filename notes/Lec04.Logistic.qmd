@@ -663,15 +663,13 @@ $$\binom{n}{y} \pi^{y} (1 - \pi)^{n - y},$$
     $\eta = \alpha + \mathbf{x}^\top \boldsymbol{\beta}$ is a linear
     predictor
 
-```{=html}
 <!-- -->
-```
+
 -   For a sample of size $N$, the likelihood of the entire sample is the
     product of $N$ individual likelihood contributions.
 
-```{=html}
 <!-- -->
-```
+
 -   Because $\pi$ is a probability, for a binomial model the *link*
     function $g$ maps between the unit interval (the support of $\pi$)
     and the set of all real numbers $\mathbb{R}$. When applied to a

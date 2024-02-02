@@ -6,17 +6,17 @@ Week,Day,Date,Topic,"Notes or Lab",Supplemental,Homework,Reading
 2,3,2024/01/16,"Class cancelled (weather)","no class",,,
 2,5,2024/01/18,"Simple Linear Regression","Lab 1",,,"RMB 3.2"
 3,2,2024/01/22,"Simple Linear Regression","Lab 1 and Lec 3","Matrix Algebra Review","HW 1 assigned",
-3,3,2024/01/23,"Simple Linear Regression","Chap 3","Log Transformations",,
+3,3,2024/01/23,"Simple Linear Regression","Lec 3","Log Transformations",,
 3,5,2024/01/25,"Linear Regression model assumptions","Lab 2",,,
-4,2,2024/01/29,"Simple Linear Regression","Lec 4",,,"RMB 3.4, 6.1"
-4,3,2024/01/30,"Simple Logistic Regression","Lec 4/Lab 3",,"HW 1 due; HW 2 assigned",
-4,5,2024/02/01,"Logistic Regression/Precision","Lec 5/Lec6",,,
+4,2,2024/01/29,"Simple Linear Regression","Lec 3",,,"RMB 3.4, 6.1"
+4,3,2024/01/30,"Simple Logistic Regression","Lec 4",,"HW 1 due; HW 2 assigned",
+4,5,2024/02/01,"Logistic Regression/Precision","Lec 4/Lec 5",,,
 5,2,2024/02/05,"Logistic Regression Lab","Lab 3",,,
-5,3,2024/02/06,Precison,"Lec 6",,"HW 2 due; HW 3 assigned","RMB 5.1"
-5,5,2024/02/08,"Confounding and Effect Modification","Lec 7",,,
+5,3,2024/02/06,Precison/Confouding,"Lec 5/Lec 6",,"HW 2 due; HW 3 assigned","RMB 5.1"
+5,5,2024/02/08,"Confounding and Effect Modification","Lec 6",,,
 6,2,2024/02/12,"Lab: Precision","Lab 4",,,
-6,3,2024/02/13,"Multivariable Models","Lec 8",,"HW 3 due; HW 4 assigned",
-6,5,2024/02/15,"Multivariable Models","Lec 8",,,
+6,3,2024/02/13,"Multivariable Models","Lec 7",,"HW 3 due; HW 4 assigned",
+6,5,2024/02/15,"Multivariable Models","Lec 7",,,
 7,2,2024/02/19,"Lab: Multivariable models","Lab 5",,,
 7,3,2024/02/20,"Time to event models",,,"HW 4 due",
 7,5,2024/02/22,"Model estimation",,,,
