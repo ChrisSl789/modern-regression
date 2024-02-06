@@ -87,7 +87,7 @@ library(ggplot2)
 
 ### Examples of Effect Modification
 
-#### Example 1: Is serum LDL by gender modified by smoking?
+#### Example 1: Is serum LDL by smoking modified by gender?
 
 |          |       |      |        |        |
 |----------|-------|------|--------|--------|
@@ -98,9 +98,15 @@ library(ggplot2)
 | Diff     | -13   | 0    | -13    | -9     |
 | Ratio    | 0.90  | 1    | 0.90   | 0.93   |
 
--   Effect modification for mean, not really for median
+-   Effect modification by gender exists if the effect of smoking in
+    males is different from the effect of smoking in females
 
-    -   Holds for both difference or ratio
+    -   Compare the diff (or ratio) for the mean (or median) in women to
+        the diff (or ratio) for the mean (or median) in men
+
+-   Effect modification for mean, not as much for median
+
+    -   Statement holds for both difference or ratio of mean/median
 
 #### Example 2: Creatinine by stroke (modified by gender?)
 

@@ -1,0 +1,1403 @@
+---
+title: "Multivariable Models"
+subtitle: "Lecture 07"
+author: "Chris Slaughter"
+footer: "Bios 6312"
+date: last-modified
+format:
+  html:
+    embed-resources: true
+    standalone: true
+    number-sections: true
+    number-depth: 4
+    anchor-sections: true
+    smooth-scroll: true
+    theme: journal
+    toc: true
+    toc-depth: 4
+    toc-title: Contents
+    toc-location: left
+    code-link: false
+    code-tools: true
+    code-fold: true
+    code-block-bg: "#f1f3f5"
+    code-block-border-left: "#31BAE9"
+    reference-location: margin
+    fig-cap-location: margin
+    fontsize: medium
+
+execute:
+   warning: false
+   message: false
+---
+
+```{r}
+library(rms)
+library(ggplot2)
+```
+
+## Overview
+
+-   Scientific questions
+
+    -   Most often scientific questions are translated into comparing the distribution of some response variable across groups of interest
+
+    -   Groups are defined by the predictor of interest (POI)
+
+        -   Categorical predictors of interest: Treatment or control, knockout or wild type, ethnic group
+
+        -   Continuous predictors of interest: Age, BMI, cholesterol, blood pressure
+
+-   If we only considered the response and POI, this is referred to as a simple (linear, logistic, PH, etc.) regression model
+
+-   Often we need to consider additional variables other than POI because\...
+
+    -   We want to make comparisons in different strata
+
+        -   e.g if we stratify by gender, we may get different answers to our scientific question in men and women
+
+    -   Groups being compared differ in other ways
+
+        -   Confounding: A variable that is related to both the outcome and predictor of interest
+
+    -   Less variability in the response if we control for other variables
+
+        -   Precision: If we restrict to looking within certain strata, may get smaller $\sigma^2$
+
+-   Statistics: Covariates other than the Predictor of Interest are included in the model as\...
+
+    -   Effect modifiers
+
+    -   Confounders
+
+    -   Precision variables
+
+-   Two main statistical methods to adjust for covariates
+
+    -   Stratified analyses
+
+        -   Combines information about associations between response across strata
+
+        -   Will not borrow information about (or even estimate) associations between response and adjustment variables
+
+    -   Adjustment in multiple regression
+
+        -   Can (but does not have to) borrow information about associations between response and all modeled variables
+
+        -   Could conduct a stratified analysis using regression
+
+        -   In practice, when researchers say they are using regression, they are almost certainly doing so to borrow information
+
+-   Example: Is smoking associated with FEV in teenagers?
+
+    -   Stratified Analysis
+
+        -   Separately estimate mean FEV in 19 year olds, 18 year olds, 17 year olds, etc. by smoking status
+
+        -   Average means (using weights) to come up with overall effect of smoking on FEV
+
+        -   Key: Not trying to estimate a common effect of age across strata (not borrowing information across age)
+
+        -   No estimate of the age effect in this analysis
+
+    -   Multiple regression
+
+        -   Fit a regression model with FEV as the outcome, smoking as the POI, and age as an adjustment variable
+
+        -   Will provide you an estimate of the association between FEV and age (but do you care?)
+
+        -   Can borrow information across ages to estimate the age effect
+
+            -   Linear/spline function for age would borrow information
+
+            -   Separate indicator variable for each age would borrow less information (would still assume that all 19.1 and 19.2 year olds are the same)
+
+-   Adjustment for two factors: Age and Sex
+
+    -   Stratified analyses
+
+        -   Calculate separate means by age and sex, combine using weight averages as before
+
+        -   This method adjusts for the interaction of age and sex (in addition to age and sex main effects)
+
+    -   Multiple regression
+
+        -   "We adjusted for age and sex\..." or "Holding age and sex constant, we found \..."
+
+        -   Almost certainly the research adjusted for age and sex, but not the interaction of the two variables (but they could have)
+
+## Stratified Analysis
+
+### Methods
+
+-   General approach to conducting a stratified analysis
+
+    -   Divide the data into strata based on all combinations of the "adjustment" covariates
+
+        -   e.g. every combination of age, gender, race, SES, etc.
+
+    -   Within each strata, perform an analysis comparing responses across POI groups
+
+    -   Use (weighted) average of estimated associations across groups
+
+-   Combining responses: Easy if estimates are independent and approximately Normally distributed
+
+    -   For independent strata $k$, $k = 1, \ldots, K$
+
+        -   Estimate in stratum $k$: $\hat{\theta}_k \sim N (\theta_k, se^2_k)$
+
+        -   Weight in stratum $k$: $w_k$
+
+        -   Stratified estimate is
+
+            $$\hat{\theta} = \frac{\sum_{k=1}^K w_k \hat{\theta}_k}{\sum_{k=1}^K w_k} \sim N\left(\frac{\sum_{k=1}^K w_k \theta_k}{\sum_{k=1}^K w_k}, \frac{\sum_{k=1}^K w_k^2 se^2_k}{\left(\sum_{k=1}^K w_k\right)^2} \right)$$
+
+-   How to choose the weights?
+
+    -   Scientific role of the stratified estimate
+
+        -   Just because I have more women in my sample than men, does that mean I should weight my estimate towards women? Maybe, maybe not.
+
+    -   Statistical precision of the stratified estimate
+
+        -   Just because the data are more variable in women than men, does that mean I should down-weight women? Maybe, maybe not.
+
+        -   Weight usually chosen on statistical criteria
+
+-   Weights should be chosen based on the statistical role of the adjustment variable
+
+    -   Effect modifiers
+
+    -   Confounding
+
+    -   Precision
+
+### Weights for Effect Modification
+
+-   Scientific criteria
+
+    -   Sometimes we anticipate effect modification by some variables, but
+
+        -   We do not choose to report estimates of the association between the response and POI in each stratum separately
+
+            -   e.g. political polls, age adjusted incidence rates
+
+        -   We are interested in estimating the "average association" for a population
+
+-   Choosing weights according to scientific importance
+
+    -   Want to estimate the average effect in some population of interest
+
+        -   The real population, or,
+
+        -   Some standard population used for comparisons
+
+    -   Example: Ecologic studies comparing incidence of hip fractures across countries
+
+        -   Hip fracture rates increase with age
+
+        -   Industrialized countries and developing world have very different age distributions
+
+        -   Choose a standard age distribution to remove confounding by age
+
+-   Comment on oversampling
+
+    -   In political polls or epidemiologic studies we sometimes oversample some strata in order to gain precision
+
+        -   For fixed maximal sample size, we gain most precision if stratum samples size is proportional to weight times standard deviation of measurements in stratum
+
+        -   Example: Oversample swing-voters relative to individuals who we can be more certain about their voting preferences
+
+    -   For independent strata $k$, $k = 1, \ldots, K$
+
+        -   Sample size in stratum $k$: $n_k$
+
+        -   Estimate in stratum $k$: $\hat{\theta}_k \sim N\left(\theta_k, se^2_k = \frac{V_k}{n_k} \right)$
+
+        -   Importance weight for stratum $k$: $w_k$
+
+        -   Optimal sample size when $N = \sum_{k=1}^K n_k$ is:
+
+            $$\frac{w_1 \sqrt{V_1}}{n_1} = \frac{w_2 \sqrt{V_2}}{n_2} = \ldots = \frac{w_k \sqrt{V_k}}{n_k}$$
+
+### Weights for Confounders and Precision Variables
+
+-   If the true association is the same in each stratum, we are free to consider statistical criteria
+
+    -   It is very unlikely that there is *no* effect modification in truth, but is it small enough to ignore?
+
+-   Statistical criteria
+
+    -   Maximize precision of stratified estimates by minimizing the standard error
+
+-   Optimal statistical weights
+
+    -   For independent strata $k$, $k = 1, \ldots, K$
+
+        -   Sample size in stratum $k$: $n_k$
+
+        -   Estimate in stratum $k$: $\hat{\theta}_k \sim N\left(\theta_k, se^2_k = \frac{V_k}{n_k} \right)$
+
+        -   Importance weight for stratum $k$: $w_k$
+
+        -   Optimal sample size when $N = \sum_{k=1}^K n_k$ is:
+
+            $$\frac{w_1 \sqrt{V_1}}{n_1} = \frac{w_2 \sqrt{V_2}}{n_2} = \ldots = \frac{w_k \sqrt{V_k}}{n_k}$$
+
+-   We often ignore the aspect that variability may differ across strata
+
+    -   Simplifies so that we choose weight by sample size for each stratum
+
+-   Example: Mantel-Haenszel Statistic
+
+    -   Popular method used to create a common odds ratio estimate across strata
+
+        -   One way to combine a binary response variable and binary predictor across various strata
+
+    -   Hypothesis test comparing odds (proportions) across two groups
+
+        -   Adjust for confounding in a stratified analysis
+
+        -   Weights chosen for statistical precision
+
+    -   Approximate weighting of difference in proportions based on harmonic means of sample sizes in each stratum
+
+        -   Usually viewed as a weighted odds ratio
+
+        -   (Why not weight by log odds or probabilities?)
+
+    -   For independent strata $k$, $k = 1, \ldots, K$
+
+        -   Sample size in stratum $k$: $n_{1k}, n_{0k}$
+
+        -   Estimates in stratum $k$: $\hat{p}_{1k}, \hat{p}_{2k}$
+
+        -   Precision weight for stratum $k$:
+
+            $$w_k = \frac{n_{1k} n_{0k}}{n_{1k} + n_{0k}} \div \sum_{k=1}^K \frac{n_{1k} n_{0k}}{n_{1k} + n_{0k}}$$
+
+        -   These weights work well in practice, and are not as complicated as some other weighting systems
+
+-   Odds of being full professor by sex
+
+<!-- -->
+
+```         
+. cc full female if year==95, by(field)
+
+           field |       OR       [95% Conf. Interval]   M-H Weight
+-----------------+-------------------------------------------------
+            Arts |   .5384615      .2927119   .9835152     16.54545 (exact)
+           Other |   .2540881      .1870044   .3440217      91.6448 (exact)
+            Prof |   .3434705      .1640076   .7048353     14.42581 (exact)
+-----------------+-------------------------------------------------
+           Crude |    .290421       .226544   .3715365              (exact)
+    M-H combined |   .3029764      .2378934    .385865              
+-------------------------------------------------------------------
+Test of homogeneity (M-H)      chi2(2) =     5.47  Pr>chi2 = 0.0648
+
+                   Test that combined OR = 1:
+                                Mantel-Haenszel chi2(1) =     99.10
+                                                Pr>chi2 =    0.0000
+```
+
+-   Questions about output
+
+    -   What hypothesis is being tested by the "Test of Homogeneity"?
+
+    -   Should we use the test of homogeneity to decide if we need to use the M-H adjustment?
+
+    -   Compare the Crude and M-H combined OR
+
+        -   Is there evidence of confounding?
+
+        -   Would there be evidence of confounding if the M-H estimate was further from the null (got smaller in this case)?
+
+    -   How would you determine if field is a precision variable from the output?
+
+-   R code for similar output as above
+
+```{r}
+salary <- read.csv(file="https://biostat.app.vumc.org/wiki/pub/Main/CourseBios312/salary.csv")
+salary.95 <- subset(salary, year==95)
+salary.95$female <- factor((salary.95$sex=="F")+0,levels=0:1, labels=c("Male","Female"))
+salary.95$full <- factor((salary.95$rank=="Full")+0,levels=0:1, labels=c("Assist/Assoc","Full"))
+salary.95$field <- factor(salary.95$field)
+library(rms)
+partial.tables <- xtabs(~female + full + field, salary.95)
+partial.tables
+marginal.table <- xtabs(~female + full, salary.95)
+marginal.table
+library(epiR)
+epi.2by2(partial.tables)
+```
+
+-   Can compare the M-H results to results obtained running logistic regression
+
+#### Unadjusted OR from logistic regression {#unadjusted-or-from-logistic-regression .unnumbered}
+
+```{r}
+m.unadj <- lrm(full ~ female, data=salary.95)
+dd <- datadist(salary.95)
+options(datadist='dd')
+m.unadj
+html(summary(m.unadj))
+```
+
+```         
+Logistic regression                               Number of obs   =       1597
+                                                  LR chi2(1)      =     109.43
+                                                  Prob > chi2     =     0.0000
+Log likelihood =  -1049.533                       Pseudo R2       =     0.0495
+
+------------------------------------------------------------------------------
+        full | Odds Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      female |    .290421    .035561   -10.10   0.000     .2284555    .3691939
+------------------------------------------------------------------------------
+```
+
+#### Unadjusted ORs by field {#unadjusted-ors-by-field .unnumbered}
+
+```{r}
+m.unadj.arts <- lrm(full ~ female, data=salary.95[salary.95$field=="Arts",])
+m.unadj.other <- lrm(full ~ female, data=salary.95[salary.95$field=="Other",])
+m.unadj.prof <- lrm(full ~ female, data=salary.95[salary.95$field=="Prof",])
+```
+
+#### In Arts Strata
+
+```{r}
+m.unadj.arts
+summary(m.unadj.arts)
+```
+
+#### In Other Strata
+
+```{r}
+m.unadj.other
+html(summary(m.unadj.other))
+```
+
+#### In Prof(essional) Strata
+
+```{r}
+m.unadj.arts
+html(summary(m.unadj.other))
+```
+
+```         
+. sort field
+. by field: logistic full female if year==95
+
+----------------------------------------------------------------------------------
+-> field = Arts
+
+Logistic regression                               Number of obs   =        220
+                                                  LR chi2(1)      =       4.69
+                                                  Prob > chi2     =     0.0304
+Log likelihood = -148.83634                       Pseudo R2       =     0.0155
+
+------------------------------------------------------------------------------
+        full | Odds Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      female |   .5384615   .1556108    -2.14   0.032      .305608    .9487343
+------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------
+-> field = Other
+
+Logistic regression                               Number of obs   =       1067
+                                                  LR chi2(1)      =      91.17
+                                                  Prob > chi2     =     0.0000
+Log likelihood = -692.78622                       Pseudo R2       =     0.0617
+
+------------------------------------------------------------------------------
+        full | Odds Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      female |   .2540881   .0380877    -9.14   0.000     .1894041    .3408624
+------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------
+-> field = Prof
+
+Logistic regression                               Number of obs   =        310
+                                                  LR chi2(1)      =      10.10
+                                                  Prob > chi2     =     0.0015
+Log likelihood = -202.74823                       Pseudo R2       =     0.0243
+
+------------------------------------------------------------------------------
+        full | Odds Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      female |   .3434705   .1175803    -3.12   0.002      .175589    .6718641
+------------------------------------------------------------------------------
+```
+
+#### OR from multivariable logistic regression controlling for field {#or-from-multivariable-logistic-regression-controlling-for-field .unnumbered}
+
+```{r}
+m.adj <- lrm(full ~ female + field, data=salary.95, x=TRUE, y=TRUE)
+m.adj
+html(summary(m.adj))
+```
+
+```         
+. xi: logistic full female i.field if year==95
+i.field           _Ifield_1-3         (_Ifield_1 for field==Arts omitted)
+
+Logistic regression                               Number of obs   =       1597
+                                                  LR chi2(3)      =     114.38
+                                                  Prob > chi2     =     0.0000
+Log likelihood = -1047.0583                       Pseudo R2       =     0.0518
+
+------------------------------------------------------------------------------
+        full | Odds Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      female |   .3012563   .0372301    -9.71   0.000     .2364515    .3838222
+   _Ifield_2 |   1.248611   .1932157     1.43   0.151     .9219526    1.691009
+   _Ifield_3 |   1.508263   .2798894     2.21   0.027     1.048381    2.169877
+------------------------------------------------------------------------------
+```
+
+-   M-H OR (.303) differs slightly from the multiple logistic regression OR for (.301).
+
+-   Conceptually, the are attempting to do the same thing, but are using different weights
+
+-   Multivariable logistic regression would allow you to control for continuous covariates without complete stratification
+
+#### Logistic regression with robust standard error estimates
+
+-   We could also fit the logistic regression models using robust standard error estimate
+
+-   We did not fit a saturated model to exactly predict the probability of being a full professor in all 6 combinations of field and female. So, it is possible that we have a poorly fitting mean model, and because of the mean-variance relationship, our variance estimates could be poor too.
+
+```{r}
+robcov(m.adj)
+html(summary(robcov(m.adj)))
+```
+
+-   A saturated model would include the interaction of female with field
+
+```{r}
+m.saturated <- lrm(full ~ field + female + field*female, data=salary.95)
+m.saturated
+```
+
+-   We can compare the saturated to the adjusted model using a likelihood ratio test
+
+```{r}
+rms::lrtest(m.saturated, m.adj)
+```
+
+-   We can also compare the predicted probabilities directly
+
+```{r}
+# Predict probability of being a full professor at all 6 combinations of field and salary
+newdata <- expand.grid(female=levels(salary.95$female),
+                       field=levels(salary.95$field)
+                       )
+newdata$phat.adj <- predict(m.adj, newdata, type = "fitted")
+newdata$phat.sat <- predict(m.saturated, newdata, type = "fitted")
+newdata
+```
+
+-   Recall the partial tables of full by female by field given above. Here is the Arts Table. Note that the saturated model matches the observed probability of being a full professor in the Arts group exactly.
+
+```{r}
+partial.tables[,,'Arts']
+70/(70+70)
+28/(28+52)
+```
+
+-   Also matches for Other and Professional
+
+```{r}
+partial.tables[,,'Other']
+477/(477+303)
+82/(82+205)
+```
+
+```{r}
+partial.tables[,,'Prof']
+172/(172+96)
+16/(16+26)
+```
+
+## Multivariable Regression
+
+### General Regression Setting
+
+-   Types of variables
+
+    -   Binary data: e.g. sex, death
+
+    -   Nominal (unordered categorical) data: e.g. race, martial status
+
+    -   Ordinal (ordered categorical data): e.g. cancer stage, asthma severity
+
+    -   Quantitative data: e.g. age, blood pressure
+
+    -   Right censored data: e.g. time to death
+
+-   Which regression model you choose to use is based on the parameter being compared across groups
+
+    | Means           | $\rightarrow$ Linear regression                     |     |
+    |:----------------|:----------------------------------------------------|-----|
+    | Geometric means | $\rightarrow$ Linear regression on log scale        |     |
+    | Odds            | $\rightarrow$ Logistic regression                   |     |
+    | Rates           | $\rightarrow$ Poisson regression                    |     |
+    | Hazards         | $\rightarrow$ Proportional Hazards (Cox) regression |     |
+
+-   General notation for variables and parameters
+
+    | $Y_i$                    | **Response measured on the** $i$**th subject**                   |
+    |:-------------------------|:-----------------------------------------------------------------|
+    | $X_i$                    | Value of the predictor of interest measured on the $i$th subject |
+    | $W_{1i}, W_{2i}, \ldots$ | Value of the adjustment variable for the $i$th subject           |
+    | $\theta_i$               | Parameter summarizing distribution of $Y_i$                      |
+
+    -   The parameter ($\theta_i$) might be the mean, geometric mean, odds, rate, instantaneous risk of an event (hazard), etc.
+
+    -   In multiple linear regression on means, $\theta_i = E[Y_i | X_i, W_{1i}, W_{1i}, \ldots]$
+
+    -   Choice of correct $\theta_i$ should be based on scientific understanding of problem
+
+-   General notation for multiple regression model
+
+    -   $g(\theta_i) = \beta_0 + \beta_1 \times X_i + \beta_2 \times W_{1i} + \beta_3 \times W_{2i} + \ldots$
+
+        | $g( )$    | Link function used for modeling     |
+        |:----------|:------------------------------------|
+        | $\beta_0$ | Intercept                           |
+        | $\beta_1$ | Slope for predictor of interest $X$ |
+        | $\beta_j$ | Slope for covariate $W_{j-1}$       |
+
+    -   The link function is often either none (for modeling means) or log (for modeling geometric means, odds, hazards)
+
+### General Uses of Multivariable Regression
+
+-   Borrowing information
+
+    -   Use other groups to make estimates in groups with sparse data
+
+        -   Intuitively, 67 and 69 year olds would provide some relevant information about 68 year olds
+
+        -   Assuming a straight line relationship tells us about other, even more distant, individuals
+
+        -   If we do not want to assume a straight line, we may only want to borrow information from nearby groups
+
+-   Defining "Contrasts"
+
+    -   Define a comparison across groups to use when answering scientific questions
+
+    -   If the straight line relationship holds, the slope for the POI is the difference in parameter between groups differing by 1 unit in $X$ *when all other covariates are held constant*
+
+    -   If a non-linear relationship in parameter, the slope is still the average difference in parameter between groups differing by 1 unit in $X$ *when all other covariates are held constant*
+
+        -   Slope is a (first order or linear) test for trend in the parameter
+
+        -   Statistical jargon: "a contrast" across groups
+
+-   The major difference between different regression models is the interpretation of the parameters
+
+    -   How do I want to summarize the outcome?
+
+        -   Mean, geometric mean, odds, hazard
+
+    -   How do I want to compare groups?
+
+        -   Difference, ratio
+
+-   Issues related to the inclusion of covariates remains the same
+
+    -   Address the scientific question: Predictor of interest, effect modification
+
+    -   Address confounding
+
+    -   Increase precision
+
+-   Interpretation of parameters
+
+    -   Intercept
+
+        -   Corresponds to a population with all modeled covariates equal to zero
+
+            -   Quite often, this will be outside the range of the data so that the intercept has no meaningful interpretation by itself
+
+    -   Slope
+
+        -   A comparison between groups differing by 1 unit in corresponding covariate, but agreeing on all other modeled covariates
+
+            -   Sometimes impossible to use this interpretation when modeling interactions or complex dose-response curves (e.g. a model with age and age-squared)
+
+-   Stratification versus regression
+
+    -   Generally, any stratified analysis could be performed as a regression model
+
+        -   Stratification adjusts for covariates and all interactions among those covariates
+
+        -   Our habit in regression is to just adjust for covariates as main effects, and consider interactions less often
+
+### Software
+
+-   In Stata or R, we use the same commands as were used for simple regression models
+
+    -   We just list more variable names
+
+    -   Interpretations of the CIs, p-values for coefficients estimates now relate to new scientific interpretations of intercept and slopes
+
+    -   Test of entire regression model also provided (a test that all slopes are equal to zero)
+
+### Example: FEV and Smoking
+
+-   Scientific question: Is the maximum forced expiatory volume (FEV) related to smoking status in children?
+
+-   Age ranges from 3 to 19, but no child under 9 smokes in the sample
+
+-   Models we will compare
+
+    -   Unadjusted (simple) model: FEV and smoking
+
+    -   Adjusted for age: FEV and smoking with age (confounder)
+
+    -   Adjusted for age, height: FEV and smoking with age (confounder) and height (precision)
+
+<!-- -->
+
+```         
+. regress logfev smoker if age>=9, robust
+
+Linear regression                                      Number of obs =     439
+                                                       F(  1,   437) =   10.45
+                                                       Prob > F      =  0.0013
+                                                       R-squared     =  0.0212
+                                                       Root MSE      =  .24765
+
+------------------------------------------------------------------------------
+             |               Robust
+      logfev |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      smoker |   .1023056   .0316539     3.23   0.001     .0400927    .1645184
+       _cons |    1.05817   .0129335    81.82   0.000     1.032751     1.08359
+------------------------------------------------------------------------------
+
+. 
+. regress logfev smoker age if age>=9, robust
+
+Linear regression                                      Number of obs =     439
+                                                       F(  2,   436) =   82.28
+                                                       Prob > F      =  0.0000
+                                                       R-squared     =  0.3012
+                                                       Root MSE      =  .20949
+
+------------------------------------------------------------------------------
+             |               Robust
+      logfev |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      smoker |  -.0513495   .0343822    -1.49   0.136     -.118925     .016226
+         age |   .0635957   .0051401    12.37   0.000     .0534932    .0736981
+       _cons |   .3518165   .0575011     6.12   0.000     .2388028    .4648303
+------------------------------------------------------------------------------
+
+. 
+. regress logfev smoker age loght if age >=9, robust
+
+Linear regression                                      Number of obs =     439
+                                                       F(  3,   435) =  284.22
+                                                       Prob > F      =  0.0000
+                                                       R-squared     =  0.6703
+                                                       Root MSE      =  .14407
+
+------------------------------------------------------------------------------
+             |               Robust
+      logfev |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      smoker |  -.0535896   .0241879    -2.22   0.027    -.1011293     -.00605
+         age |   .0215295   .0034817     6.18   0.000     .0146864    .0283725
+       loght |   2.869658   .1279943    22.42   0.000     2.618093    3.121222
+       _cons |  -11.09461   .5153323   -21.53   0.000    -12.10746   -10.08176
+------------------------------------------------------------------------------
+```
+
+## Unadjusted versus Adjusted Models
+
+### General comparison
+
+-   Adjusting for covariates changes the scientific question
+
+    -   Unadjusted models: Slope compares parameters across groups differing by 1 unit in the modeled predictor
+
+        -   Groups may also differ with respect to other variables
+
+    -   Adjusted models: Slope compares parameters across groups differing by 1 unit in the modeled predictor but similar with respect to other model covariates
+
+-   Interpretation of Slopes
+
+    -   Unadjusted model: $g(\theta | X_i) = \beta_0 + \beta_1 \times X_i$
+
+        -   $\beta_1$: Compares $\theta$ for groups differing by 1 unit in $X$
+
+            -   (The distribution of $W$ might differ across groups being compared)
+
+    -   Adjusted model: $g(\theta | X_i, W_i) = \gamma_0 + \gamma_1 \times X_i + \gamma_2 \times W_i$
+
+        -   $\gamma_1$: Compares $\theta$ for groups differing by 1 unit in $X$, but agreeing on their values of $W$
+
+-   Comparing unadjusted and adjusted models
+
+    -   Science questions
+
+        -   When does $\gamma_1 = \beta_1$?
+
+        -   When does $\hat{\gamma}_1 = \hat{\beta}_1$?
+
+    -   Statistics questions
+
+        -   When does $se(\hat{\gamma_1}) = se(\hat{\beta_1})$?
+
+        -   When does $\hat{se}(\hat{\gamma_1}) = \hat{se}(\hat{\beta_1})$
+
+    -   In above, note placement of the $\hat{ }$ ("hat") which signifies estimates of population parameters
+
+    -   Lack of a hat indicates "the truth" in the population
+
+    -   When $\hat{\gamma}_1 = \hat{\beta}_1$ (the formulas are the same), then it must be the case that $se(\hat{\gamma_1}) = se(\hat{\beta_1})$
+
+        -   But our estimates of the standard errors may not be the same
+
+    -   Example of when $\gamma_1 = \beta_1$
+
+        -   Want to compare smokers to non-smokers (POI) with respect to their FEV (response) and have conducted a randomized experiment in which boys and girls ($W$) are equally represented as smokers and non-smokers
+
+        -   When we compare a random smoker to a random non-smoker, that average difference will be the same if we adjust for gender or not
+
+        -   Numbers in unadjusted and adjusted analyses are the same, but interpretation is different
+
+-   Answering these four questions cannot be done in the general case
+
+    -   However, in linear regression we can derive exact results
+
+    -   These exact results can serve as a basis for examination of other regression models
+
+        -   Logistic regression
+
+        -   Poisson regression
+
+        -   Proportional hazards regression
+
+### Comparison of Adjusted and Unadjusted Models in Linear Regression
+
+#### Interpretation of Slopes
+
+-   Unadjusted model: $E[Y_i | X_i] = \beta_0 + \beta_1 \times X_i$
+
+    -   $\beta_1$: Difference in mean $Y$ for groups differing by 1 unit in $X$
+
+        -   (The distribution of $W$ might differ across groups being compared)
+
+-   Adjusted model: $E[Y_i | X_i, W_i] = \gamma_0 + \gamma_1 \times X_i + \gamma_2 \times W_i$
+
+    -   $\gamma_1$: Difference in mean $Y$ for groups differing by 1 unit in $X$, but agreeing in their values of $W$
+
+#### Relationships: True Slopes
+
+-   The slope of the unadjusted model will tend to be
+
+    $$\beta_1 = \gamma_1 + \rho_{XW} \frac{\sigma_W}{\sigma_X} \gamma_2$$
+
+-   Hence, true adjusted and unadjusted slopes for $X$ are estimating the same quantity on if
+
+    -   $\rho_{XW} = 0$ ($X$ and $W$ are truly uncorrelated), OR
+
+    -   $\gamma_2 = 0$ (no association between $W$ and $Y$ after adjusting for $X$)
+
+#### Relationships: Estimated Slopes
+
+-   The estimated slope of the unadjusted model will be
+
+    $$\hat{\beta}_1 = \hat{\gamma}_1\left(1 + \hat{\gamma}_2 r_{XW} \left[\frac{s_W}{s_X(r_{YX} - r_{YW} r_{XW}} \right] \right)$$
+
+-   Hence, estimated adjusted and unadjusted slopes for $X$ are equal only if
+
+    -   $r_{XW} = 0$ ($X$ and $W$ are uncorrelated in the sample, which can be arranged by experimental design, OR
+
+    -   $\hat{\gamma}_2 = 0$ (which cannot be predetermined because $Y$ is random)
+
+#### Relationships: True SE
+
+-   Unadjusted model: $[se(\hat{\beta}_1)]^2 = \frac{Var(Y|X)}{n Var(X)}$
+
+-   Adjusted model: $[se(\hat{\gamma}_1)]^2 = \frac{Var(Y|X, W)}{n Var(X)(1 - r^2_{XW})}$
+
+    $$\begin{aligned}
+        Var(Y|X) & = & \gamma_2^2 Var(W|X) + Var(Y | X, W) \\
+        \sigma^2_{Y|X} & = & \gamma_2^2 \sigma^2_{W|X} + \sigma^2_{Y|X,W}
+       \end{aligned}$$
+
+-   Hence, $se(\hat{\beta}_1) = se(\hat{\gamma}_1)$ if,
+
+    -   $r_{XW} = 0$ AND
+
+    -   $\gamma_2 = 0$ OR $Var(W|X) = 0$
+
+#### Relationships: Estimated SE
+
+-   Unadjusted model: $[\hat{se}(\hat{\beta}_1)]^2 = \frac{SSE(Y|X)/(n-2)}{(n-1) s^2_X}$
+
+-   Adjusted model: $[\hat{se}(\hat{\gamma}_1)]^2 = \frac{SSE(Y|X, W)/(n-3)}{(n-1) s^2_X (1 - r^2_{XW})}$
+
+    $$\begin{aligned}
+        SSE(Y|X) & = & \sum(Y_i - \hat{\beta}_0 - \hat{\beta}_1 \times X_i)^2 \\
+        SSE(Y|X, W) & = & \sum(Y_i - \hat{\gamma}_0 - \hat{\gamma}_1 \times X_i - \hat{\gamma}_2 \times W_i)^2
+       \end{aligned}$$
+
+-   Hence, $\hat{se}(\hat{\beta}_1) = \hat{se}(\hat{\gamma}_1)$ if,
+
+    -   $r_{XW} = 0$ AND
+
+    -   $SSE(Y|X)/(n-2) = SSE(Y|X,W)/(n-3)$
+
+-   Note than when calculated on the same data,
+
+    -   $SSE(Y|X) \geq SSE(Y | X, W)$
+
+-   Now $\hat{\beta}_1 = \hat{\gamma}_1$ if
+
+    -   $\hat{\gamma}_2 = 0$, in which case $SSE(Y | X) = SSE(Y | X, W)$, OR
+
+    -   $r_{XW} = 0$, and $SSE(Y | X) > SSE(Y | X, W)$ if $\hat{\gamma}_2 \neq 0$
+
+#### Summary: Special Cases
+
+-   We are interested in knowing the behavior of unadjusted and adjusted models according to whether
+
+    -   $X$ and $W$ are uncorrelated
+
+    -   $W$ is associated with $Y$ after adjustment for $X$
+
+-   The 4 key cases are summarized below
+
+    |                   | $r_{XW} = 0$ |  $r_{XW} \neq 0$   |
+    |-------------------|:------------:|:------------------:|
+    | $\gamma_2 \neq 0$ |  Precision   |    Confounding     |
+    | $\gamma_2 = 0$    |  Irrelevant  | Variance Inflation |
+
+-   When $X$ is associated with $W$, and $W$ is associated with $Y$ after we control for $X$, that is what we call confounding
+
+-   When $X$ is associated with $W$, and $W$ is not associated with $Y$ after we control for $X$, this inflates the variance of the association between $X$ and $Y$ (more on this follows)
+
+-   When $X$ is not associated with $W$, and $W$ is associated with $Y$ after we control for $X$, this increases the precision of our estimate of the association between $X$ and $Y$
+
+-   When $X$ is not associated with $W$, and $W$ is not associated with $Y$ after we control for $X$, there is no reason to be concerned with modeling $W$
+
+### Precision variables
+
+#### Precision in Linear Regression
+
+-   Adjusting for a true precision variable should not impact the point estimate of the association between the POI and the response, but will decrease the standard error
+
+-   $X, W$ independent in the population (or a completely randomized experiment) AND $W$ is associated with $Y$ independent of $X$
+
+    -   $\rho_{XW} = 0$
+
+    -   $\gamma_2 \neq 0$
+
+        |            |                True Value                |                      Estimates                       |
+        |------------|:----------------------------------------:|:----------------------------------------------------:|
+        | Slopes     |           $\beta_1 = \gamma_1$           |        $\hat{\beta}_1 \approx \hat{\gamma}_1$        |
+        | Std Errors | $se(\hat{\beta}_1) > se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) > \hat{se}(\hat{\gamma}_1)$ |
+
+#### Precision in Logistic Regression
+
+-   Can no longer use the formulas for linear regression
+
+-   Adjusting for a precision variable
+
+    -   Deattenuates slope away from the null
+
+    -   Standard errors reflect the mean-variance relationship
+
+        |                         |                True Value                |                      Estimates                       |
+        |-------------------------|:----------------------------------------:|:----------------------------------------------------:|
+        | Slopes if $\beta_1 > 0$ |           $\beta_1 < \gamma_1$           |           $\hat{\beta}_1 < \hat{\gamma}_1$           |
+        | Slopes if $\beta_1 < 0$ |           $\beta_1 > \gamma_1$           |           $\hat{\beta}_1 > \hat{\gamma}_1$           |
+        | Std Errors              | $se(\hat{\beta}_1) < se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) < \hat{se}(\hat{\gamma}_1)$ |
+
+-   Note that the standard errors will be smaller in the unadjusted model due to the mean-variance relationship
+
+    -   Proportions have minimum variance when $p$ gets close to 0 or 1, and maximum variance at $p = 0.5$
+
+    -   Odds have minimum variance when $p$ is $0.5$
+
+    -   Precision variables should be driving probabilities toward 0 or 1
+
+#### Precision in Poisson Regression
+
+-   Adjusting for a precision variable will
+
+    -   Have no effect on the slope (log ratios are linear in log means)
+
+    -   Standard errors reflect the mean-variance relationship (virtually no effect on power)
+
+        |            |                   True Value                   |                         Estimates                          |
+        |------------|:----------------------------------------------:|:----------------------------------------------------------:|
+        | Slopes     |              $\beta_1 = \gamma_1$              |           $\hat{\beta}_1 \approx \hat{\gamma}_1$           |
+        | Std Errors | $se(\hat{\beta}_1) \approx se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) \approx \hat{se}(\hat{\gamma}_1)$ |
+
+#### Precision in PH Regression
+
+-   Adjusting for a precision variable
+
+    -   Deattenuates slope away from the null
+
+    -   Standard errors stay fairly constant (complicated result of binomial mean-variance relationship)
+
+        |                         |                   True Value                   |                         Estimates                          |
+        |-------------------------|:----------------------------------------------:|:----------------------------------------------------------:|
+        | Slopes if $\beta_1 > 0$ |              $\beta_1 < \gamma_1$              |              $\hat{\beta}_1 < \hat{\gamma}_1$              |
+        | Slopes if $\beta_1 < 0$ |              $\beta_1 > \gamma_1$              |              $\hat{\beta}_1 > \hat{\gamma}_1$              |
+        | Std Errors              | $se(\hat{\beta}_1) \approx se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) \approx \hat{se}(\hat{\gamma}_1)$ |
+
+-   Will get some gain in power due to deattenuation of $\beta_1$ while standard errors remain similar
+
+-   However, it is rare to have PH assumption hold for both adjusted and unadjusted models
+
+#### Stratified Randomization in Linear Regression
+
+-   Stratified randomization in a designed experiment
+
+    -   $r_{XW} = 0$
+
+    -   $\gamma_2 \neq 0$
+
+        |            |                True Value                |                      Estimates                       |
+        |------------|:----------------------------------------:|:----------------------------------------------------:|
+        | Slopes     |           $\beta_1 = \gamma_1$           |           $\hat{\beta}_1 = \hat{\gamma}_1$           |
+        | Std Errors | $se(\hat{\beta}_1) = se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) > \hat{se}(\hat{\gamma}_1)$ |
+
+-   Need to adjust for the blocking variable in regression analysis to get improved standard error
+
+### Confounding variables
+
+#### Confounding in Linear Regression
+
+-   Causally associated with the response and associated with POI in the sample
+
+    -   $r_{XW} \neq 0$
+
+    -   $\gamma_2 \neq 0$
+
+        |            |                             True Value                              |                                                          Estimates                                                           |
+        |------------|:-------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------:|
+        | Slopes     | $\beta_1 = \gamma_1 + \rho_{XW} \frac{\sigma_W}{\sigma_X} \gamma_2$ | $\hat{\beta}_1 = \hat{\gamma}_1\left(1 + \hat{\gamma}_2 r_{XW} \left[\frac{s_W}{s_X(r_{YX} - r_{YW} r_{XW}} \right] \right)$ |
+        | Std Errors |        $se(\hat{\beta}_1) \{>, =, or <\} se(\hat{\gamma}_1)$        |                              $\hat{se}(\hat{\beta}_1) \{>, =, or <\} \hat{se}(\hat{\gamma}_1)$                               |
+
+-   Slopes could increase or decrease
+
+-   Standard errors could increase, decrease, or stay the same
+
+    -   Competition of greater precision with variance inflation
+
+#### Confounding in Other Regressions
+
+-   With logistic, Poisson, PH regression we cannot write down formula, but
+
+    -   As in linear regression, anything can happen
+
+        |            |                      True Value                       |                             Estimates                             |
+        |------------|:-----------------------------------------------------:|:-----------------------------------------------------------------:|
+        | Slopes     |           $\beta_1 \{>, =, or <\} \gamma_1$           |           $\hat{\beta}_1 \{>, =, or <\} \hat{\gamma}_1$           |
+        | Std Errors | $se(\hat{\beta}_1) \{>, =, or <\} se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) \{>, =, or <\} \hat{se}(\hat{\gamma}_1)$ |
+
+-   Slopes could increase or decrease
+
+-   Standard errors could increase, decrease, or stay the same
+
+### Variance Inflation
+
+#### Variance Inflation in Linear Regression
+
+-   Associated with POI in the sample, but not associated with response
+
+    -   $r_{XW} \neq 0$
+
+    -   $\gamma_2 = 0$
+
+        |            |                True Value                |                                                          Estimates                                                           |
+        |------------|:----------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------:|
+        | Slopes     |           $\beta_1 = \gamma_1$           | $\hat{\beta}_1 = \hat{\gamma}_1\left(1 + \hat{\gamma}_2 r_{XW} \left[\frac{s_W}{s_X(r_{YX} - r_{YW} r_{XW}} \right] \right)$ |
+        | Std Errors | $se(\hat{\beta}_1) < se(\hat{\gamma}_1)$ |                                     $\hat{se}(\hat{\beta}_1) < \hat{se}(\hat{\gamma}_1)$                                     |
+
+#### Variance Inflation in Other Regressions
+
+-   With logistic, Poisson, PH regression we cannot write down formula, but
+
+    -   Similar to linear regression
+
+        |            |                True Value                |                      Estimates                       |
+        |------------|:----------------------------------------:|:----------------------------------------------------:|
+        | Slopes     |           $\beta_1 = \gamma_1$           |    $\hat{\beta}_1 \{>, =, or <\} \hat{\gamma}_1$     |
+        | Std Errors | $se(\hat{\beta}_1) < se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) < \hat{se}(\hat{\gamma}_1)$ |
+
+### Irrelevant variables
+
+-   Uncorrelated with POI in sample, and not associated with response
+
+    -   $r_{XW} = 0$
+
+    -   $\gamma_2 = 0$
+
+-   Inclusion of irrelevant variables results in slight loss in precision in all regressions
+
+    |            |                True Value                |                      Estimates                       |
+    |------------|:----------------------------------------:|:----------------------------------------------------:|
+    | Slopes     |           $\beta_1 = \gamma_1$           |           $\hat{\beta}_1= \hat{\gamma}_1$            |
+    | Std Errors | $se(\hat{\beta}_1) = se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) < \hat{se}(\hat{\gamma}_1)$ |
+
+## Example: FEV and Smoking in Children
+
+### Linear model for geometric means
+
+-   Association between lung function and self-reported smoking in children
+
+-   Compare geometric means of FEV of children who smoke to comparable non-smokers
+
+-   Restrict analysis to children 9 years and older
+
+    -   No smokers less than 9
+
+    -   Still about 6 : 1 ratio of non-smokers to smokers
+
+        -   Little precision gained by keeping younger children
+
+        -   Borrowing information from young kids problematic if not a linear relationship between log(FEV) and predictors
+
+        -   With confounding, want to get the model correct
+
+-   Academic Exercise: Compare alternative models
+
+    -   In real life, we should choose a single model in advance of looking at the data
+
+    -   Here we will observe what happens to parameter estimates and SE across models
+
+        -   Smoking
+
+        -   Smoking adjusted for age
+
+        -   Smoking adjusted for age and height
+
+#### Unadjusted Model
+
+```         
+. regress logfev smoker if age>=9, robust
+
+Linear regression                                      Number of obs =     439
+                                                       F(  1,   437) =   10.45
+                                                       Prob > F      =  0.0013
+                                                       R-squared     =  0.0212
+                                                       Root MSE      =  .24765
+
+------------------------------------------------------------------------------
+             |               Robust
+      logfev |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      smoker |   .1023056   .0316539     3.23   0.001     .0400927    .1645184
+       _cons |    1.05817   .0129335    81.82   0.000     1.032751     1.08359
+------------------------------------------------------------------------------
+```
+
+-   Intercept
+
+    -   Geometric mean of FEV in nonsmokers is 2.88 l/sec
+
+        -   The scientific relevance is questionable here because we do not really know the population our sample represents
+
+        -   Calculations $e^{1.05817} = 2.88$
+
+        -   The p-value is completely unimportant here as it is testing that the log geometric mean is 0, or that the geometric mean is 1. Why would we care?
+
+    -   Because smoker is a binary variable, the estimate corresponds to a geometric mean. In many regression models, the intercept will have not interpretation
+
+-   Smoking effect
+
+    -   Geometric mean of FEV is $10.8\%$ higher in smokers than in nonsmokers (95% CI: $4.1\%$ to $17.9\%$ higher)
+
+        -   These results are atypical of what we might expect with no true difference between groups ($p = 0.001$)
+
+        -   Calculations: $e^{.102} = 1.108; e^{.040} = 1.041; e^{0.165} = 1.179$
+
+        -   (Note that $e^x$ is approximately $(1+x)$ for $x$ close to 1)
+
+    -   Because smoker is a binary variable, this analysis is nearly identical to a two sample t-test allowing for unequal variances
+
+#### Adjusted for Age
+
+```         
+. regress logfev smoker age if age>=9, robust
+
+Linear regression                                      Number of obs =     439
+                                                       F(  2,   436) =   82.28
+                                                       Prob > F      =  0.0000
+                                                       R-squared     =  0.3012
+                                                       Root MSE      =  .20949
+
+------------------------------------------------------------------------------
+             |               Robust
+      logfev |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      smoker |  -.0513495   .0343822    -1.49   0.136     -.118925     .016226
+         age |   .0635957   .0051401    12.37   0.000     .0534932    .0736981
+       _cons |   .3518165   .0575011     6.12   0.000     .2388028    .4648303
+------------------------------------------------------------------------------
+```
+
+-   Intercept
+
+    -   Geometric mean of FEV in newborn nonsmokers is 1.42 l/sec
+
+        -   Intercept corresponds to the log geometric mean in a group having all predictors equal to $0$
+
+        -   There is no scientific relevance here as we are extrapolating beyond the range of our data
+
+        -   Calculations $e^{0.352} = 1.422$
+
+-   Age effect
+
+    -   Geometric mean of FEV is $6.6\%$ higher for each year difference in age between two groups with the same smoking status (95% CI: $5.5\%$ to $7.6\%$ higher)
+
+        -   These results are highly atypical of what we might expect with no true difference in geometric means between age groups having similar smoking status ($p < 0.001$)
+
+-   Smoking effect (age adjusted interpretation)
+
+    -   Geometric mean of FEV is $5.0\%$ lower in smokers than in nonsmokers of the same age (95% CI: $12.2\%$ lower to $1.6\%$ higher)
+
+        -   These results are not atypical of what we might expect with no true difference between groups of the same age ($p = 0.136$)
+
+        -   Lack of statistical significance can also be noted by the fact that the CI for the ratio contain 1 or the CI for the percent difference contains 0
+
+        -   Calculations: $e^{-.051} = 0.950; e^{-.119} = 0.888; e^{0.016} = 1.016$
+
+-   Comparing unadjusted and age adjusted analyses
+
+    -   Marked differences in effect of smoking suggests that there was indeed confounding
+
+        -   Age is a relatively strong predictor of FEV
+
+        -   Age is associated with smoking in the sample
+
+            -   Mean (SD) of age in analyzed smokers: 11.1 (2.04)
+
+            -   Mean (SD) of age in analyzed nonsmokers: 13.5 (2.34)
+
+    -   Effect of age adjustment on precision
+
+        -   Lower Root MSE (0.209 vs 0.248) would tend to increase precision of estimate of smoking effect
+
+        -   Association between smoking and age tends to lower precision
+
+        -   Net effect: Less precision (adj SE 0.034 vs unadj SE 0.031)
+
+#### Adjusted for Age and Height
+
+```         
+. regress logfev smoker age loght if age >=9, robust
+
+Linear regression                                      Number of obs =     439
+                                                       F(  3,   435) =  284.22
+                                                       Prob > F      =  0.0000
+                                                       R-squared     =  0.6703
+                                                       Root MSE      =  .14407
+
+------------------------------------------------------------------------------
+             |               Robust
+      logfev |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      smoker |  -.0535896   .0241879    -2.22   0.027    -.1011293     -.00605
+         age |   .0215295   .0034817     6.18   0.000     .0146864    .0283725
+       loght |   2.869658   .1279943    22.42   0.000     2.618093    3.121222
+       _cons |  -11.09461   .5153323   -21.53   0.000    -12.10746   -10.08176
+------------------------------------------------------------------------------
+```
+
+-   Intercept
+
+    -   Geometric mean of FEV in newborn nonsmokers who are 1 inch in height is 0.000015 l/sec
+
+        -   Intercept corresponds to the log geometric mean in a group having all predictors equal to $0$ (nonsmokers, age 0, log height 0)
+
+        -   There is no scientific relevance because there are no such people in our data in either our sample or the population
+
+-   Age effect
+
+    -   Geometric mean of FEV is $2.2\%$ higher for each year difference in age between two groups with the same height and smoking status (95% CI: $1.5\%$ to $2.9\%$ higher for each year difference in age)
+
+        -   These results are highly atypical of what we might expect with no true difference in geometric means between age groups having similar smoking status and height ($p < 0.001$)
+
+    -   Note that there is clear evidence that height confounded the age effect estimated in the analysis that only considered age and smoking, but there is still a clearly independent effect of age on FEV
+
+-   Height effect
+
+    -   Geometric mean of FEV is $31.5\%$ higher for each $10\%$ difference in height between two groups with the same age and smoking status (95% CI: $28.3\%$ to $34.6\%$ higher for each $10\%$ difference in height)
+
+        -   These results are highly atypical of what we might expect with no true difference in geometric means between height groups having similar smoking status and age ($p < 0.001$)
+
+        -   Calculations: $1.1^{2.867} = 1.315$
+
+    -   Note that the CI for the regression coefficient is consistent with the scientifically-hypothesize value of 3
+
+-   Smoking effect (age, height adjusted interpretation)
+
+    -   Geometric mean of FEV is $5.2\%$ lower in smokers than in nonsmokers of the same age and height (95% CI: $9.6\%$ to $0.6\%$ lower)
+
+        -   These results are atypical of what we might expect with no true difference between groups of the same age and height ($p = 0.027$)
+
+        -   Calculations: $e^{-.054} = 0.948; e^{-.101} = 0.904; e^{-0.006} = .994$
+
+-   Comparing age-adjusted to age- and height-adjusted analyses
+
+    -   No difference in effect of smoking suggests that there was no more confounding after age adjustment
+
+    -   Effect of height adjustment on precision
+
+        -   Lower Root MSE (0.144 vs 0.209) would tend to increase precision of estimate of smoking effect
+
+        -   Little association between smoking and height after adjusting for age will not tend to lower precision
+
+        -   Net effect: Higher precision (adj SE 0.024 vs unadj SE 0.034)
+
+### Logistic model
+
+-   Continue our academic exercise using logistic regression
+
+    -   Dichotomize FEV at median (2.93)
+
+    -   In real life, we would not want to make a continuous variable like FEV into a binary variable
+
+    -   Here we will observe what happens to parameter estimates and SE across models
+
+        -   Smoking
+
+        -   Smoking adjusted for age
+
+        -   Smoking adjusted for height
+
+        -   Smoking adjusted for age and height
+
+<!-- -->
+
+```         
+. logit fevbin smoker if age>=9
+Logistic regression                               Number of obs   =        439
+                                                  LR chi2(1)      =      15.81
+                                                  Prob > chi2     =     0.0001
+Log likelihood = -296.38409                       Pseudo R2       =     0.0260
+
+------------------------------------------------------------------------------
+      fevbin |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      smoker |   1.120549   .2959672     3.79   0.000      .540464    1.700634
+       _cons |  -.1607732   .1037519    -1.55   0.121    -.3641231    .0425767
+------------------------------------------------------------------------------
+
+. 
+. logit fevbin smoker age if age>=9
+Logistic regression                               Number of obs   =        439
+                                                  LR chi2(2)      =      88.68
+                                                  Prob > chi2     =     0.0000
+Log likelihood = -259.95032                       Pseudo R2       =     0.1457
+
+------------------------------------------------------------------------------
+      fevbin |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      smoker |   .1971403   .3402482     0.58   0.562     -.469734    .8640146
+         age |    .470792   .0637495     7.39   0.000     .3458453    .5957386
+       _cons |  -5.360912   .7056265    -7.60   0.000    -6.743914   -3.977909
+------------------------------------------------------------------------------
+
+. 
+. logit fevbin smoker loght if age>=9
+Logistic regression                               Number of obs   =        439
+                                                  LR chi2(2)      =     224.11
+                                                  Prob > chi2     =     0.0000
+Log likelihood = -192.23646                       Pseudo R2       =     0.3682
+
+------------------------------------------------------------------------------
+      fevbin |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      smoker |   .4159311   .3646506     1.14   0.254    -.2987709    1.130633
+       loght |   33.08872   3.169516    10.44   0.000     26.87659    39.30086
+       _cons |  -137.6043   13.16723   -10.45   0.000    -163.4116    -111.797
+------------------------------------------------------------------------------
+
+. 
+. logit fevbin smoker age loght if age>=9
+Logistic regression                               Number of obs   =        439
+                                                  LR chi2(3)      =     230.19
+                                                  Prob > chi2     =     0.0000
+Log likelihood = -189.19487                       Pseudo R2       =     0.3782
+
+------------------------------------------------------------------------------
+      fevbin |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      smoker |    .047695   .3933191     0.12   0.903    -.7231963    .8185863
+         age |   .1753759   .0723176     2.43   0.015      .033636    .3171157
+       loght |   31.04791   3.289031     9.44   0.000     24.60152    37.49429
+       _cons |  -131.0647    13.5393    -9.68   0.000    -157.6013   -104.5282
+------------------------------------------------------------------------------
+```
+
+#### Results Summarized
+
+-   Coefficients (logit scale)
+
+    | Model        | Smoker | Age  | Log(Height) |
+    |:-------------|:------:|:----:|:-----------:|
+    | Smoke        |  1.12  |      |             |
+    | Smoke+Age    |  0.19  | 0.47 |             |
+    | Smoke+Ht     |  0.42  |      |    33.1     |
+    | Smoke+Age+Ht |  0.47  | 0.18 |    31.0     |
+
+-   Std Errors (logit scale)
+
+    | Model        | Smoker | Age  | Log(Height) |
+    |:-------------|:------:|:----:|:-----------:|
+    | Smoke        |  0.30  |      |             |
+    | Smoke+Age    |  0.34  | 0.06 |             |
+    | Smoke+Ht     |  0.36  |      |     3.2     |
+    | Smoke+Age+Ht |  0.39  | 0.07 |     3.3     |
+
+-   Adjusting for the height
+
+    -   Comparing Smoke+Age to Smoke+Age+Ht
+
+        -   Height is being added as a precision variable
+
+        -   Deattenuated the smoking effect (estimate changes from 0.19 to 0.47, which is further from 0)
+
+        -   Increased the standard error estimate (0.34 to 0.39)
+
+        -   Both of these change are predicted by the previous discusssion
+
+    -   Comparing Smoke to Smoke+Ht
+
+        -   Attenuated the smoking effect (1.12 to 0.42, closer to 0)
+
+        -   Increased the standard error estimate
+
+        -   Height now also acting acting as a confounding variable (because we are not modeling age), so these changes were not predictable
+
+-   Adjusting for the confounding variable (age)
+
+    -   Comparing Smoke+Ht to Smoke+Age+Ht
+
+        -   Deattenuated the estimated coefficient (0.42 to 0.47)
+
+        -   Increased the standard error
+
+    -   Comparing Smoke to Smoke+Age
+
+        -   Attenuated the coefficient estimate (1.12 to 0.19)
+
+        -   Increased the standard error
+
+    -   Changes in estimates and standard errors were not predictable for this, or any, confounder

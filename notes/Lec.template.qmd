@@ -1,0 +1,37 @@
+---
+title: "Review of Key Concepts"
+subtitle: "Lecture 02"
+author: "Chris Slaughter"
+footer: "Bios 6312"
+date: last-modified
+format:
+  html:
+    embed-resources: true
+    standalone: true
+    number-sections: true
+    number-depth: 4
+    anchor-sections: true
+    smooth-scroll: true
+    theme: journal
+    toc: true
+    toc-depth: 4
+    toc-title: Contents
+    toc-location: left
+    code-link: false
+    code-tools: true
+    code-fold: true
+    code-block-bg: "#f1f3f5"
+    code-block-border-left: "#31BAE9"
+    reference-location: margin
+    fig-cap-location: margin
+    fontsize: medium
+
+execute:
+   warning: false
+   message: false
+---
+
+```{r}
+library(rms)
+library(ggplot2)
+```
