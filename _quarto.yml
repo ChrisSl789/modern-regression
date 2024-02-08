@@ -48,6 +48,7 @@ website:
           - href: labs/lab1-linearregression.qmd
           - href: labs/lab2-linearassumptions.qmd
           - href: labs/lab3-logistic-questions.qmd
+          - href: labs/lab4-precision-questions.qmd
           - href: https://vanderbilt.box.com/s/rpftvmc9vua2w3gz3jy16phlnsojs6on
             text: "Box folder with .qmd files"
       - section: "Supplemental notes"
@@ -64,6 +65,8 @@ website:
             text: Model selection criteria
           - href: supplemental/ReviewMatrixAlgebra.pdf
             text: Matrix algebra review
+          - href: supplemental/Baseline_Change_MACH.pdf
+            text: Change from baseline and precision
 
 format:
   html:
