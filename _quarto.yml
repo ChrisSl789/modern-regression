@@ -42,6 +42,7 @@ website:
           - href: notes/Lec04.Logistic.qmd
           - href: notes/Lec05.Precision.qmd
           - href: notes/Lec06.ConfoundingEffectModificationMediation.qmd
+          - href: notes/Lec07.MultivariableModels.qmd
       - section: "Labs"
         contents: 
           - href: labs/quarto-intro.qmd
