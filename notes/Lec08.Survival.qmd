@@ -1,0 +1,1093 @@
+---
+title: "Introduction to Survival Analysis"
+subtitle: "Lecture 08"
+author: "Chris Slaughter"
+footer: "Bios 6312"
+date: last-modified
+format:
+  html:
+    embed-resources: true
+    standalone: true
+    number-sections: true
+    number-depth: 4
+    anchor-sections: true
+    smooth-scroll: true
+    theme: journal
+    toc: true
+    toc-depth: 4
+    toc-title: Contents
+    toc-location: left
+    code-link: false
+    code-tools: true
+    code-fold: true
+    code-block-bg: "#f1f3f5"
+    code-block-border-left: "#31BAE9"
+    reference-location: margin
+    fig-cap-location: margin
+    fontsize: medium
+
+execute:
+   warning: false
+   message: false
+---
+
+```{r}
+library(rms)
+library(ggplot2)
+library(knitr)
+library(dplyr)
+library(survival)
+library(ggplot2)
+library(tibble)
+library(survminer)
+library(dplyr)
+library(flexsurv)
+library(eha)
+```
+
+## Background
+
+In logistic regression, we were interested in studying how risk factors were associated with presence or absence of disease. Sometimes, though, we are interested in how a risk factor or treatment affects time to disease or some other event. Or we may have study dropout, and therefore subjects who we are not sure if they had disease or not. In these cases, logistic regression is not appropriate.
+
+Survival analysis is used to analyze data in which the time until the event is of interest. The response is often referred to as a failure time, survival time, or event time.
+
+### Examples
+
+-   Time from randomization until cardiovascular death after some treatment intervention
+
+-   Time from diagnosis until tumor recurrence
+
+-   Time from diagnosis until AIDS for HIV patients
+
+-   Time from production until a machine part fails
+
+-   Note that there needs to be a clearly defined starting and ending point
+
+### The survival time response
+
+-   Usually continuous
+-   May be incompletely determined for some subjects
+    -   i.e. For some subjects we may know that their survival time was at least equal to some time t. Whereas, for other subjects, we will know their exact time of event.
+-   Incompletely observed responses are *censored*
+-   Time is always $>0$
+
+### Analysis issues
+
+-   If there is no censoring, standard regression procedures could be used
+-   However, these may be inadequate because
+    -   Time to event is restricted to be positive and has a skewed distribution.
+    -   The probability of surviving past a certain point in time may be of more interest than the expected time of event. Linear regression models means.
+    -   A multiplicative model for the hazard may be a better fit
+    -   May desire an interpretation that is similar to a relative risk
+
+### Censoring
+
+Censoring is present when we have some information about a subject's event time, but we don't know the exact event time. For the analysis methods we will discuss to be valid, censoring mechanism must be independent of the survival mechanism.
+
+There are generally three reasons why censoring might occur:
+
+-   A subject does not experience the event before the study ends
+-   A person is lost to follow-up during the study period
+-   A person withdraws from the study
+
+These are all examples of right-censoring.
+
+[Trial Anatomy](figures/trial_anatomy.png)
+
+> RICH JT, NEELY JG, PANIELLO RC, VOELKER CCJ, NUSSENBAUM B, WANG EW. A PRACTICAL GUIDE TO UNDERSTANDING KAPLAN-MEIER CURVES. Otolaryngology head and neck surgery: official journal of American Academy of Otolaryngology Head and Neck Surgery. 2010;143(3):331-336. doi:10.1016/j.otohns.2010.05.007.
+
+To illustrate the impact of censoring, suppose we have the following data:
+
+```{r swimmer, echo = FALSE}
+# make fake data
+set.seed(20180809)
+fkdt <- tibble(Subject = as.factor(1:10), 
+                   Years = sample(4:20, 10, replace = T),
+                   censor = sample(c("Censor", rep("Event", 2)), 10, 
+                                   replace = T)) 
+
+# plot with shapes to indicate censoring or event
+ggplot(fkdt, aes(Subject, Years)) + 
+    geom_bar(stat = "identity", width = 0.5) + 
+    geom_point(data = fkdt, 
+               aes(Subject, Years, color = censor, shape = censor), 
+               size = 6) +
+    coord_flip() +
+    theme_minimal() + 
+    theme(legend.title = element_blank(),
+          legend.position = "bottom")
+```
+
+How would we compute the proportion who are event-free at 10 years?
+
+-   Subjects 6 and 7 were **event-free at 10 years**.
+-   Subjects 2, 9, and 10 had the **event before 10 years**.
+-   Subjects 1, 3, 4, 5, and 8 were **censored before 10 years**, so we don't know whether they had the event or not at 10 years. But we know something about them - that they were each followed for a certain amount of time without the event of interest prior to being censored.
+
+*Survival analysis techniques provide a way to appropriately account for censored patients in the analysis.*
+
+### Types of right-censoring
+
+-   Fixed type I censoring occurs when a study is designed to end after C years of follow-up. In this case, everyone who does not have an event observed during the course of the study is censored at C years.
+-   In random type I censoring, the study is designed to end after C years, but censored subjects do not all have the same censoring time. This is the main type of right-censoring we will be concerned with.
+-   In type II censoring, a study ends when there is a pre- specified number of events.
+
+Regardless of the type of censoring, we must assume that it is non-informative about the event; that is, the censoring is caused by something other than the impending failure.
+
+### Terminology and notation
+
+-   $T$ denotes the response variable, $T > 0$
+-   The survival function is
+
+$$
+S(t) = \textrm{Pr}(T > t) = 1− F(t)
+$$
+
+```{r}
+#| fig-cap: Example survival function.  Survival is 1 at time 0 and decreases over time.
+plot(function(t) exp(-2*t), 0, 2, ylab="Survival", xlab="Time (years)")
+```
+
+-   All subjects are at risk (and event free) at time 0. Thus, the survival estimate at 0 is always 1
+-   Survival decreases over time. If we observe for a long enough period of time, survival eventually decreases to 0.
+-   The survival function gives the probability that a subject will survive past time t.
+-   Specifically, as t ranges from 0 to $\infty$, the survival function has the following properties ∗ It is non-increasing ∗ At time t = 0, S(t) = 1. In other words, the probability of surviving past time 0 is 1. ∗ At time $t = \infty$, $S(t) = S(\infty) = 0$. As time goes to infinity, the survival curve goes to 0.
+-   In theory, the survival function is smooth. In practice, we observe events on a discrete time scale (days, weeks, etc.)
+
+#### Hazard, cumulative hazard, and survival
+
+-   The hazard function, h(t), is the instantaneous rate at which events occur, given no previous events. $$
+    h(t) = \lim_{{\Delta t} \to 0} \frac{P(t \leq T < t + \Delta t | T \geq t)}{\Delta t}
+    $$
+
+-   $T$ is a random variable denoting the time until the event (for example, failure or death) occurs. The numerator in the fraction is the conditional probability that the event occurs in the small time interval $[t, t + Δt]$ given that it has not occurred before time $t$. The denominator $\Delta t$ is the length of this time interval. As $\Delta t$ goes to 0, this ratio gives the instantaneous rate of occurrence of the event at time $t$, which is the hazard function $h(t)$.
+
+-   The cumulative hazard
+
+$$
+H(t) = \int_{0}^{t} h(u) du
+$$
+
+-   Here, h(u) is the hazard function and u is the variable of integration. This integral represents the accumulated risk of the event (for example, failure or death) over the time interval $[0, t]$.
+
+-   The relationship between the survival function $S(t)$ and the cumulative hazard function $H(t)$
+
+$$
+S(t) = \exp(-H(t))
+$$
+
+-   Key point: Survival function, cumulative hazard function, and hazard function are interconnected. If we know any one of the functions $S(t)$, $H(t)$, or $h(t)$, we can derive the other two functions.
+
+#### Outcome definition
+
+-   To analyze survival data, we need to know the observed time $Y_i$ and the event indicator $\delta_i$. For subject $i$:
+
+-   Observed time $Y_i = \min(T_i, C_i)$ where $T_i$ = event time and $C_i$ = censoring time
+
+-   Event indicator $\delta_i$ = 1 if event observed (i.e. $T_i \leq C_i$), = 0 if censored (i.e. $T_i > C_i$)
+
+## Non-parametric estimation of the survival curve
+
+-   In theory the survival function is smooth; in practice we observe events on a discrete time scale.
+
+-   The **survival probability** at a certain time, $S(t)$, is a conditional probability of surviving beyond that time, given that an individual has survived just prior to that time. The survival probability can be estimated as the number of patients who are alive without loss to follow-up at that time, divided by the number of patients who were alive just prior to that time.
+
+-   The **Kaplan-Meier** estimate of survival probability at a given time is the product of these conditional probabilities up until that given time
+
+$$
+\hat{S}(t) = \prod_{i: t_i \leq t} (1 - \frac{d_i}{n_i})
+$$
+
+-   (\hat{S}(t)) is the estimated survival function at time (t),
+-   (t_i) are the observed event times,
+-   (d_i) is the number of events (e.g. deaths) at time (t_i),
+-   (n_i) is the number of individuals known to have survived (are at risk) up to time (t_i).
+
+### Example: The `lung` dataset
+
+The `lung` dataset is available from the {survival} package. The data contain subjects with advanced lung cancer from the North Central Cancer Treatment Group. We will focus on the following variables throughout this tutorial:
+
+-   time: Observed survival time in days
+-   status: censoring status 1=censored, 2=dead
+-   sex: 1=Male, 2=Female
+
+*Note that the status is coded in a non-standard way in this dataset. Typically you will see 1=event, 0=censored*. Let's recode it to avoid confusion:
+
+```{r}
+lung <- 
+  lung %>% 
+  mutate(
+    status = recode(status, `1` = 0, `2` = 1)
+  )
+```
+
+Now we have:
+
+-   time: Observed survival time in days
+-   status: censoring status 0=censored, 1=dead
+-   sex: 1=Male, 2=Female
+
+Here are the first 6 observations:
+
+```{r viewlung}
+head(lung[, c("time", "status", "sex")])
+```
+
+*Note*: the `Surv()` function in the {survival} package accepts by default TRUE/FALSE, where TRUE is event and FALSE is censored; 1/0 where 1 is event and 0 is censored; or 2/1 where 2 is event and 1 is censored. **Please take care to ensure the event indicator is properly formatted.**
+
+### Creating survival objects and curves
+
+The Kaplan-Meier method is the most common way to estimate survival times and probabilities. It is a non-parametric approach that results in a step function, where there is a step down each time an event occurs.
+
+The `Surv()` function from the {survival} package creates a survival object for use as the response in a model formula. There will be one entry for each subject that is the survival time, which is followed by a `+` if the subject was censored. Let's look at the first 10 observations:
+
+```{r survfunc}
+Surv(lung$time, lung$status)[1:10]
+```
+
+We see that subject 1 had an event at time 306 days, subject 2 had an event at time 455 days, subject 3 was censored at time 1010 days, etc.
+
+The `survfit()` function creates survival curves using the Kaplan-Meier method based on a formula. Let's generate the overall survival curve for the entire cohort, assign it to object `s1`, and look at the structure using `str()`:
+
+```{r lung_survfit}
+s1 <- survfit(Surv(time, status) ~ 1, data = lung)
+str(s1)
+```
+
+Some key components of this `survfit` object that will be used to create survival curves include:
+
+-   `time`: the timepoints at which the curve has a step, i.e. at least one event occurred
+-   `surv`: the estimate of survival at the corresponding `time`
+
+### Kaplan-Meier estimates
+
+::: {style="height:400px;overflow:auto;"}
+```{r}
+summary(s1)
+```
+:::
+
+-   Applying the formula
+
+$$
+\hat{S}(t) = \prod_{i: t_i \leq t} (1 - \frac{d_i}{n_i})
+$$
+
+-   $S(0) = 1$
+
+-   $S(5) = 1*(1-1/228) = 0.9956$
+
+-   $S(11) = 1*(1-1/228)*(3-1/227) = 0.9825$
+
+-   etc.
+
+-   Number at risk is decrease by events or censored observations
+
+-   Most early times are events, so number at risk is decreasing because of events. -- The first censored observation is at 92 days. Here, the risk set decreases by the number of events and number censored (find this time point in the table to verify yourself)
+
+### Kaplan-Meier plot
+
+```{r}
+ggsurvplot(s1, data=lung, risk.table = TRUE)
+```
+
+-   Plot gives estimate of survival over time
+-   Confidence interval is conditional on a given survival time (rather than being a confidence band for the entire survival curve)
+-   Risk table gives the number of subjects at risk at specified time points
+
+### Estimating $x$-year survival
+
+One quantity often of interest in a survival analysis is the probability of surviving beyond a certain number of years, $x$.
+
+For example, to estimate the probability of surviving to $1$ year, use `summary` with the `times` argument (*Note:* the `time` variable in the `lung` data is actually in days, so we need to use `times = 365.25`)
+
+```{r 5yrest}
+summary(survfit(Surv(time, status) ~ 1, data = lung), times = 365.25)
+```
+
+We find that the $1$-year probability of survival in this study is `r round(summary(survfit(Surv(time, status) ~ 1, data = lung), times = 365.25)$surv * 100)`%.
+
+The associated lower and upper bounds of the 95% confidence interval are also displayed.
+
+The $1$-year survival probability is the point on the y-axis that corresponds to $1$ year on the x-axis for the survival curve.
+
+```{r, message = FALSE, echo = FALSE, fig.height = 5}
+plot_main <- ggsurvplot(s1, data=lung, risk.table = TRUE)
+
+plot1 <- 
+  plot_main$plot + 
+  geom_segment(x = 365.25, xend = 365.25, y = -0.05, yend = 0.4092416, 
+               linewidth = 1.5) +
+  geom_segment(x = 365.25, xend = -40, y = 0.4092416, yend = 0.4092416,
+               linewidth = 1.5, 
+               arrow = arrow(length = unit(0.2, "inches"))) 
+
+plot1
+```
+
+What happens if you use a "naive" estimate? Here "naive" means that the patients who were censored prior to 1-year are considered event-free and included in the denominator.
+
+`r table(lung$status[lung$time <= 365.25])[2]` of the `r nrow(lung)` patients in the `lung` data died by $1$ year so the "naive" estimate is calculated as:
+
+$$\Big(1 - \frac{121}{228}\Big) \times 100 = 47\%$$ You get an **incorrect** estimate of the $1$-year probability of survival when you ignore the fact that `r table(lung$status[lung$time <= 365.25])[1]` patients were censored before $1$ year.
+
+Recall the **correct** estimate of the $1$-year probability of survival, accounting for censoring using the Kaplan-Meier method, was `r round(summary(s1, times = 365.25)$surv * 100)`%.
+
+Ignoring censoring leads to an **overestimate** of the overall survival probability. Imagine two studies, each with 228 subjects. There are 165 deaths in each study. Censoring is ignored in one (blue line), censoring is accounted for in the other (yellow line). The censored subjects only contribute information for a portion of the follow-up time, and then fall out of the risk set, thus pulling down the cumulative probability of survival. Ignoring censoring erroneously treats patients who are censored as part of the risk set for the entire follow-up period.
+
+```{r echo = FALSE, message = FALSE, warning = FALSE, fig.height = 6}
+fakedata2 <- 
+  lung %>% 
+  mutate(
+    time = ifelse(status == 1, time, 1022), 
+    group = "Ignoring censoring") %>% 
+  full_join(mutate(lung, group = "With censoring"))
+
+fit.fake <- survfit(Surv(time, status) ~ group, data = fakedata2)
+
+ggsurvplot(fit.fake, risk.table=TRUE) +
+  labs(
+    x = "Days",
+    y = "Overall survival probability"
+    )
+```
+
+### Estimating median survival time
+
+Another quantity often of interest in a survival analysis is the average survival time, which we quantify using the median. Survival times are not expected to be normally distributed so the mean is not an appropriate summary.
+
+We can obtain the median survival directly from the `survfit` object:
+
+```{r}
+survfit(Surv(time, status) ~ 1, data = lung)
+```
+
+We see the median survival time is `r round(summary(s1)$table["median"], 1)` days The lower and upper bounds of the 95% confidence interval are also displayed.
+
+Median survival is the time corresponding to a survival probability of $0.5$:
+
+```{r, message = FALSE, echo = FALSE, fig.height = 5}
+plot2 <- 
+  plot_main$plot +
+  geom_segment(x = -45, xend = 310, y = 0.5, yend = 0.5,  linewidth = 1.5) +
+  geom_segment(x = 310, xend = 310, y = 0.5, yend = -0.02, linewidth = 1.5, 
+               arrow = arrow(length = unit(0.2, "inches")))
+
+plot2
+```
+
+### Non-parametric test for comparing survival times between groups
+
+-   The most common test for comparing survival by groups is the log-rank test
+
+    -   At each event time, constructs a 2x2 table of observed events and number at risk for each group
+
+    -   Compare observed to expected number of events under the null hypothesis that the event rates are the same in each group
+
+    -   A Chi-squared test stratifying over all event times
+
+    -   A test of the entire survival curve
+
+-   We get the log-rank p-value using the `survdiff` function. For example, we can test whether there was a difference in survival time according to sex in the `lung` data:
+
+```{r}
+survdiff(Surv(time, status) ~ sex, data = lung)
+```
+
+-   We can also add the p-value to Kaplan-Meier plot by sex
+
+```{r}
+fit.sex <- survfit(Surv(time, status) ~ sex, data=lung)
+ggsurvplot(fit.sex, data=lung, pval=TRUE)
+```
+
+There was a significant difference in overall survival according to sex in the `lung` data, with a p-value of p = 'round(1-pchisq(survdiff(Surv(time, status) \~ sex, data = lung)\$chisq, 1),3)'.
+
+## Semi-parametric regression (Cox proportional hazards model)
+
+-   The preceding approach was very flexible in that it makes no parametric assumptions above the shape of the survival curve
+
+-   This can work for well for categorical predictors and/or descriptive purposes
+
+-   In a clinical trial where we have randomized to treatment groups (and presumably have minimized confounding), the Kaplan-Meier method and log-rank test can be the primary analysis method
+
+-   Extensions are needed if we want to consider continuous predictors and multivariable models
+
+-   Would be nice to maintain flexibility and have a readily interpret
+
+-   Statistical methods
+
+    -   Regression models we have studied to date are generally not valid for survival data
+
+        -   Because of right censoring, survival time cannot be analyzed as a continuous outcome (e.g. linear regression)
+
+        -   Because of unequal length of followup, survival (yes/no) cannot be analyzed using logistic regression
+
+    -   In the presence of censored data, the usual descriptive statistics are not appropriate
+
+        -   Sample mean, sample median, simple proportions, sample standard deviation should not be used
+
+        -   Proper descriptives should be based on the Kaplan Meier estimates
+
+    -   Specialized regression models are needed with censored data
+
+-   (Cox) Proportional hazards model
+
+    -   Considers the instantaneous risk of failure at each time among those subjects who have not failed
+
+    -   The term "proportional hazards" assumes that the ratio of these instantaneous failure rates is constant in time between groups
+
+    -   Proportional hazards (Cox) regression treats the survival distribution within a group semi-parametrically
+
+        -   The baseline hazard is estimated without making any distributional assumptions
+
+        -   The hazard ratio is the parameter of interest and is used to compare groups
+
+### Proportional Hazards Regression
+
+-   Looks at odds of choosing subjects relative to prevalence in the population
+
+    -   Can be derived as estimating the odds ratio of an event at each time that an event occurs
+
+    -   Proportional hazards model averages the odds ratio across all observed event times
+
+    -   If the odds ratio is constant over time between two groups, such an average results in a precise estimate of the hazard ratio
+
+-   Borrowing information
+
+    -   Uses other groups to make estimates in groups with sparse data
+
+    -   Borrows information across predictor groups
+
+        -   Intuitively, 67 and 69 year olds would provide some relevant information about 68 year olds
+
+    -   Also borrows information over time
+
+        -   Relative risk for an event at each time is presumed to be the same under proportional hazards
+
+### The simple PH regression model
+
+-   Modeling the log hazard over time as a function of covariates $X$
+
+-   "Baseline hazard" is unspecified. Baseline hazard is similar to an intercept
+
+    | Model       | $\textrm{log}(\lambda(t | X_i)) = \textrm{log}(\lambda_{0}(t)) + \beta_1 \times X_i$ |
+    |:--------------|:--------------------------------------------------------|
+    | $X_i = 0$   | log hazard at $t$ is $\textrm{log}(\lambda_{0}(t))$                                  |
+    | $X_i = x$   | log hazard at $t$ is $\textrm{log}(\lambda_{0}(t)) + \beta_1 \times x$               |
+    | $X_i = x+1$ | log hazard at $t$ is $\textrm{log}(\lambda_{0}(t))+ \beta_1 \times x + \beta_1$      |
+
+-   Model on the hazard scale is found by exponentiating parameters
+
+    | Model       | $\lambda(t | X_i) = \lambda_{0}(t) \times e^{\beta_1 \times X_i}$                |
+    |:--------------|:--------------------------------------------------------|
+    | $X_i = 0$   | hazard at $t$ is $\lambda_{0}(t)$                                                |
+    | $X_i = x$   | hazard at $t$ is $\lambda_{0}(t) \times e^{\beta_1 \times x}$                    |
+    | $X_i = x+1$ | hazard at $t$ is $\lambda_{0}(t) \times e^{\beta_1 \times x} \times e^{\beta_1}$ |
+
+-   Interpretation of the model
+
+    -   No intercept
+
+        -   Generally ignore the baseline hazard
+
+    -   Slope parameter
+
+        -   Hazard ratio found by exponentiating the slope from the PH regression: $\textrm{exp}(\beta_1)$
+
+        -   Hazard ratio compared groups differing in the value of the predictor by 1 unit
+
+-   Relationship to survival
+
+    -   Hazard function determines the survival function
+
+        |                   |                                                                                              |
+        |:-----------------|:-----------------------------------------------------|
+        | Hazard            | $\lambda(t | X_i) = \lambda_{0}(t) \times e^{\beta_1 \times X_i}$                            |
+        | Cumulative Hazard | $\Lambda(t | X_i) = \displaystyle\int^t_0 \lambda_{0}(u) \times e^{\beta_1 \times X_i} \ du$ |
+        | Survival Function | $S(t | X_i) = e^{-\Lambda(t|X_i)} = [S_0(t)]^{e^{\beta_1 \times X_i}}$                       |
+
+### Descriptive Plots
+
+#### Hazard
+
+```{r}
+set.seed(55)
+x <- seq(0,2*pi,by=0.1)
+lambda0 <- (2*sin(x) + 4 + rnorm(length(x), 0, .2)) / 100
+lambda0[1] <- 0
+plot(x, lambda0, type='l', xlab="Time", ylab="Hazard", ylim=c(0,.1), main="Baseline Hazard Over Time", lwd=2)
+legend("top", inset=0.05, lty=1, expression(lambda[0] (t)), lwd=2)
+```
+
+#### Cumulative hazard
+
+```{r}
+plot(x, cumsum(lambda0), type='l', xlab="Time", ylab="Cumulative Hazard", ylim=c(0,3), main="Baseline Cumulative Hazard over Time", lwd=2)
+legend("top", inset=0.05, lty=1, expression(Lambda[0] (t) == integral(lambda[0] (u)*du, 0, t)), lwd=2)
+```
+
+#### Survival
+
+```{r}
+plot(x, exp(-cumsum(lambda0)), type='l', xlab="Time", ylab="Survival", ylim=c(0,1), main="Baseline Survival over Time", lwd=2)
+legend("top", inset=0.05, lty=1, expression(exp(-Lambda[0] (t))), lwd=2)
+```
+
+#### Proportional hazards assumption
+
+```{r}
+lambda1 <- lambda0*1.5
+plot(x, lambda0, type='l', xlab="Time", ylab="Hazard", ylim=c(0,.1), main="Proportional Hazards for Two Groups", lwd=2)
+lines(x, lambda1, col="Red", lwd=2)
+legend("topright", inset=0.05, lty=1, c(expression(lambda[0] (t)), expression(lambda[1] (t) == 1.5*lambda[0] (t))), lwd=2, col=c("Black","Red"))
+```
+
+#### Proportional hazards assumption on log scale
+
+```{r}
+plot(x, log(lambda0), type='l', xlab="Time", ylab="Log Hazard", ylim=c(-4.5,-2), main="Proportional Hazards for Two Groups, log scale", lwd=2)
+lines(x, log(lambda1), col="Red", lwd=2)
+legend("topright", inset=0.05, lty=1, c(expression(log(lambda[0] (t))), expression(log(lambda[1] (t)) == log(1.5) + log(lambda[0] (t)))), lwd=2, col=c("Black","Red"))
+```
+
+-   Comments on plots
+
+    -   Baseline hazard can follow any functional form. This is the "non-parametric" part of the Cox proportional hazards model
+
+    -   The cumulative hazard is a non-decreasing function that starts at 0 at time 0. It is bounded by $\infty$.
+
+    -   Survival is a function of the cumulative hazard. Survival is 1 at time 0 and decreases over time. It is bounded by $0$ and $1$.
+
+    -   For a dichotomous predictor variable (two groups), the proportional hazards assumption is that $\lambda_0 (t) = e^{\beta_1} \lambda_0 (t)$
+
+        -   In the plots I illustrated $e^{\beta_1} = 1.5$ ($\beta_1 = 0.4054$).
+
+        -   On the hazard scale, this corresponds to $\lambda_1(t)$ always being $1.5$ times larger than $\lambda_0(t)$.
+
+        -   On the log hazard scale, this corresponds to $log(\lambda_1(t))$ always being $log(1.5) = 0.4054$ units larger than $log(\lambda_0(t))$.
+
+        -   The proportional hazards assumption is the "parametric" part of the Cox proportional hazards model. Hence, the Cox proportional hazards model is referred to as being "semi-parametric".
+
+### Software
+
+-   Stata commands
+
+    -   "stset time event-indicator"
+
+    -   "stcox predictor, \[robust\]"
+
+-   R functions
+
+    -   "Surv(time, event-indicator)"
+
+    -   "coxph(Surv(time, event-indicator) \~ predictor)"
+
+### Example Analysis
+
+#### Descriptives
+
+-   Prognostic values of nadir PSA relative to time in remission
+
+    -   PSA dataset: 50 men who received hormonal treatment for advanced prostate cancer
+
+    -   Followed at least 24 months for clinical progression, but exact followup varies from subject to subject
+
+    -   Nadir PSA: lowest level of serum prostate specific antigen achieved post treatment
+
+-   Scatterplots of censored data are not scientifically meaningful
+
+    -   It is best to not generate them unless you do something to indicate the censored dataset
+
+    -   We can label censored data, but have to remember that the true value may be anywhere larger than that
+
+    -   Following plot in Stata: "scatter obstime nadir, mlablel(inrem)"
+
+![image](./prophaz/psascatter.pdf)
+
+-   Characterization of plot
+
+    -   Outliers: Can't tell
+
+    -   First order trends
+
+        -   Downward trending slop
+
+        -   No censoring at high nadir PSAs
+
+    -   Second order trend: Must be curvilinear (but how much?)
+
+    -   Variability within groups: Highest variability within lowest PSA groups
+
+#### Regression model
+
+```         
+. encode inrem, gen(inrem2)
+. gen relapse = abs(inrem2 - 2)
+. table relapse inrem
+
+----------------------
+          |   inrem   
+  relapse |   no   yes
+----------+-----------
+        0 |         14
+        1 |   36      
+----------------------
+
+. stset obstime relapse
+
+     failure event:  relapse != 0 & relapse < .
+obs. time interval:  (0, obstime]
+ exit on or before:  failure
+
+------------------------------------------------------------------------------
+       50  total obs.
+        0  exclusions
+------------------------------------------------------------------------------
+       50  obs. remaining, representing
+       36  failures in single record/single failure data
+     1423  total analysis time at risk, at risk from t =         0
+                             earliest observed entry t =         0
+                                  last observed exit t =        75
+```
+
+-   Create a relapse variable to indicate if a subject has relapsed or not
+
+-   Define the outcome using "stset"
+
+    -   Time to event (relapse or censored)
+
+    -   Failture indicator (relapse)
+
+<!-- -->
+
+```         
+. stcox nadir
+
+         failure _d:  relapse
+   analysis time _t:  obstime
+
+Iteration 0:   log likelihood = -118.96593
+Iteration 1:   log likelihood = -113.88229
+Iteration 2:   log likelihood = -113.29294
+Iteration 3:   log likelihood = -113.28918
+Iteration 4:   log likelihood = -113.28918
+Refining estimates:
+Iteration 0:   log likelihood = -113.28918
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =           50                     Number of obs   =        50
+No. of failures =           36
+Time at risk    =         1423
+                                                   LR chi2(1)      =     11.35
+Log likelihood  =   -113.28918                     Prob > chi2     =    0.0008
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       nadir |    1.01551   .0038122     4.10   0.000     1.008066     1.02301
+------------------------------------------------------------------------------
+
+. lincom 10*nadir, hr
+
+ ( 1)  10 nadir = 0
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   1.166387   .0437864     4.10   0.000     1.083648    1.255443
+------------------------------------------------------------------------------
+```
+
+-   Interpretation of output
+
+    -   By default, stata gives the hazard ratio, not the coefficient
+
+        -   $\textrm{Hazard ratio} = e^{\textrm{coeff}}$
+
+    -   $\textrm{Hazard ratio} = 1.015^{\Delta nadir}$
+
+    -   Estimated hazard ratio for two groups differing by 1 in nadir PSA is found by exponentiating the slope (Stata only reports the hazard ratio)
+
+        -   Groups 1 unit higher nadir PSA have instantaneous event rate $1.015$ fold higher (1.5% higher)
+
+        -   Groups 10 units higher nadir PSA have instantaneous event rate $1.015^{10} = 1.166$ fold higher (16.6% higher)
+
+### Inference with PH Regression
+
+-   The ideas of Signal and Noise found in simple linear regression do not translate well to PH regression
+
+    -   We do not tend to quantify an error distribution with PH regression
+
+-   Valid statistical inference (CIs, p-values) about *associations* requires three general assumptions
+
+    -   Assumptions about approximately Normal distributions for the parameter estimates
+
+        -   Large N
+
+            -   Need for either robust standard errors or classical regression
+
+            -   Definition of large depends on the underlying probability distribution
+
+    -   Assumptions about independence of observations
+
+        -   Classical regression: Independence of all observation
+
+        -   Robust standard errors: Correlated observations within identified clusters
+
+    -   Assumptions about variance of observations within groups
+
+        -   Classical regression: Mean-variance relationship for binary data
+
+            -   Proportional hazards considers the hazard of event at every time
+
+            -   Hence in order to satisfy this requirement, need proportional hazards and linearity of predictor
+
+        -   Robust standard errors
+
+            -   Allows unequal variance across groups
+
+            -   Hence, do not need linearity of predictor or proportional hazards
+
+-   Valid statistical inference (CIs, p-values) about *hazard of response in specific groups* requires a further assumption
+
+    -   Assumption about the adequacy of the linear model
+
+        -   If we are trying to borrow information about the log hazards from neighboring groups, and we are assuming a straight line relationship, the straight line needs to be true
+
+        -   Needed for either classical or robust standard errors
+
+        -   Note that we can model transformations of the measured predictor
+
+-   We rarely make inference about within group survival probabilities using the proportional hazards model
+
+    -   Sometimes estimated survival curves are used descriptively
+
+        -   Use estimates of the baseline survival function
+
+        -   Exponentiate the baseline survival to find survival curve for specific covariate patterns
+
+-   Relationship to survival
+
+    -   Hazard function determines the survival function.
+
+    -   For the Cox model
+
+        |                   |                                                                                              |
+        |:-----------------|:-----------------------------------------------------|
+        | Hazard            | $\lambda(t | X_i) = \lambda_{0}(t) \times e^{\beta_1 \times X_i}$                            |
+        | Cumulative Hazard | $\Lambda(t | X_i) = \displaystyle\int^t_0 \lambda_{0}(u) \times e^{\beta_1 \times X_i} \ du$ |
+        | Survival Function | $S(t | X_i) = e^{-\Lambda(t|X_i)} = [S_0(t)]^{e^{\beta_1 \times X_i}}$                       |
+
+### Example Revisited
+
+#### Robust standard errors
+
+```         
+. stcox nadir, robust
+
+Cox regression -- Breslow method for ties
+
+No. of subjects      =           50                Number of obs   =        50
+No. of failures      =           36
+Time at risk         =         1423
+                                                   Wald chi2(1)    =     16.79
+Log pseudolikelihood =   -113.28918                Prob > chi2     =    0.0000
+
+------------------------------------------------------------------------------
+             |               Robust
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       nadir |    1.01551   .0038139     4.10   0.000     1.008063    1.023013
+------------------------------------------------------------------------------
+```
+
+"From proportional hazards regression analysis, we estimate that for each 1 ng/ml unit difference in nadir PSA, this risk of relapse is $1.6\%$ higher in the group with the higher nadir PSA. This estimate is highly statistically significant ($p < 0.001$). A 95% CI suggests that this observation is not unusual if a group that has a 1 ng/ml higher nadir PSA might have risk of relapse that was anywhere from $0.8\%$ higher to $2.3\%$ higher than the group with lower nadir PSA."
+
+#### Log-transformed nadir PSA
+
+-   Based on prior experience
+
+    -   A constant difference in PSA would not be expected to confer the same increased risk
+
+        -   Comparing 4 ng/ml to 10 ng/ml is not the same as comparing 104 ng/ml to 110 ng/ml
+
+    -   A multiplicative effect on risk might be better
+
+        -   Same increase in risk for each doubling of nadir PSA
+
+        -   Achieve this model by using log transformed nadir PSA
+
+```         
+. generate lnnadir = log(nadir)
+. stcox lnnadir, robust
+
+Cox regression -- Breslow method for ties
+
+No. of subjects      =           50                Number of obs   =        50
+No. of failures      =           36
+Time at risk         =         1423
+                                                   Wald chi2(1)    =     34.04
+Log pseudolikelihood =   -107.31899                Prob > chi2     =    0.0000
+
+------------------------------------------------------------------------------
+             |               Robust
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     lnnadir |   1.535399   .1128444     5.83   0.000     1.329419    1.773293
+------------------------------------------------------------------------------
+```
+
+-   Hazard ratio is $1.54$ for a $e$-fold difference in nadir PSA ($e = 2.7183$)
+
+-   It is more easy to understand doubling, tripling, 5-fold, 10-fold increases
+
+    -   For doubling: $\textrm{HR} = 1.54^{log(2)} = 1.35$
+
+    -   For 5-fold: $\textrm{HR} = 1.54^{log(5)} = 1.99$
+
+    -   Can similarly transform the upper and lower limits of the confidence interval
+
+-   The confidence interval and statistical test given in the Stata output is called a Wald test. Other tests (Score, Likelihood Ratio) are also possible.
+
+    -   All tests are asymptotically equivalent
+
+    -   The Wald test is easiest to obtain, but generally performs the poorest in small sample sizes. It is based on the coefficient estimate and standard error.
+
+    -   The Likelihood Ratio test performs the best in small samples. We will discuss it later, including how to obtain the test using post-estimation commands.
+
+    -   The Score test is not bad in small samples, but is often hard to obtain from software. It is exactly equal to the logrank test for binary outcomes and categorical predictors.
+
+### Review: Interpretation of Slopes
+
+#### Additive models
+
+-   Identity link function
+
+    |       |                                 |     |
+    |:------|:--------------------------------|-----|
+    | Means | $\rightarrow$ Linear regression |     |
+
+-   Interpretation of non-transformed slope: $\theta_X = \beta_0 + \beta_1 \times X$
+
+    -   $\beta_1$ : (Average) difference in summary measure between groups per 1 unit difference in $X$
+
+    -   $\Delta \times \beta_1$ : (Average) difference in summary measure between groups per $\Delta$ unit difference in $X$
+
+-   Interpretation with log transformed slope: $\theta_X = \beta_0 + \beta_1 \times \textrm{log}(X)$
+
+    -   $\textrm{log}(k) \times \beta_1$ : (Average) difference in summary measure between groups per $k$-fold difference in $X$
+
+#### Multiplicative models
+
+-   Log link function
+
+    |                 |                                                     |     |
+    |:---------------|:----------------------------------------|----------------|
+    | Geometric means | $\rightarrow$ Linear regression on log scale        |     |
+    | Odds            | $\rightarrow$ Logistic regression                   |     |
+    | Hazards         | $\rightarrow$ Proportional Hazards (Cox) regression |     |
+    | Rates/Means     | $\rightarrow$ Poisson regression                    |     |
+    | Medians         | $\rightarrow$ Accelerated Failure Time regression   |     |
+
+-   Interpretation of non-transformed slope: $\textrm{log}(\theta_X) = \beta_0 + \beta_1 \times X$
+
+    -   $e^{\beta_1}$ : (Average) ratio of summary measure between groups per 1 unit difference in $X$
+
+    -   $e^{\Delta \times \beta_1}$ : (Average) ratio of summary measure between groups per $\Delta$ unit difference in $X$
+
+-   Interpretation with log transformed slope: $\textrm{log}(\theta_X) = \beta_0 + \beta_1 \times \textrm{log}(X)$
+
+    -   $e^{\textrm{log}(k) \times \beta_1} = k^{\beta_1}$ : (Average) ratio of summary measure between groups per $k$-fold difference in $X$
+
+## Parametric regression
+
+-   Fully-parametric models are less common than the semi-parametric Cox model because they are less flexible
+
+-   However, if they are a good fit to a particular dataset, they may
+
+    -   Estimate fewer parameters
+
+    -   Allow for better predictions (as long as the error distribution is correctly specified!)
+
+    -   All for comparison of survival estimates rather than hazards (accelerated failure time)
+
+-   Two fundamental models used to describe the way that some factor might affect time to event
+
+    -   Proportional hazards (aka Cox model)
+
+    -   Accelerated failure time (less popular)
+
+-   Accelerated Failure Time model
+
+    -   Assume that a factor causes some subjects to spend their lifetime too fast
+
+    -   Basic idea: For every year in a reference group's lives, the other group ages "k" years
+
+        -   e.g. 1 human year is about 7 dog years
+
+    -   Assumes that ratios of quantiles of survival distribution are constant across groups
+
+        -   e.g. report median ratios: It takes 50% longer for half of the treated group to die than half of the control group
+
+    -   AFT models include the parametric exponential, Weibull, and lognormal models
+
+### Weibull model
+
+-   The Weibull model accommodates monotonically increasing or decreasing hazards
+
+-   The following gives the relationship between the hazard function, Survival function, distribution function and cumulative distribution function for four different shape parameters
+
+```{r}
+plot.data <- expand.grid(
+  t = seq(0.1, 10, .1),
+  loc = c(.5, 1, 1.5, 2)
+) %>% 
+  mutate(
+    `F (CDF)` = pweibull(t, shape = loc, scale = 2),
+    `f (PDF)` = dweibull(t, shape = loc, scale = 2),
+    S = 1 - `F (CDF)`,
+    `h = f / S` = flexsurv::hweibull(t, shape = loc, scale = 2),
+    loc = paste("shape:", loc)
+)
+
+plot.data <- expand.grid(t=seq(0.1, 10, .1),
+                         loc=c(.5, 1, 1.5, 2))
+
+plot.data2 <- with(plot.data, 
+                   data.frame(t=rep(t,4),
+                              loc=rep(loc,4),
+                              value=NA,
+                              type=rep(1:4,each=nrow(plot.data))))
+
+plot.data2$value[plot.data2$type==1] <- 
+  pweibull(plot.data2$t[plot.data2$type==1], shape = plot.data2$loc[plot.data2$type==1], scale = 2)
+
+plot.data2$value[plot.data2$type==2] <- 
+  dweibull(plot.data2$t[plot.data2$type==2], shape = plot.data2$loc[plot.data2$type==2], scale = 2)
+
+plot.data2$value[plot.data2$type==3] <- 
+  1-pweibull(plot.data2$t[plot.data2$type==3], shape = plot.data2$loc[plot.data2$type==3], scale = 2)
+
+plot.data2$value[plot.data2$type==4] <- 
+  flexsurv::hweibull(plot.data2$t[plot.data2$type==4], shape = plot.data2$loc[plot.data2$type==4], scale = 2)
+
+plot.data2$type <- factor(plot.data2$type, levels=1:4, labels=c("F (CDF)","f (PDF)", "S = 1 - F", "h = f / S" ))
+
+plot.data2$loc2 <- paste("scale =", plot.data2$loc)
+
+ggplot(plot.data2, aes(x=t, y=value)) + geom_line() + facet_grid(type ~ loc2, scales="free_y") + theme_bw()
+```
+
+-   Weibull hazard and cumulative hazard at time $t$ with shape $p$ and scale $\lambda$
+
+$$h(t) = λpt^{(p−1)}$$ $$\textrm{where } \lambda = \textrm{exp}(\beta_0 + \beta_1 X_1 + \ldots + \beta_p X_p$$
+
+-   A special case of the Weibull model is the Exponential model. The Weibull reduces to the Exponential when the shape parameter is 1 ($p=1$). A shape parameter of 1 assumes the hazard is constant over time, and the cumulative hazard increases linearly with time.
+
+    -   This provides a method for checking if the Weibull or Exponential model is reasonable for our data. If we estimate the cumulative hazard without making parametric assumptions and plot versus time, we can see if it is increasing linearly or not.
+
+-   Nelson-Aalen estimator of the cumulative hazard (non-parametric)
+
+$$\hat{H}(t)=\sum_{i:t_i\leq t}\frac{d_i}{n_i}$$
+
+-   where $d_i$ is the number of events at time $t_i$, and $n_i$ is the number of individuals at risk just before time $t_i$
+
+```{=html}
+<!-- -->
+```
+-   Apply this to the lung cancer dataset
+
+```{r}
+# Calculate the non-parametric estimate of the cumulative hazard
+n.risk <- summary(s1)$n.risk
+n.evt <- summary(s1)$n.event
+time <- summary(s1)$time
+
+# Plot cumulative hazard versus time
+na.haz <- n.risk/n.evt
+na.cumhaz <- cumsum(na.haz)
+plot(time, na.cumhaz)
+```
+
+-   Cumulative hazard is increasing over time, but not at a constant rate
+
+### Weibull example
+
+#### Compare fit of Weibull (parametric) to Kaplan-Meier (non-parametric)
+
+-   Is the Weibull model a reasonable fit to the observed survival estimates?
+
+```{r}
+fit2 <- survreg(Surv(time, status) ~ sex, data = lung, dist = "weibull")
+
+pct <- 1:98/100
+ptime1 <- predict(fit2, newdata=data.frame(sex=1), type='quantile',
+                 p=pct)
+ptime2 <- predict(fit2, newdata=data.frame(sex=2), type='quantile',
+                 p=pct)
+
+# Kaplan-Meier fit
+plot(fit.sex, col=1:2, ylab="Survival")
+
+lines(ptime1, 1-pct, col=1,lty=2)
+lines(ptime2, 1-pct, col=2,lty=2)
+legend("topright", col=c(1,1,2,2), lty=c(1,2,1,2), 
+       c("Kaplan-Meier, Male","Weibull, Male","Kaplan-Meier, Female","Weibull, Female"))
+```
+
+#### Interpretation of Weibull parameters
+
+-   The Weibull model is both a proportional hazards and accelerated failure time model
+
+-   How the model is parameterized will either give a proportional hazards or accelerated failure time interpretation (details omitted)
+
+-   R default is to give the proportional hazards parameterization. The hazard ratio is found by exponentiation of the slope as we have done with other models
+
+-   Compare to females, males are at a 1.48 fold increased risk (hazard) of death.
+
+```{r}
+summary(fit2)
+exp(coef(fit2))
+```
+
+-   To obtain the accelerated failure time interpretation, the Weibull model needs to be reparameterized so the output coefficients can be directly interpreted
+
+```{r}
+aftreg(formula = Surv(time, status) ~ sex, data = lung,
+                         dist = "weibull")
+```
+
+-   Acceleration factor (males compared to females) is 0.673
+
+    -   Comparison of survival times, with males having shorter survival times at all percentiles
+
+```{r}
+# 25th, 50th, and 75th percentiles of survival time in males
+ptime1[pct%in%c("0.25","0.5","0.75")]
+
+# 25th, 50th, and 75th percentiles of survival time in females
+ptime2[pct%in%c("0.25","0.5","0.75")]
+
+# Ratios is constant (accelerated failure-time assumption)
+ptime1[pct%in%c("0.25","0.5","0.75")] / ptime2[pct%in%c("0.25","0.5","0.75")]
+```
+
+### Other parametric models
+
+-   Example shown here focused on a Weibull model as an introduction. We identified the Exponential distribution (a special case of the Weibull) is not a good fit.
+
+-   Other (parametric) distributions are possible. Some have a proportional hazards interpretation (only) or an accelerated failure time interpretation (only). Other lack either of these interpretations, but are more flexible in how they model the hazard function. There is a trade-off between interpretability and flexibility.
+
+-   Goal is to pick a distribution with a corresponding hazard (cumulative hazard) that is appropriate model for your data, will be reproducible, and is ultimately interpretable.
+
+-   Cox model is a good choice if you want to model associations and not concern yourself with the shape of the hazard function. This is a very common situation and why the Cox model is widely used.
+
+-   If goal is prediction, appropriate parametric models (perhaps with additional flexibility) may outperform the Cox model
+
+-   Bayesian approach to fitting survival models are most often based on parametric approaches
+
+    -   It is relatively straight forward to fit Bayesian models using parametric distributions like Weibull
+
+    -   Models that attempt to recreate a Cox-like models are more complex because of the flexibility of the baseline hazard function

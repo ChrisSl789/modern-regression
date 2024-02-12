@@ -664,7 +664,7 @@ flowchart LR
 
     -   $V = \frac{\sigma^2_{Y|X,W}}{\textrm{Var}(X)(1-r^2_{X,W})}$
 
-    -   $se(\hat{\theta}) = \sqrt{\frac{\hat{\sigma}^2_{Y|X}}{n \hat{\textrm{Var}}(X)(1-r^2_{X,W})}}$
+    -   $se(\hat{\theta}) = \sqrt{\frac{\hat{\sigma}^2_{Y|X,W}}{n \hat{\textrm{Var}}(X)(1-r^2_{X,W})}}$
 
     -   $\sigma^2_{Y|X,W} = \sigma^2_{Y|X} - \beta_2^2 \textrm{Var}(W | X)$
 

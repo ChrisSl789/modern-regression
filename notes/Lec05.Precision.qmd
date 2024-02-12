@@ -658,7 +658,7 @@ What is V if \...
 
     -   Variability $V$ within one sampling unit
 
-    -   $n = \frac{(z_{1-\alpha/2} + z_\beta)^2 \times V}{(\theta_1 - \theta_0)^2}$
+    -   $n = \frac{(z_{1-\alpha/2} + z_{1-\beta})^2 \times V}{(\theta_1 - \theta_0)^2}$
 
 -   When sample size is constrained (the usual case) either
 
@@ -672,7 +672,7 @@ What is V if \...
 
     -   Compute alternative that can be detected with high power
 
-        -   $\theta_1 = \theta_0 + (z_{1-\alpha/2} + z_\beta) \sqrt{V/n}$
+        -   $\theta_1 = \theta_0 + (z_{1-\alpha/2} + z_{1-\beta}) \sqrt{V/n}$
 
 ### General Comments
 
