@@ -3,6 +3,8 @@ title: "Lab Template"
 author: "Author"
 format:
   html:
+    embed-resources: true
     code-tools: true
-editor: visual
+editor: source
 ---
+

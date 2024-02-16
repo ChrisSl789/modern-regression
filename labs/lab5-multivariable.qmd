@@ -1,0 +1,114 @@
+---
+title: "Lab 5: Multivariable Regression"
+author: "Author"
+format:
+  html:
+    embed-resources: true
+    code-tools: true
+editor: source
+---
+
+
+
+## Background
+
+Another way to think about regression is the amount of variablity in the outcome (Y) that is explained by the predictors (X).  In simple linear regression, we regress X on Y because we believe that X will explain some of the variability in Y.  This leads to an alternate way of thinking about statistical tests for regression coefficients in terms of the variability of the outcome.  Specifically, the null hypothesis is that X explains none of the variability in Y, and the alternative hypothesis is that X explains more variability than would be expected by chance alone.  In this lab we will consider the interpretation of statistical tests in a multivariable model that adds another predictor (W) to the model.  Salary will be outcome (Y), male gender the predictor of interest (X), and year of degree the additional covariate (W).
+
+
+An added-variable plot is a scatterplot of the transformations of an independent variable (say, $X_1$) and the dependent variable ($y$) that nets out the influence of all the other independent variables. The fitted regression line through the origin between these transformed variables has the same slope as the coefficient on x1 in the full regression model which includes all the independent variables. An added-variable plot is the multivariable analogue of using a simple scatterplot with a regression fit when there are no other covariates to show the relationship between a single x variable and a y variable. An added-variable plot is a visually compelling method for showing the nature of the partial correlation between x1 and y as estimated
+in a multiple regression.
+
+
+### New functions
+
+To obtain residuals for a model fit, use the resid() function on the model fit.
+
+avPlots in the car packages will added-variable, also called partial-regression, plots for linear and generalized linear models.
+
+In part 1 and part 2 of the lab, we will construct these in steps without the use of a specialized function.
+
+
+## Example
+
+Duncan's Occupational Prestige. Data on the prestige and other characteristics of 45 U. S. occupations in 1950.
+
+```{r}
+library(car)
+head(Duncan)
+```
+
+
+Obtain summary statistics for the variables in `Duncan`:
+```{r}
+summary(Duncan)
+```
+
+As a first graph, we view a histogram of the variable `prestige`:
+```{r, fig.width=5, fig.height=5}
+with(Duncan, hist(prestige))
+```
+
+
+#####  Examining the Data
+
+The `scatterplotMatrix()` function in the **car** package produces scatterplots for all paris of variables.  A few relatively remote points are marked by case names, in this instance by occupation.
+```{r fig.height=8, fig.width=8}
+scatterplotMatrix( ~ prestige + education + income, 
+    id=list(n=3), data=Duncan)
+```
+
+#### 1.5.2 Regression Analysis
+
+We use the`lm()` function to fit a linear regression model to the data:
+```{r}
+(duncan.model <- lm(prestige ~ education + income, data=Duncan))
+```
+
+```{r}
+summary(duncan.model)
+```
+
+#### Added-variable plot
+
+
+Added-variable plots for Duncan's regression, looking for influential cases:
+
+```{r fig.height=4, fig.width=8}
+avPlots(duncan.model, 
+    id=list(cex=0.75, n=3, method="mahal"))
+```
+
+
+## Initial Setup
+
+For this lab, we will be using salary data from they year 1995.  We will focus on the variables: salary, sex, and yrdeg
+
+Initial dataset manipulations
+
+1. Read in the salary dataset
+2. Remove any observations that are not from 1995 (use the 'year' variable)
+3. Describe the dataset
+4. Create an indicator variable for male gender
+
+
+## Part 1
+
+### Model 1: Fit a simple linear regression model with salary as the outcome and male as the predictor.  Save the residuals from this model.  Interpret these residuals in terms of the unexplained variability in salary.
+
+### Model 2: Fit a simple linear regression model with yrdeg as the outcome and male as the predictor.  Save the residuals from this model.  Interpret these residuals in terms of the unexplained variability in yrdeg.
+
+### Plot the residuals from model 2 (X-axis) versus the residuals from model 1 (y-axis).  Describe any association you see.  It may be helpful to add a lowess smooth or other smooth line to the plot.
+
+### Model 3: Fit a simple linear regression model using the residuals from model 1 as the outcome and the residuals from model 2 as the predictor.  Interpret the slope coefficient from this model.
+
+### Model 4: Fit a multivariable linear regression model with salary as the outcome using predictors male and yrdeg.  What is the interpretation of the male coefficient in this model?  What is the interpretation of the yrdeg coefficient?
+
+### Compare the slope estimate for yrdeg from Model 3 to the slope estimate obtained in Model 4.  Explain your findings.
+
+
+## Part 2
+
+### Create a new variable FULL that takes on the value 1 for full professors and 0 for Assistant or Associate Professors.
+
+### Determine if FULL explains some of the variability in salary after adjusting for year of degree and gender by fitting the multivariable regression model and by regressing residuals from “Model A” on the residuals from “Model B” other as was done previously (you will need to figure out what “Model A” and “Model B” should be).  Compare the results from the two models.
+

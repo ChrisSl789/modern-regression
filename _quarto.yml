@@ -50,6 +50,7 @@ website:
           - href: labs/lab2-linearassumptions.qmd
           - href: labs/lab3-logistic-questions.qmd
           - href: labs/lab4-precision-questions.qmd
+          - href: labs/lab5-multivariable.qmd
           - href: https://vanderbilt.box.com/s/rpftvmc9vua2w3gz3jy16phlnsojs6on
             text: "Box folder with .qmd files"
       - section: "Supplemental notes"
