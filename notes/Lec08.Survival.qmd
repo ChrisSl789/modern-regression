@@ -45,6 +45,10 @@ library(flexsurv)
 library(eha)
 ```
 
+## Acknowledgments
+
+Parts of the introductory material is borrowed from Emily Zabor's [introduction to survival analysis in R](https://www.emilyzabor.com/tutorials/survival_analysis_in_r_tutorial.html).
+
 ## Background
 
 In logistic regression, we were interested in studying how risk factors were associated with presence or absence of disease. Sometimes, though, we are interested in how a risk factor or treatment affects time to disease or some other event. Or we may have study dropout, and therefore subjects who we are not sure if they had disease or not. In these cases, logistic regression is not appropriate.
@@ -472,7 +476,7 @@ There was a significant difference in overall survival according to sex in the `
 -   "Baseline hazard" is unspecified. Baseline hazard is similar to an intercept
 
     | Model       | $\textrm{log}(\lambda(t | X_i)) = \textrm{log}(\lambda_{0}(t)) + \beta_1 \times X_i$ |
-    |:--------------|:--------------------------------------------------------|
+    |:--------------------|:--------------------------------------------------|
     | $X_i = 0$   | log hazard at $t$ is $\textrm{log}(\lambda_{0}(t))$                                  |
     | $X_i = x$   | log hazard at $t$ is $\textrm{log}(\lambda_{0}(t)) + \beta_1 \times x$               |
     | $X_i = x+1$ | log hazard at $t$ is $\textrm{log}(\lambda_{0}(t))+ \beta_1 \times x + \beta_1$      |
@@ -480,7 +484,7 @@ There was a significant difference in overall survival according to sex in the `
 -   Model on the hazard scale is found by exponentiating parameters
 
     | Model       | $\lambda(t | X_i) = \lambda_{0}(t) \times e^{\beta_1 \times X_i}$                |
-    |:--------------|:--------------------------------------------------------|
+    |:--------------------|:--------------------------------------------------|
     | $X_i = 0$   | hazard at $t$ is $\lambda_{0}(t)$                                                |
     | $X_i = x$   | hazard at $t$ is $\lambda_{0}(t) \times e^{\beta_1 \times x}$                    |
     | $X_i = x+1$ | hazard at $t$ is $\lambda_{0}(t) \times e^{\beta_1 \times x} \times e^{\beta_1}$ |
@@ -502,7 +506,7 @@ There was a significant difference in overall survival according to sex in the `
     -   Hazard function determines the survival function
 
         |                   |                                                                                              |
-        |:-----------------|:-----------------------------------------------------|
+        |:----------------------|:------------------------------------------------|
         | Hazard            | $\lambda(t | X_i) = \lambda_{0}(t) \times e^{\beta_1 \times X_i}$                            |
         | Cumulative Hazard | $\Lambda(t | X_i) = \displaystyle\int^t_0 \lambda_{0}(u) \times e^{\beta_1 \times X_i} \ du$ |
         | Survival Function | $S(t | X_i) = e^{-\Lambda(t|X_i)} = [S_0(t)]^{e^{\beta_1 \times X_i}}$                       |
@@ -583,6 +587,8 @@ legend("topright", inset=0.05, lty=1, c(expression(log(lambda[0] (t))), expressi
 
     -   "coxph(Surv(time, event-indicator) \~ predictor)"
 
+    -   There is a robust option in coxph, and it defaults to TRUE. In my opinion, this is a good default to have because the assumption of proportional hazards in the Cox model rarely (never?) holds completely.
+
 ### Example Analysis
 
 #### Descriptives
@@ -601,9 +607,15 @@ legend("topright", inset=0.05, lty=1, c(expression(log(lambda[0] (t))), expressi
 
     -   We can label censored data, but have to remember that the true value may be anywhere larger than that
 
-    -   Following plot in Stata: "scatter obstime nadir, mlablel(inrem)"
+```{r}
+library(foreign)
+library(rms)
+psa <- read.dta(file="data/psa.dta")
+psa$nadirpsa <- psa$dirpsa
 
-![image](./prophaz/psascatter.pdf)
+ggplot(psa, aes(y=obstime, x=nadirpsa, color=inrem)) + geom_point() + theme_bw()
+
+```
 
 -   Characterization of plot
 
@@ -613,7 +625,7 @@ legend("topright", inset=0.05, lty=1, c(expression(log(lambda[0] (t))), expressi
 
         -   Downward trending slop
 
-        -   No censoring at high nadir PSAs
+        -   No censoring at high nadir PSAs (high nadir PSA are all early events)
 
     -   Second order trend: Must be curvilinear (but how much?)
 
@@ -621,98 +633,57 @@ legend("topright", inset=0.05, lty=1, c(expression(log(lambda[0] (t))), expressi
 
 #### Regression model
 
-```         
-. encode inrem, gen(inrem2)
-. gen relapse = abs(inrem2 - 2)
-. table relapse inrem
+-   The usual coding of the outcome is survival is 1 for an event and 0 for a censored observation.
 
-----------------------
-          |   inrem   
-  relapse |   no   yes
-----------+-----------
-        0 |         14
-        1 |   36      
-----------------------
-
-. stset obstime relapse
-
-     failure event:  relapse != 0 & relapse < .
-obs. time interval:  (0, obstime]
- exit on or before:  failure
-
-------------------------------------------------------------------------------
-       50  total obs.
-        0  exclusions
-------------------------------------------------------------------------------
-       50  obs. remaining, representing
-       36  failures in single record/single failure data
-     1423  total analysis time at risk, at risk from t =         0
-                             earliest observed entry t =         0
-                                  last observed exit t =        75
+```{r}
+# First, create an indicator variable for those who relapsed at any time point
+psa$relapse <- as.numeric(psa$inrem=="no")
+with(psa, table(relapse, inrem))
 ```
 
 -   Create a relapse variable to indicate if a subject has relapsed or not
 
--   Define the outcome using "stset"
+-   Define the outcome using "Surv(obstime, relapse)"
 
-    -   Time to event (relapse or censored)
+    -   obstime: Time to event (either time to relapse or time to censored)
 
-    -   Failture indicator (relapse)
+    -   relapse: Failure indicator variable
 
-<!-- -->
+```{r}
+m1 <- coxph(Surv(obstime, relapse) ~ nadirpsa, data=psa)
+m1
+summary(m1)
+exp(confint.default(m1))
 
-```         
-. stcox nadir
+# 10-unit change in nadir PSA
+exp(coef(m1)*10)
 
-         failure _d:  relapse
-   analysis time _t:  obstime
+exp(10*confint.default(m1))
 
-Iteration 0:   log likelihood = -118.96593
-Iteration 1:   log likelihood = -113.88229
-Iteration 2:   log likelihood = -113.29294
-Iteration 3:   log likelihood = -113.28918
-Iteration 4:   log likelihood = -113.28918
-Refining estimates:
-Iteration 0:   log likelihood = -113.28918
-
-Cox regression -- Breslow method for ties
-
-No. of subjects =           50                     Number of obs   =        50
-No. of failures =           36
-Time at risk    =         1423
-                                                   LR chi2(1)      =     11.35
-Log likelihood  =   -113.28918                     Prob > chi2     =    0.0008
-
-------------------------------------------------------------------------------
-          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-       nadir |    1.01551   .0038122     4.10   0.000     1.008066     1.02301
-------------------------------------------------------------------------------
-
-. lincom 10*nadir, hr
-
- ( 1)  10 nadir = 0
-
-------------------------------------------------------------------------------
-          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-         (1) |   1.166387   .0437864     4.10   0.000     1.083648    1.255443
-------------------------------------------------------------------------------
 ```
 
--   Interpretation of output
+#### Interpretation of output
 
-    -   By default, stata gives the hazard ratio, not the coefficient
+```         
+-   By default, R gives the hazard ratio andthe coefficient for comparing groups who differ by one unit in the nadir psa covariate
 
-        -   $\textrm{Hazard ratio} = e^{\textrm{coeff}}$
+    -   $\textrm{Hazard ratio} = e^{\textrm{coeff}}$
 
-    -   $\textrm{Hazard ratio} = 1.015^{\Delta nadir}$
+-   $\textrm{Hazard ratio} = 1.015^{\Delta nadir}$
 
-    -   Estimated hazard ratio for two groups differing by 1 in nadir PSA is found by exponentiating the slope (Stata only reports the hazard ratio)
+-   Estimated hazard ratio for two groups differing by 1 in nadir PSA is found by exponentiating the slope
 
-        -   Groups 1 unit higher nadir PSA have instantaneous event rate $1.015$ fold higher (1.5% higher)
+    -   Groups 1 unit higher nadir PSA have instantaneous event rate $1.0157$ fold higher (1.6% higher)
 
-        -   Groups 10 units higher nadir PSA have instantaneous event rate $1.015^{10} = 1.166$ fold higher (16.6% higher)
+    -   Groups 10 units higher nadir PSA have instantaneous event rate $1.015^{10} = 1.166$ fold higher (16.6% higher)
+    
+```
+
+#### Robust standard errors
+
+By default, R uses robust standard errors in the coxph function. Note that other functions for fitting Cox models in R may or may not have this same default
+
+"From proportional hazards regression analysis, we estimate that for each 1 ng/ml unit difference in nadir PSA, this risk of relapse is $1.6\%$ higher in the group with the higher nadir PSA. This estimate is highly statistically significant ($p < 0.001$). A 95% CI suggests that this observation is not unusual if a group that has a 1 ng/ml higher nadir PSA might have risk of relapse that was anywhere from $0.8\%$ higher to $2.3\%$ higher than the group with lower nadir PSA."
 
 ### Inference with PH Regression
 
@@ -775,39 +746,14 @@ Log likelihood  =   -113.28918                     Prob > chi2     =    0.0008
     -   For the Cox model
 
         |                   |                                                                                              |
-        |:-----------------|:-----------------------------------------------------|
+        |:----------------------|:------------------------------------------------|
         | Hazard            | $\lambda(t | X_i) = \lambda_{0}(t) \times e^{\beta_1 \times X_i}$                            |
         | Cumulative Hazard | $\Lambda(t | X_i) = \displaystyle\int^t_0 \lambda_{0}(u) \times e^{\beta_1 \times X_i} \ du$ |
         | Survival Function | $S(t | X_i) = e^{-\Lambda(t|X_i)} = [S_0(t)]^{e^{\beta_1 \times X_i}}$                       |
 
-### Example Revisited
-
-#### Robust standard errors
-
-```         
-. stcox nadir, robust
-
-Cox regression -- Breslow method for ties
-
-No. of subjects      =           50                Number of obs   =        50
-No. of failures      =           36
-Time at risk         =         1423
-                                                   Wald chi2(1)    =     16.79
-Log pseudolikelihood =   -113.28918                Prob > chi2     =    0.0000
-
-------------------------------------------------------------------------------
-             |               Robust
-          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-       nadir |    1.01551   .0038139     4.10   0.000     1.008063    1.023013
-------------------------------------------------------------------------------
-```
-
-"From proportional hazards regression analysis, we estimate that for each 1 ng/ml unit difference in nadir PSA, this risk of relapse is $1.6\%$ higher in the group with the higher nadir PSA. This estimate is highly statistically significant ($p < 0.001$). A 95% CI suggests that this observation is not unusual if a group that has a 1 ng/ml higher nadir PSA might have risk of relapse that was anywhere from $0.8\%$ higher to $2.3\%$ higher than the group with lower nadir PSA."
-
 #### Log-transformed nadir PSA
 
--   Based on prior experience
+-   Suppose that you know based on prior experience or consultation with collaborators...
 
     -   A constant difference in PSA would not be expected to confer the same increased risk
 
@@ -819,27 +765,15 @@ Log pseudolikelihood =   -113.28918                Prob > chi2     =    0.0000
 
         -   Achieve this model by using log transformed nadir PSA
 
-```         
-. generate lnnadir = log(nadir)
-. stcox lnnadir, robust
-
-Cox regression -- Breslow method for ties
-
-No. of subjects      =           50                Number of obs   =        50
-No. of failures      =           36
-Time at risk         =         1423
-                                                   Wald chi2(1)    =     34.04
-Log pseudolikelihood =   -107.31899                Prob > chi2     =    0.0000
-
-------------------------------------------------------------------------------
-             |               Robust
-          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-     lnnadir |   1.535399   .1128444     5.83   0.000     1.329419    1.773293
-------------------------------------------------------------------------------
+```{r}
+psa$lognadirpsa <- log(psa$nadirpsa)
+m2 <- coxph(Surv(obstime, relapse) ~ lognadirpsa, data=psa)
+m2
+summary(m2)
+exp(confint.default(m2))
 ```
 
--   Hazard ratio is $1.54$ for a $e$-fold difference in nadir PSA ($e = 2.7183$)
+-   Hazard ratio is $1.55$ for a $e$-fold difference in nadir PSA ($e = 2.7183$)
 
 -   It is more easy to understand doubling, tripling, 5-fold, 10-fold increases
 
@@ -849,7 +783,7 @@ Log pseudolikelihood =   -107.31899                Prob > chi2     =    0.0000
 
     -   Can similarly transform the upper and lower limits of the confidence interval
 
--   The confidence interval and statistical test given in the Stata output is called a Wald test. Other tests (Score, Likelihood Ratio) are also possible.
+-   The confidence interval and statistical test given in the output is called a Wald test. Other tests (Score, Likelihood Ratio) are also possible.
 
     -   All tests are asymptotically equivalent
 
@@ -884,7 +818,7 @@ Log pseudolikelihood =   -107.31899                Prob > chi2     =    0.0000
 -   Log link function
 
     |                 |                                                     |     |
-    |:---------------|:----------------------------------------|----------------|
+    |:------------------|:----------------------------------|-------------------|
     | Geometric means | $\rightarrow$ Linear regression on log scale        |     |
     | Odds            | $\rightarrow$ Logistic regression                   |     |
     | Hazards         | $\rightarrow$ Proportional Hazards (Cox) regression |     |
@@ -921,11 +855,17 @@ Log pseudolikelihood =   -107.31899                Prob > chi2     =    0.0000
 
 -   Accelerated Failure Time model
 
+    -   Comparisons across groups based on survival times rather than hazards
+
     -   Assume that a factor causes some subjects to spend their lifetime too fast
 
     -   Basic idea: For every year in a reference group's lives, the other group ages "k" years
 
-        -   e.g. 1 human year is about 7 dog years
+        -   e.g. 1 human year is about 7 dog years, so a 70 year old human is the same age as a 10 year old dog
+
+        -   In AFT terminology, the probability that a human survives beyond 70 years is the same as the probability that a dog survives beyond 10 years
+
+        -   From the framework, dogs are accelerating through life 7 times faster than a human. Equivalently, the lifespan of a human is stretched out to be 7 times longer than that of a dog.
 
     -   Assumes that ratios of quantiles of survival distribution are constant across groups
 
@@ -935,9 +875,11 @@ Log pseudolikelihood =   -107.31899                Prob > chi2     =    0.0000
 
 ### Weibull model
 
+-   The Weibull model can also be interpreted as either a proportional hazard or accelerated failure time model. It is one of the few models that makes both the proportional hazards and accelerated failure time assumptions.
+
 -   The Weibull model accommodates monotonically increasing or decreasing hazards
 
--   The following gives the relationship between the hazard function, Survival function, distribution function and cumulative distribution function for four different shape parameters
+-   The following gives the relationship between the hazard function, Survival function, distribution function and cumulative distribution function for four different shape parameters following a Weibull distribution with scale parameter held constant at 2
 
 ```{r}
 plot.data <- expand.grid(
@@ -980,13 +922,25 @@ plot.data2$loc2 <- paste("scale =", plot.data2$loc)
 ggplot(plot.data2, aes(x=t, y=value)) + geom_line() + facet_grid(type ~ loc2, scales="free_y") + theme_bw()
 ```
 
--   Weibull hazard and cumulative hazard at time $t$ with shape $p$ and scale $\lambda$
+-   Weibull hazard and cumulative hazard at time $t$ with shape $p$ and scale $\lambda$ $(\lambda > 0)$
 
-$$h(t) = λpt^{(p−1)}$$ $$\textrm{where } \lambda = \textrm{exp}(\beta_0 + \beta_1 X_1 + \ldots + \beta_p X_p$$
+$$h(t) = λpt^{(p−1)}$$
+
+-   $p$ is a shape parameter
+
+    -   $p>1$ is an increasing hazard over time
+
+    -   $p=1$ is a constant hazard
+
+    -   $p<1$ is a decreasing hazard
+
+-   We can model the scale as a function of covariates
+
+$$\textrm{where } \lambda = \textrm{exp}(\beta_0 + \beta_1 X_1 + \ldots + \beta_p X_p)$$
 
 -   A special case of the Weibull model is the Exponential model. The Weibull reduces to the Exponential when the shape parameter is 1 ($p=1$). A shape parameter of 1 assumes the hazard is constant over time, and the cumulative hazard increases linearly with time.
 
-    -   This provides a method for checking if the Weibull or Exponential model is reasonable for our data. If we estimate the cumulative hazard without making parametric assumptions and plot versus time, we can see if it is increasing linearly or not.
+    -   This provides a method for checking if the Weibull can be reduced to an Exponential model. If we estimate the cumulative hazard without making parametric assumptions and plot versus time, we can see if it is increasing at a constant rate.
 
 -   Nelson-Aalen estimator of the cumulative hazard (non-parametric)
 
@@ -994,9 +948,6 @@ $$\hat{H}(t)=\sum_{i:t_i\leq t}\frac{d_i}{n_i}$$
 
 -   where $d_i$ is the number of events at time $t_i$, and $n_i$ is the number of individuals at risk just before time $t_i$
 
-```{=html}
-<!-- -->
-```
 -   Apply this to the lung cancer dataset
 
 ```{r}
@@ -1011,7 +962,7 @@ na.cumhaz <- cumsum(na.haz)
 plot(time, na.cumhaz)
 ```
 
--   Cumulative hazard is increasing over time, but not at a constant rate
+-   Cumulative hazard is increasing over time, but not at a constant rate. The Weibull may be appropriate, but the Exponential is not appropriate.
 
 ### Weibull example
 
@@ -1041,7 +992,33 @@ legend("topright", col=c(1,1,2,2), lty=c(1,2,1,2),
 
 -   The Weibull model is both a proportional hazards and accelerated failure time model
 
--   How the model is parameterized will either give a proportional hazards or accelerated failure time interpretation (details omitted)
+-   How the model is parameterized will either give a proportional hazards or accelerated failure time interpretation
+
+    -   For the Weibull proportional hazards model with one covariate (\$X\$)
+
+        $$
+        h(t) = \lambda p t^{p-1}
+        $$
+
+        $$
+        \lambda = \textrm{exp}(\beta_1 X)
+        $$
+
+    -   For the Weibull accelerated failure time model with one covariate (\$X\$)
+
+        $$
+        S(t) = exp(-\lambda t^p)
+        $$
+
+        Solve for $t$
+
+        $$
+        t = (-\textrm{ln} S(t))^{1/p} \times \frac{1}{\lambda^{1/p}}
+        $$
+
+        $$
+        \frac{1}{\lambda^{1/p}} = \textrm{exp}(\alpha_0 + \alpha_1 X)
+        $$
 
 -   R default is to give the proportional hazards parameterization. The hazard ratio is found by exponentiation of the slope as we have done with other models
 
@@ -1050,13 +1027,16 @@ legend("topright", col=c(1,1,2,2), lty=c(1,2,1,2),
 ```{r}
 summary(fit2)
 exp(coef(fit2))
+exp(confint.default(fit2))
 ```
 
--   To obtain the accelerated failure time interpretation, the Weibull model needs to be reparameterized so the output coefficients can be directly interpreted
+-   To obtain the accelerated failure time interpretation, the Weibull model needs to be reparameterized so the output coefficients can be directly interpreted. We also have to exponeniate the coefficient estimates as we are comparing fold differences in survival quantiles.
 
 ```{r}
-aftreg(formula = Surv(time, status) ~ sex, data = lung,
+m.aft <- aftreg(formula = Surv(time, status) ~ sex, data = lung,
                          dist = "weibull")
+m.aft
+exp(confint(m.aft))
 ```
 
 -   Acceleration factor (males compared to females) is 0.673
@@ -1073,6 +1053,18 @@ ptime2[pct%in%c("0.25","0.5","0.75")]
 # Ratios is constant (accelerated failure-time assumption)
 ptime1[pct%in%c("0.25","0.5","0.75")] / ptime2[pct%in%c("0.25","0.5","0.75")]
 ```
+
+-   Summary interpretation of both PH and AFT
+
+From the Weibull regression model, we can estimate both the hazard ratio and acceleration factor.
+
+Comparing males to females, males have a 1.48 fold increased hazard (risk) of death compared to females. We are 95% confident the true hazard ratio is between a 1.16 and 1.91 fold increase. Since the hazard ratio does not contain 1, males are at a significantly increased hazard of death compared to females.
+
+Comparing males to females, males have a median (or any other quantile) survival times that is 0.673 times the median (or other quantile) survival time in females. We are 95% confident that the true acceleration factor is between 0.52 and 0.85.
+
+The statements are more awkward when the acceleration factor is less than 1. We could flip the estimates (e.g \$1/0.673\$) and say that the median (or other quantile) survival time in females is 1.49 times longer than it is in males to be less awkward.
+
+-   Note that a hazard ratio greater than one is harmful for survival while an acceleration factor greater than one is beneficial for survival. One is the null values for both interpretations.
 
 ### Other parametric models
 
