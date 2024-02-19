@@ -15,7 +15,7 @@ editor: source
 Another way to think about regression is the amount of variablity in the outcome (Y) that is explained by the predictors (X).  In simple linear regression, we regress X on Y because we believe that X will explain some of the variability in Y.  This leads to an alternate way of thinking about statistical tests for regression coefficients in terms of the variability of the outcome.  Specifically, the null hypothesis is that X explains none of the variability in Y, and the alternative hypothesis is that X explains more variability than would be expected by chance alone.  In this lab we will consider the interpretation of statistical tests in a multivariable model that adds another predictor (W) to the model.  Salary will be outcome (Y), male gender the predictor of interest (X), and year of degree the additional covariate (W).
 
 
-An added-variable plot is a scatterplot of the transformations of an independent variable (say, $X_1$) and the dependent variable ($y$) that nets out the influence of all the other independent variables. The fitted regression line through the origin between these transformed variables has the same slope as the coefficient on x1 in the full regression model which includes all the independent variables. An added-variable plot is the multivariable analogue of using a simple scatterplot with a regression fit when there are no other covariates to show the relationship between a single x variable and a y variable. An added-variable plot is a visually compelling method for showing the nature of the partial correlation between x1 and y as estimated
+An added-variable plot is a scatterplot of the transformations of an independent variable (say, $X_1$) and the dependent variable ($y$) that nets out the influence of all the other independent variables. The fitted regression line through the origin between these transformed variables has the same slope as the coefficient on x1 in the full regression model which includes all the independent variables. An added-variable plot is the multivariable analogue of using a simple scatterplot with a regression fit when there are no other covariates to show the relationship between a single x variable and a y variable. An added-variable plot is a visually compelling method for showing the nature of the partial correlation between $X_1$ and y as estimated
 in a multiple regression.
 
 
@@ -25,10 +25,10 @@ To obtain residuals for a model fit, use the resid() function on the model fit.
 
 avPlots in the car packages will added-variable, also called partial-regression, plots for linear and generalized linear models.
 
-In part 1 and part 2 of the lab, we will construct these in steps without the use of a specialized function.
+In part 1 and part 2 of the lab, we will construct added variable plots in steps without the use of a specialized function.
 
 
-## Example
+## Example 1: Duncan Data
 
 Duncan's Occupational Prestige. Data on the prestige and other characteristics of 45 U. S. occupations in 1950.
 
@@ -57,7 +57,7 @@ scatterplotMatrix( ~ prestige + education + income,
     id=list(n=3), data=Duncan)
 ```
 
-#### 1.5.2 Regression Analysis
+#### Regression Analysis
 
 We use the`lm()` function to fit a linear regression model to the data:
 ```{r}
@@ -79,7 +79,62 @@ avPlots(duncan.model,
 ```
 
 
-## Initial Setup
+## Example 2: FEV and smoking, age, height
+
+Recall the FEV data presented in the notes
+
+* In unadjusted models, smokers had lower FEV that non-smokers.  We suspect this is due to confouding by age
+* Age is suspected to be associated with smoking (in the sample) and FEV (in truth)
+* In unadjusted models, height is likely associated with FEV and age.  There is likely an association between height and smoking through age.
+
+* In adjusted models, we might expect
+
+1. Lower FEV comparing a smoker to non-smoker of the same age and height
+2. Higher FEV comparing individuals differing by on year of age but with the same smoking status and height
+3. Higher FEV in taller individuals of the same age and smoking status
+
+Try to identify these observations in the plots that follow
+
+
+
+```{r}
+fev <- read.table("http://www.emersonstatistics.com/Datasets/fev.txt", header = TRUE)
+fev$smoker <- ifelse(fev$smoke == 2, 0, 1)
+summary(fev)
+```
+
+### Scatterplot matrix
+
+The scatterplot matrix summarizes the unadjusted associations.  
+
+```{r fig.height=8, fig.width=8}
+#| warning: false
+scatterplotMatrix( ~ fev + age + height + smoker, data=fev)
+```
+
+
+#### Regression Analysis
+
+We use the`lm()` function to fit a linear regression model to the data in those 9 and older.
+```{r}
+(fev.model <- lm(fev ~ smoker + height + age, data=fev[fev$age>=9,]))
+```
+
+```{r}
+summary(fev.model)
+```
+
+#### Added-variable plot
+
+
+Added-variable plots for FEV regression to visualize the adjusted associations
+
+```{r fig.height=8, fig.width=8}
+avPlots(fev.model)
+```
+
+
+## Initial Lab Setup
 
 For this lab, we will be using salary data from they year 1995.  We will focus on the variables: salary, sex, and yrdeg
 
@@ -91,7 +146,7 @@ Initial dataset manipulations
 4. Create an indicator variable for male gender
 
 
-## Part 1
+## Lab Part 1
 
 ### Model 1: Fit a simple linear regression model with salary as the outcome and male as the predictor.  Save the residuals from this model.  Interpret these residuals in terms of the unexplained variability in salary.
 
@@ -106,7 +161,7 @@ Initial dataset manipulations
 ### Compare the slope estimate for yrdeg from Model 3 to the slope estimate obtained in Model 4.  Explain your findings.
 
 
-## Part 2
+## Lab Part 2
 
 ### Create a new variable FULL that takes on the value 1 for full professors and 0 for Assistant or Associate Professors.
 
