@@ -96,7 +96,7 @@ There are generally three reasons why censoring might occur:
 
 These are all examples of right-censoring.
 
-[Trial Anatomy](figures/trial_anatomy.png)
+![Trial Anatomy](figures/trial_anatomy.png)
 
 > RICH JT, NEELY JG, PANIELLO RC, VOELKER CCJ, NUSSENBAUM B, WANG EW. A PRACTICAL GUIDE TO UNDERSTANDING KAPLAN-MEIER CURVES. Otolaryngology head and neck surgery: official journal of American Academy of Otolaryngology Head and Neck Surgery. 2010;143(3):331-336. doi:10.1016/j.otohns.2010.05.007.
 
@@ -155,7 +155,12 @@ plot(function(t) exp(-2*t), 0, 2, ylab="Survival", xlab="Time (years)")
 -   All subjects are at risk (and event free) at time 0. Thus, the survival estimate at 0 is always 1
 -   Survival decreases over time. If we observe for a long enough period of time, survival eventually decreases to 0.
 -   The survival function gives the probability that a subject will survive past time t.
--   Specifically, as t ranges from 0 to $\infty$, the survival function has the following properties ∗ It is non-increasing ∗ At time t = 0, S(t) = 1. In other words, the probability of surviving past time 0 is 1. ∗ At time $t = \infty$, $S(t) = S(\infty) = 0$. As time goes to infinity, the survival curve goes to 0.
+-   Specifically, as t ranges from 0 to $\infty$, the survival function has the following properties
+    -   It is non-increasing
+
+    -   At time t = 0, S(t) = 1. In other words, the probability of surviving past time 0 is 1.
+
+    -   At time $t = \infty$, $S(t) = S(\infty) = 0$. As time goes to infinity, the survival curve goes to 0.
 -   In theory, the survival function is smooth. In practice, we observe events on a discrete time scale (days, weeks, etc.)
 
 #### Hazard, cumulative hazard, and survival
@@ -202,10 +207,10 @@ $$
 \hat{S}(t) = \prod_{i: t_i \leq t} (1 - \frac{d_i}{n_i})
 $$
 
--   (\hat{S}(t)) is the estimated survival function at time (t),
--   (t_i) are the observed event times,
--   (d_i) is the number of events (e.g. deaths) at time (t_i),
--   (n_i) is the number of individuals known to have survived (are at risk) up to time (t_i).
+-   $\hat{S}(t)$ is the estimated survival function at time (t),
+-   $t_i$ are the observed event times,
+-   $d_i$ is the number of events (e.g. deaths) at time ($t_i$),
+-   $n_i$ is the number of individuals known to have survived (are at risk) up to time ($t_i$).
 
 ### Example: The `lung` dataset
 
@@ -476,7 +481,7 @@ There was a significant difference in overall survival according to sex in the `
 -   "Baseline hazard" is unspecified. Baseline hazard is similar to an intercept
 
     | Model       | $\textrm{log}(\lambda(t | X_i)) = \textrm{log}(\lambda_{0}(t)) + \beta_1 \times X_i$ |
-    |:--------------------|:--------------------------------------------------|
+    |:-----------------------|:-----------------------------------------------|
     | $X_i = 0$   | log hazard at $t$ is $\textrm{log}(\lambda_{0}(t))$                                  |
     | $X_i = x$   | log hazard at $t$ is $\textrm{log}(\lambda_{0}(t)) + \beta_1 \times x$               |
     | $X_i = x+1$ | log hazard at $t$ is $\textrm{log}(\lambda_{0}(t))+ \beta_1 \times x + \beta_1$      |
@@ -484,7 +489,7 @@ There was a significant difference in overall survival according to sex in the `
 -   Model on the hazard scale is found by exponentiating parameters
 
     | Model       | $\lambda(t | X_i) = \lambda_{0}(t) \times e^{\beta_1 \times X_i}$                |
-    |:--------------------|:--------------------------------------------------|
+    |:-----------------------|:-----------------------------------------------|
     | $X_i = 0$   | hazard at $t$ is $\lambda_{0}(t)$                                                |
     | $X_i = x$   | hazard at $t$ is $\lambda_{0}(t) \times e^{\beta_1 \times x}$                    |
     | $X_i = x+1$ | hazard at $t$ is $\lambda_{0}(t) \times e^{\beta_1 \times x} \times e^{\beta_1}$ |
@@ -506,7 +511,7 @@ There was a significant difference in overall survival according to sex in the `
     -   Hazard function determines the survival function
 
         |                   |                                                                                              |
-        |:----------------------|:------------------------------------------------|
+        |:------------------------|:----------------------------------------------|
         | Hazard            | $\lambda(t | X_i) = \lambda_{0}(t) \times e^{\beta_1 \times X_i}$                            |
         | Cumulative Hazard | $\Lambda(t | X_i) = \displaystyle\int^t_0 \lambda_{0}(u) \times e^{\beta_1 \times X_i} \ du$ |
         | Survival Function | $S(t | X_i) = e^{-\Lambda(t|X_i)} = [S_0(t)]^{e^{\beta_1 \times X_i}}$                       |
@@ -664,7 +669,6 @@ exp(10*confint.default(m1))
 
 #### Interpretation of output
 
-```         
 -   By default, R gives the hazard ratio andthe coefficient for comparing groups who differ by one unit in the nadir psa covariate
 
     -   $\textrm{Hazard ratio} = e^{\textrm{coeff}}$
@@ -676,8 +680,6 @@ exp(10*confint.default(m1))
     -   Groups 1 unit higher nadir PSA have instantaneous event rate $1.0157$ fold higher (1.6% higher)
 
     -   Groups 10 units higher nadir PSA have instantaneous event rate $1.015^{10} = 1.166$ fold higher (16.6% higher)
-    
-```
 
 #### Robust standard errors
 
@@ -746,7 +748,7 @@ By default, R uses robust standard errors in the coxph function. Note that other
     -   For the Cox model
 
         |                   |                                                                                              |
-        |:----------------------|:------------------------------------------------|
+        |:------------------------|:----------------------------------------------|
         | Hazard            | $\lambda(t | X_i) = \lambda_{0}(t) \times e^{\beta_1 \times X_i}$                            |
         | Cumulative Hazard | $\Lambda(t | X_i) = \displaystyle\int^t_0 \lambda_{0}(u) \times e^{\beta_1 \times X_i} \ du$ |
         | Survival Function | $S(t | X_i) = e^{-\Lambda(t|X_i)} = [S_0(t)]^{e^{\beta_1 \times X_i}}$                       |
@@ -799,9 +801,11 @@ exp(confint.default(m2))
 
 -   Identity link function
 
-    |       |                                 |     |
-    |:------|:--------------------------------|-----|
-    | Means | $\rightarrow$ Linear regression |     |
+::: center
+| Parameter       | Approach                              |
+|:----------------|:--------------------------------------|
+| Means           | Linear regression                     |
+:::
 
 -   Interpretation of non-transformed slope: $\theta_X = \beta_0 + \beta_1 \times X$
 
@@ -817,14 +821,14 @@ exp(confint.default(m2))
 
 -   Log link function
 
-    |                 |                                                     |     |
-    |:------------------|:----------------------------------|-------------------|
-    | Geometric means | $\rightarrow$ Linear regression on log scale        |     |
-    | Odds            | $\rightarrow$ Logistic regression                   |     |
-    | Hazards         | $\rightarrow$ Proportional Hazards (Cox) regression |     |
-    | Rates/Means     | $\rightarrow$ Poisson regression                    |     |
-    | Medians         | $\rightarrow$ Accelerated Failure Time regression   |     |
-
+::: center
+| Parameter       | Approach                              |
+|:----------------|:--------------------------------------|
+| Geometric means | Linear regression on log scale        |
+| Odds            | Logistic regression                   |
+| Rates           | Poisson regression                    |
+| Hazards         | Proportional Hazards (Cox) regression |
+:::
 -   Interpretation of non-transformed slope: $\textrm{log}(\theta_X) = \beta_0 + \beta_1 \times X$
 
     -   $e^{\beta_1}$ : (Average) ratio of summary measure between groups per 1 unit difference in $X$
