@@ -32,6 +32,7 @@ execute:
 ---
 
 ```{r}
+#| echo: false
 library(rms)
 library(ggplot2)
 library(knitr)
@@ -286,7 +287,7 @@ $$
 
 -   $S(5) = 1*(1-1/228) = 0.9956$
 
--   $S(11) = 1*(1-1/228)*(3-1/227) = 0.9825$
+-   $S(11) = 1*(1-1/228)*(1-3/227) = 0.9825$
 
 -   etc.
 
@@ -481,7 +482,7 @@ There was a significant difference in overall survival according to sex in the `
 -   "Baseline hazard" is unspecified. Baseline hazard is similar to an intercept
 
     | Model       | $\textrm{log}(\lambda(t | X_i)) = \textrm{log}(\lambda_{0}(t)) + \beta_1 \times X_i$ |
-    |:-----------------------|:-----------------------------------------------|
+    |:------------------------|:-----------------------------------------------|
     | $X_i = 0$   | log hazard at $t$ is $\textrm{log}(\lambda_{0}(t))$                                  |
     | $X_i = x$   | log hazard at $t$ is $\textrm{log}(\lambda_{0}(t)) + \beta_1 \times x$               |
     | $X_i = x+1$ | log hazard at $t$ is $\textrm{log}(\lambda_{0}(t))+ \beta_1 \times x + \beta_1$      |
@@ -489,7 +490,7 @@ There was a significant difference in overall survival according to sex in the `
 -   Model on the hazard scale is found by exponentiating parameters
 
     | Model       | $\lambda(t | X_i) = \lambda_{0}(t) \times e^{\beta_1 \times X_i}$                |
-    |:-----------------------|:-----------------------------------------------|
+    |:------------------------|:-----------------------------------------------|
     | $X_i = 0$   | hazard at $t$ is $\lambda_{0}(t)$                                                |
     | $X_i = x$   | hazard at $t$ is $\lambda_{0}(t) \times e^{\beta_1 \times x}$                    |
     | $X_i = x+1$ | hazard at $t$ is $\lambda_{0}(t) \times e^{\beta_1 \times x} \times e^{\beta_1}$ |
@@ -511,7 +512,7 @@ There was a significant difference in overall survival according to sex in the `
     -   Hazard function determines the survival function
 
         |                   |                                                                                              |
-        |:------------------------|:----------------------------------------------|
+        |:------------------------|:---------------------------------------------|
         | Hazard            | $\lambda(t | X_i) = \lambda_{0}(t) \times e^{\beta_1 \times X_i}$                            |
         | Cumulative Hazard | $\Lambda(t | X_i) = \displaystyle\int^t_0 \lambda_{0}(u) \times e^{\beta_1 \times X_i} \ du$ |
         | Survival Function | $S(t | X_i) = e^{-\Lambda(t|X_i)} = [S_0(t)]^{e^{\beta_1 \times X_i}}$                       |
@@ -592,7 +593,9 @@ legend("topright", inset=0.05, lty=1, c(expression(log(lambda[0] (t))), expressi
 
     -   "coxph(Surv(time, event-indicator) \~ predictor)"
 
-    -   There is a robust option in coxph, and it defaults to TRUE. In my opinion, this is a good default to have because the assumption of proportional hazards in the Cox model rarely (never?) holds completely.
+    -   There is a robust option in coxph for calcluating robust standard error estimates. In my opinion the assumption of proportional hazards in the Cox model rarely (never?) holds completely, so the robust option can be a good default.
+
+    -   Lin, D. Y., and L. J. Wei. "The Robust Inference for the Cox Proportional Hazards Model." Journal of the American Statistical Association 84, no. 408 (1989): 1074--78. https://doi.org/10.2307/2290085.
 
 ### Example Analysis
 
@@ -655,7 +658,7 @@ with(psa, table(relapse, inrem))
     -   relapse: Failure indicator variable
 
 ```{r}
-m1 <- coxph(Surv(obstime, relapse) ~ nadirpsa, data=psa)
+m1 <- coxph(Surv(obstime, relapse) ~ nadirpsa, data=psa, robust=TRUE)
 m1
 summary(m1)
 exp(confint.default(m1))
@@ -669,7 +672,7 @@ exp(10*confint.default(m1))
 
 #### Interpretation of output
 
--   By default, R gives the hazard ratio andthe coefficient for comparing groups who differ by one unit in the nadir psa covariate
+-   By default, R gives the hazard ratio and the coefficient for comparing groups who differ by one unit in the nadir psa covariate
 
     -   $\textrm{Hazard ratio} = e^{\textrm{coeff}}$
 
@@ -683,9 +686,9 @@ exp(10*confint.default(m1))
 
 #### Robust standard errors
 
-By default, R uses robust standard errors in the coxph function. Note that other functions for fitting Cox models in R may or may not have this same default
+R allows for robust standard errors in the coxph function. Note that other functions for fitting Cox models in R may or may not have this functionality.
 
-"From proportional hazards regression analysis, we estimate that for each 1 ng/ml unit difference in nadir PSA, this risk of relapse is $1.6\%$ higher in the group with the higher nadir PSA. This estimate is highly statistically significant ($p < 0.001$). A 95% CI suggests that this observation is not unusual if a group that has a 1 ng/ml higher nadir PSA might have risk of relapse that was anywhere from $0.8\%$ higher to $2.3\%$ higher than the group with lower nadir PSA."
+"From proportional hazards regression analysis, we estimate that for each 1 ng/ml unit difference in nadir PSA, this risk of relapse is $1.6\%$ higher in the group with the higher nadir PSA. This estimate is highly statistically significant ($p < 0.001$). A 95% CI suggests that this observation is not unusual if a group that has a 1 ng/ml higher nadir PSA might have risk of relapse that was anywhere from $0.9\%$ higher to $2.3\%$ higher than the group with lower nadir PSA."
 
 ### Inference with PH Regression
 
@@ -748,7 +751,7 @@ By default, R uses robust standard errors in the coxph function. Note that other
     -   For the Cox model
 
         |                   |                                                                                              |
-        |:------------------------|:----------------------------------------------|
+        |:------------------------|:---------------------------------------------|
         | Hazard            | $\lambda(t | X_i) = \lambda_{0}(t) \times e^{\beta_1 \times X_i}$                            |
         | Cumulative Hazard | $\Lambda(t | X_i) = \displaystyle\int^t_0 \lambda_{0}(u) \times e^{\beta_1 \times X_i} \ du$ |
         | Survival Function | $S(t | X_i) = e^{-\Lambda(t|X_i)} = [S_0(t)]^{e^{\beta_1 \times X_i}}$                       |
@@ -769,7 +772,7 @@ By default, R uses robust standard errors in the coxph function. Note that other
 
 ```{r}
 psa$lognadirpsa <- log(psa$nadirpsa)
-m2 <- coxph(Surv(obstime, relapse) ~ lognadirpsa, data=psa)
+m2 <- coxph(Surv(obstime, relapse) ~ lognadirpsa, data=psa, robust=TRUE)
 m2
 summary(m2)
 exp(confint.default(m2))
@@ -802,9 +805,9 @@ exp(confint.default(m2))
 -   Identity link function
 
 ::: center
-| Parameter       | Approach                              |
-|:----------------|:--------------------------------------|
-| Means           | Linear regression                     |
+| Parameter | Approach          |
+|:----------|:------------------|
+| Means     | Linear regression |
 :::
 
 -   Interpretation of non-transformed slope: $\theta_X = \beta_0 + \beta_1 \times X$
@@ -829,6 +832,7 @@ exp(confint.default(m2))
 | Rates           | Poisson regression                    |
 | Hazards         | Proportional Hazards (Cox) regression |
 :::
+
 -   Interpretation of non-transformed slope: $\textrm{log}(\theta_X) = \beta_0 + \beta_1 \times X$
 
     -   $e^{\beta_1}$ : (Average) ratio of summary measure between groups per 1 unit difference in $X$
@@ -849,7 +853,7 @@ exp(confint.default(m2))
 
     -   Allow for better predictions (as long as the error distribution is correctly specified!)
 
-    -   All for comparison of survival estimates rather than hazards (accelerated failure time)
+    -   Allow for comparison of survival estimates rather than hazards (accelerated failure time)
 
 -   Two fundamental models used to describe the way that some factor might affect time to event
 
@@ -1066,7 +1070,7 @@ Comparing males to females, males have a 1.48 fold increased hazard (risk) of de
 
 Comparing males to females, males have a median (or any other quantile) survival times that is 0.673 times the median (or other quantile) survival time in females. We are 95% confident that the true acceleration factor is between 0.52 and 0.85.
 
-The statements are more awkward when the acceleration factor is less than 1. We could flip the estimates (e.g \$1/0.673\$) and say that the median (or other quantile) survival time in females is 1.49 times longer than it is in males to be less awkward.
+The statements are more awkward when the acceleration factor is less than 1. We could flip the estimates (e.g $0.673^{-1}$) and say that the median (or other quantile) survival time in females is 1.49 times longer than it is in males to be less awkward.
 
 -   Note that a hazard ratio greater than one is harmful for survival while an acceleration factor greater than one is beneficial for survival. One is the null values for both interpretations.
 

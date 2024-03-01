@@ -1,0 +1,62 @@
+---
+title: "Lab 6: Survival Analysis"
+author: "Author"
+format:
+  html:
+    embed-resources: true
+    code-tools: true
+editor: source
+toc: true
+---
+
+## Introduction
+
+All questions relate to the question of whether treatment (DES) and index (a measure of disease severity) are prognostic of survival time for prostate cancer. The data is posted on the class web pages (prostaticcancer.dta, prostaticcancer.dat). We will consider four variables in this lab:
+
+-   Time: Time to death or censoring (months)
+-   Status: Indicator of death (status=0 if subject censored, status=1 if subject died)
+-   Treatment: Two treatments are considered. Treatment 1 is placebo, Treatment 2 is DES
+-   Index: Gleason index, a measure of disease severity
+
+Perform analyses to determine whether the distribution of time to relapse differs across groups defined by treatment and index.
+
+
+### R functions
+
+Some usueful R functions
+
+* Surv
+* survfit
+* survdiff
+* ggsurvplot
+* coxph
+
+
+## Setup
+
+### Pacakges
+
+```{r}
+#| echo: false
+#| warnings: false
+library(survival)
+library(rms)
+library(ggplot2)
+library(survminer)
+library(foreign)
+```
+
+### Load data
+
+```{r}
+cancer <- stata.get("http://biostat.app.vumc.org/wiki/pub/Main/CourseBios312/prostaticcancer.dta")
+names(cancer)
+summary(cancer)
+```
+
+
+## Questions
+
+
+
+
