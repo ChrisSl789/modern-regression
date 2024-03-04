@@ -8,8 +8,8 @@ Week,Day,Date,Topic,"Notes or Lab",Supplemental,Homework,Reading
 3,2,2024/01/22,"Simple Linear Regression","Lab 1 and Lec 3","Matrix Algebra Review","HW 1 assigned",
 3,3,2024/01/23,"Simple Linear Regression","Lec 3","Log Transformations",,
 3,5,2024/01/25,"Linear Regression model assumptions","Lab 2",,,
-4,2,2024/01/29,"Simple Linear Regression","Lec 3",,,"RMB 3.4, 6.1"
-4,3,2024/01/30,"Simple Logistic Regression","Lec 4",,"HW 1 due; HW 2 assigned",
+4,2,2024/01/29,"Simple Linear Regression","Lec 3",,,
+4,3,2024/01/30,"Simple Logistic Regression","Lec 4",,"HW 1 due; HW 2 assigned","RMB 3.4; 6.1"
 4,5,2024/02/01,"Logistic Regression/Precision","Lec 4/Lec 5",,,
 5,2,2024/02/05,"Logistic Regression Lab","Lab 3",,,
 5,3,2024/02/06,Precison/Confouding,"Lec 5/Lec 6",,"HW 2 due; HW 3 assigned","RMB 5.1"
@@ -22,10 +22,10 @@ Week,Day,Date,Topic,"Notes or Lab",Supplemental,Homework,Reading
 7,5,2024/02/22,"Model estimation",,,,
 8,2,2024/02/26,"  Review",,,,
 8,3,2024/02/27,"Midterm Exam",,,Exam,
-8,5,2024/02/29,"Time to event models",,,,
-9,2,2024/03/04,"   Lab",,,,
-9,3,2024/03/05,"Modeling effect modificiaton",,,,
-9,5,2024/03/07,"Regression models for nominal, ordinal, and count outcomes",,,,
+8,5,2024/02/29,"Time to event models",,,,"RMB: 3.5; 7.1; 7.2.1-7.2.7"
+9,2,2024/03/04,"   Lab: Go over midterm exam",,,,
+9,3,2024/03/05,"Time to event models","Lab 6",,,
+9,5,2024/03/07,"Poisson Regression",,,,
 10,2,2024/03/11,"Spring Break",,,,
 10,3,2024/03/12,"Spring Break",,,,
 10,5,2024/03/14,"Spring Break",,,,
