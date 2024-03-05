@@ -482,7 +482,7 @@ There was a significant difference in overall survival according to sex in the `
 -   "Baseline hazard" is unspecified. Baseline hazard is similar to an intercept
 
     | Model       | $\textrm{log}(\lambda(t | X_i)) = \textrm{log}(\lambda_{0}(t)) + \beta_1 \times X_i$ |
-    |:------------------------|:-----------------------------------------------|
+    |:------------------------|:----------------------------------------------|
     | $X_i = 0$   | log hazard at $t$ is $\textrm{log}(\lambda_{0}(t))$                                  |
     | $X_i = x$   | log hazard at $t$ is $\textrm{log}(\lambda_{0}(t)) + \beta_1 \times x$               |
     | $X_i = x+1$ | log hazard at $t$ is $\textrm{log}(\lambda_{0}(t))+ \beta_1 \times x + \beta_1$      |
@@ -490,7 +490,7 @@ There was a significant difference in overall survival according to sex in the `
 -   Model on the hazard scale is found by exponentiating parameters
 
     | Model       | $\lambda(t | X_i) = \lambda_{0}(t) \times e^{\beta_1 \times X_i}$                |
-    |:------------------------|:-----------------------------------------------|
+    |:------------------------|:----------------------------------------------|
     | $X_i = 0$   | hazard at $t$ is $\lambda_{0}(t)$                                                |
     | $X_i = x$   | hazard at $t$ is $\lambda_{0}(t) \times e^{\beta_1 \times x}$                    |
     | $X_i = x+1$ | hazard at $t$ is $\lambda_{0}(t) \times e^{\beta_1 \times x} \times e^{\beta_1}$ |
@@ -512,7 +512,7 @@ There was a significant difference in overall survival according to sex in the `
     -   Hazard function determines the survival function
 
         |                   |                                                                                              |
-        |:------------------------|:---------------------------------------------|
+        |:-------------------------|:---------------------------------------------|
         | Hazard            | $\lambda(t | X_i) = \lambda_{0}(t) \times e^{\beta_1 \times X_i}$                            |
         | Cumulative Hazard | $\Lambda(t | X_i) = \displaystyle\int^t_0 \lambda_{0}(u) \times e^{\beta_1 \times X_i} \ du$ |
         | Survival Function | $S(t | X_i) = e^{-\Lambda(t|X_i)} = [S_0(t)]^{e^{\beta_1 \times X_i}}$                       |
@@ -569,7 +569,7 @@ legend("topright", inset=0.05, lty=1, c(expression(log(lambda[0] (t))), expressi
 
     -   Survival is a function of the cumulative hazard. Survival is 1 at time 0 and decreases over time. It is bounded by $0$ and $1$.
 
-    -   For a dichotomous predictor variable (two groups), the proportional hazards assumption is that $\lambda_0 (t) = e^{\beta_1} \lambda_0 (t)$
+    -   For a dichotomous predictor variable (X is 0 or 1), the proportional hazards assumption is that $\lambda_1 (t) = e^{\beta_1} \lambda_0 (t)$
 
         -   In the plots I illustrated $e^{\beta_1} = 1.5$ ($\beta_1 = 0.4054$).
 
@@ -751,7 +751,7 @@ R allows for robust standard errors in the coxph function. Note that other funct
     -   For the Cox model
 
         |                   |                                                                                              |
-        |:------------------------|:---------------------------------------------|
+        |:-------------------------|:---------------------------------------------|
         | Hazard            | $\lambda(t | X_i) = \lambda_{0}(t) \times e^{\beta_1 \times X_i}$                            |
         | Cumulative Hazard | $\Lambda(t | X_i) = \displaystyle\int^t_0 \lambda_{0}(u) \times e^{\beta_1 \times X_i} \ du$ |
         | Survival Function | $S(t | X_i) = e^{-\Lambda(t|X_i)} = [S_0(t)]^{e^{\beta_1 \times X_i}}$                       |

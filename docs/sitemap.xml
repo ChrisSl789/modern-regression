@@ -2,110 +2,114 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://chrissl789.github.io/modern-regression/notes/Lec05.Precision.html</loc>
-    <lastmod>2024-03-04T16:17:13.182Z</lastmod>
+    <lastmod>2024-03-05T15:40:56.533Z</lastmod>
   </url>
   <url>
     <loc>https://chrissl789.github.io/modern-regression/notes/Lec06.ConfoundingEffectModificationMediation.html</loc>
-    <lastmod>2024-03-04T16:17:04.614Z</lastmod>
+    <lastmod>2024-03-05T15:40:47.741Z</lastmod>
   </url>
   <url>
     <loc>https://chrissl789.github.io/modern-regression/notes/Lec04.Logistic.html</loc>
-    <lastmod>2024-03-04T16:17:00.130Z</lastmod>
+    <lastmod>2024-03-05T15:40:43.177Z</lastmod>
   </url>
   <url>
     <loc>https://chrissl789.github.io/modern-regression/notes/Lec03.SimpleLinearRegression.html</loc>
-    <lastmod>2024-03-04T16:16:52.882Z</lastmod>
+    <lastmod>2024-03-05T15:40:35.469Z</lastmod>
   </url>
   <url>
     <loc>https://chrissl789.github.io/modern-regression/notes/Lec02.review.html</loc>
-    <lastmod>2024-03-04T16:16:46.906Z</lastmod>
-  </url>
-  <url>
-    <loc>https://chrissl789.github.io/modern-regression/labs/lab5-multivariable.html</loc>
-    <lastmod>2024-03-04T16:16:43.638Z</lastmod>
-  </url>
-  <url>
-    <loc>https://chrissl789.github.io/modern-regression/labs/quarto-intro.html</loc>
-    <lastmod>2024-03-04T16:16:39.166Z</lastmod>
-  </url>
-  <url>
-    <loc>https://chrissl789.github.io/modern-regression/labs/lab6-survival.html</loc>
-    <lastmod>2024-03-04T16:16:37.038Z</lastmod>
-  </url>
-  <url>
-    <loc>https://chrissl789.github.io/modern-regression/labs/lab2-linearassumptions.html</loc>
-    <lastmod>2024-03-04T16:16:31.902Z</lastmod>
-  </url>
-  <url>
-    <loc>https://chrissl789.github.io/modern-regression/computing.html</loc>
-    <lastmod>2024-03-04T16:16:29.846Z</lastmod>
-  </url>
-  <url>
-    <loc>https://chrissl789.github.io/modern-regression/syllabus.html</loc>
-    <lastmod>2024-03-04T16:16:29.018Z</lastmod>
-  </url>
-  <url>
-    <loc>https://chrissl789.github.io/modern-regression/supplemental/mlr-matrix.html</loc>
-    <lastmod>2024-03-04T16:16:25.582Z</lastmod>
-  </url>
-  <url>
-    <loc>https://chrissl789.github.io/modern-regression/supplemental/model-selection-criteria.html</loc>
-    <lastmod>2024-03-04T16:16:25.090Z</lastmod>
-  </url>
-  <url>
-    <loc>https://chrissl789.github.io/modern-regression/supplemental/model-diagnostics-matrix.html</loc>
-    <lastmod>2024-03-04T16:16:24.478Z</lastmod>
-  </url>
-  <url>
-    <loc>https://chrissl789.github.io/modern-regression/supplemental/log-transformations.html</loc>
-    <lastmod>2024-03-04T16:16:24.834Z</lastmod>
-  </url>
-  <url>
-    <loc>https://chrissl789.github.io/modern-regression/supplemental/slr-derivations.html</loc>
-    <lastmod>2024-03-04T16:16:25.326Z</lastmod>
-  </url>
-  <url>
-    <loc>https://chrissl789.github.io/modern-regression/officehours.html</loc>
-    <lastmod>2024-03-04T16:16:25.794Z</lastmod>
-  </url>
-  <url>
-    <loc>https://chrissl789.github.io/modern-regression/LICENSE.html</loc>
-    <lastmod>2024-03-04T16:16:29.482Z</lastmod>
-  </url>
-  <url>
-    <loc>https://chrissl789.github.io/modern-regression/labs/lab-template.html</loc>
-    <lastmod>2024-03-04T16:16:31.170Z</lastmod>
-  </url>
-  <url>
-    <loc>https://chrissl789.github.io/modern-regression/labs/lab1-linearregression.html</loc>
-    <lastmod>2024-03-04T16:16:32.318Z</lastmod>
-  </url>
-  <url>
-    <loc>https://chrissl789.github.io/modern-regression/labs/lab3-logistic-questions.html</loc>
-    <lastmod>2024-03-04T16:16:38.626Z</lastmod>
-  </url>
-  <url>
-    <loc>https://chrissl789.github.io/modern-regression/labs/lab4-precision-questions.html</loc>
-    <lastmod>2024-03-04T16:16:41.194Z</lastmod>
+    <lastmod>2024-03-05T15:40:29.469Z</lastmod>
   </url>
   <url>
     <loc>https://chrissl789.github.io/modern-regression/index.html</loc>
-    <lastmod>2024-03-04T16:20:24.086Z</lastmod>
+    <lastmod>2024-03-05T15:41:19.473Z</lastmod>
+  </url>
+  <url>
+    <loc>https://chrissl789.github.io/modern-regression/labs/lab4-precision-questions.html</loc>
+    <lastmod>2024-03-05T15:40:21.161Z</lastmod>
+  </url>
+  <url>
+    <loc>https://chrissl789.github.io/modern-regression/labs/lab3-logistic-questions.html</loc>
+    <lastmod>2024-03-05T15:40:18.449Z</lastmod>
+  </url>
+  <url>
+    <loc>https://chrissl789.github.io/modern-regression/labs/lab1-linearregression.html</loc>
+    <lastmod>2024-03-05T15:40:15.237Z</lastmod>
+  </url>
+  <url>
+    <loc>https://chrissl789.github.io/modern-regression/labs/lab-template.html</loc>
+    <lastmod>2024-03-05T15:40:14.073Z</lastmod>
+  </url>
+  <url>
+    <loc>https://chrissl789.github.io/modern-regression/LICENSE.html</loc>
+    <lastmod>2024-03-05T15:40:12.329Z</lastmod>
+  </url>
+  <url>
+    <loc>https://chrissl789.github.io/modern-regression/officehours.html</loc>
+    <lastmod>2024-03-05T15:40:08.677Z</lastmod>
+  </url>
+  <url>
+    <loc>https://chrissl789.github.io/modern-regression/supplemental/slr-derivations.html</loc>
+    <lastmod>2024-03-05T15:40:08.189Z</lastmod>
+  </url>
+  <url>
+    <loc>https://chrissl789.github.io/modern-regression/supplemental/log-transformations.html</loc>
+    <lastmod>2024-03-05T15:40:07.685Z</lastmod>
+  </url>
+  <url>
+    <loc>https://chrissl789.github.io/modern-regression/supplemental/model-diagnostics-matrix.html</loc>
+    <lastmod>2024-03-05T15:40:07.325Z</lastmod>
+  </url>
+  <url>
+    <loc>https://chrissl789.github.io/modern-regression/supplemental/model-selection-criteria.html</loc>
+    <lastmod>2024-03-05T15:40:07.953Z</lastmod>
+  </url>
+  <url>
+    <loc>https://chrissl789.github.io/modern-regression/supplemental/mlr-matrix.html</loc>
+    <lastmod>2024-03-05T15:40:08.457Z</lastmod>
+  </url>
+  <url>
+    <loc>https://chrissl789.github.io/modern-regression/syllabus.html</loc>
+    <lastmod>2024-03-05T15:40:11.857Z</lastmod>
+  </url>
+  <url>
+    <loc>https://chrissl789.github.io/modern-regression/computing.html</loc>
+    <lastmod>2024-03-05T15:40:12.697Z</lastmod>
+  </url>
+  <url>
+    <loc>https://chrissl789.github.io/modern-regression/labs/lab2-linearassumptions.html</loc>
+    <lastmod>2024-03-05T15:40:14.813Z</lastmod>
+  </url>
+  <url>
+    <loc>https://chrissl789.github.io/modern-regression/labs/lab6-survival.html</loc>
+    <lastmod>2024-03-05T15:40:16.857Z</lastmod>
+  </url>
+  <url>
+    <loc>https://chrissl789.github.io/modern-regression/labs/quarto-intro.html</loc>
+    <lastmod>2024-03-05T15:40:19.001Z</lastmod>
+  </url>
+  <url>
+    <loc>https://chrissl789.github.io/modern-regression/labs/lab5-multivariable.html</loc>
+    <lastmod>2024-03-05T15:40:23.661Z</lastmod>
+  </url>
+  <url>
+    <loc>https://chrissl789.github.io/modern-regression/notes/Lec09.Poisson.html</loc>
+    <lastmod>2024-03-05T15:40:26.853Z</lastmod>
   </url>
   <url>
     <loc>https://chrissl789.github.io/modern-regression/notes/Lec.template.html</loc>
-    <lastmod>2024-03-04T16:16:48.390Z</lastmod>
+    <lastmod>2024-03-05T15:40:31.009Z</lastmod>
   </url>
   <url>
     <loc>https://chrissl789.github.io/modern-regression/notes/Lec08.Survival.html</loc>
-    <lastmod>2024-03-04T16:16:56.634Z</lastmod>
+    <lastmod>2024-03-05T15:40:39.485Z</lastmod>
   </url>
   <url>
     <loc>https://chrissl789.github.io/modern-regression/notes/Lec01.Introduction.html</loc>
-    <lastmod>2024-03-04T16:17:01.338Z</lastmod>
+    <lastmod>2024-03-05T15:40:44.409Z</lastmod>
   </url>
   <url>
     <loc>https://chrissl789.github.io/modern-regression/notes/Lec07.MultivariableModels.html</loc>
-    <lastmod>2024-03-04T16:17:09.374Z</lastmod>
+    <lastmod>2024-03-05T15:40:52.685Z</lastmod>
   </url>
 </urlset>
