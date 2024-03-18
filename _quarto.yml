@@ -47,6 +47,7 @@ website:
             text: "Model Estimation"
           - href: notes/Lec08.Survival.qmd
           - href: notes/Lec09.Poisson.qmd
+          - href: notes/Lec10.Modeling.Effect.Modification.qmd
       - section: "Labs"
         contents: 
           - href: labs/quarto-intro.qmd
