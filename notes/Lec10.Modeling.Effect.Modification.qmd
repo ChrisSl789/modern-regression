@@ -937,48 +937,8 @@ Linear regression                                      Number of obs =    1597
 
 #### Inference about admin association using R
 
--   To test the sex association, we are actually comparing a "full" model to a "reduced" model
+- See the effect modification lab.  We will go over this in detail in class.
 
-    -   Full model contains predictors for sex, admin, and the sex by admin interaction
-
-    -   Reduced model contains predictor for just sex
-
--   In R, we fit the full model (m2 below) and the reduced model (m1 below)
-
--   Then, compare the two models using the anova function: `anova(m1, m2)`
-
--   Note that we are only using data from 1995 (just as in the Stata regression)
-
-```         
-> m1 <- lm(salary ~ factor(sex), data=d1, subset=year==95)
-> m2 <- lm(salary ~ admin*factor(sex), data=d1, subset=year==95)
->                                                               
-> m1                                                            
-Call:
-lm(formula = salary ~ factor(sex), data = d1, subset = year == 95)
-
-Coefficients:
- (Intercept)  factor(sex)M  
-        5397          1335  
-> m2
-Call:
-lm(formula = salary ~ admin * factor(sex), data = d1, subset = year == 95)
-
-Coefficients:
-       (Intercept)               admin        factor(sex)M  admin:factor(sex)M  
-            5280.4              1489.5              1226.2               461.9  
-
-> anova(m1, m2)
-Analysis of Variance Table
-
-Model 1: salary ~ factor(sex)
-Model 2: salary ~ admin * factor(sex)
-  Res.Df        RSS   Df  Sum of Sq    F    Pr(>F)
-1   1595 6078886293
-2   1593 5551928754    2  526957538 75.6 < 2.2e-16 ***
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-```
 
 ## Continuous Effect Modification
 

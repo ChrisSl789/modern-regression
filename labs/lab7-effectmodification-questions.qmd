@@ -1,0 +1,81 @@
+---
+title: "Lab 7: Effect Modification"
+author: "Chris Slaughter"
+format:
+  html:
+    code-tools: true
+    embed-resources: true
+editor: visual
+toc: true
+---
+
+## Introduction
+
+In this lab, we will estimate the association between salary and gender and consider administrative responsibilities a potential effect modifier. The linear regression model is given below. We will use robust standard error estimates.
+
+$E[\textrm{Salary} | \textrm{Male}, \textrm{Admin}] = \beta_0 + \beta_M * \textrm{Male} + \beta_A * \textrm{Admin} + \beta_{MA} * \textrm{Male} * \textrm{Admin}$
+
+### Setup
+
+Load packages
+
+```{r}
+#| echo: false
+#| results: hide
+library(rms)
+library(ggplot2)
+library(biostat3)
+library(car)
+library(sandwich)
+```
+
+
+## Part 1: Initial dataset manipulation
+
+### 1. Read in the salary dataset
+
+### 2. Remove all observations that are not from 1995
+
+### 3. Create an indicator variable for male gender
+
+## Part 2: Effect modification
+
+### 2.1 Fit the given model and use it to answer the following questions
+
+For each of the following scientific questions, specify the null and alternative hypothesis need to answer the question based on this model. Then, conduct the appropriate test and interpret the results.
+
+### 2.2 Gender effects
+
+#### 2.2.1 Is there a difference in mean salary, males compared to females, among faculty without administrative duties?
+
+#### 2.2.2 Is there a difference in mean salary, males compared to females, among faculty with administrative duties?
+
+#### 2.2.3 Is there any difference in mean salary, males compared to females (that is, in faculty with or without administrative duties)?
+
+### 2.3 Administrative effects
+
+#### 2.3.1 Is there a difference in mean salary, comparing faculty with admin duties to those without admin duties, among female faculty?
+
+#### 2.3.2 Is there a difference in mean salary, comparing faculty with admin duties to those without admin duties, among male faculty?
+
+#### 2.3.3 Is there a any difference in mean salary, those with admin duties compared to those without admin duties (that is, in male or female faculty)?
+
+### 2.4 Effect Modification
+
+#### 2.4.1 Is there evidence that administrative duties modifies the difference in salary, males compared to females?
+
+#### 2.4.2 Is there evidence that gender modifies the difference in salary comparing faculty with administrative duties to faculty without administrative duties?
+
+### 2.5 Impact of not including the effect modifier, $\beta_{MA}$ in the model. Suppose we had fit the following model instead.
+
+$E[\textrm{Salary} | \textrm{Male}, \textrm{Admin}] = \beta_0 + \beta_M * \textrm{Male} + \beta_A * \textrm{Admin}$
+
+What can me say about our estimates of $\beta_M$ and $\beta_A$ from this model? Fit the model to see if you are right.
+
+### 2.5 Impact of not including the effect modifier, $\beta_{MA}$ or the main effect $\beta_A$ in the model. Suppose we had fit the following model instead.
+
+$E[\textrm{Salary} | \textrm{Male}, \textrm{Admin}] = \beta_0 + \beta_M * \textrm{Male}$
+
+#### 2.5.1 If Admin duties is a confounder, what can me say about our estimate of $\beta_M$ from this model?
+
+#### 2.5.2 If Admin duties is not a confounder, what can me say about our estimate of $\beta_M$ from this model?
