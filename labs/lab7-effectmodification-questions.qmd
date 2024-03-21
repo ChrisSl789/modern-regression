@@ -70,12 +70,12 @@ For each of the following scientific questions, specify the null and alternative
 
 $E[\textrm{Salary} | \textrm{Male}, \textrm{Admin}] = \beta_0 + \beta_M * \textrm{Male} + \beta_A * \textrm{Admin}$
 
-What can me say about our estimates of $\beta_M$ and $\beta_A$ from this model? Fit the model to see if you are right.
+What can we say about our estimates of $\beta_M$ and $\beta_A$ from this model? Fit the model to see if you are right.
 
 ### 2.5 Impact of not including the effect modifier, $\beta_{MA}$ or the main effect $\beta_A$ in the model. Suppose we had fit the following model instead.
 
 $E[\textrm{Salary} | \textrm{Male}, \textrm{Admin}] = \beta_0 + \beta_M * \textrm{Male}$
 
-#### 2.5.1 If Admin duties is a confounder, what can me say about our estimate of $\beta_M$ from this model?
+#### 2.5.1 If Admin duties is a confounder, what can we say about our estimate of $\beta_M$ from this model?
 
-#### 2.5.2 If Admin duties is not a confounder, what can me say about our estimate of $\beta_M$ from this model?
+#### 2.5.2 If Admin duties is not a confounder, what can we say about our estimate of $\beta_M$ from this model?
