@@ -48,6 +48,8 @@ website:
           - href: notes/Lec08.Survival.qmd
           - href: notes/Lec09.Poisson.qmd
           - href: notes/Lec10.Modeling.Effect.Modification.qmd
+          - href: notes/Set8.pdf
+            text: "Multinomial and Ordinal Regression"
       - section: "Labs"
         contents: 
           - href: labs/quarto-intro.qmd
@@ -58,6 +60,8 @@ website:
           - href: labs/lab5-multivariable.qmd
           - href: labs/lab6-survival.qmd
           - href: labs/lab7-effectmodification-questions.qmd
+          - href: labs/Lab-DiscreteOutcomeRegression.pdf
+            text: "Lab 8: Discrete Outcomes Lab"
           - href: https://vanderbilt.box.com/s/rpftvmc9vua2w3gz3jy16phlnsojs6on
             text: "Box folder with .qmd files"
       - section: "Supplemental notes"
