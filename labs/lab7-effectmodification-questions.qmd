@@ -11,7 +11,7 @@ toc: true
 
 ## Introduction
 
-In this lab, we will estimate the association between salary and gender and consider administrative responsibilities a potential effect modifier. To provide a Poisson Regresion review, we will consider salary to be a rate (dollars per month) and use the following Poisson regression model for the log of the salary rate ($\labda_i$). We will use robust standard error estimates
+In this lab, we will estimate the association between salary and gender and consider administrative responsibilities a potential effect modifier. To provide a Poisson Regresion review, we will consider salary to be a rate (dollars per month) and use the following Poisson regression model for the log of the salary rate ($\lambda_i$). We will use robust standard error estimates
 
 
 $\textrm{log}(\lambda_i) = \beta_0 + \beta_M * \textrm{Male} + \beta_A * \textrm{Admin} + \beta_{MA} * \textrm{Male} * \textrm{Admin}$
