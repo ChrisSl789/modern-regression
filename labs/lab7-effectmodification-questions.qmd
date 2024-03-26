@@ -69,7 +69,7 @@ data95 %>% group_by(sex, admin) %>%
 
 #### 2.2.3 Why should we use robust standard error estimates?  Should we base our decision to use robust standard error estimate on exploratory analyses like what is given above?
 
-#### 2.2.4 Use the estimates of the stratum-specific means to find the estimate $\beta_0$, $\beta_M$, $\beta_A$, and $\beta_{MA}) that will be obtained from the Poisson regression model.
+#### 2.2.4 Use the estimates of the stratum-specific means to find the estimate $\beta_0$, $\beta_M$, $\beta_A$, and $\beta_{MA}$ that will be obtained from the Poisson regression model.
 
 ## Part 3: Effect modification model parameter interpretation
 
@@ -102,11 +102,9 @@ For each of the following scientific questions, specify the null and alternative
 
 ## Part 4: Comparison to other Poisson models
 
-### 4.1 Impact of not including the effect modifier, $\beta_{MA}$ in the model. Suppose we had fit the following model instead.
+### 4.1 Impact of not including the effect modifier, $\beta_{MA}$ in the model. Suppose we had fit the following model instead.  What can we say about our estimates of $\beta_M$ and $\beta_A$ from this model? Fit the model to see if you are right.
 
 $\textrm{log}(\lambda_i) = \beta_0 + \beta_M * \textrm{Male} + \beta_A * \textrm{Admin}$
-
-What can we say about our estimates of $\beta_M$ and $\beta_A$ from this model? Fit the model to see if you are right.
 
 ### 4.2 Impact of not including the effect modifier, $\beta_{MA}$ or the main effect $\beta_A$ in the model. Suppose we had fit the following model instead.
 
