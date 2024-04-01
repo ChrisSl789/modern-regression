@@ -923,7 +923,7 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
 
 -   
 
-```{r, fig.cap="Natrual spline (with knots at 3.5 and 9.5) copmare with restricted cubic spline with parms set to give the same fit.  Both spline approaches impose a linearity constraint at the tails.  Fits are same using these inputs."}
+```{r, fig.cap="Natrual spline (with knots at 3.5 and 9.5) compared with restricted cubic spline with parms set to give the same fit.  Both spline approaches impose a linearity constraint at the tails.  Fits are same using these inputs."}
 ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + 
   geom_smooth(method=lm, formula=y ~ ns(x, knots=c(9.5, 15.5)), se=FALSE, aes(color="Blue")) + 
   geom_smooth(method=lm, formula=y ~ rcs(x, parms=c(0, 9.5, 15.5, 19)), se=FALSE, aes(color="Green")) +
@@ -931,7 +931,7 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
   scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("ns(x, knots=c(9.5, 15.5)","rcs(x, parms=c(0, 9.5, 15.5, 19)")) + theme(legend.position = c(0.8, 0.2))
 ```
 
-```{r, fig.cap="Natrual cubic spline (3 d.f) copmare with restricted cubic spline using default inputs.  Both spline approaches impose a linearity constraint at the tails, but with different default knot locations the fits are different."}
+```{r, fig.cap="Natrual cubic spline (3 d.f) compared with restricted cubic spline using default inputs.  Both spline approaches impose a linearity constraint at the tails, but with different default knot locations the fits are different."}
 ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + 
   geom_smooth(method=lm, formula=y ~ ns(x, df=3), se=FALSE, aes(color="Blue")) + 
   geom_smooth(method=lm, formula=y ~ rcs(x, nk=5), se=FALSE, aes(color="Green")) +
@@ -941,7 +941,7 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
 
 ##### Nautral spline versus piecewise lienar spline
 
-```{r, fig.cap="Natrual spline (3 d.f) copmare with restricted cubic spline with knots at 9.5 and 15.5.  Both spline approaches impose a linearity constraint at the tails."}
+```{r, fig.cap="Natrual spline (3 d.f) compared with restricted cubic spline with knots at 9.5 and 15.5.  Both spline approaches impose a linearity constraint at the tails."}
 ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + 
   geom_smooth(method=lm, formula=y ~ ns(x, df=3), se=FALSE, aes(color="Blue")) + 
   geom_smooth(method=lm, formula=y ~ lspline(x, knots=c(9.5,15.5)), se=FALSE, aes(color="Green")) +
@@ -990,9 +990,13 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
     -   Multinomial regression: Number of events in smallest categorical outcome level
     -   Ordinal regression: If few severity events, more like logistic regression. If a wider range of severity, more like linear regression
 
--   Allowed model complexity is, roughly, 10-15 effective sample size per degree of freedom
+-   Allowed model complexity is, roughly, gain one available degree of freedom per every 10-15 of effective sample size
 
-    -   These are all approximations, and the allowed sample size can depend on other characteristics of the data too
+    -   Degrees of freedom can be spent on dummy variable, knot locations, and degree of polynomial
+    
+    -   Degrees of freedom can be saved by constraints, such as the linearity constraint at the tails for natural splines and restricted cubic spline.  These are popular splines because the constraint often saves degrees of freedom while improving the generalizability of the fit at the tails of the continuous distribution
+
+    -   This is an approximations, and the allowed model complexity can depend on other characteristics of the data too
 
 -   Splines for effect modification (continuous effect modifier and/or continuous predictor of interest)
 
@@ -1006,7 +1010,7 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
 
     -   Often most of the association of the precision variable with the outcome can be capture in a linear term
 
-    -   If justified, can consider a spline model too
+    -   However, if justified, can consider a flexible model too
 
     -   Goal of a precision variable is to explain residual variability in the outcome after accounting for the predictor of interest (and, possibly, confounders that are included in the model)
 
@@ -1014,7 +1018,7 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
 
     -   Often it is important to adjust for confounders adequately, so a spline or other flexible function can help
 
-    -   If we are not interested in interpreting the effect of the confounder, than we are free to model it a variety of different ways
+    -   If we are not interested in interpreting the effect of the confounder, then we are free to model it a variety of different ways
 
         -   Argues for flexibly modeling continuous confounder (limited by the effective sample size)
 
@@ -1030,3 +1034,18 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
 ggplot(fev, aes(x=height, y=logfev)) + geom_point() + geom_smooth(method=lm, se=FALSE) +
   geom_smooth(method=lm, formula=y ~ ns(x, df=3), se=FALSE, color="Green")
 ```
+
+
+- Example interpretation for linear model with FEV as outcome, smoking the predictor of interest controlling for age and height.  There are 654 observations in the dataset, so allowed model complexity is at least 43 degrees of freedom.
+
+```{r}
+nrow(fev) / 15
+fev$smoker <- (fev$smoke=="current smoker")+0
+fev$male <- (fev$sex=="male")+0
+m1 <- lm(fev ~ smoker + ns(age,3) + ns(height,3) + male, data= fev)
+coeftest(m1, vcov=sandwich(m1))
+```
+- The betas for the naturally-splined terms (age, height) are  difficult to interpret directly.  We could test for age and or height effect if that was of scientific interest using the Wald approach.
+
+- For the predictor of interest, smoker, we have the usual interpretation in terms of holding other covariates constant.  "Among subjects of the same age, height, and sex but differing in smoking status..." However, we may be controlling for the confounding effects of age and height effects more completely by using flexible spline functions.
+
