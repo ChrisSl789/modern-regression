@@ -51,6 +51,7 @@ website:
           - href: notes/Set8.pdf
             text: "Multinomial and Ordinal Regression"
           - href: notes/Lec11.DoseResponse.qmd
+          - href: notes/Lec12.ANOVA.Model.Choice.qmd
           - href: notes/Set13.pdf
             text: "Missing Data"
           - href: notes/Set14.pdf
