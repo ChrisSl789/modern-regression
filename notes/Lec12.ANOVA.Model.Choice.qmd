@@ -55,7 +55,6 @@ library(plotrix)
 
     -   We can find dose-specific means and compare modeling approaches
 
-
 ## ANOVA versus Linear Continuous Models
 
 -   Compare power of linear continuous models versus ANOVA as a function
@@ -68,7 +67,7 @@ library(plotrix)
 
     -   Uses indicator variables for every dose (group) level
 
-        -   Again, I am thinking about "dose" in a general sense that could including covariates like age, cholesterol, blood pressure, etc.
+        -   Again, I am thinking about "dose" in a general sense that could include covariates like age, cholesterol, blood pressure, etc.
 
         -   Traditionally, dose would just be dose of some treatment
 
@@ -127,6 +126,7 @@ p2 <- predict(m2, newdata=data.frame(dose=dose.levels), se.fit=TRUE)
 #p3 <- predict(m3, newdata=data.frame(dose=dose.levels), se.fit=TRUE)
 p4 <- predict(m4, newdata=data.frame(dose=dose.levels), se.fit=TRUE)
 ```
+
 ```{r, fig.height=8, fig.cap="Comparsion of power using ANOVA versus linear dose for detecting a dose effect for various dose-response relationships"}
 par(mfrow=c(2,2))
 plotCI(x=dose.levels, y=p1$fit, p1$se.fit, ylab="Response", xlab="Dose", ylim=c(0,1000), main="Linear: High power; ANOVA: High Power")
@@ -135,8 +135,6 @@ plotCI(x=dose.levels, y=p1$fit, 3*p1$se.fit, ylab="Response", xlab="Dose", ylim=
 plotCI(x=dose.levels[c(1,5,4,2,3)], y=p1$fit, p1$se.fit, ylab="Response", xlab="Dose", ylim=c(0,1000), main="Linear: No power; ANOVA: High Power")
 plotCI(x=dose.levels[c(1,5,4,2,3)], y=p1$fit, 3*p1$se.fit, ylab="Response", xlab="Dose", ylim=c(0,1000), main="Linear: No power; ANOVA: Low Power")
 ```
-
-
 
 -   Other options for modeling continuous predictors
 
@@ -234,7 +232,6 @@ plotCI(x=dose.levels[c(1,5,4,2,3)], y=p1$fit, 3*p1$se.fit, ylab="Response", xlab
 
 -   Other measured variables available in this data set include subject age, sex, weight, body mass index, percent body fat, and serum cholesterol level at baseline
 
-
 ```{r}
 carot <- stata.get("data/carot.dta")
 res1 <- aggregate(carot3 ~ dose, data = carot,
@@ -245,8 +242,6 @@ max = max(x)))
 
 print(res1, digits=2)
 ```
-
-
 
 -   In this randomized trial, we can consider several potential response variables
 
@@ -352,7 +347,6 @@ print(res1, digits=2)
 
     -   We will thus have less power to detect a first-order trend
 
-
 ```{r}
 carot$dose.factor <- factor(carot$dose)
 m.factor <- lm(carot3 ~ dose.factor + carot0, data=carot)
@@ -368,9 +362,6 @@ lines(seq(0,60, by=15), predict(m1, newdata=data.frame(dose=seq(0,60, by=15))))
 legend("topleft", c("Fitted", "Group Means"), pch=c("X","O"), lty=c(NA,1), bty="n")
 ```
 
-
-
-
 -   Testing for the dose effect
 
     -   We must use the `testparm` command (or `test`) because the model includes the baseline measurement
@@ -384,7 +375,6 @@ linearHypothesis(m.factor, c("dose.factor15",
                        "dose.factor60"),
                  vcov=sandwich(m.factor))
 ```
-
 
 -   We would have had the same fitted values (and thus inference) if we had decided to drop a different dose group
 
@@ -404,7 +394,6 @@ linearHypothesis(m2.factor, c("dose.new0",
 
 ```
 
-
 -   Note that the parameter estimates all will lead to the same fitted values
 
     -   e.g. Intercept in above model (1430) equals the intercept + dose60 coefficient (-361 + 1791) in previous model
@@ -423,12 +412,10 @@ linearHypothesis(m2.factor, c("dose.new0",
 
     -   Not including the intercept changes the overall F statistic and the R-squared measures
 
-
 ```{r}
 m3.factor <- lm(carot3 ~ -1 + dose.factor + carot0, data=carot)
 coeftest(m3.factor, vcov=sandwich)
 ```
-
 
 -   Correspondence of the no-intercept model compared to previous models
 
@@ -472,15 +459,12 @@ linearHypothesis(m3.factor, c("dose.factor0=dose.factor15",
 
         -   We are relatively certain of a smoking effect, so our major scientific interest is likely related to the dose-response relationship above the lowest dose
 
-
-
 ```{r}
 carot$trt <- (carot$dose>0)+0
 
 m.trt <- lm(carot3 ~ trt + carot0, data=carot)
 coeftest(m.trt, vcov=sandwich(m.trt))
 ```
-
 
 ```{r}
 m2 <- lm(carot3 ~ dose>0, data=carot)
@@ -490,8 +474,6 @@ points(seq(0,60, by=15), predict(m1, newdata=data.frame(dose=seq(0,60, by=15))),
 points(seq(0,60, by=15), predict(m2, newdata=data.frame(dose=seq(0,60, by=15))), pch="X", cex=2)
 legend("topleft", c("Fitted", "Group Means"), pch=c("X","O"), lty=c(NA,1), bty="n")
 ```
-
-
 
 ### Linear, continuous dose
 
@@ -503,12 +485,10 @@ legend("topleft", c("Fitted", "Group Means"), pch=c("X","O"), lty=c(NA,1), bty="
 
     -   In this particular application, we are relatively certain of an effect, so our major interest is in modeling the dose response relationship above 0.
 
-
 ```{r}
 m.cont <- lm(carot3 ~ dose + carot0, data=carot)
 coeftest(m.cont, vcov=sandwich(m.cont))
 ```
-
 
 -   To test the treatment effect, could either use the `test` command for dose or use the output directly as we are only testing one parameter
 
@@ -520,7 +500,6 @@ points(seq(0,60, by=15), predict(m1, newdata=data.frame(dose=seq(0,60, by=15))),
 points(seq(0,60, by=15), predict(m3, newdata=data.frame(dose=seq(0,60, by=15))), pch="X", cex=2)
 legend("topleft", c("Fitted", "Group Means"), pch=c("X","O"), lty=c(NA,1), bty="n")
 ```
-
 
 ### Polynomial models of dose
 
@@ -535,7 +514,6 @@ m.poly <- lm(carot3 ~ poly(dose,2) + carot0, data=carot)
 coeftest(m.poly, vcov=sandwich(m.poly))
 ```
 
-
 ```{r}
 m4 <- lm(carot3 ~ poly(dose, 2), data=carot)
 plot(jitter(carot$dose, factor=.2), carot$carot3, ylab="Plasma Beta Carotene", xlab="Dose of Supplementation", main="Model: Quadratic Dose")
@@ -544,7 +522,6 @@ points(seq(0,60, by=15), predict(m1, newdata=data.frame(dose=seq(0,60, by=15))),
 points(seq(0,60, by=15), predict(m4, newdata=data.frame(dose=seq(0,60, by=15))), pch="X", cex=2)
 legend("topleft", c("Fitted", "Group Means"), pch=c("X","O"), lty=c(NA,1), bty="n")
 ```
-
 
 -   The partial t-test for dosesqr can be interpreted as a test for linear dose response
 
@@ -557,7 +534,6 @@ linearHypothesis(m.poly, c("poly(dose, 2)1",
                            "poly(dose, 2)2"),
                  vcov=sandwich(m.poly))
 ```
-
 
 ### Highest order polynomial models versus ANOVA
 
@@ -664,7 +640,6 @@ points(seq(0,60, by=15), predict(m5, newdata=data.frame(dose=seq(0,60, by=15))),
 legend("topleft", c("Fitted", "Group Means"), pch=c("X","O"), lty=c(NA,1), bty="n")
 ```
 
-
 -   Testing the effect of treatment
 
     -   Two variables model dose, so we need to test both
@@ -768,7 +743,6 @@ p.hat <- sum(apply(p.vals<.05,1, sum) >= 1) / reps
 p.hat
 p.hat + c(-1.96,1.96)*sqrt(p.hat*(1-p.hat)/reps)
 ```
-
 
 -   Individual Model Results
 
