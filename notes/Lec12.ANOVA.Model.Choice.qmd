@@ -1,34 +1,7 @@
 ---
 title: "ANOVA and Model Choice"
 subtitle: "Lecture 12"
-author: "Chris Slaughter"
-footer: "Bios 6312"
-date: last-modified
-format:
-  html:
-    embed-resources: true
-    standalone: true
-    number-sections: true
-    number-depth: 4
-    anchor-sections: true
-    smooth-scroll: true
-    theme: journal
-    toc: true
-    toc-depth: 4
-    toc-title: Contents
-    toc-location: left
-    code-link: false
-    code-tools: true
-    code-fold: true
-    code-block-bg: "#f1f3f5"
-    code-block-border-left: "#31BAE9"
-    reference-location: margin
-    fig-cap-location: margin
-    fontsize: medium
-
-execute:
-   warning: false
-   message: false
+name: notes/Lec12.ANOVA.Model.Choice.qmd
 ---
 
 ```{r}
@@ -646,9 +619,9 @@ legend("topleft", c("Fitted", "Group Means"), pch=c("X","O"), lty=c(NA,1), bty="
 
     -   If response increases from dose 0 to lowest dose OR
 
-    -   \... response increases as dose increase, THEN
+    -   ... response increases as dose increase, THEN
 
-    -   \... we will declare an effect of treatment
+    -   ... we will declare an effect of treatment
 
 -   The partial t-test for the `trt` term can be used to test for linear dose response
 

@@ -1,8 +1,10 @@
 {
-  "hash": "b5460c932a0616479a84204f3feb6b4e",
+  "hash": "c2edc4efc9299f68d338b5e8e2414046",
   "result": {
     "markdown": "---\ntitle: \"Review of Key Concepts\"\nsubtitle: \"Lecture 02\"\nauthor: \"Chris Slaughter\"\nfooter: \"Bios 6312\"\ndate: last-modified\nformat:\n  html:\n    embed-resources: true\n    standalone: true\n    number-sections: true\n    number-depth: 4\n    anchor-sections: true\n    smooth-scroll: true\n    theme: journal\n    toc: true\n    toc-depth: 4\n    toc-title: Contents\n    toc-location: left\n    code-link: false\n    code-tools: true\n    code-fold: true\n    code-block-bg: \"#f1f3f5\"\n    code-block-border-left: \"#31BAE9\"\n    reference-location: margin\n    fig-cap-location: margin\n    fontsize: medium\n\nexecute:\n   warning: false\n   message: false\n---\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(rms)\nlibrary(ggplot2)\n```\n:::\n",
-    "supporting": [],
+    "supporting": [
+      "Lec.template_files"
+    ],
     "filters": [
       "rmarkdown/pagebreak.lua"
     ],

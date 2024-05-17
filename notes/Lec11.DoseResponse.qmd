@@ -1,34 +1,7 @@
 ---
 title: "Flexible Modeling of Continuous Predictors"
 subtitle: "Lecture 11"
-author: "Chris Slaughter"
-footer: "Bios 6312"
-date: last-modified
-format:
-  html:
-    embed-resources: true
-    standalone: true
-    number-sections: true
-    number-depth: 4
-    anchor-sections: true
-    smooth-scroll: true
-    theme: journal
-    toc: true
-    toc-depth: 4
-    toc-title: Contents
-    toc-location: left
-    code-link: false
-    code-tools: true
-    code-fold: true
-    code-block-bg: "#f1f3f5"
-    code-block-border-left: "#31BAE9"
-    reference-location: margin
-    fig-cap-location: margin
-    fontsize: medium
-
-execute:
-   warning: false
-   message: false
+name: notes/Lec11.DoseResponse.qmd
 ---
 
 ```{r}
@@ -39,6 +12,7 @@ library(lspline)
 library(lmtest)
 library(sandwich)
 library(car)
+library(knitr)
 ```
 
 # Flexible models of continuous predictors
@@ -442,7 +416,7 @@ lines(lowess(fev$fev ~ fev$height3), lwd=2)
 
 -   Polynomial regression
 
-    -   Fit linear term plus higher order terms (squared, cubic, \...)
+    -   Fit linear term plus higher order terms (squared, cubic, ...)
 
     -   Can fit an arbitrarily-complex function
 
@@ -754,7 +728,7 @@ kable(newdata[12:17,], format='html', digits=2)
 
 -   Stata: `mkspline newvar0 knot1 newvar1 knot2 newvar2 ... knotp newvarp = oldvar`
 
-    -   Would then run regression using newvar0 \... newvarp
+    -   Would then run regression using newvar0 ... newvarp
 
     -   Assumes straight lines between min and knot1; knot1 and knot2; etc.
 

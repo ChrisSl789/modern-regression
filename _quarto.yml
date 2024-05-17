@@ -8,7 +8,7 @@ website:
   description: "Homepage for BIOS 6312 - Modern Regression at Vanderbilt University, Spring 2024."
   site-url: "https://chrissl789.github.io/modern-regression/"
 
-  repo-url: github.com/chrissl789/modern-regression
+  repo-url: "https://github.com/chrissl789/modern-regression"
   repo-actions: [edit, issue]
 
   open-graph: true
@@ -97,6 +97,9 @@ format:
     code-copy: true
     code-overflow: wrap
     toc: true
+    template-partials:
+      - title-block.html
+    css: styles.css
 
 freeze: auto
 

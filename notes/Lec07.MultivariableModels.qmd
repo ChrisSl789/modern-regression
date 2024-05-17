@@ -1,34 +1,7 @@
 ---
 title: "Multivariable Models"
 subtitle: "Lecture 07"
-author: "Chris Slaughter"
-footer: "Bios 6312"
-date: last-modified
-format:
-  html:
-    embed-resources: true
-    standalone: true
-    number-sections: true
-    number-depth: 4
-    anchor-sections: true
-    smooth-scroll: true
-    theme: journal
-    toc: true
-    toc-depth: 4
-    toc-title: Contents
-    toc-location: left
-    code-link: false
-    code-tools: true
-    code-fold: true
-    code-block-bg: "#f1f3f5"
-    code-block-border-left: "#31BAE9"
-    reference-location: margin
-    fig-cap-location: margin
-    fontsize: medium
-
-execute:
-   warning: false
-   message: false
+name: notes/Lec07.MultivariableModels.qmd
 ---
 
 ```{r}
@@ -50,7 +23,7 @@ library(ggplot2)
 
 -   If we only considered the response and POI, this is referred to as a simple (linear, logistic, PH, etc.) regression model
 
--   Often we need to consider additional variables other than POI because\...
+-   Often we need to consider additional variables other than POI because...
 
     -   We want to make comparisons in different strata
 
@@ -64,7 +37,7 @@ library(ggplot2)
 
         -   Precision: If we restrict to looking within certain strata, may get smaller $\sigma^2$
 
--   Statistics: Covariates other than the Predictor of Interest are included in the model as\...
+-   Statistics: Covariates other than the Predictor of Interest are included in the model as...
 
     -   Effect modifiers
 
@@ -122,7 +95,7 @@ library(ggplot2)
 
     -   Multiple regression
 
-        -   "We adjusted for age and sex\..." or "Holding age and sex constant, we found \..."
+        -   "We adjusted for age and sex..." or "Holding age and sex constant, we found ..."
 
         -   Almost certainly the research adjusted for age and sex, but not the interaction of the two variables (but they could have)
 
@@ -555,7 +528,7 @@ partial.tables[,,'Prof']
 
 ::: center
 |                          |                                                        |
-|:-------------------------|:-------------------------------------------------------|
+|:----------------------|:------------------------------------------------|
 | $Y_i$                    | Response measured on the $i$th subject                 |
 | $X_i$                    | Value of the predictor measured on the $i$th subject   |
 | $W_{1i}, W_{2i}, \ldots$ | Value of the adjustment variable for the $i$th subject |
@@ -933,7 +906,7 @@ Linear regression                                      Number of obs =     439
     -   $\gamma_2 \neq 0$
 
         |            |                True Value                |                      Estimates                       |
-        |------------|:----------------------------------------:|:----------------------------------------------------:|
+        |---------------|:-----------------------:|:------------------------------:|
         | Slopes     |           $\beta_1 = \gamma_1$           |        $\hat{\beta}_1 \approx \hat{\gamma}_1$        |
         | Std Errors | $se(\hat{\beta}_1) > se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) > \hat{se}(\hat{\gamma}_1)$ |
 
@@ -948,7 +921,7 @@ Linear regression                                      Number of obs =     439
     -   Standard errors reflect the mean-variance relationship
 
         |                         |                True Value                |                      Estimates                       |
-        |-------------------------|:----------------------------------------:|:----------------------------------------------------:|
+        |------------------|:----------------------:|:-----------------------------:|
         | Slopes if $\beta_1 > 0$ |           $\beta_1 < \gamma_1$           |           $\hat{\beta}_1 < \hat{\gamma}_1$           |
         | Slopes if $\beta_1 < 0$ |           $\beta_1 > \gamma_1$           |           $\hat{\beta}_1 > \hat{\gamma}_1$           |
         | Std Errors              | $se(\hat{\beta}_1) < se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) < \hat{se}(\hat{\gamma}_1)$ |
@@ -970,7 +943,7 @@ Linear regression                                      Number of obs =     439
     -   Standard errors reflect the mean-variance relationship (virtually no effect on power)
 
         |            |                   True Value                   |                         Estimates                          |
-        |------------|:----------------------------------------------:|:----------------------------------------------------------:|
+        |---------------|:-----------------------:|:------------------------------:|
         | Slopes     |              $\beta_1 = \gamma_1$              |           $\hat{\beta}_1 \approx \hat{\gamma}_1$           |
         | Std Errors | $se(\hat{\beta}_1) \approx se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) \approx \hat{se}(\hat{\gamma}_1)$ |
 
@@ -983,7 +956,7 @@ Linear regression                                      Number of obs =     439
     -   Standard errors stay fairly constant (complicated result of binomial mean-variance relationship)
 
         |                         |                   True Value                   |                         Estimates                          |
-        |-------------------------|:----------------------------------------------:|:----------------------------------------------------------:|
+        |-----------------|:-----------------------:|:-----------------------------:|
         | Slopes if $\beta_1 > 0$ |              $\beta_1 < \gamma_1$              |              $\hat{\beta}_1 < \hat{\gamma}_1$              |
         | Slopes if $\beta_1 < 0$ |              $\beta_1 > \gamma_1$              |              $\hat{\beta}_1 > \hat{\gamma}_1$              |
         | Std Errors              | $se(\hat{\beta}_1) \approx se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) \approx \hat{se}(\hat{\gamma}_1)$ |
@@ -1001,7 +974,7 @@ Linear regression                                      Number of obs =     439
     -   $\gamma_2 \neq 0$
 
         |            |                True Value                |                      Estimates                       |
-        |------------|:----------------------------------------:|:----------------------------------------------------:|
+        |---------------|:-----------------------:|:------------------------------:|
         | Slopes     |           $\beta_1 = \gamma_1$           |           $\hat{\beta}_1 = \hat{\gamma}_1$           |
         | Std Errors | $se(\hat{\beta}_1) = se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) > \hat{se}(\hat{\gamma}_1)$ |
 
@@ -1018,7 +991,7 @@ Linear regression                                      Number of obs =     439
     -   $\gamma_2 \neq 0$
 
         |            |                             True Value                              |                                                          Estimates                                                           |
-        |------------|:-------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------:|
+        |--------------|:------------------:|:------------------------------------:|
         | Slopes     | $\beta_1 = \gamma_1 + \rho_{XW} \frac{\sigma_W}{\sigma_X} \gamma_2$ | $\hat{\beta}_1 = \hat{\gamma}_1\left(1 + \hat{\gamma}_2 r_{XW} \left[\frac{s_W}{s_X(r_{YX} - r_{YW} r_{XW}} \right] \right)$ |
         | Std Errors |        $se(\hat{\beta}_1) \{>, =, or <\} se(\hat{\gamma}_1)$        |                              $\hat{se}(\hat{\beta}_1) \{>, =, or <\} \hat{se}(\hat{\gamma}_1)$                               |
 
@@ -1035,7 +1008,7 @@ Linear regression                                      Number of obs =     439
     -   As in linear regression, anything can happen
 
         |            |                      True Value                       |                             Estimates                             |
-        |------------|:-----------------------------------------------------:|:-----------------------------------------------------------------:|
+        |---------------|:------------------------:|:------------------------------:|
         | Slopes     |           $\beta_1 \{>, =, or <\} \gamma_1$           |           $\hat{\beta}_1 \{>, =, or <\} \hat{\gamma}_1$           |
         | Std Errors | $se(\hat{\beta}_1) \{>, =, or <\} se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) \{>, =, or <\} \hat{se}(\hat{\gamma}_1)$ |
 
@@ -1054,7 +1027,7 @@ Linear regression                                      Number of obs =     439
     -   $\gamma_2 = 0$
 
         |            |                True Value                |                                                          Estimates                                                           |
-        |------------|:----------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------:|
+        |--------------|:------------:|:------------------------------------------:|
         | Slopes     |           $\beta_1 = \gamma_1$           | $\hat{\beta}_1 = \hat{\gamma}_1\left(1 + \hat{\gamma}_2 r_{XW} \left[\frac{s_W}{s_X(r_{YX} - r_{YW} r_{XW}} \right] \right)$ |
         | Std Errors | $se(\hat{\beta}_1) < se(\hat{\gamma}_1)$ |                                     $\hat{se}(\hat{\beta}_1) < \hat{se}(\hat{\gamma}_1)$                                     |
 
@@ -1065,7 +1038,7 @@ Linear regression                                      Number of obs =     439
     -   Similar to linear regression
 
         |            |                True Value                |                      Estimates                       |
-        |------------|:----------------------------------------:|:----------------------------------------------------:|
+        |---------------|:-----------------------:|:------------------------------:|
         | Slopes     |           $\beta_1 = \gamma_1$           |    $\hat{\beta}_1 \{>, =, or <\} \hat{\gamma}_1$     |
         | Std Errors | $se(\hat{\beta}_1) < se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) < \hat{se}(\hat{\gamma}_1)$ |
 
@@ -1080,7 +1053,7 @@ Linear regression                                      Number of obs =     439
 -   Inclusion of irrelevant variables results in slight loss in precision in all regressions
 
     |            |                True Value                |                      Estimates                       |
-    |------------|:----------------------------------------:|:----------------------------------------------------:|
+    |---------------|:-----------------------:|:------------------------------:|
     | Slopes     |           $\beta_1 = \gamma_1$           |           $\hat{\beta}_1= \hat{\gamma}_1$            |
     | Std Errors | $se(\hat{\beta}_1) = se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) < \hat{se}(\hat{\gamma}_1)$ |
 

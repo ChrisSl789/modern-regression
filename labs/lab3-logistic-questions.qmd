@@ -1,11 +1,7 @@
 ---
 title: "Lab 3: Logistic Regression"
 author: "Chris Slaughter"
-format:
-  html:
-    code-tools: true
-    embed-resources: true
-editor: visual
+name: labs/lab3-logistic-questions.qmd
 toc: true
 ---
 

@@ -1,34 +1,7 @@
 ---
 title: "Regression Based Prediction"
 subtitle: "Lecture 13"
-author: "Chris Slaughter"
-footer: "Bios 6312"
-date: last-modified
-format:
-  html:
-    embed-resources: true
-    standalone: true
-    number-sections: true
-    number-depth: 4
-    anchor-sections: true
-    smooth-scroll: true
-    theme: journal
-    toc: true
-    toc-depth: 4
-    toc-title: Contents
-    toc-location: left
-    code-link: false
-    code-tools: true
-    code-fold: true
-    code-block-bg: "#f1f3f5"
-    code-block-border-left: "#31BAE9"
-    reference-location: margin
-    fig-cap-location: margin
-    fontsize: medium
-
-execute:
-   warning: false
-   message: false
+name: notes/Lec13.Prediction.qmd
 ---
 
 ```{r}
@@ -972,9 +945,9 @@ Log likelihood = -70.223945                       Pseudo R2       =     0.3629
 
 -   From abstract of paper
 
-    -   "Multivariable regression models are powerful tools that are frequently used in clinical outcomes\... however uncritical application of modeling techniques can result in models that poorly fit the dataset at hand, or, even more likely, inaccurately predict outcomes on new subjects."
+    -   "Multivariable regression models are powerful tools that are frequently used in clinical outcomes... however uncritical application of modeling techniques can result in models that poorly fit the dataset at hand, or, even more likely, inaccurately predict outcomes on new subjects."
 
-    -   "\... predictive accuracy should be unbiasedly validated using bootstrapping or cross-validation before using predictions in new data series."
+    -   "... predictive accuracy should be unbiasedly validated using bootstrapping or cross-validation before using predictions in new data series."
 
 -   Common problem: Number of predictors being considered ($p$) is larger than the number of events ($m$)
 
@@ -1002,7 +975,7 @@ Log likelihood = -70.223945                       Pseudo R2       =     0.3629
 
         -   Scientifically meaningful summary measures
 
--   Step 3: Fit the model and \...
+-   Step 3: Fit the model and ...
 
     -   Evaluate modeling assumptions: Linearity, additivity, distributional assumptions
 
@@ -1076,7 +1049,7 @@ sex=male * cholesterol''  -0.1227 0.6718 -0.18  0.8551
 sex=male * cholesterol'''  0.1315 1.1752  0.11  0.9109  
 ```
 
--   Validation\...
+-   Validation...
 
     -   Backwards stepwise regression
 

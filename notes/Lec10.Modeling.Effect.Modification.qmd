@@ -1,34 +1,7 @@
 ---
 title: "Modeling Effect Modification"
 subtitle: "Lecture 10"
-author: "Chris Slaughter"
-footer: "Bios 6312"
-date: last-modified
-format:
-  html:
-    embed-resources: true
-    standalone: true
-    number-sections: true
-    number-depth: 4
-    anchor-sections: true
-    smooth-scroll: true
-    theme: journal
-    toc: true
-    toc-depth: 4
-    toc-title: Contents
-    toc-location: left
-    code-link: false
-    code-tools: true
-    code-fold: true
-    code-block-bg: "#f1f3f5"
-    code-block-border-left: "#31BAE9"
-    reference-location: margin
-    fig-cap-location: margin
-    fontsize: medium
-
-execute:
-   warning: false
-   message: false
+name: notes/Lec10.Modeling.Effect.Modification.qmd
 ---
 
 ```{r}
@@ -192,6 +165,7 @@ bp$malesmoke <- bp$male * bp$smoke
 library(dplyr)
 bp %>% group_by(smoke, male) %>% summarize(meanbp=mean(bp))
 ```
+
 ```{r}
 m1 <- lm(bp ~ male + smoke + male*smoke, data=bp)
 
@@ -209,8 +183,6 @@ lincom(m1, c("(Intercept)",
        vcov=hccm(m1, type = "hc3"))
 ```
 
-
-
 ###### Difference in mean bp, males versus females, in non-smokers
 
 ```{r}
@@ -225,14 +197,12 @@ lincom(m1, "male", vcov=hccm(m1, type = "hc3"))
 lincom(m1, "male + male:smoke", vcov=hccm(m1, type = "hc3"))
 ```
 
-
 ###### Difference in mean bp, smokers versus non-smokers, in females
 
 ```{r}
 # Smoking effect in females
 lincom(m1, "smoke", vcov=hccm(m1, type = "hc3"))
 ```
-
 
 ###### Difference in mean bp, smokers versus non-smokers, in males
 
@@ -243,16 +213,12 @@ lincom(m1, "smoke + male:smoke", vcov=hccm(m1, type = "hc3"))
 
 ###### Test for effect modification
 
-Is the effect of smoking on mean bp modified by male?  Is the effect of male on mean bp modified by smoking?  Effect modification is symmetric.  The answer to these two questions is answered by testing for the significance of the interaction term between male and smoking.  The following answers both questions.
+Is the effect of smoking on mean bp modified by male? Is the effect of male on mean bp modified by smoking? Effect modification is symmetric. The answer to these two questions is answered by testing for the significance of the interaction term between male and smoking. The following answers both questions.
 
 ```{r}
 # Effect modification
 lincom(m1, "male:smoke", vcov=hccm(m1, type = "hc3"))
 ```
-
-
-
-
 
 ##### Geometric Means
 
@@ -262,6 +228,7 @@ We can obtain the geometric means by male and smoking using summary statistics o
 library(dplyr)
 bp %>% group_by(smoke, male) %>% summarize(geomeanbp=exp(mean(log(bp))))
 ```
+
 ```{r}
 m2 <- lm(logbp ~ male + smoke + male*smoke, data=bp)
 
@@ -280,8 +247,6 @@ lincom(m2, c("(Intercept)",
        eform=TRUE)
 ```
 
-
-
 ###### Ratio of geometric mean bp, males versus females, in non-smokers
 
 ```{r}
@@ -296,14 +261,12 @@ lincom(m2, "male", vcov=hccm(m2, type = "hc3"), eform=TRUE)
 lincom(m2, "male + male:smoke", vcov=hccm(m2, type = "hc3"), eform=TRUE)
 ```
 
-
 ###### Ratio of geometric mean bp, smokers versus non-smokers, in females
 
 ```{r}
 # Smoking effect in females
 lincom(m2, "smoke", vcov=hccm(m2, type = "hc3"), eform=TRUE)
 ```
-
 
 ###### Ratio of geometric mean bp, smokers versus non-smokers, in males
 
@@ -314,13 +277,12 @@ lincom(m2, "smoke + male:smoke", vcov=hccm(m2, type = "hc3"), eform=TRUE)
 
 ###### Test for effect modification
 
-Is the effect of smoking on geometric mean bp modified by male?  Is the effect of male on geometric mean bp modified by smoking?  Effect modification is symmetric.  The answer to these two questions is answered by testing for the significance of the interaction term between male and smoking.  The following answers both questions.
+Is the effect of smoking on geometric mean bp modified by male? Is the effect of male on geometric mean bp modified by smoking? Effect modification is symmetric. The answer to these two questions is answered by testing for the significance of the interaction term between male and smoking. The following answers both questions.
 
 ```{r}
 # Effect modification
 lincom(m2, "male:smoke", vcov=hccm(m2, type = "hc3"), eform=TRUE)
 ```
-
 
 #### Stata Output
 
@@ -937,8 +899,7 @@ Linear regression                                      Number of obs =    1597
 
 #### Inference about admin association using R
 
-- See the effect modification lab.  We will go over this in detail in class.
-
+-   See the effect modification lab. We will go over this in detail in class.
 
 ## Continuous Effect Modification
 
@@ -970,11 +931,11 @@ Linear regression                                      Number of obs =    1597
 
 -   Prior to looking at the data, we can also consider the possibility that interactions between these variables might be important
 
-    -   Height and age interaction? Do we expect\...
+    -   Height and age interaction? Do we expect...
 
-        -   Difference in conduction times comparing 6 foot tall and 5 foot tall 20 year old, to be the same as \...
+        -   Difference in conduction times comparing 6 foot tall and 5 foot tall 20 year old, to be the same as ...
 
-        -   Difference in conduction times comparing 6 foot tall and 5 foot tall 50 year old, to be the same as \...
+        -   Difference in conduction times comparing 6 foot tall and 5 foot tall 50 year old, to be the same as ...
 
         -   Difference in conduction times comparing 6 foot tall and 5 foot tall 80 year old?
 
@@ -1151,7 +1112,6 @@ lines(53:83, predict(m.male, newdata=data.frame(age=70, height=53:83)), col=1)
 legend("topleft", c("<35","35-60","60+"), pch=c(3,2,1), col=c(3,2,1), bty="n",title="Age")
 ```
 
-
 ### Influence diagnostics
 
 -   From the output, we find a statistically significant three way interaction (p = 0.047)
@@ -1173,7 +1133,6 @@ legend("topleft", c("<35","35-60","60+"), pch=c(3,2,1), col=c(3,2,1), bty="n",ti
     -   I plot the slope estimates and p-values for each variable as a function of which case I left out
 
     -   For comparison, case 0 corresponds to using the full dataset
-
 
 -   Changes in coefficients ($\beta$s)
 
@@ -1204,7 +1163,6 @@ points(x=140, y=coeffs[141,i], pch=19, col="Red")
 
 ```
 
-
 -   Changes in p-values for $\beta$s
 
 ```{r}
@@ -1215,7 +1173,6 @@ plot(case, pvals[,i], ylab=(names(coef(m))[i]))
 points(x=140, y=coeffs[141,i], pch=19, col="Red")
 }
 ```
-
 
 -   Contrary to my fear, the only influential observation actually lessened the evidence of an interaction
 
@@ -1237,7 +1194,6 @@ legend("topleft", c("30 Female","50 Female","30 Male", "50 Male"),
   lty=1, col=1:4, bty="n", title="Age, Gender")
 ```
 
-
 -   So, what do I do with observation 140?
 
     -   From the influence diagnostics, I am still comfortable that the data suggest a 3-way interaction
@@ -1251,4 +1207,3 @@ legend("topleft", c("30 Female","50 Female","30 Male", "50 Male"),
         -   My best guess is observation 140 represents only $0.4\%$ of the population, but would still leave her in the analysis
 
     -   Removing subject 140 could bias parameter estimates, so I would rarely remove observations based on diagnostics
-

@@ -1,34 +1,7 @@
 ---
 title: "Poisson Regression"
 subtitle: "Lecture 09"
-author: "Chris Slaughter"
-footer: "Bios 6312"
-date: last-modified
-format:
-  html:
-    embed-resources: true
-    standalone: true
-    number-sections: true
-    number-depth: 4
-    anchor-sections: true
-    smooth-scroll: true
-    theme: journal
-    toc: true
-    toc-depth: 4
-    toc-title: Contents
-    toc-location: left
-    code-link: false
-    code-tools: true
-    code-fold: true
-    code-block-bg: "#f1f3f5"
-    code-block-border-left: "#31BAE9"
-    reference-location: margin
-    fig-cap-location: margin
-    fontsize: medium
-
-execute:
-   warning: false
-   message: false
+name: notes/Lec09.Poisson.qmd
 ---
 
 ```{r}
@@ -342,7 +315,7 @@ Log pseudolikelihood =  -11360.89                 Pseudo R2       =     0.0520
 
 -   The following results compare using a Poisson model to a linear regression model
 
--   Both models will control for Esophagitis status, so any interpretation must involve "Holding esophagitis status constant\..." ("Among subjects with the same Esophagitis status\...")
+-   Both models will control for Esophagitis status, so any interpretation must involve "Holding esophagitis status constant..." ("Among subjects with the same Esophagitis status...")
 
 -   Note the different (numerical) estimates for the coefficients and standard errors for BMI and esophagitis, but the similar statistical significance
 
@@ -469,7 +442,6 @@ legend("bottomright", c("Esophagitis Pos","Esophagitis Neg"), inset=0.05, col="B
 
     -   For the Linear regrression, the true distance between lines is constant
 
-
 ```{r}
 m.spline2.adj <- glm(events ~ ns(bmi,4) + offset(log(totalmins)) + esop, data=bmi.data, family="poisson")
 m.spline3.adj <- lm(events / totalmins ~ ns(bmi,4) + esop, data=bmi.data)
@@ -486,7 +458,6 @@ box()
 lines(18:40, 720*predict(m.spline3.adj, newdata=data.frame(bmi=18:40, esop=0), type="response"), type='l', col='Blue', lty=2)
 legend("bottomright", c("Esophagitis Pos","Esophagitis Neg"), inset=0.05, col="Blue", lty=1:2)
 ```
-
 
 ### Comparison of modeling linear BMI to using spline function
 
