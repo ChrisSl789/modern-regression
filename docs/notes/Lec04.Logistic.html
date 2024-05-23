@@ -4585,6 +4585,7 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
   </script>
 
 
+<style type="text/css">.right {text-align: right;}</style>
 <meta property="og:title" content="BIOS 6312 - Spring 2024 - Logistic Regression">
 <meta property="og:description" content="Lecture 04">
 <meta property="og:image" content="https://chrissl789.github.io/modern-regression/notes/Lec04.Logistic_files/figure-html/unnamed-chunk-1-1.png">
@@ -4951,13 +4952,16 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 <main class="content page-columns page-full" id="quarto-document-content">
 
 <header id="title-block-header">
-<div class="quarto-title-block d-none d-lg-block"><div><h1 class="title">Logistic Regression</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button" data-quarto-source-url="https://github.com/chrissl789/modern-regression/blob/main/notes/Lec04.Logistic.qmd">View Source</a></li></ul></div></div>
+
+<div class="right">
+<a href="https://github.com/chrissl789/modern-regression/raw/main/notes/Lec04.Logistic.qmd" target="_blank">View Code</a>
+</div>
+
+<div class="quarto-title-block d-none d-lg-block"><div><h1 class="title">Logistic Regression</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 <p class="subtitle lead">Lecture 04</p>
 <p class="author">Chris Slaughter</p>
 
 <p class="date">May 14, 2024</p>
-
-<a href="https://github.com/chrissl789/modern-regression/raw/main/notes/Lec04.Logistic.qmd" target="_blank">View Code</a>
 
 </header>
 
@@ -6141,6 +6145,8 @@ Number of Fisher Scoring iterations: 2</code></pre>
 </div>
 
 
+<!-- -->
+
 </section>
 </section>
 
@@ -6555,7 +6561,970 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         <span class="nav-page-text">Precision of Statistical Intefence</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
-</nav>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class>
+<div class="sourceCode" id="cb65" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;Logistic Regression&quot;</span></span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> &quot;Lecture 04&quot;</span></span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a><span class="an">name:</span><span class="co"> notes/Lec04.Logistic.qmd</span></span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## General Regression Setting</span></span>
+<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Types of variables</span>
+<span id="cb65-10"><a href="#cb65-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-11"><a href="#cb65-11" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Binary data: e.g. sex, death</span>
+<span id="cb65-12"><a href="#cb65-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-13"><a href="#cb65-13" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Nominal (unordered categorical) data: e.g. race, martial status</span>
+<span id="cb65-14"><a href="#cb65-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-15"><a href="#cb65-15" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Ordinal (ordered categorical data): e.g. cancer stage, asthma</span>
+<span id="cb65-16"><a href="#cb65-16" aria-hidden="true" tabindex="-1"></a>        severity</span>
+<span id="cb65-17"><a href="#cb65-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-18"><a href="#cb65-18" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Quantitative data: e.g. age, blood pressure</span>
+<span id="cb65-19"><a href="#cb65-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-20"><a href="#cb65-20" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Right censored data: e.g. time to death</span>
+<span id="cb65-21"><a href="#cb65-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-22"><a href="#cb65-22" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The measures used to summarize and compare distributions vary</span>
+<span id="cb65-23"><a href="#cb65-23" aria-hidden="true" tabindex="-1"></a>    according to the type of variable</span>
+<span id="cb65-24"><a href="#cb65-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-25"><a href="#cb65-25" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Means: Binary, quantitative</span>
+<span id="cb65-26"><a href="#cb65-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-27"><a href="#cb65-27" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Medians: Ordered, quantitative, censored</span>
+<span id="cb65-28"><a href="#cb65-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-29"><a href="#cb65-29" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Proportions: Binary, nominal, ordinal</span>
+<span id="cb65-30"><a href="#cb65-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-31"><a href="#cb65-31" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Odds: Binary, nominal, ordinal</span>
+<span id="cb65-32"><a href="#cb65-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-33"><a href="#cb65-33" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Hazards: Censored</span>
+<span id="cb65-34"><a href="#cb65-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-35"><a href="#cb65-35" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Which regression model you choose to use is based on the parameter</span>
+<span id="cb65-36"><a href="#cb65-36" aria-hidden="true" tabindex="-1"></a>    being compared across groups</span>
+<span id="cb65-37"><a href="#cb65-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-38"><a href="#cb65-38" aria-hidden="true" tabindex="-1"></a>::: center</span>
+<span id="cb65-39"><a href="#cb65-39" aria-hidden="true" tabindex="-1"></a>| Parameter       | Approach                              |</span>
+<span id="cb65-40"><a href="#cb65-40" aria-hidden="true" tabindex="-1"></a>|:----------------|:--------------------------------------|</span>
+<span id="cb65-41"><a href="#cb65-41" aria-hidden="true" tabindex="-1"></a>| Means           | Linear regression                     |</span>
+<span id="cb65-42"><a href="#cb65-42" aria-hidden="true" tabindex="-1"></a>| Geometric means | Linear regression on log scale        |</span>
+<span id="cb65-43"><a href="#cb65-43" aria-hidden="true" tabindex="-1"></a>| Odds            | Logistic regression                   |</span>
+<span id="cb65-44"><a href="#cb65-44" aria-hidden="true" tabindex="-1"></a>| Rates           | Poisson regression                    |</span>
+<span id="cb65-45"><a href="#cb65-45" aria-hidden="true" tabindex="-1"></a>| Hazards         | Proportional Hazards (Cox) regression |</span>
+<span id="cb65-46"><a href="#cb65-46" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb65-47"><a href="#cb65-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-48"><a href="#cb65-48" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>General notation for variables and parameters</span>
+<span id="cb65-49"><a href="#cb65-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-50"><a href="#cb65-50" aria-hidden="true" tabindex="-1"></a>::: center</span>
+<span id="cb65-51"><a href="#cb65-51" aria-hidden="true" tabindex="-1"></a>|            |                                                      |</span>
+<span id="cb65-52"><a href="#cb65-52" aria-hidden="true" tabindex="-1"></a>|:-----------|:-----------------------------------------------------|</span>
+<span id="cb65-53"><a href="#cb65-53" aria-hidden="true" tabindex="-1"></a>| $Y_i$      | Response measured on the $i$th subject               |</span>
+<span id="cb65-54"><a href="#cb65-54" aria-hidden="true" tabindex="-1"></a>| $X_i$      | Value of the predictor measured on the $i$th subject |</span>
+<span id="cb65-55"><a href="#cb65-55" aria-hidden="true" tabindex="-1"></a>| $\theta_i$ | Parameter summarizing distribution of $Y_i | X_i$    |</span>
+<span id="cb65-56"><a href="#cb65-56" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb65-57"><a href="#cb65-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-58"><a href="#cb65-58" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The parameter ($\theta_i$) might be the mean, geometric mean, odds,</span>
+<span id="cb65-59"><a href="#cb65-59" aria-hidden="true" tabindex="-1"></a>    rate, instantaneous risk of an event (hazard), etc.</span>
+<span id="cb65-60"><a href="#cb65-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-61"><a href="#cb65-61" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>In linear regression on means, $\theta_i = E<span class="co">[</span><span class="ot">Y_i | X_i</span><span class="co">]</span>$</span>
+<span id="cb65-62"><a href="#cb65-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-63"><a href="#cb65-63" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Choice of correct $\theta_i$ should be based on scientific</span>
+<span id="cb65-64"><a href="#cb65-64" aria-hidden="true" tabindex="-1"></a>    understanding of problem</span>
+<span id="cb65-65"><a href="#cb65-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-66"><a href="#cb65-66" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>General notation for simple regression model</span>
+<span id="cb65-67"><a href="#cb65-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-68"><a href="#cb65-68" aria-hidden="true" tabindex="-1"></a>$$g(\theta_i) = \beta_0 + \beta_1 \times X_i$$</span>
+<span id="cb65-69"><a href="#cb65-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-70"><a href="#cb65-70" aria-hidden="true" tabindex="-1"></a>::: center</span>
+<span id="cb65-71"><a href="#cb65-71" aria-hidden="true" tabindex="-1"></a>General notation for regression model with one predictor</span>
+<span id="cb65-72"><a href="#cb65-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-73"><a href="#cb65-73" aria-hidden="true" tabindex="-1"></a>|           |                                 |</span>
+<span id="cb65-74"><a href="#cb65-74" aria-hidden="true" tabindex="-1"></a>|:----------|:--------------------------------|</span>
+<span id="cb65-75"><a href="#cb65-75" aria-hidden="true" tabindex="-1"></a>| $g( )$    | Link function used for modeling |</span>
+<span id="cb65-76"><a href="#cb65-76" aria-hidden="true" tabindex="-1"></a>| $\beta_0$ | Intercept                       |</span>
+<span id="cb65-77"><a href="#cb65-77" aria-hidden="true" tabindex="-1"></a>| $\beta_1$ | Slope for predictor $X$         |</span>
+<span id="cb65-78"><a href="#cb65-78" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb65-79"><a href="#cb65-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-80"><a href="#cb65-80" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The link function is often either the identity function (for</span>
+<span id="cb65-81"><a href="#cb65-81" aria-hidden="true" tabindex="-1"></a>    modeling means) or log (for modeling geometric means, odds, hazards)</span>
+<span id="cb65-82"><a href="#cb65-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-83"><a href="#cb65-83" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Identity function: $f(x) = x$</span>
+<span id="cb65-84"><a href="#cb65-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-85"><a href="#cb65-85" aria-hidden="true" tabindex="-1"></a><span class="fu">### Uses of General Regression</span></span>
+<span id="cb65-86"><a href="#cb65-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-87"><a href="#cb65-87" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Borrowing information</span>
+<span id="cb65-88"><a href="#cb65-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-89"><a href="#cb65-89" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Use other groups to make estimates in groups with sparse data</span>
+<span id="cb65-90"><a href="#cb65-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-91"><a href="#cb65-91" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Intuitively, 67 and 69 year olds would provide some relevant</span>
+<span id="cb65-92"><a href="#cb65-92" aria-hidden="true" tabindex="-1"></a>        information about 68 year olds</span>
+<span id="cb65-93"><a href="#cb65-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-94"><a href="#cb65-94" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Assuming a straight line relationship tells us about other, even</span>
+<span id="cb65-95"><a href="#cb65-95" aria-hidden="true" tabindex="-1"></a>        more distant, individuals</span>
+<span id="cb65-96"><a href="#cb65-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-97"><a href="#cb65-97" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>If we do not want to assume a straight line, we may only want to</span>
+<span id="cb65-98"><a href="#cb65-98" aria-hidden="true" tabindex="-1"></a>        borrow information from nearby groups</span>
+<span id="cb65-99"><a href="#cb65-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-100"><a href="#cb65-100" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Defining &quot;Contrasts&quot;</span>
+<span id="cb65-101"><a href="#cb65-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-102"><a href="#cb65-102" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Define a comparison across groups to use when answering</span>
+<span id="cb65-103"><a href="#cb65-103" aria-hidden="true" tabindex="-1"></a>        scientific questions</span>
+<span id="cb65-104"><a href="#cb65-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-105"><a href="#cb65-105" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>If the straight line relationship holds, the slope is the</span>
+<span id="cb65-106"><a href="#cb65-106" aria-hidden="true" tabindex="-1"></a>        difference in parameter between groups differing by 1 unit in</span>
+<span id="cb65-107"><a href="#cb65-107" aria-hidden="true" tabindex="-1"></a>        $X$</span>
+<span id="cb65-108"><a href="#cb65-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-109"><a href="#cb65-109" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>If a non-linear relationship in parameter, the slope is still</span>
+<span id="cb65-110"><a href="#cb65-110" aria-hidden="true" tabindex="-1"></a>        the average difference in parameter between groups differing by</span>
+<span id="cb65-111"><a href="#cb65-111" aria-hidden="true" tabindex="-1"></a>        1 unit in $X$</span>
+<span id="cb65-112"><a href="#cb65-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-113"><a href="#cb65-113" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Slope is a (first order or linear) test for trend in the</span>
+<span id="cb65-114"><a href="#cb65-114" aria-hidden="true" tabindex="-1"></a>        parameter</span>
+<span id="cb65-115"><a href="#cb65-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-116"><a href="#cb65-116" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Statistical jargon: &quot;a contrast&quot; across groups</span>
+<span id="cb65-117"><a href="#cb65-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-118"><a href="#cb65-118" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The major difference between different regression models is the</span>
+<span id="cb65-119"><a href="#cb65-119" aria-hidden="true" tabindex="-1"></a>    interpretation of the parameters</span>
+<span id="cb65-120"><a href="#cb65-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-121"><a href="#cb65-121" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>How do I want to summarize the outcome?</span>
+<span id="cb65-122"><a href="#cb65-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-123"><a href="#cb65-123" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Mean, geometric mean, odds, hazard</span>
+<span id="cb65-124"><a href="#cb65-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-125"><a href="#cb65-125" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>How do I want to compare groups?</span>
+<span id="cb65-126"><a href="#cb65-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-127"><a href="#cb65-127" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Difference, ratio</span>
+<span id="cb65-128"><a href="#cb65-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-129"><a href="#cb65-129" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Answering these two simple questions provides a starting road-map as</span>
+<span id="cb65-130"><a href="#cb65-130" aria-hidden="true" tabindex="-1"></a>    to which regression model to choose</span>
+<span id="cb65-131"><a href="#cb65-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-132"><a href="#cb65-132" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Issues related to the inclusion of covariates remains the same</span>
+<span id="cb65-133"><a href="#cb65-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-134"><a href="#cb65-134" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Address the scientific question: Predictor of interest, effect</span>
+<span id="cb65-135"><a href="#cb65-135" aria-hidden="true" tabindex="-1"></a>        modification</span>
+<span id="cb65-136"><a href="#cb65-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-137"><a href="#cb65-137" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Address confounding</span>
+<span id="cb65-138"><a href="#cb65-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-139"><a href="#cb65-139" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Increase precision</span>
+<span id="cb65-140"><a href="#cb65-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-141"><a href="#cb65-141" aria-hidden="true" tabindex="-1"></a><span class="fu">## Simple Logistic Regression</span></span>
+<span id="cb65-142"><a href="#cb65-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-143"><a href="#cb65-143" aria-hidden="true" tabindex="-1"></a><span class="fu">### Uses of logistic regression</span></span>
+<span id="cb65-144"><a href="#cb65-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-145"><a href="#cb65-145" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Use logistic regression when you want to make inference about the</span>
+<span id="cb65-146"><a href="#cb65-146" aria-hidden="true" tabindex="-1"></a>    odds</span>
+<span id="cb65-147"><a href="#cb65-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-148"><a href="#cb65-148" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Allows for continuous (or multiple) grouping variables</span>
+<span id="cb65-149"><a href="#cb65-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-150"><a href="#cb65-150" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Is OK with binary grouping variables too</span>
+<span id="cb65-151"><a href="#cb65-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-152"><a href="#cb65-152" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Compares odds of responses across groups using ratios</span>
+<span id="cb65-153"><a href="#cb65-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-154"><a href="#cb65-154" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>&quot;Odds ratio&quot;</span>
+<span id="cb65-155"><a href="#cb65-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-156"><a href="#cb65-156" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Binary response variable</span>
+<span id="cb65-157"><a href="#cb65-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-158"><a href="#cb65-158" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>When using regression with binary response variables, we typically</span>
+<span id="cb65-159"><a href="#cb65-159" aria-hidden="true" tabindex="-1"></a>    model the (log) odds using logistic regression</span>
+<span id="cb65-160"><a href="#cb65-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-161"><a href="#cb65-161" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Conceptually there should be no problem modeling the proportion</span>
+<span id="cb65-162"><a href="#cb65-162" aria-hidden="true" tabindex="-1"></a>        (which is the mean of the distribution)</span>
+<span id="cb65-163"><a href="#cb65-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-164"><a href="#cb65-164" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>However, there are several technical reasons why we do not use</span>
+<span id="cb65-165"><a href="#cb65-165" aria-hidden="true" tabindex="-1"></a>        linear regression very often with binary responses</span>
+<span id="cb65-166"><a href="#cb65-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-167"><a href="#cb65-167" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Why not use linear regression for binary responses?</span>
+<span id="cb65-168"><a href="#cb65-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-169"><a href="#cb65-169" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Many misconceptions about the advantages and disadvantages of</span>
+<span id="cb65-170"><a href="#cb65-170" aria-hidden="true" tabindex="-1"></a>    analyzing the odds</span>
+<span id="cb65-171"><a href="#cb65-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-172"><a href="#cb65-172" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Reasons I consider valid: Scientific basis</span>
+<span id="cb65-173"><a href="#cb65-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-174"><a href="#cb65-174" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Uses of odds ratios in case control studies</span>
+<span id="cb65-175"><a href="#cb65-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-176"><a href="#cb65-176" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Plausibility of linear trends and no effect modifiers</span>
+<span id="cb65-177"><a href="#cb65-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-178"><a href="#cb65-178" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Reasons I consider valid: Statistical basis</span>
+<span id="cb65-179"><a href="#cb65-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-180"><a href="#cb65-180" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>There is a mean variance relationship (if not using robust</span>
+<span id="cb65-181"><a href="#cb65-181" aria-hidden="true" tabindex="-1"></a>            SE) that can be incorporate in the logistic regression model</span>
+<span id="cb65-182"><a href="#cb65-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-183"><a href="#cb65-183" aria-hidden="true" tabindex="-1"></a><span class="fu">### Reasons to use logistic regression</span></span>
+<span id="cb65-184"><a href="#cb65-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-185"><a href="#cb65-185" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>First (scientific) reason: Case-Control Studies</span>
+<span id="cb65-186"><a href="#cb65-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-187"><a href="#cb65-187" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Studying a rare disease, so we do study in reverse</span>
+<span id="cb65-188"><a href="#cb65-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-189"><a href="#cb65-189" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>e.g. find subjects with cancer (and suitable controls) and</span>
+<span id="cb65-190"><a href="#cb65-190" aria-hidden="true" tabindex="-1"></a>            then ascertain exposure of interest</span>
+<span id="cb65-191"><a href="#cb65-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-192"><a href="#cb65-192" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Estimate distribution of the &quot;effect&quot; across groups defined</span>
+<span id="cb65-193"><a href="#cb65-193" aria-hidden="true" tabindex="-1"></a>            by &quot;cause&quot;</span>
+<span id="cb65-194"><a href="#cb65-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-195"><a href="#cb65-195" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Proportion (or odds) of smokers among people with or without</span>
+<span id="cb65-196"><a href="#cb65-196" aria-hidden="true" tabindex="-1"></a>            lung cancer</span>
+<span id="cb65-197"><a href="#cb65-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-198"><a href="#cb65-198" aria-hidden="true" tabindex="-1"></a>    |            |               |               |</span>
+<span id="cb65-199"><a href="#cb65-199" aria-hidden="true" tabindex="-1"></a>    |------------|---------------|---------------|</span>
+<span id="cb65-200"><a href="#cb65-200" aria-hidden="true" tabindex="-1"></a>    |            | Lung Cancer + | Lung Cancer - |</span>
+<span id="cb65-201"><a href="#cb65-201" aria-hidden="true" tabindex="-1"></a>    | Smoker     | a             | b             |</span>
+<span id="cb65-202"><a href="#cb65-202" aria-hidden="true" tabindex="-1"></a>    | Non-Smoker | c             | d             |</span>
+<span id="cb65-203"><a href="#cb65-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-204"><a href="#cb65-204" aria-hidden="true" tabindex="-1"></a><span class="in">    : Case-Control or Cohort 2x2 Table. In the Case-Control design, the</span></span>
+<span id="cb65-205"><a href="#cb65-205" aria-hidden="true" tabindex="-1"></a><span class="in">    total number of subjects with Cancer $(a+c)$ and without cancer</span></span>
+<span id="cb65-206"><a href="#cb65-206" aria-hidden="true" tabindex="-1"></a><span class="in">    $(b+d)$ are fixed by design.</span></span>
+<span id="cb65-207"><a href="#cb65-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-208"><a href="#cb65-208" aria-hidden="true" tabindex="-1"></a><span class="in">    -   In contrast, a cohort study samples by exposure (smoking) and</span></span>
+<span id="cb65-209"><a href="#cb65-209" aria-hidden="true" tabindex="-1"></a><span class="in">        then estimates the distribution of the effect in exposure groups</span></span>
+<span id="cb65-210"><a href="#cb65-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-211"><a href="#cb65-211" aria-hidden="true" tabindex="-1"></a><span class="in">    -   In a case-control study, we cannot estimate prevalence (without</span></span>
+<span id="cb65-212"><a href="#cb65-212" aria-hidden="true" tabindex="-1"></a><span class="in">        knowing selection probabilities)</span></span>
+<span id="cb65-213"><a href="#cb65-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-214"><a href="#cb65-214" aria-hidden="true" tabindex="-1"></a><span class="in">        -   e.g. if doing a 1:1 case-control study, $(a+c) = b+d$ so it</span></span>
+<span id="cb65-215"><a href="#cb65-215" aria-hidden="true" tabindex="-1"></a><span class="in">            would look like $50\%$ of the subjects have cancer</span></span>
+<span id="cb65-216"><a href="#cb65-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-217"><a href="#cb65-217" aria-hidden="true" tabindex="-1"></a><span class="in">    -   Odds ratios are estimable in either case-control or cohort</span></span>
+<span id="cb65-218"><a href="#cb65-218" aria-hidden="true" tabindex="-1"></a><span class="in">        sampling scheme</span></span>
+<span id="cb65-219"><a href="#cb65-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-220"><a href="#cb65-220" aria-hidden="true" tabindex="-1"></a><span class="in">        -   Cohort study: Odds of cancer among smoker compared to odds</span></span>
+<span id="cb65-221"><a href="#cb65-221" aria-hidden="true" tabindex="-1"></a><span class="in">            of cancer among nonsmokers</span></span>
+<span id="cb65-222"><a href="#cb65-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-223"><a href="#cb65-223" aria-hidden="true" tabindex="-1"></a><span class="in">        -   Case-control study: Odds of smoking among cancer compared to</span></span>
+<span id="cb65-224"><a href="#cb65-224" aria-hidden="true" tabindex="-1"></a><span class="in">            odds of smoking among non-cancer</span></span>
+<span id="cb65-225"><a href="#cb65-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-226"><a href="#cb65-226" aria-hidden="true" tabindex="-1"></a><span class="in">    -   Mathematically, these two odds ratios are the same</span></span>
+<span id="cb65-227"><a href="#cb65-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-228"><a href="#cb65-228" aria-hidden="true" tabindex="-1"></a><span class="in">        -   </span></span>
+<span id="cb65-229"><a href="#cb65-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-230"><a href="#cb65-230" aria-hidden="true" tabindex="-1"></a><span class="in">    -   Odds ratios are easy to interpret when investigating rare events</span></span>
+<span id="cb65-231"><a href="#cb65-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-232"><a href="#cb65-232" aria-hidden="true" tabindex="-1"></a><span class="in">        -   Odds = prob / (1 - prob)</span></span>
+<span id="cb65-233"><a href="#cb65-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-234"><a href="#cb65-234" aria-hidden="true" tabindex="-1"></a><span class="in">        -   For rare events, (1 - prob) is approximately 1</span></span>
+<span id="cb65-235"><a href="#cb65-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-236"><a href="#cb65-236" aria-hidden="true" tabindex="-1"></a><span class="in">            -   Odds is approximately the probability</span></span>
+<span id="cb65-237"><a href="#cb65-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-238"><a href="#cb65-238" aria-hidden="true" tabindex="-1"></a><span class="in">            -   Odds ratios are approximately risk ratios</span></span>
+<span id="cb65-239"><a href="#cb65-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-240"><a href="#cb65-240" aria-hidden="true" tabindex="-1"></a><span class="in">        -   Case-control studies usually used when events are rare</span></span>
+<span id="cb65-241"><a href="#cb65-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-242"><a href="#cb65-242" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Second (scientific) reason: Linearity</span>
+<span id="cb65-243"><a href="#cb65-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-244"><a href="#cb65-244" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Proportions are bounded by 0 and 1</span>
+<span id="cb65-245"><a href="#cb65-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-246"><a href="#cb65-246" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>It is thus unlikely that a straight line relationship would</span>
+<span id="cb65-247"><a href="#cb65-247" aria-hidden="true" tabindex="-1"></a>        exists between a proportion and a predictor</span>
+<span id="cb65-248"><a href="#cb65-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-249"><a href="#cb65-249" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Unless the predictor itself is bounded</span>
+<span id="cb65-250"><a href="#cb65-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-251"><a href="#cb65-251" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Otherwise, there eventually must be a threshold above which</span>
+<span id="cb65-252"><a href="#cb65-252" aria-hidden="true" tabindex="-1"></a>            the probability does not increase (or only increases a</span>
+<span id="cb65-253"><a href="#cb65-253" aria-hidden="true" tabindex="-1"></a>            little)</span>
+<span id="cb65-254"><a href="#cb65-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-257"><a href="#cb65-257" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb65-258"><a href="#cb65-258" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Logistic function will bound probabilities between 0 and 1</span></span>
+<span id="cb65-259"><a href="#cb65-259" aria-hidden="true" tabindex="-1"></a>expit <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {<span class="fu">exp</span>(x)<span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(x))}</span>
+<span id="cb65-260"><a href="#cb65-260" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="cf">function</span>(x) <span class="fu">expit</span>(x), <span class="sc">-</span><span class="dv">4</span>,<span class="dv">4</span>, <span class="at">ylab=</span><span class="st">&quot;Probabilty&quot;</span>, <span class="at">xlab=</span><span class="st">&quot;Predictor&quot;</span>)</span>
+<span id="cb65-261"><a href="#cb65-261" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb65-262"><a href="#cb65-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-263"><a href="#cb65-263" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Third (scientific) reason: Effect modification</span>
+<span id="cb65-264"><a href="#cb65-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-265"><a href="#cb65-265" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The restriction on ranges for probabilities makes it likely that</span>
+<span id="cb65-266"><a href="#cb65-266" aria-hidden="true" tabindex="-1"></a>        effect modification *must* be present with proportions</span>
+<span id="cb65-267"><a href="#cb65-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-268"><a href="#cb65-268" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Example: Is the association between 2-year relapse rates and</span>
+<span id="cb65-269"><a href="#cb65-269" aria-hidden="true" tabindex="-1"></a>        having a positive scan modified by gender?</span>
+<span id="cb65-270"><a href="#cb65-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-271"><a href="#cb65-271" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Women relapse 40% of the time when the scan is negative, and</span>
+<span id="cb65-272"><a href="#cb65-272" aria-hidden="true" tabindex="-1"></a>            95% of the time when the scan is positive (an increase of</span>
+<span id="cb65-273"><a href="#cb65-273" aria-hidden="true" tabindex="-1"></a>            55%)</span>
+<span id="cb65-274"><a href="#cb65-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-275"><a href="#cb65-275" aria-hidden="true" tabindex="-1"></a><span class="ss">            -   </span>If men relapse 75% of the time when the scan is</span>
+<span id="cb65-276"><a href="#cb65-276" aria-hidden="true" tabindex="-1"></a>                negative, then a positive scan can increase the relapse</span>
+<span id="cb65-277"><a href="#cb65-277" aria-hidden="true" tabindex="-1"></a>                rate to at most 100%, which is only a 25% increase</span>
+<span id="cb65-278"><a href="#cb65-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-279"><a href="#cb65-279" aria-hidden="true" tabindex="-1"></a>                |                 |       |              |</span>
+<span id="cb65-280"><a href="#cb65-280" aria-hidden="true" tabindex="-1"></a>                |-----------------|-------|--------------|</span>
+<span id="cb65-281"><a href="#cb65-281" aria-hidden="true" tabindex="-1"></a>                | **Proportions** |       |              |</span>
+<span id="cb65-282"><a href="#cb65-282" aria-hidden="true" tabindex="-1"></a>                |                 | Women | Men          |</span>
+<span id="cb65-283"><a href="#cb65-283" aria-hidden="true" tabindex="-1"></a>                | Negative Scan   | 40%   | 75%          |</span>
+<span id="cb65-284"><a href="#cb65-284" aria-hidden="true" tabindex="-1"></a>                | Positive Scan   | 95%   | (up to 100%) |</span>
+<span id="cb65-285"><a href="#cb65-285" aria-hidden="true" tabindex="-1"></a>                |                 |       |              |</span>
+<span id="cb65-286"><a href="#cb65-286" aria-hidden="true" tabindex="-1"></a>                | Difference      | 55%   | Up to 25%    |</span>
+<span id="cb65-287"><a href="#cb65-287" aria-hidden="true" tabindex="-1"></a>                | Ratio           | 1.64  | $\leq 1.33$  |</span>
+<span id="cb65-288"><a href="#cb65-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-289"><a href="#cb65-289" aria-hidden="true" tabindex="-1"></a><span class="ss">            -   </span>With the odds, the association can hold without effect</span>
+<span id="cb65-290"><a href="#cb65-290" aria-hidden="true" tabindex="-1"></a>                modification</span>
+<span id="cb65-291"><a href="#cb65-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-292"><a href="#cb65-292" aria-hidden="true" tabindex="-1"></a>                |               |       |                  |</span>
+<span id="cb65-293"><a href="#cb65-293" aria-hidden="true" tabindex="-1"></a>                |---------------|-------|------------------|</span>
+<span id="cb65-294"><a href="#cb65-294" aria-hidden="true" tabindex="-1"></a>                | **Odds**      |       |                  |</span>
+<span id="cb65-295"><a href="#cb65-295" aria-hidden="true" tabindex="-1"></a>                |               | Women | Men              |</span>
+<span id="cb65-296"><a href="#cb65-296" aria-hidden="true" tabindex="-1"></a>                | Negative Scan | 0.67  | 3                |</span>
+<span id="cb65-297"><a href="#cb65-297" aria-hidden="true" tabindex="-1"></a>                | Positive Scan | 19    | (up to $\infty$) |</span>
+<span id="cb65-298"><a href="#cb65-298" aria-hidden="true" tabindex="-1"></a>                |               |       |                  |</span>
+<span id="cb65-299"><a href="#cb65-299" aria-hidden="true" tabindex="-1"></a>                | Ratio         | 28.5  | $&lt; \infty$       |</span>
+<span id="cb65-300"><a href="#cb65-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-301"><a href="#cb65-301" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>If the o dds of positive scan in men was 85.5, then the odds ratio</span>
+<span id="cb65-302"><a href="#cb65-302" aria-hidden="true" tabindex="-1"></a>    would be exactly 28.5 (no effect modification)</span>
+<span id="cb65-303"><a href="#cb65-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-304"><a href="#cb65-304" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Fourth (statistics) reason:</span>
+<span id="cb65-305"><a href="#cb65-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-306"><a href="#cb65-306" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Classical linear regression requires equal variances across each</span>
+<span id="cb65-307"><a href="#cb65-307" aria-hidden="true" tabindex="-1"></a>        predictor group</span>
+<span id="cb65-308"><a href="#cb65-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-309"><a href="#cb65-309" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>But, with binary data, the variance within a group depends on</span>
+<span id="cb65-310"><a href="#cb65-310" aria-hidden="true" tabindex="-1"></a>        the mean</span>
+<span id="cb65-311"><a href="#cb65-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-312"><a href="#cb65-312" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>For binary $Y$, $E(Y) = p$ and $Var(Y) = p(1-p)$</span>
+<span id="cb65-313"><a href="#cb65-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-314"><a href="#cb65-314" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>With robust standard errors, the mean-variance relationship is</span>
+<span id="cb65-315"><a href="#cb65-315" aria-hidden="true" tabindex="-1"></a>        not a major problem. However, a logistic model that correctly</span>
+<span id="cb65-316"><a href="#cb65-316" aria-hidden="true" tabindex="-1"></a>        models the mean-variance relationship will be more efficient.</span>
+<span id="cb65-317"><a href="#cb65-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-318"><a href="#cb65-318" aria-hidden="true" tabindex="-1"></a><span class="fu">### The simple logistic regression model</span></span>
+<span id="cb65-319"><a href="#cb65-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-320"><a href="#cb65-320" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Modeling the odds of binary response variable $Y$ on predictor $X$</span>
+<span id="cb65-321"><a href="#cb65-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-322"><a href="#cb65-322" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Distribution: $\textrm{Pr}(Y_i = 1) = p_i$</span>
+<span id="cb65-323"><a href="#cb65-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-324"><a href="#cb65-324" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Model:</span>
+<span id="cb65-325"><a href="#cb65-325" aria-hidden="true" tabindex="-1"></a>        $\textrm{logit}(p_i) = \textrm{log}\left(\frac{p_i}{1-p_i}\right) = \beta_0 + \beta_1 \times X_i$</span>
+<span id="cb65-326"><a href="#cb65-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-327"><a href="#cb65-327" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = 0$: log odds = $\beta_0$</span>
+<span id="cb65-328"><a href="#cb65-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-329"><a href="#cb65-329" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = x$: log odds = $\beta_0 + \beta_1 \times x$</span>
+<span id="cb65-330"><a href="#cb65-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-331"><a href="#cb65-331" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = x+1$: log odds =</span>
+<span id="cb65-332"><a href="#cb65-332" aria-hidden="true" tabindex="-1"></a>        $\beta_0 + \beta_1 \times x + \beta_1$</span>
+<span id="cb65-333"><a href="#cb65-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-334"><a href="#cb65-334" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>To interpret as odds, exponentiate the regression parameters</span>
+<span id="cb65-335"><a href="#cb65-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-336"><a href="#cb65-336" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Distribution: $\textrm{Pr}(Y_i = 1) = p_i$</span>
+<span id="cb65-337"><a href="#cb65-337" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Model:</span>
+<span id="cb65-338"><a href="#cb65-338" aria-hidden="true" tabindex="-1"></a>        $\frac{p_i}{1-p_i} = \exp(\beta_0 + \beta_1 \times X_i) = e^{\beta_0} \times e^{\beta_1 \times X_i}$</span>
+<span id="cb65-339"><a href="#cb65-339" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = 0$: odds = $e^{\beta_0}$</span>
+<span id="cb65-340"><a href="#cb65-340" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = x$: odds = $e^{\beta_0} \times e^{\beta_1 \times x}$</span>
+<span id="cb65-341"><a href="#cb65-341" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = x+1$: odds =</span>
+<span id="cb65-342"><a href="#cb65-342" aria-hidden="true" tabindex="-1"></a>        $e^{\beta_0} \times e^{\beta_1 \times x} \times e^{\beta_1}$</span>
+<span id="cb65-343"><a href="#cb65-343" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-344"><a href="#cb65-344" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>To interpret as proportions (remember proportion = odds / (1 +</span>
+<span id="cb65-345"><a href="#cb65-345" aria-hidden="true" tabindex="-1"></a>    odds))</span>
+<span id="cb65-346"><a href="#cb65-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-347"><a href="#cb65-347" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Distribution: $\textrm{Pr}(Y_i = 1) = p_i$</span>
+<span id="cb65-348"><a href="#cb65-348" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Model:</span>
+<span id="cb65-349"><a href="#cb65-349" aria-hidden="true" tabindex="-1"></a>        $p_i = \frac{e^{\beta_0} e^{\beta_1 \times X_i}}{1 + e^{\beta_0} e^{\beta_1 \times X_i}}$</span>
+<span id="cb65-350"><a href="#cb65-350" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = 0$: $p_i = \frac{e^{\beta_0}}{1 + e^{\beta_0}}$\</span>
+<span id="cb65-351"><a href="#cb65-351" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = x$:</span>
+<span id="cb65-352"><a href="#cb65-352" aria-hidden="true" tabindex="-1"></a>        $p_i = \frac{e^{\beta_0} e^{\beta_1 \times x}}{1 + e^{\beta_0} e^{\beta_1 \times x}}$</span>
+<span id="cb65-353"><a href="#cb65-353" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = x+1$:</span>
+<span id="cb65-354"><a href="#cb65-354" aria-hidden="true" tabindex="-1"></a>        $p_i = \frac{e^{\beta_0} e^{\beta_1 \times x} e^{\beta_1}}{1 + e^{\beta_0} e^{\beta_1 \times x}e^{\beta_1}}$</span>
+<span id="cb65-355"><a href="#cb65-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-356"><a href="#cb65-356" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Most common interpretations found by exponentiating the coefficients</span>
+<span id="cb65-357"><a href="#cb65-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-358"><a href="#cb65-358" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Odds when predictor is 0 found by exponentiating the intercept:</span>
+<span id="cb65-359"><a href="#cb65-359" aria-hidden="true" tabindex="-1"></a>        $\exp(\beta_0)$</span>
+<span id="cb65-360"><a href="#cb65-360" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-361"><a href="#cb65-361" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Odds ratio between groups differing in the values of the</span>
+<span id="cb65-362"><a href="#cb65-362" aria-hidden="true" tabindex="-1"></a>        predictor by 1 unit found by exponentiating the slope:</span>
+<span id="cb65-363"><a href="#cb65-363" aria-hidden="true" tabindex="-1"></a>        $\exp(\beta_1)$</span>
+<span id="cb65-364"><a href="#cb65-364" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-365"><a href="#cb65-365" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Stata commands</span>
+<span id="cb65-366"><a href="#cb65-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-367"><a href="#cb65-367" aria-hidden="true" tabindex="-1"></a>    <span class="in">``` stata</span></span>
+<span id="cb65-368"><a href="#cb65-368" aria-hidden="true" tabindex="-1"></a><span class="in">    logit respvar predvar, [robust]</span></span>
+<span id="cb65-369"><a href="#cb65-369" aria-hidden="true" tabindex="-1"></a><span class="in">    ```</span></span>
+<span id="cb65-370"><a href="#cb65-370" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-371"><a href="#cb65-371" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Provides regression parameter estimates an inference on the log</span>
+<span id="cb65-372"><a href="#cb65-372" aria-hidden="true" tabindex="-1"></a>        odds scale (both coefficients with CIs, SEs, p-values)</span>
+<span id="cb65-373"><a href="#cb65-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-374"><a href="#cb65-374" aria-hidden="true" tabindex="-1"></a>    <span class="in">``` stata</span></span>
+<span id="cb65-375"><a href="#cb65-375" aria-hidden="true" tabindex="-1"></a><span class="in">    logistic respvar predvar, [robust]</span></span>
+<span id="cb65-376"><a href="#cb65-376" aria-hidden="true" tabindex="-1"></a><span class="in">    ```</span></span>
+<span id="cb65-377"><a href="#cb65-377" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-378"><a href="#cb65-378" aria-hidden="true" tabindex="-1"></a><span class="in">    -   Provides regression parameter estimates and inference on the</span></span>
+<span id="cb65-379"><a href="#cb65-379" aria-hidden="true" tabindex="-1"></a><span class="in">        odds ratio scale (only slope with CIs, SEs, p-values)</span></span>
+<span id="cb65-380"><a href="#cb65-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-381"><a href="#cb65-381" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>R Commands</span>
+<span id="cb65-382"><a href="#cb65-382" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-383"><a href="#cb65-383" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>With rms package, <span class="in">`lrm(respvar ~ predvar, ...)`</span></span>
+<span id="cb65-384"><a href="#cb65-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-385"><a href="#cb65-385" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>In general, <span class="in">`glm(respvar ~ predvar, family=“binomial”)`</span></span>
+<span id="cb65-386"><a href="#cb65-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-387"><a href="#cb65-387" aria-hidden="true" tabindex="-1"></a><span class="fu">## Example: Survival on the Titanic and Age</span></span>
+<span id="cb65-388"><a href="#cb65-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-389"><a href="#cb65-389" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Dataset at <span class="ot">&lt;https://biostat.app.vumc.org/DataSets&gt;</span></span>
+<span id="cb65-390"><a href="#cb65-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-391"><a href="#cb65-391" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Describes the survival status of individual passengers on the</span>
+<span id="cb65-392"><a href="#cb65-392" aria-hidden="true" tabindex="-1"></a>    Titanic</span>
+<span id="cb65-393"><a href="#cb65-393" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-394"><a href="#cb65-394" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Data on age available for many, but not all, subjects (data</span>
+<span id="cb65-395"><a href="#cb65-395" aria-hidden="true" tabindex="-1"></a>    continually being updated)</span>
+<span id="cb65-396"><a href="#cb65-396" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-397"><a href="#cb65-397" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Response variables is Survival</span>
+<span id="cb65-398"><a href="#cb65-398" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-399"><a href="#cb65-399" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Binary variable: 1=Survived, 0=Died</span>
+<span id="cb65-400"><a href="#cb65-400" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-401"><a href="#cb65-401" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Predictor variable is Age</span>
+<span id="cb65-402"><a href="#cb65-402" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-403"><a href="#cb65-403" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Continuous grouping variable</span>
+<span id="cb65-404"><a href="#cb65-404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-405"><a href="#cb65-405" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Possibly different age effects by sex (effect modification by sex)</span>
+<span id="cb65-406"><a href="#cb65-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-407"><a href="#cb65-407" aria-hidden="true" tabindex="-1"></a><span class="fu">### Descriptive Plots</span></span>
+<span id="cb65-408"><a href="#cb65-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-411"><a href="#cb65-411" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb65-412"><a href="#cb65-412" aria-hidden="true" tabindex="-1"></a><span class="co"># | fig-cap: Missing data patterns in the Tianic dataset</span></span>
+<span id="cb65-413"><a href="#cb65-413" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rms)</span>
+<span id="cb65-414"><a href="#cb65-414" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb65-415"><a href="#cb65-415" aria-hidden="true" tabindex="-1"></a>titanic <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file=</span><span class="st">&quot;data/titanic3.csv&quot;</span>)</span>
+<span id="cb65-416"><a href="#cb65-416" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">naclus</span>(titanic)) <span class="co"># study patterns of missing values</span></span>
+<span id="cb65-417"><a href="#cb65-417" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb65-418"><a href="#cb65-418" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-421"><a href="#cb65-421" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb65-422"><a href="#cb65-422" aria-hidden="true" tabindex="-1"></a><span class="co"># | fig-cap: Scatterplot of age versus survival in the Titanic data with lowess smooth.  This simple plot is not very useful because survival is either 0 or 1, making it hard to visualize any trends.</span></span>
+<span id="cb65-423"><a href="#cb65-423" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(titanic, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>survived)) <span class="sc">+</span> <span class="fu">geom_jitter</span>(<span class="at">width=</span><span class="dv">0</span>, <span class="at">height=</span>.<span class="dv">02</span>, <span class="at">alpha=</span>.<span class="dv">5</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span>
+<span id="cb65-424"><a href="#cb65-424" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb65-425"><a href="#cb65-425" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-428"><a href="#cb65-428" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb65-429"><a href="#cb65-429" aria-hidden="true" tabindex="-1"></a><span class="co"># | fig-cap: Age versus survival by sex in the Titanic data by age using a super smoother.  The trends are clearer with this smoothing approach.</span></span>
+<span id="cb65-430"><a href="#cb65-430" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(titanic, </span>
+<span id="cb65-431"><a href="#cb65-431" aria-hidden="true" tabindex="-1"></a>     <span class="fu">plsmo</span>(age, survived, <span class="at">group=</span>sex, <span class="at">datadensity=</span>T, <span class="at">ylab=</span><span class="st">&quot;Survived (1=Yes, 0=No)&quot;</span>, <span class="at">xlab=</span><span class="st">&quot;Age (years)&quot;</span>)</span>
+<span id="cb65-432"><a href="#cb65-432" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb65-433"><a href="#cb65-433" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb65-434"><a href="#cb65-434" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-437"><a href="#cb65-437" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb65-438"><a href="#cb65-438" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb65-439"><a href="#cb65-439" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-440"><a href="#cb65-440" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Comments on the plots</span>
+<span id="cb65-441"><a href="#cb65-441" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-442"><a href="#cb65-442" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Age is missing for many subjects, which we will not worry about</span>
+<span id="cb65-443"><a href="#cb65-443" aria-hidden="true" tabindex="-1"></a>        in the following analysis</span>
+<span id="cb65-444"><a href="#cb65-444" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-445"><a href="#cb65-445" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The simple scatterplot, even with superimposes lowess smooth, is</span>
+<span id="cb65-446"><a href="#cb65-446" aria-hidden="true" tabindex="-1"></a>        worthless. I have jittered the point and altered their opacity</span>
+<span id="cb65-447"><a href="#cb65-447" aria-hidden="true" tabindex="-1"></a>        to help visualize overlapping point.</span>
+<span id="cb65-448"><a href="#cb65-448" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-449"><a href="#cb65-449" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>More advanced plotting available in R (in this case, the plsmo()</span>
+<span id="cb65-450"><a href="#cb65-450" aria-hidden="true" tabindex="-1"></a>        function) can help to visualize the data</span>
+<span id="cb65-451"><a href="#cb65-451" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-452"><a href="#cb65-452" aria-hidden="true" tabindex="-1"></a><span class="fu">### Regression Model</span></span>
+<span id="cb65-453"><a href="#cb65-453" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-454"><a href="#cb65-454" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Regression model for survival on age (ignoring possible effect</span>
+<span id="cb65-455"><a href="#cb65-455" aria-hidden="true" tabindex="-1"></a>    modification for now)</span>
+<span id="cb65-456"><a href="#cb65-456" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-457"><a href="#cb65-457" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Answer question by assessing linear trends in log odds of survival</span>
+<span id="cb65-458"><a href="#cb65-458" aria-hidden="true" tabindex="-1"></a>    by age</span>
+<span id="cb65-459"><a href="#cb65-459" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-460"><a href="#cb65-460" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Estimate the best fitting line to log odds of survival within age</span>
+<span id="cb65-461"><a href="#cb65-461" aria-hidden="true" tabindex="-1"></a>    groups</span>
+<span id="cb65-462"><a href="#cb65-462" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-463"><a href="#cb65-463" aria-hidden="true" tabindex="-1"></a>$$\textrm{logodds}(\textrm{Survival} | \textrm{Age}) = \beta_0 + \beta_1 \times \textrm{Age}$$</span>
+<span id="cb65-464"><a href="#cb65-464" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-465"><a href="#cb65-465" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>An association will exist if the slope $\beta_1$ is nonzero</span>
+<span id="cb65-466"><a href="#cb65-466" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-467"><a href="#cb65-467" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>In that case, the odds (and probability) of survival will be</span>
+<span id="cb65-468"><a href="#cb65-468" aria-hidden="true" tabindex="-1"></a>    different across different age groups</span>
+<span id="cb65-469"><a href="#cb65-469" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-472"><a href="#cb65-472" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb65-473"><a href="#cb65-473" aria-hidden="true" tabindex="-1"></a>m.titanic <span class="ot">&lt;-</span> <span class="fu">glm</span>(survived <span class="sc">~</span> age, <span class="at">data=</span>titanic, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>)</span>
+<span id="cb65-474"><a href="#cb65-474" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m.titanic)</span>
+<span id="cb65-475"><a href="#cb65-475" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb65-476"><a href="#cb65-476" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-477"><a href="#cb65-477" aria-hidden="true" tabindex="-1"></a>$\textrm{logodds}(\textrm{Survival} | \textrm{Age}) = -0.1365 - 0.007899 \times \textrm{Age}$</span>
+<span id="cb65-478"><a href="#cb65-478" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-479"><a href="#cb65-479" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>General interpretation</span>
+<span id="cb65-480"><a href="#cb65-480" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-481"><a href="#cb65-481" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Intercept is labeled &quot;(Intercept)&quot;</span>
+<span id="cb65-482"><a href="#cb65-482" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-483"><a href="#cb65-483" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Slope for age is labeled &quot;age&quot;</span>
+<span id="cb65-484"><a href="#cb65-484" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-485"><a href="#cb65-485" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Interpretation of intercept</span>
+<span id="cb65-486"><a href="#cb65-486" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-487"><a href="#cb65-487" aria-hidden="true" tabindex="-1"></a>    <span class="sc">\*</span>Estimated log odds for newborns (age=0) is $-0.136534$</span>
+<span id="cb65-488"><a href="#cb65-488" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-489"><a href="#cb65-489" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Odds of survival for newborns is $e^{-0.136534} = 0.8724$</span>
+<span id="cb65-490"><a href="#cb65-490" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-491"><a href="#cb65-491" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Probability of survival</span>
+<span id="cb65-492"><a href="#cb65-492" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-493"><a href="#cb65-493" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Prob = odds / (1 + odds)</span>
+<span id="cb65-494"><a href="#cb65-494" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-495"><a href="#cb65-495" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>$0.8724 / (1 + .8724) = 0.4659$</span>
+<span id="cb65-496"><a href="#cb65-496" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-499"><a href="#cb65-499" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb65-500"><a href="#cb65-500" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(m.titanic, <span class="at">newdata=</span><span class="fu">data.frame</span>(<span class="at">age=</span><span class="dv">0</span>), <span class="at">type=</span><span class="st">&#39;response&#39;</span>)</span>
+<span id="cb65-501"><a href="#cb65-501" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb65-502"><a href="#cb65-502" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-503"><a href="#cb65-503" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Interpretation of slope</span>
+<span id="cb65-504"><a href="#cb65-504" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-505"><a href="#cb65-505" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Estimate difference in the log odds of survival for two groups</span>
+<span id="cb65-506"><a href="#cb65-506" aria-hidden="true" tabindex="-1"></a>        differing by one year in age is $-0.0078985$</span>
+<span id="cb65-507"><a href="#cb65-507" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-508"><a href="#cb65-508" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>This estimate averages over males and females</span>
+<span id="cb65-509"><a href="#cb65-509" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-510"><a href="#cb65-510" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Older groups tend to have lower log odds</span>
+<span id="cb65-511"><a href="#cb65-511" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-512"><a href="#cb65-512" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Odds Ratio: $e^{-0.0078985} = 0.9921$</span>
+<span id="cb65-513"><a href="#cb65-513" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-514"><a href="#cb65-514" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>For five year difference in age:</span>
+<span id="cb65-515"><a href="#cb65-515" aria-hidden="true" tabindex="-1"></a>        $e^{-0.0078985 \times 5} = 0.9612$</span>
+<span id="cb65-516"><a href="#cb65-516" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-517"><a href="#cb65-517" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>In Stata use &quot;lincom age, or&quot; or &quot;lincom 5<span class="sc">\*</span>age, or&quot;</span>
+<span id="cb65-518"><a href="#cb65-518" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-519"><a href="#cb65-519" aria-hidden="true" tabindex="-1"></a>Note that if the straight line relationship does not hold true, we</span>
+<span id="cb65-520"><a href="#cb65-520" aria-hidden="true" tabindex="-1"></a>interpret the slope as an average difference in the log odds of survival</span>
+<span id="cb65-521"><a href="#cb65-521" aria-hidden="true" tabindex="-1"></a>per one year difference in age</span>
+<span id="cb65-522"><a href="#cb65-522" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-523"><a href="#cb65-523" aria-hidden="true" tabindex="-1"></a>There are several ways to get the odds ratio and confidence interval in</span>
+<span id="cb65-524"><a href="#cb65-524" aria-hidden="true" tabindex="-1"></a>R</span>
+<span id="cb65-525"><a href="#cb65-525" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-528"><a href="#cb65-528" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb65-529"><a href="#cb65-529" aria-hidden="true" tabindex="-1"></a><span class="co"># The coefficient and confidence interval (on the log-odds scale)</span></span>
+<span id="cb65-530"><a href="#cb65-530" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(m.titanic)[<span class="st">&quot;age&quot;</span>]</span>
+<span id="cb65-531"><a href="#cb65-531" aria-hidden="true" tabindex="-1"></a><span class="fu">confint.default</span>(m.titanic, <span class="st">&quot;age&quot;</span>)</span>
+<span id="cb65-532"><a href="#cb65-532" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-533"><a href="#cb65-533" aria-hidden="true" tabindex="-1"></a><span class="co"># Odds ratio for age and confidence interval for age (1 year increase)</span></span>
+<span id="cb65-534"><a href="#cb65-534" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">coef</span>(m.titanic)[<span class="st">&quot;age&quot;</span>])</span>
+<span id="cb65-535"><a href="#cb65-535" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">confint.default</span>(m.titanic, <span class="st">&quot;age&quot;</span>))</span>
+<span id="cb65-536"><a href="#cb65-536" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-537"><a href="#cb65-537" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-538"><a href="#cb65-538" aria-hidden="true" tabindex="-1"></a><span class="co"># Odds ratio for age and confidence interval for age (5 year increase)</span></span>
+<span id="cb65-539"><a href="#cb65-539" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="dv">5</span><span class="sc">*</span><span class="fu">coef</span>(m.titanic)[<span class="st">&quot;age&quot;</span>])</span>
+<span id="cb65-540"><a href="#cb65-540" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="dv">5</span><span class="sc">*</span><span class="fu">confint.default</span>(m.titanic, <span class="st">&quot;age&quot;</span>))</span>
+<span id="cb65-541"><a href="#cb65-541" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb65-542"><a href="#cb65-542" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-543"><a href="#cb65-543" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Using finalfit to create a nicer output table of the coefficients</span>
+<span id="cb65-544"><a href="#cb65-544" aria-hidden="true" tabindex="-1"></a>    and confidence intervals</span>
+<span id="cb65-545"><a href="#cb65-545" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-546"><a href="#cb65-546" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>For finalfit to use a logistic regression model by default,</span>
+<span id="cb65-547"><a href="#cb65-547" aria-hidden="true" tabindex="-1"></a>        survived must be defined as a factor variable with two levels</span>
+<span id="cb65-548"><a href="#cb65-548" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-551"><a href="#cb65-551" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb65-552"><a href="#cb65-552" aria-hidden="true" tabindex="-1"></a>mykable <span class="ot">=</span> <span class="cf">function</span>(x){</span>
+<span id="cb65-553"><a href="#cb65-553" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(x, <span class="at">row.names =</span> <span class="cn">FALSE</span>, <span class="at">align =</span> <span class="fu">c</span>(<span class="st">&quot;l&quot;</span>, <span class="st">&quot;l&quot;</span>, <span class="st">&quot;r&quot;</span>, <span class="st">&quot;r&quot;</span>, <span class="st">&quot;r&quot;</span>, <span class="st">&quot;r&quot;</span>, <span class="st">&quot;r&quot;</span>, <span class="st">&quot;r&quot;</span>, <span class="st">&quot;r&quot;</span>),</span>
+<span id="cb65-554"><a href="#cb65-554" aria-hidden="true" tabindex="-1"></a>               <span class="at">booktabs=</span><span class="cn">TRUE</span>)</span>
+<span id="cb65-555"><a href="#cb65-555" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb65-556"><a href="#cb65-556" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-557"><a href="#cb65-557" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-558"><a href="#cb65-558" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(finalfit)</span>
+<span id="cb65-559"><a href="#cb65-559" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb65-560"><a href="#cb65-560" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rms)</span>
+<span id="cb65-561"><a href="#cb65-561" aria-hidden="true" tabindex="-1"></a>explanatory <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;age&quot;</span>)</span>
+<span id="cb65-562"><a href="#cb65-562" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-563"><a href="#cb65-563" aria-hidden="true" tabindex="-1"></a>titanic<span class="sc">$</span>survived.factor <span class="ot">&lt;-</span> <span class="fu">factor</span>(titanic<span class="sc">$</span>survived, <span class="at">levels=</span><span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>, <span class="at">labels=</span><span class="fu">c</span>(<span class="st">&quot;Died&quot;</span>,<span class="st">&quot;Survived&quot;</span>))</span>
+<span id="cb65-564"><a href="#cb65-564" aria-hidden="true" tabindex="-1"></a>dependent <span class="ot">=</span> <span class="st">&#39;survived.factor&#39;</span></span>
+<span id="cb65-565"><a href="#cb65-565" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-566"><a href="#cb65-566" aria-hidden="true" tabindex="-1"></a><span class="fu">label</span>(titanic<span class="sc">$</span>age) <span class="ot">&lt;-</span> <span class="st">&quot;Age (years)&quot;</span></span>
+<span id="cb65-567"><a href="#cb65-567" aria-hidden="true" tabindex="-1"></a>titanic <span class="sc">%&gt;%</span> </span>
+<span id="cb65-568"><a href="#cb65-568" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalfit</span>(dependent, explanatory) <span class="sc">%&gt;%</span> <span class="fu">mykable</span>()</span>
+<span id="cb65-569"><a href="#cb65-569" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-570"><a href="#cb65-570" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb65-571"><a href="#cb65-571" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-572"><a href="#cb65-572" aria-hidden="true" tabindex="-1"></a><span class="fu">### Comments on Interpretation</span></span>
+<span id="cb65-573"><a href="#cb65-573" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-574"><a href="#cb65-574" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The slope for age is expressed as a difference in group means, not</span>
+<span id="cb65-575"><a href="#cb65-575" aria-hidden="true" tabindex="-1"></a>    the difference due to aging. We did not do a longitudinal study in</span>
+<span id="cb65-576"><a href="#cb65-576" aria-hidden="true" tabindex="-1"></a>    which repeated measurements were taken on the same subject.</span>
+<span id="cb65-577"><a href="#cb65-577" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-578"><a href="#cb65-578" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>If the group log odds are truly linear, then the slope has an exact</span>
+<span id="cb65-579"><a href="#cb65-579" aria-hidden="true" tabindex="-1"></a>    interpretation as the change in survival due to a one year change in</span>
+<span id="cb65-580"><a href="#cb65-580" aria-hidden="true" tabindex="-1"></a>    (any) age</span>
+<span id="cb65-581"><a href="#cb65-581" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-582"><a href="#cb65-582" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Otherwise, the slope estimates the first order trend of the sample</span>
+<span id="cb65-583"><a href="#cb65-583" aria-hidden="true" tabindex="-1"></a>    data and we should not treat the estimates of group odds or</span>
+<span id="cb65-584"><a href="#cb65-584" aria-hidden="true" tabindex="-1"></a>    probabilities as accurate</span>
+<span id="cb65-585"><a href="#cb65-585" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-586"><a href="#cb65-586" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>It is difficult to see in the above example, but the CIs around the</span>
+<span id="cb65-587"><a href="#cb65-587" aria-hidden="true" tabindex="-1"></a>    odds ratios are not symmetric</span>
+<span id="cb65-588"><a href="#cb65-588" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-589"><a href="#cb65-589" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>(Symmetric) CIs are calculated on the log odds scale, and then</span>
+<span id="cb65-590"><a href="#cb65-590" aria-hidden="true" tabindex="-1"></a>        transformed to the odds scale by expoenentiating the lower and</span>
+<span id="cb65-591"><a href="#cb65-591" aria-hidden="true" tabindex="-1"></a>        upper limits of the CI</span>
+<span id="cb65-592"><a href="#cb65-592" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-593"><a href="#cb65-593" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>&quot;From logistic regression analysis, we estimate that for each 5 year</span>
+<span id="cb65-594"><a href="#cb65-594" aria-hidden="true" tabindex="-1"></a>    difference in age, the odds of survival on the Titanic decreased by</span>
+<span id="cb65-595"><a href="#cb65-595" aria-hidden="true" tabindex="-1"></a>    3.9%, though this estimate is not statistically significant</span>
+<span id="cb65-596"><a href="#cb65-596" aria-hidden="true" tabindex="-1"></a>    ($p = 0.07$). A 95% CI suggests that this observation is not unusual</span>
+<span id="cb65-597"><a href="#cb65-597" aria-hidden="true" tabindex="-1"></a>    if a group that is five years older might have an odds of survival</span>
+<span id="cb65-598"><a href="#cb65-598" aria-hidden="true" tabindex="-1"></a>    that was anywhere between 7.9% lower and 0.4% higher than the</span>
+<span id="cb65-599"><a href="#cb65-599" aria-hidden="true" tabindex="-1"></a>    younger group.&quot;</span>
+<span id="cb65-600"><a href="#cb65-600" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-601"><a href="#cb65-601" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The confidence interval and statistical test given in the output is</span>
+<span id="cb65-602"><a href="#cb65-602" aria-hidden="true" tabindex="-1"></a>    called a Wald test. Other tests (Score, Likelihood Ratio) are also</span>
+<span id="cb65-603"><a href="#cb65-603" aria-hidden="true" tabindex="-1"></a>    possible.</span>
+<span id="cb65-604"><a href="#cb65-604" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-605"><a href="#cb65-605" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>All tests are asymptotically equivalent</span>
+<span id="cb65-606"><a href="#cb65-606" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-607"><a href="#cb65-607" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The Wald test is easiest to obtain, but generally performs the</span>
+<span id="cb65-608"><a href="#cb65-608" aria-hidden="true" tabindex="-1"></a>        poorest in small sample sizes</span>
+<span id="cb65-609"><a href="#cb65-609" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-610"><a href="#cb65-610" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The Likelihood Ratio test performs the best in small samples. We</span>
+<span id="cb65-611"><a href="#cb65-611" aria-hidden="true" tabindex="-1"></a>        will discuss it later, including how to obtain the test using</span>
+<span id="cb65-612"><a href="#cb65-612" aria-hidden="true" tabindex="-1"></a>        post-estimation commands.</span>
+<span id="cb65-613"><a href="#cb65-613" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-614"><a href="#cb65-614" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The Score test is not bad in small samples, but is often hard to</span>
+<span id="cb65-615"><a href="#cb65-615" aria-hidden="true" tabindex="-1"></a>        obtain from software. It is exactly equal to the Chi-squared</span>
+<span id="cb65-616"><a href="#cb65-616" aria-hidden="true" tabindex="-1"></a>        test for binary outcomes and categorical predictors.</span>
+<span id="cb65-617"><a href="#cb65-617" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-618"><a href="#cb65-618" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Bayesian Estimates and Interpretation</span></span>
+<span id="cb65-619"><a href="#cb65-619" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-620"><a href="#cb65-620" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Bayesian approach to the logistic model requires specifying the</span>
+<span id="cb65-621"><a href="#cb65-621" aria-hidden="true" tabindex="-1"></a>    model, prior distributions, and the likelihood</span>
+<span id="cb65-622"><a href="#cb65-622" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-623"><a href="#cb65-623" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The model</span>
+<span id="cb65-624"><a href="#cb65-624" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-625"><a href="#cb65-625" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>e.g. a model for the log odds of survival that is linear in the</span>
+<span id="cb65-626"><a href="#cb65-626" aria-hidden="true" tabindex="-1"></a>        parameters with an intercept and slope for age</span>
+<span id="cb65-627"><a href="#cb65-627" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-628"><a href="#cb65-628" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Prior distributions on parameters</span>
+<span id="cb65-629"><a href="#cb65-629" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-630"><a href="#cb65-630" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>For the simple logistic regression model, we have parameters</span>
+<span id="cb65-631"><a href="#cb65-631" aria-hidden="true" tabindex="-1"></a>        $\beta_0$, and $\beta_1$.</span>
+<span id="cb65-632"><a href="#cb65-632" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-633"><a href="#cb65-633" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>For now, we will use default prior distributions that are are</span>
+<span id="cb65-634"><a href="#cb65-634" aria-hidden="true" tabindex="-1"></a>        intended to be *weakly informative* in that they provide</span>
+<span id="cb65-635"><a href="#cb65-635" aria-hidden="true" tabindex="-1"></a>        moderate regularization and help stabilize computation. See the</span>
+<span id="cb65-636"><a href="#cb65-636" aria-hidden="true" tabindex="-1"></a>        [STAN</span>
+<span id="cb65-637"><a href="#cb65-637" aria-hidden="true" tabindex="-1"></a>        documentation](https://mc-stan.org/rstanarm/reference/priors.html)</span>
+<span id="cb65-638"><a href="#cb65-638" aria-hidden="true" tabindex="-1"></a>        for more details</span>
+<span id="cb65-639"><a href="#cb65-639" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-640"><a href="#cb65-640" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Appropriate priors can be based on scientific considerations</span>
+<span id="cb65-641"><a href="#cb65-641" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-642"><a href="#cb65-642" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Sensitivity analyses can evaluate the the robustness of finding</span>
+<span id="cb65-643"><a href="#cb65-643" aria-hidden="true" tabindex="-1"></a>        to different prior assumptions</span>
+<span id="cb65-644"><a href="#cb65-644" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-645"><a href="#cb65-645" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The likelihood</span>
+<span id="cb65-646"><a href="#cb65-646" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-647"><a href="#cb65-647" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>For a binomial GLM the likelihood for one observation $y$ can be</span>
+<span id="cb65-648"><a href="#cb65-648" aria-hidden="true" tabindex="-1"></a>        written as a conditionally binomial probability mass function</span>
+<span id="cb65-649"><a href="#cb65-649" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-650"><a href="#cb65-650" aria-hidden="true" tabindex="-1"></a>$$\binom{n}{y} \pi^{y} (1 - \pi)^{n - y},$$</span>
+<span id="cb65-651"><a href="#cb65-651" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-652"><a href="#cb65-652" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>$n$ is the known number of trials, $\pi = g^{-1}(\eta)$ is the</span>
+<span id="cb65-653"><a href="#cb65-653" aria-hidden="true" tabindex="-1"></a>    probability of success and</span>
+<span id="cb65-654"><a href="#cb65-654" aria-hidden="true" tabindex="-1"></a>    $\eta = \alpha + \mathbf{x}^\top \boldsymbol{\beta}$ is a linear</span>
+<span id="cb65-655"><a href="#cb65-655" aria-hidden="true" tabindex="-1"></a>    predictor</span>
+<span id="cb65-656"><a href="#cb65-656" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-657"><a href="#cb65-657" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- --&gt;</span></span>
+<span id="cb65-658"><a href="#cb65-658" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-659"><a href="#cb65-659" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>For a sample of size $N$, the likelihood of the entire sample is the</span>
+<span id="cb65-660"><a href="#cb65-660" aria-hidden="true" tabindex="-1"></a>    product of $N$ individual likelihood contributions.</span>
+<span id="cb65-661"><a href="#cb65-661" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-662"><a href="#cb65-662" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- --&gt;</span></span>
+<span id="cb65-663"><a href="#cb65-663" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-664"><a href="#cb65-664" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Because $\pi$ is a probability, for a binomial model the *link*</span>
+<span id="cb65-665"><a href="#cb65-665" aria-hidden="true" tabindex="-1"></a>    function $g$ maps between the unit interval (the support of $\pi$)</span>
+<span id="cb65-666"><a href="#cb65-666" aria-hidden="true" tabindex="-1"></a>    and the set of all real numbers $\mathbb{R}$. When applied to a</span>
+<span id="cb65-667"><a href="#cb65-667" aria-hidden="true" tabindex="-1"></a>    linear predictor $\eta$ with values in $\mathbb{R}$, the inverse</span>
+<span id="cb65-668"><a href="#cb65-668" aria-hidden="true" tabindex="-1"></a>    link function $g^{-1}(\eta)$ therefore returns a valid probability</span>
+<span id="cb65-669"><a href="#cb65-669" aria-hidden="true" tabindex="-1"></a>    between 0 and 1.</span>
+<span id="cb65-670"><a href="#cb65-670" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-671"><a href="#cb65-671" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The two most common link functions used for binomial GLMs are the</span>
+<span id="cb65-672"><a href="#cb65-672" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-673"><a href="#cb65-673" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span><span class="co">[</span><span class="ot">logit</span><span class="co">](https://en.wikipedia.org/wiki/Logit)</span> and</span>
+<span id="cb65-674"><a href="#cb65-674" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span><span class="co">[</span><span class="ot">probit</span><span class="co">](https://en.wikipedia.org/wiki/Probit)</span></span>
+<span id="cb65-675"><a href="#cb65-675" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-676"><a href="#cb65-676" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>With the logit (or log-odds) link function</span>
+<span id="cb65-677"><a href="#cb65-677" aria-hidden="true" tabindex="-1"></a>    $g(x) = \ln{\left(\frac{x}{1-x}\right)}$, the likelihood for a</span>
+<span id="cb65-678"><a href="#cb65-678" aria-hidden="true" tabindex="-1"></a>    single observation becomes</span>
+<span id="cb65-679"><a href="#cb65-679" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-680"><a href="#cb65-680" aria-hidden="true" tabindex="-1"></a>$$\binom{n}{y}\left(\text{logit}^{-1}(\eta)\right)^y </span>
+<span id="cb65-681"><a href="#cb65-681" aria-hidden="true" tabindex="-1"></a>\left(1 - \text{logit}^{-1}(\eta)\right)^{n-y} = </span>
+<span id="cb65-682"><a href="#cb65-682" aria-hidden="true" tabindex="-1"></a>\binom{n}{y} \left(\frac{e^{\eta}}{1 + e^{\eta}}\right)^{y}</span>
+<span id="cb65-683"><a href="#cb65-683" aria-hidden="true" tabindex="-1"></a>\left(\frac{1}{1 + e^{\eta}}\right)^{n - y}$$</span>
+<span id="cb65-684"><a href="#cb65-684" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-685"><a href="#cb65-685" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>With the probit link function $g(x) = \Phi^{-1}(x)$ yields the</span>
+<span id="cb65-686"><a href="#cb65-686" aria-hidden="true" tabindex="-1"></a>    likelihood</span>
+<span id="cb65-687"><a href="#cb65-687" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-688"><a href="#cb65-688" aria-hidden="true" tabindex="-1"></a>$$\binom{n}{y} \left(\Phi(\eta)\right)^{y}</span>
+<span id="cb65-689"><a href="#cb65-689" aria-hidden="true" tabindex="-1"></a>\left(1 - \Phi(\eta)\right)^{n - y},$$</span>
+<span id="cb65-690"><a href="#cb65-690" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-691"><a href="#cb65-691" aria-hidden="true" tabindex="-1"></a>where $\Phi$ is the CDF of the standard normal distribution.</span>
+<span id="cb65-692"><a href="#cb65-692" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-693"><a href="#cb65-693" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Output from Bayesian logistic regression using logit link function</span>
+<span id="cb65-694"><a href="#cb65-694" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-697"><a href="#cb65-697" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb65-698"><a href="#cb65-698" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstanarm)</span>
+<span id="cb65-699"><a href="#cb65-699" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bayesplot)</span>
+<span id="cb65-700"><a href="#cb65-700" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-701"><a href="#cb65-701" aria-hidden="true" tabindex="-1"></a>fit2 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(survived <span class="sc">~</span> age,</span>
+<span id="cb65-702"><a href="#cb65-702" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data=</span>titanic, <span class="at">family=</span><span class="fu">binomial</span>(),</span>
+<span id="cb65-703"><a href="#cb65-703" aria-hidden="true" tabindex="-1"></a>                 <span class="at">seed=</span><span class="dv">1234</span>,</span>
+<span id="cb65-704"><a href="#cb65-704" aria-hidden="true" tabindex="-1"></a>                 <span class="at">refresh=</span><span class="dv">0</span>)</span>
+<span id="cb65-705"><a href="#cb65-705" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit2, <span class="at">digits=</span><span class="dv">4</span>, <span class="at">prob=</span><span class="fu">c</span>(.<span class="dv">025</span>, .<span class="dv">5</span>, .<span class="dv">975</span>))</span>
+<span id="cb65-706"><a href="#cb65-706" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb65-707"><a href="#cb65-707" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-708"><a href="#cb65-708" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>And a summary of the prior distributions used</span>
+<span id="cb65-709"><a href="#cb65-709" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-712"><a href="#cb65-712" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb65-713"><a href="#cb65-713" aria-hidden="true" tabindex="-1"></a><span class="fu">prior_summary</span>(fit2, <span class="at">digits =</span> <span class="dv">2</span>)</span>
+<span id="cb65-714"><a href="#cb65-714" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb65-715"><a href="#cb65-715" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-716"><a href="#cb65-716" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Interpretation</span>
+<span id="cb65-717"><a href="#cb65-717" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-718"><a href="#cb65-718" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Slope for age is of primary scientific importance</span>
+<span id="cb65-719"><a href="#cb65-719" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-720"><a href="#cb65-720" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>*A priori* we assume that no association between age and</span>
+<span id="cb65-721"><a href="#cb65-721" aria-hidden="true" tabindex="-1"></a>        survival. Specifically, we assumed a Normal prior with location</span>
+<span id="cb65-722"><a href="#cb65-722" aria-hidden="true" tabindex="-1"></a>        (mean) of 0 and scale (standard devation) of 0.17 for $\beta_1$.</span>
+<span id="cb65-723"><a href="#cb65-723" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-724"><a href="#cb65-724" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Conditional on the data, we estimate that for every 1 year</span>
+<span id="cb65-725"><a href="#cb65-725" aria-hidden="true" tabindex="-1"></a>        increase in age, the log odds of decreases by -0.0079 (95%</span>
+<span id="cb65-726"><a href="#cb65-726" aria-hidden="true" tabindex="-1"></a>        credible interval -0.0169 to 0.0004).</span>
+<span id="cb65-727"><a href="#cb65-727" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-728"><a href="#cb65-728" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>To obtain the posterior odds ratio and 95% credible intervals,</span>
+<span id="cb65-729"><a href="#cb65-729" aria-hidden="true" tabindex="-1"></a>        some additional commands are needed</span>
+<span id="cb65-730"><a href="#cb65-730" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-733"><a href="#cb65-733" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb65-734"><a href="#cb65-734" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 year change in age</span></span>
+<span id="cb65-735"><a href="#cb65-735" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">coef</span>(fit2)[<span class="st">&quot;age&quot;</span>]) <span class="co"># Posterior Odds Ratio</span></span>
+<span id="cb65-736"><a href="#cb65-736" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">posterior_interval</span>(fit2, <span class="at">prob =</span> <span class="fl">0.95</span>)) <span class="co"># 95% credible interval</span></span>
+<span id="cb65-737"><a href="#cb65-737" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-738"><a href="#cb65-738" aria-hidden="true" tabindex="-1"></a><span class="co"># 5 year increase in age</span></span>
+<span id="cb65-739"><a href="#cb65-739" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="dv">5</span><span class="sc">*</span><span class="fu">coef</span>(fit2)[<span class="st">&quot;age&quot;</span>]) <span class="co"># Posterior Odds Ratio</span></span>
+<span id="cb65-740"><a href="#cb65-740" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="dv">5</span><span class="sc">*</span><span class="fu">posterior_interval</span>(fit2, <span class="at">prob =</span> <span class="fl">0.95</span>))[<span class="dv">2</span>,] <span class="co"># 95% credible interval</span></span>
+<span id="cb65-741"><a href="#cb65-741" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-742"><a href="#cb65-742" aria-hidden="true" tabindex="-1"></a><span class="co"># Could also flip (invert) these odds ratios to interpret as decrease in age being associated with increased survival</span></span>
+<span id="cb65-743"><a href="#cb65-743" aria-hidden="true" tabindex="-1"></a><span class="co"># 5 year decrease in age</span></span>
+<span id="cb65-744"><a href="#cb65-744" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">/</span><span class="fu">exp</span>(<span class="dv">5</span><span class="sc">*</span><span class="fu">coef</span>(fit2)[<span class="st">&quot;age&quot;</span>]) <span class="co"># Posterior Odds Ratio</span></span>
+<span id="cb65-745"><a href="#cb65-745" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">/</span><span class="fu">exp</span>(<span class="dv">5</span><span class="sc">*</span><span class="fu">posterior_interval</span>(fit2, <span class="at">prob =</span> <span class="fl">0.95</span>))[<span class="dv">2</span>,] <span class="co"># 95% credible interval</span></span>
+<span id="cb65-746"><a href="#cb65-746" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-747"><a href="#cb65-747" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-748"><a href="#cb65-748" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb65-749"><a href="#cb65-749" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-750"><a href="#cb65-750" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The association between age and probability of survival was</span>
+<span id="cb65-751"><a href="#cb65-751" aria-hidden="true" tabindex="-1"></a>    estimated using a Bayesian logistic regression model. The model did</span>
+<span id="cb65-752"><a href="#cb65-752" aria-hidden="true" tabindex="-1"></a>    not adjust for other covariates and assumed a logit link function</span>
+<span id="cb65-753"><a href="#cb65-753" aria-hidden="true" tabindex="-1"></a>    and Binomial likelihood. We assumed a weakly informative prior</span>
+<span id="cb65-754"><a href="#cb65-754" aria-hidden="true" tabindex="-1"></a>    distribution for the log odds of survival given age (Normal prior</span>
+<span id="cb65-755"><a href="#cb65-755" aria-hidden="true" tabindex="-1"></a>    with mean 0 and scale 0.17 for $\beta_1$). Conditional on the data,</span>
+<span id="cb65-756"><a href="#cb65-756" aria-hidden="true" tabindex="-1"></a>    the posterior mean estimate indicates that comparing two subjects</span>
+<span id="cb65-757"><a href="#cb65-757" aria-hidden="true" tabindex="-1"></a>    who differ in age by 5 years, the younger subject has a 1.04 fold</span>
+<span id="cb65-758"><a href="#cb65-758" aria-hidden="true" tabindex="-1"></a>    increased odds of survival compared to the older subject. A 95%</span>
+<span id="cb65-759"><a href="#cb65-759" aria-hidden="true" tabindex="-1"></a>    credible for this posterior odds ratio is from 1.00 to 1.09.</span>
+<span id="cb65-760"><a href="#cb65-760" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-761"><a href="#cb65-761" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Note that this model does not consider gender, so it is averaging</span>
+<span id="cb65-762"><a href="#cb65-762" aria-hidden="true" tabindex="-1"></a>    over the males and females. We will revisits this analysis where the</span>
+<span id="cb65-763"><a href="#cb65-763" aria-hidden="true" tabindex="-1"></a>    age effect is analyzed separately in males and females.</span>
+<span id="cb65-764"><a href="#cb65-764" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-765"><a href="#cb65-765" aria-hidden="true" tabindex="-1"></a><span class="fu">## Inference with Logistic Regression</span></span>
+<span id="cb65-766"><a href="#cb65-766" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-767"><a href="#cb65-767" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The ideas of Signal and Noise found in simple linear regression do</span>
+<span id="cb65-768"><a href="#cb65-768" aria-hidden="true" tabindex="-1"></a>    not translate well to logistic regression</span>
+<span id="cb65-769"><a href="#cb65-769" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-770"><a href="#cb65-770" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>We do not tend to quantify an error distribution with logistic</span>
+<span id="cb65-771"><a href="#cb65-771" aria-hidden="true" tabindex="-1"></a>    regression</span>
+<span id="cb65-772"><a href="#cb65-772" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-773"><a href="#cb65-773" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Valid statistical inference (CIs, p-values) about *associations*</span>
+<span id="cb65-774"><a href="#cb65-774" aria-hidden="true" tabindex="-1"></a>    requires three general assumptions</span>
+<span id="cb65-775"><a href="#cb65-775" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-776"><a href="#cb65-776" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Assumption 1: Approximately Normal distributions for the parameter</span>
+<span id="cb65-777"><a href="#cb65-777" aria-hidden="true" tabindex="-1"></a>    estimates</span>
+<span id="cb65-778"><a href="#cb65-778" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-779"><a href="#cb65-779" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Large N</span>
+<span id="cb65-780"><a href="#cb65-780" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-781"><a href="#cb65-781" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Need for either robust standard errors or classical logistic</span>
+<span id="cb65-782"><a href="#cb65-782" aria-hidden="true" tabindex="-1"></a>        regression</span>
+<span id="cb65-783"><a href="#cb65-783" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-784"><a href="#cb65-784" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Definition of large depends on the underlying probabilities</span>
+<span id="cb65-785"><a href="#cb65-785" aria-hidden="true" tabindex="-1"></a>        (odds)</span>
+<span id="cb65-786"><a href="#cb65-786" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-787"><a href="#cb65-787" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Recall the rule of thumb for chi-squared tests based on the</span>
+<span id="cb65-788"><a href="#cb65-788" aria-hidden="true" tabindex="-1"></a>        expected number of events</span>
+<span id="cb65-789"><a href="#cb65-789" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-790"><a href="#cb65-790" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Assumption 2: Assumptions about the independence of observations</span>
+<span id="cb65-791"><a href="#cb65-791" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-792"><a href="#cb65-792" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Classical regression: Independence of all observation</span>
+<span id="cb65-793"><a href="#cb65-793" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-794"><a href="#cb65-794" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Robust standard errors: Correlated observations within</span>
+<span id="cb65-795"><a href="#cb65-795" aria-hidden="true" tabindex="-1"></a>        identified clusters</span>
+<span id="cb65-796"><a href="#cb65-796" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-797"><a href="#cb65-797" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Assumption 3: Assumptions about variance of observations within</span>
+<span id="cb65-798"><a href="#cb65-798" aria-hidden="true" tabindex="-1"></a>    groups</span>
+<span id="cb65-799"><a href="#cb65-799" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-800"><a href="#cb65-800" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Classical regression: Mean-variance relationship for binary data</span>
+<span id="cb65-801"><a href="#cb65-801" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-802"><a href="#cb65-802" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Classical logistic regression estimates SE using model based</span>
+<span id="cb65-803"><a href="#cb65-803" aria-hidden="true" tabindex="-1"></a>            estimates</span>
+<span id="cb65-804"><a href="#cb65-804" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-805"><a href="#cb65-805" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Hence in order to satisfy this requirement, linearity of log</span>
+<span id="cb65-806"><a href="#cb65-806" aria-hidden="true" tabindex="-1"></a>            odds across groups must hold</span>
+<span id="cb65-807"><a href="#cb65-807" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-808"><a href="#cb65-808" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Robust standard errors</span>
+<span id="cb65-809"><a href="#cb65-809" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-810"><a href="#cb65-810" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Allows unequal variance across groups</span>
+<span id="cb65-811"><a href="#cb65-811" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-812"><a href="#cb65-812" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Hence, do not need linearity of log odds across groups to</span>
+<span id="cb65-813"><a href="#cb65-813" aria-hidden="true" tabindex="-1"></a>            hold</span>
+<span id="cb65-814"><a href="#cb65-814" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-815"><a href="#cb65-815" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Valid statistical inference (CIs, p-values) about *odds of</span>
+<span id="cb65-816"><a href="#cb65-816" aria-hidden="true" tabindex="-1"></a>            response in specific groups* requires a further assumption</span>
+<span id="cb65-817"><a href="#cb65-817" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-818"><a href="#cb65-818" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Assumption 4: Adequacy of the linear model</span>
+<span id="cb65-819"><a href="#cb65-819" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-820"><a href="#cb65-820" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>If we are trying to borrow information about the log odds from</span>
+<span id="cb65-821"><a href="#cb65-821" aria-hidden="true" tabindex="-1"></a>        neighboring groups, and we are assuming a straight line</span>
+<span id="cb65-822"><a href="#cb65-822" aria-hidden="true" tabindex="-1"></a>        relationship, the straight line needs to be true</span>
+<span id="cb65-823"><a href="#cb65-823" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-824"><a href="#cb65-824" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Needed for either classical or robust standard errors</span>
+<span id="cb65-825"><a href="#cb65-825" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-826"><a href="#cb65-826" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Note that we can model transformations of the measured</span>
+<span id="cb65-827"><a href="#cb65-827" aria-hidden="true" tabindex="-1"></a>            predictor if we feel a straight line is not appropriate</span>
+<span id="cb65-828"><a href="#cb65-828" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-829"><a href="#cb65-829" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Inference about *individual observations* (prediction intervals,</span>
+<span id="cb65-830"><a href="#cb65-830" aria-hidden="true" tabindex="-1"></a>        P-values) in specific groups requires no further assumptions</span>
+<span id="cb65-831"><a href="#cb65-831" aria-hidden="true" tabindex="-1"></a>        because we have binary data</span>
+<span id="cb65-832"><a href="#cb65-832" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-833"><a href="#cb65-833" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>For binary data, if we know the mean (proportion), we know</span>
+<span id="cb65-834"><a href="#cb65-834" aria-hidden="true" tabindex="-1"></a>            everything about the distribution including the variance</span>
+<span id="cb65-835"><a href="#cb65-835" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-836"><a href="#cb65-836" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>This differs from linear regression where we can have a</span>
+<span id="cb65-837"><a href="#cb65-837" aria-hidden="true" tabindex="-1"></a>            correct model for the mean, but the assumption about the</span>
+<span id="cb65-838"><a href="#cb65-838" aria-hidden="true" tabindex="-1"></a>            error distribution (Normality, homoskedasticity) can be</span>
+<span id="cb65-839"><a href="#cb65-839" aria-hidden="true" tabindex="-1"></a>            incorrect</span>
+<span id="cb65-840"><a href="#cb65-840" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-841"><a href="#cb65-841" aria-hidden="true" tabindex="-1"></a><span class="fu">### Interpreting &quot;Positive&quot; Results</span></span>
+<span id="cb65-842"><a href="#cb65-842" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-843"><a href="#cb65-843" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Slope is statistically different from 0 using robust standard errors</span>
+<span id="cb65-844"><a href="#cb65-844" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-845"><a href="#cb65-845" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Observed data is atypical of a setting with no linear trend in odds</span>
+<span id="cb65-846"><a href="#cb65-846" aria-hidden="true" tabindex="-1"></a>    of response across groups</span>
+<span id="cb65-847"><a href="#cb65-847" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-848"><a href="#cb65-848" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Data suggests evidence of a trend toward larger (or smaller) odds in</span>
+<span id="cb65-849"><a href="#cb65-849" aria-hidden="true" tabindex="-1"></a>    groups having larger values of the predictor</span>
+<span id="cb65-850"><a href="#cb65-850" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-851"><a href="#cb65-851" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>(To the extent the data appears linear, estimates of the group odds</span>
+<span id="cb65-852"><a href="#cb65-852" aria-hidden="true" tabindex="-1"></a>    or probabilities will be reliable)</span>
+<span id="cb65-853"><a href="#cb65-853" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-854"><a href="#cb65-854" aria-hidden="true" tabindex="-1"></a><span class="fu">### Interpreting &quot;Negative&quot; Results</span></span>
+<span id="cb65-855"><a href="#cb65-855" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-856"><a href="#cb65-856" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Many possible reasons why the slope is not statistically different</span>
+<span id="cb65-857"><a href="#cb65-857" aria-hidden="true" tabindex="-1"></a>    from 0 using robust standard errors</span>
+<span id="cb65-858"><a href="#cb65-858" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-859"><a href="#cb65-859" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>There may be no association between the response and predictor</span>
+<span id="cb65-860"><a href="#cb65-860" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-861"><a href="#cb65-861" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>There may be an association in the parameter considered, but the</span>
+<span id="cb65-862"><a href="#cb65-862" aria-hidden="true" tabindex="-1"></a>        best fitting line has zero slope</span>
+<span id="cb65-863"><a href="#cb65-863" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-864"><a href="#cb65-864" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>There may be a first order trend in the log odds, but we lacked</span>
+<span id="cb65-865"><a href="#cb65-865" aria-hidden="true" tabindex="-1"></a>        the precision to be confident that it truly exists (a type II</span>
+<span id="cb65-866"><a href="#cb65-866" aria-hidden="true" tabindex="-1"></a>        error)</span>
+<span id="cb65-867"><a href="#cb65-867" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-868"><a href="#cb65-868" aria-hidden="true" tabindex="-1"></a><span class="fu">## Example analysis revisited: Effect Modification</span></span>
+<span id="cb65-869"><a href="#cb65-869" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-870"><a href="#cb65-870" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Recall in our Titanic example that the effect of age appeared to</span>
+<span id="cb65-871"><a href="#cb65-871" aria-hidden="true" tabindex="-1"></a>    differ by sex</span>
+<span id="cb65-872"><a href="#cb65-872" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-873"><a href="#cb65-873" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>We ignored this difference earlier, so our estimated age effect</span>
+<span id="cb65-874"><a href="#cb65-874" aria-hidden="true" tabindex="-1"></a>        was a (weighted) average of the age effect in males and the age</span>
+<span id="cb65-875"><a href="#cb65-875" aria-hidden="true" tabindex="-1"></a>        effect in female</span>
+<span id="cb65-876"><a href="#cb65-876" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-877"><a href="#cb65-877" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Here is the plot again describing the trends we see in survival</span>
+<span id="cb65-878"><a href="#cb65-878" aria-hidden="true" tabindex="-1"></a>        by age and sex (using plsmo).</span>
+<span id="cb65-879"><a href="#cb65-879" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-882"><a href="#cb65-882" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb65-883"><a href="#cb65-883" aria-hidden="true" tabindex="-1"></a><span class="co"># | fig-cap: Age versus survival by gender in the Titanic data by age using a super smoother.</span></span>
+<span id="cb65-884"><a href="#cb65-884" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(titanic, </span>
+<span id="cb65-885"><a href="#cb65-885" aria-hidden="true" tabindex="-1"></a>     <span class="fu">plsmo</span>(age, survived, <span class="at">group=</span>sex, <span class="at">datadensity=</span>T, <span class="at">ylab=</span><span class="st">&quot;Survived (1=Yes, 0=No)&quot;</span>, <span class="at">xlab=</span><span class="st">&quot;Age (years)&quot;</span>)</span>
+<span id="cb65-886"><a href="#cb65-886" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb65-887"><a href="#cb65-887" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb65-888"><a href="#cb65-888" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-889"><a href="#cb65-889" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>We could describe the observed differences in two way, both being</span>
+<span id="cb65-890"><a href="#cb65-890" aria-hidden="true" tabindex="-1"></a>    correct</span>
+<span id="cb65-891"><a href="#cb65-891" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-892"><a href="#cb65-892" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Gender modifies the age effect</span>
+<span id="cb65-893"><a href="#cb65-893" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-894"><a href="#cb65-894" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>In males, the probability of survival worsened with age</span>
+<span id="cb65-895"><a href="#cb65-895" aria-hidden="true" tabindex="-1"></a>            while in female the probability of survival improved with</span>
+<span id="cb65-896"><a href="#cb65-896" aria-hidden="true" tabindex="-1"></a>            age</span>
+<span id="cb65-897"><a href="#cb65-897" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Emphasizes that the female age slope is positive while the</span>
+<span id="cb65-898"><a href="#cb65-898" aria-hidden="true" tabindex="-1"></a>            male age slope is negative</span>
+<span id="cb65-899"><a href="#cb65-899" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-900"><a href="#cb65-900" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Age modifies the gender effect</span>
+<span id="cb65-901"><a href="#cb65-901" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-902"><a href="#cb65-902" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>The survival rates of male and females were more similar at</span>
+<span id="cb65-903"><a href="#cb65-903" aria-hidden="true" tabindex="-1"></a>            younger ages than older ages</span>
+<span id="cb65-904"><a href="#cb65-904" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Could specify the odds ratio of survival comparing females</span>
+<span id="cb65-905"><a href="#cb65-905" aria-hidden="true" tabindex="-1"></a>            to males at specific ages</span>
+<span id="cb65-906"><a href="#cb65-906" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-907"><a href="#cb65-907" aria-hidden="true" tabindex="-1"></a><span class="fu">### Stratified analysis by sex</span></span>
+<span id="cb65-908"><a href="#cb65-908" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-909"><a href="#cb65-909" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The log odds of survival in females</span>
+<span id="cb65-910"><a href="#cb65-910" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-913"><a href="#cb65-913" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb65-914"><a href="#cb65-914" aria-hidden="true" tabindex="-1"></a>fit.titanic.female <span class="ot">&lt;-</span> <span class="fu">glm</span>(survived <span class="sc">~</span> age, <span class="at">data=</span>titanic, <span class="at">subset=</span>sex<span class="sc">==</span><span class="st">&quot;female&quot;</span>)</span>
+<span id="cb65-915"><a href="#cb65-915" aria-hidden="true" tabindex="-1"></a>fit.titanic.female</span>
+<span id="cb65-916"><a href="#cb65-916" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb65-917"><a href="#cb65-917" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-918"><a href="#cb65-918" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The log odds of survival in males</span>
+<span id="cb65-919"><a href="#cb65-919" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-922"><a href="#cb65-922" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb65-923"><a href="#cb65-923" aria-hidden="true" tabindex="-1"></a>fit.titanic.male <span class="ot">&lt;-</span> <span class="fu">glm</span>(survived <span class="sc">~</span> age, <span class="at">data=</span>titanic, <span class="at">subset=</span>sex<span class="sc">==</span><span class="st">&quot;male&quot;</span>)</span>
+<span id="cb65-924"><a href="#cb65-924" aria-hidden="true" tabindex="-1"></a>fit.titanic.male</span>
+<span id="cb65-925"><a href="#cb65-925" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb65-926"><a href="#cb65-926" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-927"><a href="#cb65-927" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Odds ratios and confidence intervals for age effect by sex</span></span>
+<span id="cb65-928"><a href="#cb65-928" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-929"><a href="#cb65-929" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Consider a 5 year change in age</span>
+<span id="cb65-930"><a href="#cb65-930" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-933"><a href="#cb65-933" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb65-934"><a href="#cb65-934" aria-hidden="true" tabindex="-1"></a><span class="co"># Females</span></span>
+<span id="cb65-935"><a href="#cb65-935" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="dv">5</span><span class="sc">*</span><span class="fu">coef</span>(fit.titanic.female)[<span class="st">&quot;age&quot;</span>])</span>
+<span id="cb65-936"><a href="#cb65-936" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="dv">5</span><span class="sc">*</span><span class="fu">confint.default</span>(fit.titanic.female,<span class="st">&quot;age&quot;</span>))</span>
+<span id="cb65-937"><a href="#cb65-937" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-938"><a href="#cb65-938" aria-hidden="true" tabindex="-1"></a><span class="co"># Males</span></span>
+<span id="cb65-939"><a href="#cb65-939" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="dv">5</span><span class="sc">*</span><span class="fu">coef</span>(fit.titanic.male)[<span class="st">&quot;age&quot;</span>])</span>
+<span id="cb65-940"><a href="#cb65-940" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="dv">5</span><span class="sc">*</span><span class="fu">confint.default</span>(fit.titanic.male,<span class="st">&quot;age&quot;</span>))</span>
+<span id="cb65-941"><a href="#cb65-941" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb65-942"><a href="#cb65-942" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-943"><a href="#cb65-943" aria-hidden="true" tabindex="-1"></a><span class="fu">### Effect modification using interaction terms</span></span>
+<span id="cb65-944"><a href="#cb65-944" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-945"><a href="#cb65-945" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Instead of fitting two separate models for male and females, we</span>
+<span id="cb65-946"><a href="#cb65-946" aria-hidden="true" tabindex="-1"></a>    could estimate all parameters in a single regression model</span>
+<span id="cb65-947"><a href="#cb65-947" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Let $p_i$ be the probability of survival for passenger $i$ and</span>
+<span id="cb65-948"><a href="#cb65-948" aria-hidden="true" tabindex="-1"></a>        $\textrm{logit}(p)= \textrm{log}\left(\frac{p}{1-p}\right)$</span>
+<span id="cb65-949"><a href="#cb65-949" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Let $X_{1i}$ be the age of subject $i$</span>
+<span id="cb65-950"><a href="#cb65-950" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Let $X_{2i}$ be an indicator variable for female sex. $X_{2i}=1$</span>
+<span id="cb65-951"><a href="#cb65-951" aria-hidden="true" tabindex="-1"></a>        if a subject is female and $X_{2i} = 0$ if a subject is male</span>
+<span id="cb65-952"><a href="#cb65-952" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-953"><a href="#cb65-953" aria-hidden="true" tabindex="-1"></a>$$\textrm{logit}(p_i | X_{1i},X_{2i}) = \beta_0 + \beta_1 * X_{1i} + \beta_{2i} * X_{2i} + \beta_3*X_{1i}*X_{2i}$$</span>
+<span id="cb65-954"><a href="#cb65-954" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-955"><a href="#cb65-955" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>In males, $X_{2i} = 0$, this model reduces to</span>
+<span id="cb65-956"><a href="#cb65-956" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-957"><a href="#cb65-957" aria-hidden="true" tabindex="-1"></a>$$\textrm{logit}(p_i | X_{1i}, X_{2i}=0) = \beta_0 + \beta_1 * X_{1i}$$</span>
+<span id="cb65-958"><a href="#cb65-958" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-959"><a href="#cb65-959" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>In females, $X_{2i} = 1$, this model can be expressed as</span>
+<span id="cb65-960"><a href="#cb65-960" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-961"><a href="#cb65-961" aria-hidden="true" tabindex="-1"></a>$$\textrm{logit}(p | X_{1i}, X_{2i}=1) = (\beta_0+\beta_2) + (\beta_1+\beta_3) * X_{1i}$$</span>
+<span id="cb65-962"><a href="#cb65-962" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-963"><a href="#cb65-963" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>$\hat{\beta_1}$ is the estimate age effect in males</span>
+<span id="cb65-964"><a href="#cb65-964" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>$\hat{\beta_1} + \hat{\beta_3}$ is the estimated age effect in</span>
+<span id="cb65-965"><a href="#cb65-965" aria-hidden="true" tabindex="-1"></a>    females</span>
+<span id="cb65-966"><a href="#cb65-966" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>$\hat{\beta_3}$ is the estimated *difference* between the age effect</span>
+<span id="cb65-967"><a href="#cb65-967" aria-hidden="true" tabindex="-1"></a>    in male and the age effect in females</span>
+<span id="cb65-968"><a href="#cb65-968" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-971"><a href="#cb65-971" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb65-972"><a href="#cb65-972" aria-hidden="true" tabindex="-1"></a><span class="co"># female has already been defined in the dataset, but if I wanted to create this variable I could do so</span></span>
+<span id="cb65-973"><a href="#cb65-973" aria-hidden="true" tabindex="-1"></a>titanic<span class="sc">$</span>female <span class="ot">&lt;-</span> (titanic<span class="sc">$</span>sex<span class="sc">==</span><span class="st">&quot;female&quot;</span>)<span class="sc">+</span><span class="dv">0</span></span>
+<span id="cb65-974"><a href="#cb65-974" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-975"><a href="#cb65-975" aria-hidden="true" tabindex="-1"></a>fit.titanic.interact <span class="ot">&lt;-</span> <span class="fu">glm</span>(survived <span class="sc">~</span> age <span class="sc">+</span> female <span class="sc">+</span> age<span class="sc">*</span>female, <span class="at">data=</span>titanic)</span>
+<span id="cb65-976"><a href="#cb65-976" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit.titanic.interact)</span>
+<span id="cb65-977"><a href="#cb65-977" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb65-978"><a href="#cb65-978" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-979"><a href="#cb65-979" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>We can see that the parameter estimates from the interaction model</span>
+<span id="cb65-980"><a href="#cb65-980" aria-hidden="true" tabindex="-1"></a>    are the same as the estimates from the two stratified models</span>
+<span id="cb65-981"><a href="#cb65-981" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-984"><a href="#cb65-984" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb65-985"><a href="#cb65-985" aria-hidden="true" tabindex="-1"></a><span class="co"># Interaction model</span></span>
+<span id="cb65-986"><a href="#cb65-986" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(fit.titanic.interact)</span>
+<span id="cb65-987"><a href="#cb65-987" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-988"><a href="#cb65-988" aria-hidden="true" tabindex="-1"></a><span class="co"># Model fit just on male subjects</span></span>
+<span id="cb65-989"><a href="#cb65-989" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(fit.titanic.male)</span>
+<span id="cb65-990"><a href="#cb65-990" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-991"><a href="#cb65-991" aria-hidden="true" tabindex="-1"></a><span class="co"># Model fit just on female subjects</span></span>
+<span id="cb65-992"><a href="#cb65-992" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(fit.titanic.female)</span>
+<span id="cb65-993"><a href="#cb65-993" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-994"><a href="#cb65-994" aria-hidden="true" tabindex="-1"></a><span class="co"># Linear combinations from the interaction model give the female intercept and age slope</span></span>
+<span id="cb65-995"><a href="#cb65-995" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(fit.titanic.interact)[<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">coef</span>(fit.titanic.interact)[<span class="dv">3</span>]</span>
+<span id="cb65-996"><a href="#cb65-996" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(fit.titanic.interact)[<span class="dv">2</span>] <span class="sc">+</span> <span class="fu">coef</span>(fit.titanic.interact)[<span class="dv">4</span>]</span>
+<span id="cb65-997"><a href="#cb65-997" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">

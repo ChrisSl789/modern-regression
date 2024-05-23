@@ -15,8 +15,7 @@ format:
     toc-title: Contents
     toc-location: left
     code-link: false
-    code-tools:
-      source: repo
+    code-tools: true
     code-fold: true
     code-block-bg: "#f1f3f5"
     code-block-border-left: "#31BAE9"
