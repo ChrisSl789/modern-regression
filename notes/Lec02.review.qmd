@@ -6,6 +6,7 @@ name: notes/Lec02.review.qmd
 
 ```{r}
 library(Exact)
+source(file.path('..', 'pander_registry.R'))
 ```
 
 ## Samples from populations
