@@ -4,6 +4,10 @@ subtitle: "Lecture 05"
 name: notes/Lec05.Precision.qmd
 ---
 
+```{r}
+source(file.path('..', 'pander_registry.R'))
+```
+
 ## Overview
 
 -   Goal of statistical inference is to estimate parameters *accurately*
@@ -180,20 +184,12 @@ summary(lm(Y ~ X + W, data=precisiondata))
 ```
 
 ```{r}
-mykable = function(x){
-  knitr::kable(x, row.names = FALSE, align = c("l", "l", "r", "r", "r", "r", "r", "r", "r"),
-               booktabs=TRUE)
-}
-
 library(finalfit)
-library(dplyr)
 
 explanatory = c("X", "W")
 dependent = "Y"
 
-precisiondata %>% 
-  finalfit(dependent, explanatory) %>% mykable()
-
+finalfit(.data = precisiondata, dependent, explanatory)
 ```
 
 ## Sampling Distributions

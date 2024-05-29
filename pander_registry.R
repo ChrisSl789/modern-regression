@@ -123,6 +123,7 @@ str1, str2
 }
 
 pander.prior_summary.stanreg <- function(x, ...) {
+  # `see rstanarm:::.print_scalar_prior`
   pd <- panderOptions('digits')
   on.exit(panderOptions('digits', pd))
   atts <- attributes(x)
@@ -148,10 +149,16 @@ pander.prior_summary.stanreg <- function(x, ...) {
     d <- p$dist
     a <- p$adjusted_scale
     if(d == 'exponential') {
-      sprintf('%s(rate = %s)', d, .fr3(c(p$rate, 1 / a)))
+      out <- sprintf('~ %s(rate = %s)', d, .fr3(c(p$rate, 1 / a)))
     } else {
-      sprintf('%s(location = %s, scale = %s)', d, .fr2(p$location), .fr3(c(p$scale, a)))
+      out <- sprintf('~ %s(location = %s, scale = %s)', d, .fr2(p$location), .fr3(c(p$scale, a)))
     }
+    if(length(out) == 1) out <- c(out, '')
+    ### CHECK
+    # when length=2, labels are specified/adjusted
+    # when length=1, use specified/NA or other?
+    ###
+    out
   }
   if (!is.null(x[["prior_intercept"]])) {
     rdf[1,] <- pfun(x[["prior_intercept"]])
@@ -175,6 +182,79 @@ pander.prior_summary.stanreg <- function(x, ...) {
   pandoc.table(rdf, caption = msg, ...)
 }
 
+pander.summary.glm <- function(x, ...) {
+  pd <- max(4L, panderOptions('digits')+1)
+  pander:::pander.summary.lm(x, ...)
+  if (!is.null(x$na.action) && nzchar(mess <- naprint(x$na.action))) {
+    cat("  (", mess, ")\n\n", sep = "")
+  }
+  if(!is.null(x$aic)) {
+    cat(sprintf('AIC: %s\n\n', format(x$aic, digits = pd)))
+  }
+  if(!is.null(x$iter)) {
+    cat(sprintf('Number of Fisher Scoring Iterations: %s\n', x$iter))
+  }
+}
+
+pander.glm <- function(x, ...) {
+  pander:::pander.glm(x, ...)
+  pd <- max(4L, panderOptions('digits')+1)
+  res <- matrix(NA, 5, 1)
+  rownames(res) <- c('Degrees of Freedom', 'Degrees of Freedom', 'Null Deviance', 'Residual Deviance', 'AIC')
+  if(!is.null(x$df.null)) {
+    res[1,1] <- sprintf('%s Total (i.e. Null)', x$df.null)
+  }
+  if(!is.null(x$df.residual)) {
+    res[2,1] <- sprintf('%s Residual', x$df.residual)
+  }
+  if(!is.null(x$null.deviance)) {
+    res[3,1] <- format(x$null.deviance, digits = pd)
+  }
+  if(!is.null(x$deviance)) {
+    res[4,1] <- format(x$deviance, digits = pd)
+  }
+  if(!is.null(x$aic)) {
+    res[5,1] <- format(x$aic, digits = pd)
+  }
+  res <- res[!is.na(res[,1]),,drop = FALSE]
+  pandoc.table(res, ...)
+  if (!is.null(x$na.action) && nzchar(mess <- naprint(x$na.action))) {
+    cat("  (", mess, ")\n\n", sep = "")
+  }
+}
+
+pander.data.frame.ff <- function(x, ...) {
+  rownames(x) <- NULL
+  pander:::pander.data.frame(x, ...)
+}
+
+pander.summary.lm <- function(x, ...) {
+  title <- pandoc.formula.return(x$call$formula, text = "Fitting linear model:")
+  cat(sprintf('\n\n%s\n\n', title))
+  pd <- max(4L, panderOptions('digits')+1)
+  resid <- x$residuals
+  rdf <- x$df[2L]
+  res_cap <- 'Residuals'
+  if(!is.null(x$weights) && diff(range(x$weights))) res_cap <- paste('Weighted', res_cap)
+  if (rdf > 5L) {
+    stopifnot(length(dim(resid)) == 0)
+    rq <- zapsmall(quantile(resid), pd + 1)
+    names(rq) <- c("Min", "1Q", "Median", "3Q", "Max")
+    pandoc.table(rq, caption = res_cap, ...)
+  } else if (rdf > 0L) {
+    pandoc.table(resid, ...)
+  }
+  pander:::pander.summary.lm(x, caption = '', ...)
+
+  if (!is.null(x$fstatistic)) {
+    fstat <- formatC(x$fstatistic[1L], digits = pd)
+    pval <- format.pval(pf(x$fstatistic[1L], x$fstatistic[2L], x$fstatistic[3L], lower.tail = FALSE), digits = pd)
+    cat(sprintf('F-statistic: %s on %s and %s DF,  pvalue: %s\n', fstat, x$fstatistic[2L], x$fstatistic[3L], pval))
+  }
+  if (nzchar(mess <- naprint(x$na.action)))
+    cat("  (", mess, ")\n", sep = "")
+}
+
 # knit_print.data.frame = function(x, ...) {
 #   # res = paste(c("", "", knitr::kable(x)), collapse = "\n")
 #   # knitr::asis_output(res)
@@ -186,13 +266,25 @@ gen_pander <- function(x, ...) pander::pander(x, ..., split.table = 120, split.c
 preglist <- c(
   'data.frame',
   'ols',
-  'finalfit', # consider split.cells and split.table
+  'data.frame.ff', # finalfit()
   'summary.lm', # missing residuals and fstatistic
   'matrix',
   'htest', # updated function
   'summary.stanreg', # new function
-  'prior_summary.stanreg' # new function - very limited
+  'prior_summary.stanreg', # new function - very limited
+  'glm',
+  'summary.glm', # updated function
+  'summary.lm', # updated function
+  'table',
+  'lrm', # good
+  'summary.lrm', # remove HTML()
+  'robcov', # remove print()
+  'summary.robcov',
+  'lrtest'
+  # epi.2by2 - in epiR, new method
 )
+
+# highlight STATA?
 
 for(i in seq_along(preglist)) {
   registerS3method("knit_print", preglist[i], gen_pander, envir = asNamespace("knitr"))

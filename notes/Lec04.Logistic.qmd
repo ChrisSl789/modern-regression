@@ -4,6 +4,10 @@ subtitle: "Lecture 04"
 name: notes/Lec04.Logistic.qmd
 ---
 
+```{r}
+source(file.path('..', 'pander_registry.R'))
+```
+
 ## General Regression Setting
 
 -   Types of variables
@@ -531,14 +535,7 @@ exp(5*confint.default(m.titanic, "age"))
         survived must be defined as a factor variable with two levels
 
 ```{r}
-mykable = function(x){
-  knitr::kable(x, row.names = FALSE, align = c("l", "l", "r", "r", "r", "r", "r", "r", "r"),
-               booktabs=TRUE)
-}
-
-
 library(finalfit)
-library(dplyr)
 library(rms)
 explanatory = c("age")
 
@@ -546,9 +543,7 @@ titanic$survived.factor <- factor(titanic$survived, levels=0:1, labels=c("Died",
 dependent = 'survived.factor'
 
 label(titanic$age) <- "Age (years)"
-titanic %>% 
-  finalfit(dependent, explanatory) %>% mykable()
-
+finalfit(.data = titanic, dependent, explanatory)
 ```
 
 ### Comments on Interpretation

@@ -5,6 +5,7 @@ name: notes/Lec07.MultivariableModels.qmd
 ---
 
 ```{r}
+source(file.path('..', 'pander_registry.R'))
 library(rms)
 library(ggplot2)
 ```
