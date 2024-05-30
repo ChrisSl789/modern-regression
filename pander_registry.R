@@ -3,6 +3,13 @@
 library(knitr)
 library(pander)
 
+panderOptions("digits", 5)
+panderOptions("round", 10)
+panderOptions('keep.trailing.zeros', TRUE)
+panderOptions('missing', '')
+panderOptions("table.split.table", 120)
+panderOptions("table.split.cells", 20)
+
 # updated htest supports CI
 pander.htest <- function (x, caption = attr(x, "caption"), ...) {
   if (is.null(caption)) {
@@ -261,7 +268,7 @@ pander.summary.lm <- function(x, ...) {
 #   pander::pander(x, ...)
 # }
 # registerS3method("knit_print", "data.frame", knit_print.data.frame, envir = asNamespace("knitr"))
-gen_pander <- function(x, ...) pander::pander(x, ..., split.table = 120, split.cells = 20)
+gen_pander <- function(x, ...) pander::pander(x, ...)
 
 preglist <- c(
   'data.frame',
@@ -276,9 +283,9 @@ preglist <- c(
   'summary.glm', # updated function
   'summary.lm', # updated function
   'table',
-  'lrm', # good
-  'summary.lrm', # remove HTML()
-  'robcov', # remove print()
+  'lrm',
+  'summary.lrm',
+  'robcov', # WANT: format pvalue, formatNP?
   'summary.robcov',
   'lrtest'
   # epi.2by2 - in epiR, new method

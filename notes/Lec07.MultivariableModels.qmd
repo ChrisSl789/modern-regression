@@ -256,7 +256,7 @@ library(ggplot2)
 
 <!-- -->
 
-```         
+```stata        
 . cc full female if year==95, by(field)
 
            field |       OR       [95% Conf. Interval]   M-H Weight
@@ -315,10 +315,10 @@ m.unadj <- lrm(full ~ female, data=salary.95)
 dd <- datadist(salary.95)
 options(datadist='dd')
 m.unadj
-html(summary(m.unadj))
+summary(m.unadj)
 ```
 
-```         
+```stata
 Logistic regression                               Number of obs   =       1597
                                                   LR chi2(1)      =     109.43
                                                   Prob > chi2     =     0.0000
@@ -350,17 +350,17 @@ summary(m.unadj.arts)
 
 ```{r}
 m.unadj.other
-html(summary(m.unadj.other))
+summary(m.unadj.other)
 ```
 
 #### In Prof(essional) Strata
 
 ```{r}
 m.unadj.prof
-html(summary(m.unadj.prof))
+summary(m.unadj.prof)
 ```
 
-```         
+```stata
 . sort field
 . by field: logistic full female if year==95
 
@@ -412,10 +412,10 @@ Log likelihood = -202.74823                       Pseudo R2       =     0.0243
 ```{r}
 m.adj <- lrm(full ~ female + field, data=salary.95, x=TRUE, y=TRUE)
 m.adj
-html(summary(m.adj))
+summary(m.adj)
 ```
 
-```         
+```stata
 . xi: logistic full female i.field if year==95
 i.field           _Ifield_1-3         (_Ifield_1 for field==Arts omitted)
 
@@ -447,7 +447,7 @@ Log likelihood = -1047.0583                       Pseudo R2       =     0.0518
 
 ```{r}
 robcov(m.adj)
-html(summary(robcov(m.adj)))
+summary(robcov(m.adj))
 ```
 
 -   A saturated model would include the interaction of female with field
@@ -659,16 +659,14 @@ m.unadj <- ols(logfev ~ smoker, data=fev, x=TRUE, y=TRUE)
 m.adj1 <- ols(logfev ~ smoker + age, data=fev, x=TRUE, y=TRUE)
 m.adj2 <- ols(logfev ~ smoker + age + loght, data=fev, x=TRUE, y=TRUE)
 
-options(print='html')
-print(robcov(m.unadj))
-print(robcov(m.adj1))
-print(robcov(m.adj2))
-
+robcov(m.unadj)
+robcov(m.adj1)
+robcov(m.adj2)
 ```
 
 <!-- -->
 
-```         
+```stata
 . regress logfev smoker if age>=9, robust
 
 Linear regression                                      Number of obs =     439
@@ -1093,10 +1091,10 @@ Linear regression                                      Number of obs =     439
 #### Unadjusted Model
 
 ```{r}
-print(robcov(m.unadj))
+robcov(m.unadj)
 ```
 
-```         
+```stata
 . regress logfev smoker if age>=9, robust
 
 Linear regression                                      Number of obs =     439
@@ -1141,10 +1139,10 @@ Linear regression                                      Number of obs =     439
 #### Adjusted for Age
 
 ```{r}
-print(robcov(m.adj1))
+robcov(m.adj1)
 ```
 
-```         
+```stata
 . regress logfev smoker age if age>=9, robust
 
 Linear regression                                      Number of obs =     439
@@ -1212,10 +1210,10 @@ Linear regression                                      Number of obs =     439
 #### Adjusted for Age and Height
 
 ```{r}
-print(robcov(m.adj2))
+robcov(m.adj2)
 ```
 
-```         
+```stata
 . regress logfev smoker age loght if age >=9, robust
 
 Linear regression                                      Number of obs =     439
@@ -1310,7 +1308,7 @@ lrm.adj3 <- lrm(fevbin ~ smoker + age + loght, data=fev)
 
 <!-- -->
 
-```         
+```stata
 . logit fevbin smoker if age>=9
 Logistic regression                               Number of obs   =        439
                                                   LR chi2(1)      =      15.81
