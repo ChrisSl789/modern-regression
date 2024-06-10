@@ -297,9 +297,8 @@ salary.95 <- subset(salary, year==95)
 salary.95$female <- factor((salary.95$sex=="F")+0,levels=0:1, labels=c("Male","Female"))
 salary.95$full <- factor((salary.95$rank=="Full")+0,levels=0:1, labels=c("Assist/Assoc","Full"))
 salary.95$field <- factor(salary.95$field)
-library(rms)
 partial.tables <- xtabs(~female + full + field, salary.95)
-partial.tables
+pander(partial.tables, keep.trailing.zeros = FALSE)
 marginal.table <- xtabs(~female + full, salary.95)
 marginal.table
 library(epiR)
@@ -311,6 +310,7 @@ epi.2by2(partial.tables)
 #### Unadjusted OR from logistic regression {#unadjusted-or-from-logistic-regression .unnumbered}
 
 ```{r}
+library(rms)
 m.unadj <- lrm(full ~ female, data=salary.95)
 dd <- datadist(salary.95)
 options(datadist='dd')

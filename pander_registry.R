@@ -262,6 +262,393 @@ pander.summary.lm <- function(x, ...) {
     cat("  (", mess, ")\n", sep = "")
 }
 
+pander.summary.survreg <- function(x, summary = TRUE,
+                                   digits = panderOptions("digits"),
+                                   round = panderOptions("round"),
+                                   keep.trailing.zeros = panderOptions("keep.trailing.zeros"),
+                                   ...) {
+  if (!is.null(cl <- x$call)) {
+    cat("\nCall:", pandoc.formula.return(cl), "", sep = "\n\n")
+  }
+  if (!is.null(x$fail)) {
+    cat(" Survreg failed.", x$fail, "\n\n")
+    return(invisible())
+  }
+  if (summary) {
+    pandoc.table(x$table, caption = "Model statistics", digits = digits, 
+                 round = round, keep.trailing.zeros = keep.trailing.zeros, 
+                 ...)
+  }
+  else {
+    coef <- x$coef
+    if (any(nas <- is.na(coef))) {
+      if (is.null(names(coef))) {
+        names(coef) <- paste("b", 1:length(coef), sep = "")
+      }
+      cat("\nCoefficients: (", sum(nas), " not defined because of singularities)\n", 
+          sep = "")
+    }
+    pandoc.table(coef, caption = "Coefficients", digits = digits, 
+                 round = round, keep.trailing.zeros = keep.trailing.zeros, 
+                 ...)
+  }
+  if (nrow(x$var) == length(coef)) {
+    cat("\nScale fixed at", format(x$scale), "\n")
+  }
+  else if (length(x$scale) == 1) {
+    cat("\nScale=", format(x$scale), "\n")
+  }
+  else {
+    pandoc.table(x$scale, caption = "Scale", ...)
+  }
+  nobs <- length(x$linear)
+  if(is.null(x$linear)) nobs <- x$n
+  chi <- 2 * diff(x$loglik)
+  df <- sum(x$df) - x$idf
+  pandoc.table(data.frame(`Loglik(model)` = x$loglik[2], `Loglik(intercept only)` = x$loglik[1]), ...)
+  if (df > 0) {
+    cat("Chisq=", p(chi, wrap = ""), "on", p(df, wrap = ""), 
+        "degrees of freedom, p=", p(signif(1 - pchisq(chi, 
+                                                      df), 2), wrap = ""), "\n\n")
+  }
+  else {
+    cat("\n")
+  }
+  if (summary) {
+    if (x$robust) {
+      cat("(Loglikelihood assumes independent observations)\n\n")
+    }
+    cat("Number of Newton-Raphson Iterations:", p(trunc(x$iter), 
+                                                  wrap = ), "\n\n")
+  }
+  omit <- x$na.action
+  if (length(omit)) {
+    cat("n=", nobs, " (", naprint(omit), ")\n", sep = "")
+  }
+  else {
+    cat("n=", nobs, "\n")
+  }
+  if (summary) {
+    if (!is.null(correl <- x$correlation)) {
+      p <- dim(correl)[2]
+      if (p > 1) {
+        ll <- lower.tri(correl)
+        correl <- apply(correl, c(1, 2), p, wrap = "", 
+                        digits = digits, round = round, keep.trailing.zeros = keep.trailing.zeros)
+        correl[!ll] <- ""
+        pander(correl[-1L, -ncol(correl)], digits = digits, 
+               round = round, keep.trailing.zeros = keep.trailing.zeros, 
+               caption = "Correlation of Coefficients", ...)
+      }
+    }
+  }
+  invisible()
+}
+
+pander.summary.survfit <- function (x, digits = panderOptions("digits"), ...) {
+  savedig <- options(digits = digits)
+  on.exit(options(savedig))
+  if (!is.null(cl <- x$call)) {
+    cat("\nCall:", pandoc.formula.return(cl), "", sep = "\n\n")
+  }
+  omit <- x$na.action
+  if (length(omit)) 
+    cat(naprint(omit), "\n")
+  if (x$type == "right" || is.null(x$n.enter)) {
+    mat <- cbind(x$time, x$n.risk, x$n.event, x$surv)
+    cnames <- c("time", "n.risk", "n.event")
+  }
+  else if (x$type == "counting") {
+    mat <- cbind(x$time, x$n.risk, x$n.event, x$n.censor, 
+                 x$surv)
+    cnames <- c("time", "n.risk", "n.event", "censored")
+  }
+  if (is.matrix(x$surv)) 
+    ncurve <- ncol(x$surv)
+  else ncurve <- 1
+  if (ncurve == 1) {
+    cnames <- c(cnames, "survival")
+    if (!is.null(x$std.err)) {
+      if (is.null(x$lower)) {
+        mat <- cbind(mat, x$std.err)
+        cnames <- c(cnames, "std.err")
+      }
+      else {
+        mat <- cbind(mat, x$std.err, x$lower, x$upper)
+        cipct <- x$conf.int * 100
+        cnames <- c(cnames, "std.err", sprintf('lower %s%% CI', cipct), sprintf('upper %s%% CI', cipct))
+      }
+    }
+  }
+  else cnames <- c(cnames, paste("survival", seq(ncurve), sep = ""))
+  if (!is.null(x$start.time)) {
+    mat.keep <- mat[, 1] >= x$start.time
+    mat <- mat[mat.keep, , drop = FALSE]
+    if (is.null(dim(mat))) 
+      stop(paste("No information available using start.time =", x$start.time, "."))
+  }
+  if (!is.matrix(mat)) 
+    mat <- matrix(mat, nrow = 1)
+  if (!is.null(mat)) {
+    dimnames(mat) <- list(rep("", nrow(mat)), cnames)
+    if (is.null(x$strata)) 
+      pandoc.table(mat, ...)
+    else {
+      strata <- x$strata
+      if (!is.null(x$start.time)) 
+        strata <- strata[mat.keep]
+      for (i in levels(strata)) {
+        who <- (strata == i)
+        cat("               ", i, "\n")
+        pandoc.table(mat[who, ], ...)
+        cat("\n")
+      }
+    }
+  }
+  else stop("There are no events to print.  Please use the option ", 
+            "censored=TRUE with the summary function to see the censored ", 
+            "observations.")
+  invisible(x)
+}
+
+pander.summary.coxph <- function (x, digits = panderOptions("digits"), ...) {
+  signif.stars = getOption("show.signif.stars")
+  expand = FALSE
+  if (!is.null(cl <- x$call)) {
+    cat("\nCall:", pandoc.formula.return(cl), "", sep = "\n\n")
+  }
+  if (!is.null(x$fail)) {
+    cat(" Coxreg failed.", x$fail, "\n")
+    return()
+  }
+  savedig <- options(digits = digits)
+  on.exit(options(savedig))
+  omit <- x$na.action
+  m <- matrix(c(x$n), dimnames = list('n', NULL))
+  if (!is.null(x$nevent)) 
+    m <- rbind(m, 'number of events' = x$nevent)
+  pandoc.table(t(m))
+  if (length(omit)) 
+    cat("   (", naprint(omit), ")\n", sep = "")
+  if (nrow(x$coef) == 0) {
+    cat("   Null model\n")
+    return()
+  }
+  if (expand && !is.null(x$cmap)) {
+    signif.stars <- FALSE
+    tmap <- x$cmap
+    cname <- colnames(tmap)
+    printed <- rep(FALSE, length(cname))
+    for (i in 1:length(cname)) {
+      if (!printed[i]) {
+        j <- apply(tmap, 2, function(x) all(x == tmap[, 
+                                                      i]))
+        printed[j] <- TRUE
+        tmp2 <- x$coefficients[tmap[, i], , drop = FALSE]
+        names(dimnames(tmp2)) <- c(paste(cname[j], collapse = ", "), 
+                                   "")
+        rownames(tmp2) <- rownames(tmap)[tmap[, i] > 
+                                           0]
+        printCoefmat(tmp2, digits = digits, P.values = TRUE, 
+                     has.Pvalue = TRUE, signif.legend = FALSE, signif.stars = signif.stars, 
+                     ...)
+        if (!is.null(x$conf.int)) {
+          tmp2 <- x$conf.int[tmap[, i], , drop = FALSE]
+          rownames(tmp2) <- rownames(tmap)[tmap[, i] > 
+                                             0]
+          names(dimnames(tmp2)) <- c(paste(cname[j], 
+                                           collapse = ", "), "")
+          print(tmp2, digits = digits, ...)
+        }
+      }
+    }
+    cat("\n States:", paste(paste(seq(along.with = x$states), 
+                                  x$states, sep = "= "), collapse = ", "), "\n")
+  } else {
+    if (!is.null(x$coefficients)) {
+      pandoc.table(x$coefficients, ...)
+    }
+    if (!is.null(x$conf.int)) {
+      pandoc.table(x$conf.int, ...)
+    }
+  }
+  if (!is.null(x$concordance)) {
+    v_conc <- format(round(x$concordance, digits))
+    vdf <- data.frame(Concordance = v_conc[1], se = v_conc[2], row.names = NULL)
+    pander(vdf, ...)
+  }
+  pdig <- max(1, digits - 4)
+  v_test <- c(x$logtest['test'], x$waldtest['test'], x$sctest['test'])
+  v_df <- c(x$logtest['df'], x$waldtest['df'], x$sctest['df'])
+  v_pval <- c(x$logtest['pvalue'], x$waldtest['pvalue'], x$sctest['pvalue'])
+  f_rn <- c('Likelihood ratio test', 'Wald test', 'Score (logrank) test')
+  if (!is.null(x$robscore)) {
+    v_test <- c(v_test, x$robscore['test'])
+    v_df <- c(v_df, x$robscore['df'])
+    v_pval <- c(v_pval, x$sctest['pvalue'])
+    f_rn <- c(f_rn, 'Robust score test')
+  }
+  f_test <- format(round(v_test, 2))
+  f_df <- v_df
+  f_pval <- format.pval(v_pval, digits = pdig)
+  rdf <- data.frame(test = f_test, df = f_df, p = f_pval, row.names = f_rn)
+  pander(rdf, ...)
+  if (x$used.robust) 
+    cat("  (Note: the likelihood ratio and score tests", 
+        "assume independence of\n     observations within a cluster,", 
+        "the Wald and robust score tests do not).\n")
+  invisible()
+}
+
+pander.aftreg <- function (x, digits = panderOptions("digits"), ...) {
+  if (!is.null(cl <- x$call)) {
+    cat("\nCall:", pandoc.formula.return(cl), "", sep = "\n\n")
+  }
+  if (!is.null(x$fail)) {
+    cat(" aftreg failed.\n")
+    return()
+  }
+  savedig <- options(digits = digits)
+  on.exit(options(savedig))
+  if (x$pfixed) {
+    n.slsh <- 1
+  } else {
+    n.slsh <- 2 * x$n.strata
+  }
+  coef <- x$coefficients
+  se <- sqrt(diag(x$var))
+  wald.p <- 1 - pchisq((coef/se)^2, 1)
+  if (is.null(coef) || is.null(se)) 
+    stop("Input is not valid")
+  if (x$param == "lifeAcc") {
+    cat("Covariate          W.mean      Coef Time-Accn  se(Coef)    Wald p\n")
+  }
+  else {
+    cat("Covariate          W.mean      Coef Life-Expn  se(Coef)    Wald p\n")
+  }
+  e.coef <- exp(coef)
+  ett <- formatC(1, width = 9, digits = 0, format = "f")
+  noll <- formatC(0, width = 5, digits = 0, format = "f")
+  factors <- attr(x$terms, "factors")
+  resp <- attr(x$terms, "response")
+  row.strata <- attr(x$terms, "specials")$strata
+  if (!is.null(row.strata)) 
+    col.strata <- which(factors[row.strata, ] == 1)
+  else col.strata <- NULL
+  if (!is.null(x$covars)) {
+    if (!is.null(col.strata)) {
+      factors <- attr(x$terms, "factors")[-c(resp, row.strata), 
+                                          -col.strata, drop = FALSE]
+    }
+    else {
+      factors <- attr(x$terms, "factors")[-c(resp, row.strata), 
+                                          , drop = FALSE]
+    }
+    covar.names <- c(x$covars, names(coef)[(length(coef) - n.slsh + 1):length(coef)])
+    term.names <- colnames(factors)
+    isF <- x$isF
+  }
+  ord <- attr(x$terms, "order")
+  if (!is.null(col.strata)) 
+    ord <- ord[-col.strata]
+  index <- 0
+  if (!is.null(x$covars)) {
+    n.rows <- length(term.names)
+    for (term.no in 1:n.rows) {
+      if (ord[term.no] == 1) {
+        covar.no <- which(factors[, term.no] == 1)
+        if (isF[covar.no]) {
+          cat(covar.names[covar.no], "\n")
+          no.lev <- length(x$levels[[covar.no]])
+          thing1 <- x$levels[[covar.no]][1]
+          thing2 <- x$w.means[[covar.no]][1]
+          thing3 <- noll
+          thing4 <- ett
+          thing5 <- '(reference)'
+          for (lev in 2:no.lev) {
+            index <- index + 1
+            thing1 <- x$levels[[covar.no]][lev]
+            thing2 <- x$w.means[[covar.no]][lev]
+            thing3 <- coef[index]
+            thing4 <- e.coef[index]
+            thing5 <- se[index]
+            thing6 <- wald.p[index]
+          }
+        } else {
+          index <- index + 1
+          thing1 <- covar.names[covar.no]
+          thing2 <- x$w.means[[covar.no]]
+          thing3 <- coef[index]
+          thing4 <- e.coef[index]
+          thing5 <- se[index]
+          thing6 <- wald.p[index]
+        }
+      } else if (ord[term.no] > 1) {
+        cat(format(term.names[term.no], width = 16), "\n")
+        niv <- numeric(ord[term.no])
+        covar.no <- which(factors[, term.no] == 1)
+        for (i in 1:ord[term.no]) {
+          if (isF[covar.no[i]]) {
+            niv[i] <- length(x$levels[[covar.no[i]]]) - 1
+          } else {
+            niv[i] <- 1
+          }
+        }
+        stt <- index + 1
+        for (index in stt:(stt + prod(niv) - 1)) {
+          vn <- sub(covar.names[covar.no[1]], "", names(coef)[index])
+          for (i in 1:ord[term.no]) {
+            vn <- sub(covar.names[covar.no[i]], "", vn)
+          }
+          thing1 <- ''
+          thing2 <- substring(vn, 1, 22)
+          thing3 <- coef[index]
+          thing4 <- e.coef[index]
+          thing5 <- se[index]
+          thing6 <- wald.p[index]
+        }
+      }
+    }
+    cat("\n")
+  }
+  cat("Baseline parameters:\n")
+  for (i in 1:n.slsh) {
+    jup <- length(coef)
+    ss.names <- names(coef[(jup - n.slsh + 1):jup])
+    index <- index + 1
+    i_vals <- unname(c(ss.names[i], coef[index], se[index], wald.p[index]))
+  }
+  cat("Baseline life expectancy: ", x$baselineMean, "\n")
+  logtest <- -2 * (x$loglik[1] - x$loglik[2])
+  if (is.null(x$df)) 
+    df <- sum(!is.na(coef)) - n.slsh
+  else df <- round(sum(x$df), 2)
+  cat("\n")
+  if (x$pfixed) {
+    cat(" Shape is fixed at ", x$shape, "\n\n")
+  }
+  cat(formatC("Events", width = 25, flag = "-"), x$n.events, 
+      "\n")
+  cat(formatC("Total time at risk", width = 25, flag = "-"), 
+      formatC(x$ttr, digits = 5, format = "fg"), "\n")
+  cat(formatC("Max. log. likelihood", width = 25, flag = "-"), 
+      formatC(x$loglik[2], digits = 5, format = "fg"), "\n")
+  if (df > 0.5) {
+    cat(formatC("LR test statistic", width = 25, flag = "-"), 
+        format(round(logtest, 2)), "\n")
+    cat(formatC("Degrees of freedom", width = 25, flag = "-"), 
+        formatC(df, digits = 0, format = "f"), "\n")
+    cat(formatC("Overall p-value", width = 25, flag = "-"), 
+        format.pval(1 - pchisq(logtest, df), digits = 6, 
+                    "\n"))
+  }
+  cat("\n")
+  if (length(x$icc)) 
+    cat("   number of clusters=", x$icc[1], "    ICC=", format(x$icc[2:3]), 
+        "\n")
+  invisible(x)
+}
+
 # knit_print.data.frame = function(x, ...) {
 #   # res = paste(c("", "", knitr::kable(x)), collapse = "\n")
 #   # knitr::asis_output(res)
@@ -287,7 +674,14 @@ preglist <- c(
   'summary.lrm',
   'robcov', # WANT: format pvalue, formatNP?
   'summary.robcov',
-  'lrtest'
+  'lrtest',
+  'coxph',
+  'survdiff',
+  'survfit',
+  'summary.coxph', # new function
+  'summary.survfit', # new function
+  'summary.survreg', # updated function
+  'aftreg' # - package "eha" - new function - INPROGRESS
   # epi.2by2 - in epiR, new method
 )
 

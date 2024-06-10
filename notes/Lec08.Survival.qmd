@@ -6,6 +6,7 @@ name: notes/Lec08.Survival.qmd
 
 ```{r}
 #| echo: false
+source(file.path('..', 'pander_registry.R'))
 library(rms)
 library(ggplot2)
 library(knitr)
