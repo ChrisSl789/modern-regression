@@ -213,8 +213,7 @@ FUN = function(x) c(n = length(x), mean = mean(x), sd = sd(x),
 min = min(x), q25 = quantile(x, 0.25),
 median = median(x), q75 = quantile(x, 0.75),
 max = max(x)))
-
-print(res1, digits=2)
+data.frame(dose = res1$dose, res1$carot3, check.names = FALSE)
 ```
 
 -   In this randomized trial, we can consider several potential response variables

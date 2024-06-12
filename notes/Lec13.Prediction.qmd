@@ -1014,9 +1014,8 @@ Log likelihood = -70.223945                       Pseudo R2       =     0.3629
 
 <!-- -->
 
-```         
->f <- lrm(y ~ sex*rcs(cholesterol)+pol(age,2)+blood.pressure, x=TRUE, y=TRUE)
-> 
+```r
+> f <- lrm(y ~ sex*rcs(cholesterol)+pol(age,2)+blood.pressure, x=TRUE, y=TRUE)
 > f
 
 Logistic Regression Model
@@ -1062,7 +1061,7 @@ sex=male * cholesterol'''  0.1315 1.1752  0.11  0.9109
 
 <!-- -->
 
-```         
+```r
 > validate(f, B=150, bw=TRUE, rule="p", sls=.1, type="individual")
 
                 Backwards Step-down - Original Model

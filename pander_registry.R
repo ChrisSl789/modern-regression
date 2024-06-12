@@ -708,12 +708,13 @@ preglist <- c(
   'summary.survfit', # new function
   'summary.survreg', # updated function
   'aftreg', # - package "eha" - new function/fragile
-  # epi.2by2 - in epiR, new method
   'coeftest', # package "lmtest" - new function
-  'lm'
+  'lm',
+  'grouped_df' # "tibble"
+  # epi.2by2 - in epiR, new method
 )
 
-# highlight STATA?
+# need consistent pvalue format
 
 for(i in seq_along(preglist)) {
   registerS3method("knit_print", preglist[i], gen_pander, envir = asNamespace("knitr"))

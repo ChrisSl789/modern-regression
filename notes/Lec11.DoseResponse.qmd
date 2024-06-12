@@ -659,7 +659,7 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
 -   Predicted heights for observed ages from the dummy variable and two polynomial models
 
 ```{r}
-kable(newdata[12:17,], format='html', digits=2)
+newdata[12:17,]
 ```
 
 ## Flexible Methods
@@ -702,7 +702,7 @@ m.poly16 <- lm(height ~ poly(age,16), data=fev)
 m.poly3 <- lm(height ~ poly(age,3), data=fev)
 newdata$ht.poly16 <- predict(m.poly16, newdata)
 newdata$ht.poly3 <- predict(m.poly3, newdata)
-kable(newdata[12:17,], format='html', digits=2)
+newdata[12:17,]
 ```
 
 ### Piecewise Linear Splines
