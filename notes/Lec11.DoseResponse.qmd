@@ -5,6 +5,7 @@ name: notes/Lec11.DoseResponse.qmd
 ---
 
 ```{r}
+source(file.path('..', 'pander_registry.R'))
 library(rms)
 library(ggplot2)
 library(splines)

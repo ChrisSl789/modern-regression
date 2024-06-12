@@ -6,6 +6,7 @@ name: notes/Lec09.Poisson.qmd
 
 ```{r}
 #| echo: false
+source(file.path('..', 'pander_registry.R'))
 library(rms)
 library(ggplot2)
 library(splines)
@@ -262,7 +263,7 @@ coeftest(m1.poisson, vcov=sandwich)
 confint(coeftest(m1.poisson, vcov=sandwich))
 ```
 
-```         
+```stata         
 . poisson events bmi, offset(logmins) robust
 
 Iteration 0:   log pseudolikelihood =  -11360.89  
@@ -345,7 +346,7 @@ confint(coeftest(m2.lm, vcov=sandwich))
 
 #### Stata Output
 
-```         
+```stata
 . poisson events bmi esop, offset(logmins) robust
 
 Poisson regression                                Number of obs   =        279

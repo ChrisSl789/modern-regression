@@ -5,6 +5,7 @@ name: notes/Lec13.Prediction.qmd
 ---
 
 ```{r}
+source(file.path('..', 'pander_registry.R'))
 library(rms)
 library(ggplot2)
 ```
@@ -337,7 +338,7 @@ library(ggplot2)
 
 <!-- -->
 
-```         
+```stata
 . gen logfev = log(fev)
 
 . regress logfev height age
@@ -531,7 +532,7 @@ Log likelihood = -158.52851                       Pseudo R2       =     0.2512
 
 ### Example: FEV by age and height
 
-```         
+```stata
 . regress logfev height age
 
       Source |       SS       df       MS              Number of obs =     654
@@ -572,7 +573,7 @@ Log likelihood = -158.52851                       Pseudo R2       =     0.2512
 
 -   We can compare these results to the prediction for summary measures done previously (see below)
 
-    ```         
+    ```
          +-----------------------------------------------------------------+
          |    gmfev    gmlofev    gmhifev    predfev   pre~ofev   predhi~v |
          |-----------------------------------------------------------------|
@@ -594,7 +595,7 @@ Log likelihood = -158.52851                       Pseudo R2       =     0.2512
 
 -   Example: Age is 10 and Height is 66
 
-    ```         
+    ```stata
     . gen sepredict2 = sepredict^2
     . gen sefit2 = sefit^2
     . list sepredict sefit sepredict2 sefit2 if age==10 & heigh==66
@@ -779,7 +780,7 @@ Log likelihood = -158.52851                       Pseudo R2       =     0.2512
 
 <!-- -->
 
-```         
+```stata
 . logit smoker height
 
 Logistic regression                               Number of obs   =        654
@@ -867,7 +868,7 @@ Ho: area(xb1) = area(xb2)
 
 <!-- -->
 
-```         
+```stata
 . 
 . xi: logit smoker age height i.sex fev if training < .6
 i.sex             _Isex_1-2           (_Isex_1 for sex==female omitted)

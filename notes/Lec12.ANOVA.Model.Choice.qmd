@@ -5,6 +5,7 @@ name: notes/Lec12.ANOVA.Model.Choice.qmd
 ---
 
 ```{r}
+source(file.path('..', 'pander_registry.R'))
 library(rms)
 library(ggplot2)
 library(splines)
@@ -520,7 +521,7 @@ linearHypothesis(m.poly, c("poly(dose, 2)1",
 
 <!-- -->
 
-```         
+```stata
 . gen dosecub = dose^3
 . gen dosequad = dose^4
 . regress carot3 dose dosesqr dosecub dosequad carot0, robust
@@ -584,7 +585,7 @@ Linear regression                                      Number of obs =      40
 
 <!-- -->
 
-```         
+```stata
 . regress carot3 trt dose carot0, robust
 
 Linear regression                                      Number of obs =      40

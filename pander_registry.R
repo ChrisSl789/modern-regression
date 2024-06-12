@@ -520,11 +520,9 @@ pander.aftreg <- function (x, digits = panderOptions("digits"), ...) {
   wald.p <- 1 - pchisq((coef/se)^2, 1)
   if (is.null(coef) || is.null(se)) 
     stop("Input is not valid")
+  cnames <- c('Covariate', 'W.mean', 'Coef', 'Time-Expn', 'se(Coef)', 'Wald p')
   if (x$param == "lifeAcc") {
-    cat("Covariate          W.mean      Coef Time-Accn  se(Coef)    Wald p\n")
-  }
-  else {
-    cat("Covariate          W.mean      Coef Life-Expn  se(Coef)    Wald p\n")
+    cnames[4] <- 'Time-Accn'
   }
   e.coef <- exp(coef)
   ett <- formatC(1, width = 9, digits = 0, format = "f")
@@ -552,6 +550,9 @@ pander.aftreg <- function (x, digits = panderOptions("digits"), ...) {
   if (!is.null(col.strata)) 
     ord <- ord[-col.strata]
   index <- 0
+  xdf <- as.data.frame(matrix(NA, 10, 6))
+  bdf <- xdf
+  x_new <- xdf[1,]
   if (!is.null(x$covars)) {
     n.rows <- length(term.names)
     for (term.no in 1:n.rows) {
@@ -560,28 +561,28 @@ pander.aftreg <- function (x, digits = panderOptions("digits"), ...) {
         if (isF[covar.no]) {
           cat(covar.names[covar.no], "\n")
           no.lev <- length(x$levels[[covar.no]])
-          thing1 <- x$levels[[covar.no]][1]
-          thing2 <- x$w.means[[covar.no]][1]
-          thing3 <- noll
-          thing4 <- ett
-          thing5 <- '(reference)'
+          x_new[1,1] <- x$levels[[covar.no]][1]
+          x_new[1,2] <- x$w.means[[covar.no]][1]
+          x_new[1,3] <- noll
+          x_new[1,4] <- ett
+          x_new[1,5] <- '(reference)'
           for (lev in 2:no.lev) {
             index <- index + 1
-            thing1 <- x$levels[[covar.no]][lev]
-            thing2 <- x$w.means[[covar.no]][lev]
-            thing3 <- coef[index]
-            thing4 <- e.coef[index]
-            thing5 <- se[index]
-            thing6 <- wald.p[index]
+            xdf[index,1] <- x$levels[[covar.no]][lev]
+            xdf[index,2] <- x$w.means[[covar.no]][lev]
+            xdf[index,3] <- coef[index]
+            xdf[index,4] <- e.coef[index]
+            xdf[index,5] <- se[index]
+            xdf[index,6] <- wald.p[index]
           }
         } else {
           index <- index + 1
-          thing1 <- covar.names[covar.no]
-          thing2 <- x$w.means[[covar.no]]
-          thing3 <- coef[index]
-          thing4 <- e.coef[index]
-          thing5 <- se[index]
-          thing6 <- wald.p[index]
+          xdf[index,1] <- covar.names[covar.no]
+          xdf[index,2] <- x$w.means[[covar.no]]
+          xdf[index,3] <- coef[index]
+          xdf[index,4] <- e.coef[index]
+          xdf[index,5] <- se[index]
+          xdf[index,6] <- wald.p[index]
         }
       } else if (ord[term.no] > 1) {
         cat(format(term.names[term.no], width = 16), "\n")
@@ -600,52 +601,77 @@ pander.aftreg <- function (x, digits = panderOptions("digits"), ...) {
           for (i in 1:ord[term.no]) {
             vn <- sub(covar.names[covar.no[i]], "", vn)
           }
-          thing1 <- ''
-          thing2 <- substring(vn, 1, 22)
-          thing3 <- coef[index]
-          thing4 <- e.coef[index]
-          thing5 <- se[index]
-          thing6 <- wald.p[index]
+          xdf[index,1] <- ''
+          xdf[index,2] <- substring(vn, 1, 22)
+          xdf[index,3] <- coef[index]
+          xdf[index,4] <- e.coef[index]
+          xdf[index,5] <- se[index]
+          xdf[index,6] <- wald.p[index]
         }
       }
     }
-    cat("\n")
+    if(rowSums(!is.na(x_new)) > 0) xdf <- rbind(x_new, xdf)
+    names(xdf) <- cnames
+    xdf <- xdf[rowSums(!is.na(xdf)) > 0,]
+    pandoc.table(xdf, ...)
   }
-  cat("Baseline parameters:\n")
+  base_index <- index
   for (i in 1:n.slsh) {
     jup <- length(coef)
     ss.names <- names(coef[(jup - n.slsh + 1):jup])
     index <- index + 1
-    i_vals <- unname(c(ss.names[i], coef[index], se[index], wald.p[index]))
+    bdf[index-base_index, 1] <- ss.names[i]
+    bdf[index-base_index, 3] <- coef[index]
+    bdf[index-base_index, 5] <- se[index]
+    bdf[index-base_index, 6] <- wald.p[index]
   }
-  cat("Baseline life expectancy: ", x$baselineMean, "\n")
+  bdf <- bdf[rowSums(!is.na(bdf)) > 0,]
+  names(bdf) <- cnames
+  pandoc.table(bdf, caption = 'Baseline parameters', ...)
+  cat("Baseline life expectancy: ", x$baselineMean)
+  cat('\n\n')
   logtest <- -2 * (x$loglik[1] - x$loglik[2])
   if (is.null(x$df)) 
     df <- sum(!is.na(coef)) - n.slsh
   else df <- round(sum(x$df), 2)
-  cat("\n")
+  ldf <- data.frame()
   if (x$pfixed) {
     cat(" Shape is fixed at ", x$shape, "\n\n")
   }
-  cat(formatC("Events", width = 25, flag = "-"), x$n.events, 
-      "\n")
-  cat(formatC("Total time at risk", width = 25, flag = "-"), 
-      formatC(x$ttr, digits = 5, format = "fg"), "\n")
-  cat(formatC("Max. log. likelihood", width = 25, flag = "-"), 
-      formatC(x$loglik[2], digits = 5, format = "fg"), "\n")
+  str1 <- paste(formatC("Events", width = 25, flag = "-"), x$n.events)
+  str2 <- paste(formatC("Total time at risk", width = 25, flag = "-"),
+                formatC(x$ttr, digits = 5, format = "fg"))
+  str3 <- paste(formatC("Max. log. likelihood", width = 25, flag = "-"),
+                formatC(x$loglik[2], digits = 5, format = "fg"))
+  bigstr <- c(str1, str2, str3)
   if (df > 0.5) {
-    cat(formatC("LR test statistic", width = 25, flag = "-"), 
-        format(round(logtest, 2)), "\n")
-    cat(formatC("Degrees of freedom", width = 25, flag = "-"), 
-        formatC(df, digits = 0, format = "f"), "\n")
-    cat(formatC("Overall p-value", width = 25, flag = "-"), 
-        format.pval(1 - pchisq(logtest, df), digits = 6, 
-                    "\n"))
+    val_lr <- format(round(logtest, 2))
+    val_df <- formatC(df, digits = 0, format = "f")
+    val_p <- format.pval(1 - pchisq(logtest, df), digits = 6)
+    str4 <- paste(formatC("LR test statistic", width = 25, flag = "-"), val_lr)
+    str5 <- paste(formatC("Degrees of freedom", width = 25, flag = "-"), val_df)
+    str6 <- paste(formatC("Overall p-value", width = 25, flag = "-"), val_p)
+    bigstr <- c(bigstr, str4, str5, str6)
   }
-  cat("\n")
-  if (length(x$icc)) 
-    cat("   number of clusters=", x$icc[1], "    ICC=", format(x$icc[2:3]), 
-        "\n")
+  pander(paste(bigstr, collapse = '\n\n'), ...)
+  if (length(x$icc)) {
+    cat("\n")
+    cat("   number of clusters=", x$icc[1], "    ICC=", format(x$icc[2:3]), "\n")
+  }
+  invisible(x)
+}
+
+pander.coeftest <- function (x, digits = panderOptions("digits"), ...) {
+  if (is.null(d <- dim(x)) || length(d) != 2L) 
+    stop("'x' must be coefficient matrix/data frame")
+  xm <- data.matrix(x)
+  xmethod <- attr(xm, 'method')
+  attr(xm, 'method') <- NULL
+  attr(xm, 'df') <- NULL
+  attr(xm, 'nobs') <- NULL
+  attr(xm, 'logLik') <- NULL
+  class(xm) <- 'numeric'
+  pandoc.table(xm, caption = xmethod, ...)
   invisible(x)
 }
 
@@ -681,8 +707,10 @@ preglist <- c(
   'summary.coxph', # new function
   'summary.survfit', # new function
   'summary.survreg', # updated function
-  'aftreg' # - package "eha" - new function - INPROGRESS
+  'aftreg', # - package "eha" - new function/fragile
   # epi.2by2 - in epiR, new method
+  'coeftest', # package "lmtest" - new function
+  'lm'
 )
 
 # highlight STATA?
