@@ -16,15 +16,13 @@ source(file.path('..', 'pander_registry.R'))
 
     -   Nominal (unordered categorical) data: e.g. race, martial status
 
-    -   Ordinal (ordered categorical data): e.g. cancer stage, asthma
-        severity
+    -   Ordinal (ordered categorical data): e.g. cancer stage, asthma severity
 
     -   Quantitative data: e.g. age, blood pressure
 
     -   Right censored data: e.g. time to death
 
--   The measures used to summarize and compare distributions vary
-    according to the type of variable
+-   The measures used to summarize and compare distributions vary according to the type of variable
 
     -   Means: Binary, quantitative
 
@@ -36,8 +34,7 @@ source(file.path('..', 'pander_registry.R'))
 
     -   Hazards: Censored
 
--   Which regression model you choose to use is based on the parameter
-    being compared across groups
+-   Which regression model you choose to use is based on the parameter being compared across groups
 
 ::: center
 | Parameter       | Approach                              |
@@ -59,13 +56,11 @@ source(file.path('..', 'pander_registry.R'))
 | $\theta_i$ | Parameter summarizing distribution of $Y_i | X_i$    |
 :::
 
--   The parameter ($\theta_i$) might be the mean, geometric mean, odds,
-    rate, instantaneous risk of an event (hazard), etc.
+-   The parameter ($\theta_i$) might be the mean, geometric mean, odds, rate, instantaneous risk of an event (hazard), etc.
 
 -   In linear regression on means, $\theta_i = E[Y_i | X_i]$
 
--   Choice of correct $\theta_i$ should be based on scientific
-    understanding of problem
+-   Choice of correct $\theta_i$ should be based on scientific understanding of problem
 
 -   General notation for simple regression model
 
@@ -81,8 +76,7 @@ General notation for regression model with one predictor
 | $\beta_1$ | Slope for predictor $X$         |
 :::
 
--   The link function is often either the identity function (for
-    modeling means) or log (for modeling geometric means, odds, hazards)
+-   The link function is often either the identity function (for modeling means) or log (for modeling geometric means, odds, hazards)
 
     -   Identity function: $f(x) = x$
 
@@ -92,35 +86,25 @@ General notation for regression model with one predictor
 
     -   Use other groups to make estimates in groups with sparse data
 
-    -   Intuitively, 67 and 69 year olds would provide some relevant
-        information about 68 year olds
+    -   Intuitively, 67 and 69 year olds would provide some relevant information about 68 year olds
 
-    -   Assuming a straight line relationship tells us about other, even
-        more distant, individuals
+    -   Assuming a straight line relationship tells us about other, even more distant, individuals
 
-    -   If we do not want to assume a straight line, we may only want to
-        borrow information from nearby groups
+    -   If we do not want to assume a straight line, we may only want to borrow information from nearby groups
 
 -   Defining "Contrasts"
 
-    -   Define a comparison across groups to use when answering
-        scientific questions
+    -   Define a comparison across groups to use when answering scientific questions
 
-    -   If the straight line relationship holds, the slope is the
-        difference in parameter between groups differing by 1 unit in
-        $X$
+    -   If the straight line relationship holds, the slope is the difference in parameter between groups differing by 1 unit in $X$
 
-    -   If a non-linear relationship in parameter, the slope is still
-        the average difference in parameter between groups differing by
-        1 unit in $X$
+    -   If a non-linear relationship in parameter, the slope is still the average difference in parameter between groups differing by 1 unit in $X$
 
-    -   Slope is a (first order or linear) test for trend in the
-        parameter
+    -   Slope is a (first order or linear) test for trend in the parameter
 
     -   Statistical jargon: "a contrast" across groups
 
--   The major difference between different regression models is the
-    interpretation of the parameters
+-   The major difference between different regression models is the interpretation of the parameters
 
     -   How do I want to summarize the outcome?
 
@@ -130,13 +114,11 @@ General notation for regression model with one predictor
 
     -   Difference, ratio
 
--   Answering these two simple questions provides a starting road-map as
-    to which regression model to choose
+-   Answering these two simple questions provides a starting road-map as to which regression model to choose
 
 -   Issues related to the inclusion of covariates remains the same
 
-    -   Address the scientific question: Predictor of interest, effect
-        modification
+    -   Address the scientific question: Predictor of interest, effect modification
 
     -   Address confounding
 
@@ -146,8 +128,7 @@ General notation for regression model with one predictor
 
 ### Uses of logistic regression
 
--   Use logistic regression when you want to make inference about the
-    odds
+-   Use logistic regression when you want to make inference about the odds
 
     -   Allows for continuous (or multiple) grouping variables
 
@@ -159,19 +140,15 @@ General notation for regression model with one predictor
 
 -   Binary response variable
 
--   When using regression with binary response variables, we typically
-    model the (log) odds using logistic regression
+-   When using regression with binary response variables, we typically model the (log) odds using logistic regression
 
-    -   Conceptually there should be no problem modeling the proportion
-        (which is the mean of the distribution)
+    -   Conceptually there should be no problem modeling the proportion (which is the mean of the distribution)
 
-    -   However, there are several technical reasons why we do not use
-        linear regression very often with binary responses
+    -   However, there are several technical reasons why we do not use linear regression very often with binary responses
 
     -   Why not use linear regression for binary responses?
 
--   Many misconceptions about the advantages and disadvantages of
-    analyzing the odds
+-   Many misconceptions about the advantages and disadvantages of analyzing the odds
 
     -   Reasons I consider valid: Scientific basis
 
@@ -181,8 +158,7 @@ General notation for regression model with one predictor
 
     -   Reasons I consider valid: Statistical basis
 
-        -   There is a mean variance relationship (if not using robust
-            SE) that can be incorporate in the logistic regression model
+        -   There is a mean variance relationship (if not using robust SE) that can be incorporate in the logistic regression model
 
 ### Reasons to use logistic regression
 
@@ -190,14 +166,11 @@ General notation for regression model with one predictor
 
     -   Studying a rare disease, so we do study in reverse
 
-        -   e.g. find subjects with cancer (and suitable controls) and
-            then ascertain exposure of interest
+        -   e.g. find subjects with cancer (and suitable controls) and then ascertain exposure of interest
 
-        -   Estimate distribution of the "effect" across groups defined
-            by "cause"
+        -   Estimate distribution of the "effect" across groups defined by "cause"
 
-        -   Proportion (or odds) of smokers among people with or without
-            lung cancer
+        -   Proportion (or odds) of smokers among people with or without lung cancer
 
     |            |               |               |
     |------------|---------------|---------------|
@@ -205,27 +178,19 @@ General notation for regression model with one predictor
     | Smoker     | a             | b             |
     | Non-Smoker | c             | d             |
 
-    : Case-Control or Cohort 2x2 Table. In the Case-Control design, the
-    total number of subjects with Cancer $(a+c)$ and without cancer
-    $(b+d)$ are fixed by design.
+    : Case-Control or Cohort 2x2 Table. In the Case-Control design, the total number of subjects with Cancer $(a+c)$ and without cancer $(b+d)$ are fixed by design.
 
-    -   In contrast, a cohort study samples by exposure (smoking) and
-        then estimates the distribution of the effect in exposure groups
+    -   In contrast, a cohort study samples by exposure (smoking) and then estimates the distribution of the effect in exposure groups
 
-    -   In a case-control study, we cannot estimate prevalence (without
-        knowing selection probabilities)
+    -   In a case-control study, we cannot estimate prevalence (without knowing selection probabilities)
 
-        -   e.g. if doing a 1:1 case-control study, $(a+c) = b+d$ so it
-            would look like $50\%$ of the subjects have cancer
+        -   e.g. if doing a 1:1 case-control study, $(a+c) = b+d$ so it would look like $50\%$ of the subjects have cancer
 
-    -   Odds ratios are estimable in either case-control or cohort
-        sampling scheme
+    -   Odds ratios are estimable in either case-control or cohort sampling scheme
 
-        -   Cohort study: Odds of cancer among smoker compared to odds
-            of cancer among nonsmokers
+        -   Cohort study: Odds of cancer among smoker compared to odds of cancer among nonsmokers
 
-        -   Case-control study: Odds of smoking among cancer compared to
-            odds of smoking among non-cancer
+        -   Case-control study: Odds of smoking among cancer compared to odds of smoking among non-cancer
 
     -   Mathematically, these two odds ratios are the same
 
@@ -247,14 +212,11 @@ General notation for regression model with one predictor
 
     -   Proportions are bounded by 0 and 1
 
-    -   It is thus unlikely that a straight line relationship would
-        exists between a proportion and a predictor
+    -   It is thus unlikely that a straight line relationship would exists between a proportion and a predictor
 
         -   Unless the predictor itself is bounded
 
-        -   Otherwise, there eventually must be a threshold above which
-            the probability does not increase (or only increases a
-            little)
+        -   Otherwise, there eventually must be a threshold above which the probability does not increase (or only increases a little)
 
 ```{r}
 #| fig-cap: Logistic function will bound probabilities between 0 and 1
@@ -264,19 +226,13 @@ plot(function(x) expit(x), -4,4, ylab="Probabilty", xlab="Predictor")
 
 -   Third (scientific) reason: Effect modification
 
-    -   The restriction on ranges for probabilities makes it likely that
-        effect modification *must* be present with proportions
+    -   The restriction on ranges for probabilities makes it likely that effect modification *must* be present with proportions
 
-    -   Example: Is the association between 2-year relapse rates and
-        having a positive scan modified by gender?
+    -   Example: Is the association between 2-year relapse rates and having a positive scan modified by gender?
 
-        -   Women relapse 40% of the time when the scan is negative, and
-            95% of the time when the scan is positive (an increase of
-            55%)
+        -   Women relapse 40% of the time when the scan is negative, and 95% of the time when the scan is positive (an increase of 55%)
 
-            -   If men relapse 75% of the time when the scan is
-                negative, then a positive scan can increase the relapse
-                rate to at most 100%, which is only a 25% increase
+            -   If men relapse 75% of the time when the scan is negative, then a positive scan can increase the relapse rate to at most 100%, which is only a 25% increase
 
                 |                 |       |              |
                 |-----------------|-------|--------------|
@@ -288,8 +244,7 @@ plot(function(x) expit(x), -4,4, ylab="Probabilty", xlab="Predictor")
                 | Difference      | 55%   | Up to 25%    |
                 | Ratio           | 1.64  | $\leq 1.33$  |
 
-            -   With the odds, the association can hold without effect
-                modification
+            -   With the odds, the association can hold without effect modification
 
                 |               |       |                  |
                 |---------------|-------|------------------|
@@ -300,22 +255,17 @@ plot(function(x) expit(x), -4,4, ylab="Probabilty", xlab="Predictor")
                 |               |       |                  |
                 | Ratio         | 28.5  | $< \infty$       |
 
--   If the o dds of positive scan in men was 85.5, then the odds ratio
-    would be exactly 28.5 (no effect modification)
+-   If the o dds of positive scan in men was 85.5, then the odds ratio would be exactly 28.5 (no effect modification)
 
 -   Fourth (statistics) reason:
 
-    -   Classical linear regression requires equal variances across each
-        predictor group
+    -   Classical linear regression requires equal variances across each predictor group
 
-    -   But, with binary data, the variance within a group depends on
-        the mean
+    -   But, with binary data, the variance within a group depends on the mean
 
     -   For binary $Y$, $E(Y) = p$ and $Var(Y) = p(1-p)$
 
-    -   With robust standard errors, the mean-variance relationship is
-        not a major problem. However, a logistic model that correctly
-        models the mean-variance relationship will be more efficient.
+    -   With robust standard errors, the mean-variance relationship is not a major problem. However, a logistic model that correctly models the mean-variance relationship will be more efficient.
 
 ### The simple logistic regression model
 
@@ -323,46 +273,35 @@ plot(function(x) expit(x), -4,4, ylab="Probabilty", xlab="Predictor")
 
     -   Distribution: $\textrm{Pr}(Y_i = 1) = p_i$
 
-    -   Model:
-        $\textrm{logit}(p_i) = \textrm{log}\left(\frac{p_i}{1-p_i}\right) = \beta_0 + \beta_1 \times X_i$
+    -   Model: $\textrm{logit}(p_i) = \textrm{log}\left(\frac{p_i}{1-p_i}\right) = \beta_0 + \beta_1 \times X_i$
 
     -   When $X_i = 0$: log odds = $\beta_0$
 
     -   When $X_i = x$: log odds = $\beta_0 + \beta_1 \times x$
 
-    -   When $X_i = x+1$: log odds =
-        $\beta_0 + \beta_1 \times x + \beta_1$
+    -   When $X_i = x+1$: log odds = $\beta_0 + \beta_1 \times x + \beta_1$
 
 -   To interpret as odds, exponentiate the regression parameters
 
     -   Distribution: $\textrm{Pr}(Y_i = 1) = p_i$
-    -   Model:
-        $\frac{p_i}{1-p_i} = \exp(\beta_0 + \beta_1 \times X_i) = e^{\beta_0} \times e^{\beta_1 \times X_i}$
+    -   Model: $\frac{p_i}{1-p_i} = \exp(\beta_0 + \beta_1 \times X_i) = e^{\beta_0} \times e^{\beta_1 \times X_i}$
     -   When $X_i = 0$: odds = $e^{\beta_0}$
     -   When $X_i = x$: odds = $e^{\beta_0} \times e^{\beta_1 \times x}$
-    -   When $X_i = x+1$: odds =
-        $e^{\beta_0} \times e^{\beta_1 \times x} \times e^{\beta_1}$
+    -   When $X_i = x+1$: odds = $e^{\beta_0} \times e^{\beta_1 \times x} \times e^{\beta_1}$
 
--   To interpret as proportions (remember proportion = odds / (1 +
-    odds))
+-   To interpret as proportions (remember proportion = odds / (1 + odds))
 
     -   Distribution: $\textrm{Pr}(Y_i = 1) = p_i$
-    -   Model:
-        $p_i = \frac{e^{\beta_0} e^{\beta_1 \times X_i}}{1 + e^{\beta_0} e^{\beta_1 \times X_i}}$
+    -   Model: $p_i = \frac{e^{\beta_0} e^{\beta_1 \times X_i}}{1 + e^{\beta_0} e^{\beta_1 \times X_i}}$
     -   When $X_i = 0$: $p_i = \frac{e^{\beta_0}}{1 + e^{\beta_0}}$\
-    -   When $X_i = x$:
-        $p_i = \frac{e^{\beta_0} e^{\beta_1 \times x}}{1 + e^{\beta_0} e^{\beta_1 \times x}}$
-    -   When $X_i = x+1$:
-        $p_i = \frac{e^{\beta_0} e^{\beta_1 \times x} e^{\beta_1}}{1 + e^{\beta_0} e^{\beta_1 \times x}e^{\beta_1}}$
+    -   When $X_i = x$: $p_i = \frac{e^{\beta_0} e^{\beta_1 \times x}}{1 + e^{\beta_0} e^{\beta_1 \times x}}$
+    -   When $X_i = x+1$: $p_i = \frac{e^{\beta_0} e^{\beta_1 \times x} e^{\beta_1}}{1 + e^{\beta_0} e^{\beta_1 \times x}e^{\beta_1}}$
 
 -   Most common interpretations found by exponentiating the coefficients
 
-    -   Odds when predictor is 0 found by exponentiating the intercept:
-        $\exp(\beta_0)$
+    -   Odds when predictor is 0 found by exponentiating the intercept: $\exp(\beta_0)$
 
-    -   Odds ratio between groups differing in the values of the
-        predictor by 1 unit found by exponentiating the slope:
-        $\exp(\beta_1)$
+    -   Odds ratio between groups differing in the values of the predictor by 1 unit found by exponentiating the slope: $\exp(\beta_1)$
 
 -   Stata commands
 
@@ -370,15 +309,13 @@ plot(function(x) expit(x), -4,4, ylab="Probabilty", xlab="Predictor")
     logit respvar predvar, [robust]
     ```
 
-    -   Provides regression parameter estimates an inference on the log
-        odds scale (both coefficients with CIs, SEs, p-values)
+    -   Provides regression parameter estimates an inference on the log odds scale (both coefficients with CIs, SEs, p-values)
 
     ``` stata
     logistic respvar predvar, [robust]
     ```
 
-    -   Provides regression parameter estimates and inference on the
-        odds ratio scale (only slope with CIs, SEs, p-values)
+    -   Provides regression parameter estimates and inference on the odds ratio scale (only slope with CIs, SEs, p-values)
 
 -   R Commands
 
@@ -390,11 +327,9 @@ plot(function(x) expit(x), -4,4, ylab="Probabilty", xlab="Predictor")
 
 -   Dataset at <https://biostat.app.vumc.org/DataSets>
 
--   Describes the survival status of individual passengers on the
-    Titanic
+-   Describes the survival status of individual passengers on the Titanic
 
--   Data on age available for many, but not all, subjects (data
-    continually being updated)
+-   Data on age available for many, but not all, subjects (data continually being updated)
 
 -   Response variables is Survival
 
@@ -433,33 +368,25 @@ with(titanic,
 
 -   Comments on the plots
 
-    -   Age is missing for many subjects, which we will not worry about
-        in the following analysis
+    -   Age is missing for many subjects, which we will not worry about in the following analysis
 
-    -   The simple scatterplot, even with superimposes lowess smooth, is
-        worthless. I have jittered the point and altered their opacity
-        to help visualize overlapping point.
+    -   The simple scatterplot, even with superimposes lowess smooth, is worthless. I have jittered the point and altered their opacity to help visualize overlapping point.
 
-    -   More advanced plotting available in R (in this case, the plsmo()
-        function) can help to visualize the data
+    -   More advanced plotting available in R (in this case, the plsmo() function) can help to visualize the data
 
 ### Regression Model
 
--   Regression model for survival on age (ignoring possible effect
-    modification for now)
+-   Regression model for survival on age (ignoring possible effect modification for now)
 
--   Answer question by assessing linear trends in log odds of survival
-    by age
+-   Answer question by assessing linear trends in log odds of survival by age
 
--   Estimate the best fitting line to log odds of survival within age
-    groups
+-   Estimate the best fitting line to log odds of survival within age groups
 
 $$\textrm{logodds}(\textrm{Survival} | \textrm{Age}) = \beta_0 + \beta_1 \times \textrm{Age}$$
 
 -   An association will exist if the slope $\beta_1$ is nonzero
 
--   In that case, the odds (and probability) of survival will be
-    different across different age groups
+-   In that case, the odds (and probability) of survival will be different across different age groups
 
 ```{r}
 m.titanic <- glm(survived ~ age, data=titanic, family = "binomial")
@@ -492,8 +419,7 @@ predict(m.titanic, newdata=data.frame(age=0), type='response')
 
 -   Interpretation of slope
 
-    -   Estimate difference in the log odds of survival for two groups
-        differing by one year in age is $-0.0078985$
+    -   Estimate difference in the log odds of survival for two groups differing by one year in age is $-0.0078985$
 
     -   This estimate averages over males and females
 
@@ -501,17 +427,13 @@ predict(m.titanic, newdata=data.frame(age=0), type='response')
 
     -   Odds Ratio: $e^{-0.0078985} = 0.9921$
 
-    -   For five year difference in age:
-        $e^{-0.0078985 \times 5} = 0.9612$
+    -   For five year difference in age: $e^{-0.0078985 \times 5} = 0.9612$
 
     -   In Stata use "lincom age, or" or "lincom 5\*age, or"
 
-Note that if the straight line relationship does not hold true, we
-interpret the slope as an average difference in the log odds of survival
-per one year difference in age
+Note that if the straight line relationship does not hold true, we interpret the slope as an average difference in the log odds of survival per one year difference in age
 
-There are several ways to get the odds ratio and confidence interval in
-R
+There are several ways to get the odds ratio and confidence interval in R
 
 ```{r}
 # The coefficient and confidence interval (on the log-odds scale)
@@ -528,11 +450,9 @@ exp(5*coef(m.titanic)["age"])
 exp(5*confint.default(m.titanic, "age"))
 ```
 
--   Using finalfit to create a nicer output table of the coefficients
-    and confidence intervals
+-   Using finalfit to create a nicer output table of the coefficients and confidence intervals
 
-    -   For finalfit to use a logistic regression model by default,
-        survived must be defined as a factor variable with two levels
+    -   For finalfit to use a logistic regression model by default, survived must be defined as a factor variable with two levels
 
 ```{r}
 library(finalfit)
@@ -548,119 +468,75 @@ finalfit(.data = titanic, dependent, explanatory)
 
 ### Comments on Interpretation
 
--   The slope for age is expressed as a difference in group means, not
-    the difference due to aging. We did not do a longitudinal study in
-    which repeated measurements were taken on the same subject.
+-   The slope for age is expressed as a difference in group means, not the difference due to aging. We did not do a longitudinal study in which repeated measurements were taken on the same subject.
 
--   If the group log odds are truly linear, then the slope has an exact
-    interpretation as the change in survival due to a one year change in
-    (any) age
+-   If the group log odds are truly linear, then the slope has an exact interpretation as the change in survival due to a one year change in (any) age
 
--   Otherwise, the slope estimates the first order trend of the sample
-    data and we should not treat the estimates of group odds or
-    probabilities as accurate
+-   Otherwise, the slope estimates the first order trend of the sample data and we should not treat the estimates of group odds or probabilities as accurate
 
--   It is difficult to see in the above example, but the CIs around the
-    odds ratios are not symmetric
+-   It is difficult to see in the above example, but the CIs around the odds ratios are not symmetric
 
-    -   (Symmetric) CIs are calculated on the log odds scale, and then
-        transformed to the odds scale by expoenentiating the lower and
-        upper limits of the CI
+    -   (Symmetric) CIs are calculated on the log odds scale, and then transformed to the odds scale by expoenentiating the lower and upper limits of the CI
 
--   "From logistic regression analysis, we estimate that for each 5 year
-    difference in age, the odds of survival on the Titanic decreased by
-    3.9%, though this estimate is not statistically significant
-    ($p = 0.07$). A 95% CI suggests that this observation is not unusual
-    if a group that is five years older might have an odds of survival
-    that was anywhere between 7.9% lower and 0.4% higher than the
-    younger group."
+-   "From logistic regression analysis, we estimate that for each 5 year difference in age, the odds of survival on the Titanic decreased by 3.9%, though this estimate is not statistically significant ($p = 0.07$). A 95% CI suggests that this observation is not unusual if a group that is five years older might have an odds of survival that was anywhere between 7.9% lower and 0.4% higher than the younger group."
 
--   The confidence interval and statistical test given in the output is
-    called a Wald test. Other tests (Score, Likelihood Ratio) are also
-    possible.
+-   The confidence interval and statistical test given in the output is called a Wald test. Other tests (Score, Likelihood Ratio) are also possible.
 
     -   All tests are asymptotically equivalent
 
-    -   The Wald test is easiest to obtain, but generally performs the
-        poorest in small sample sizes
+    -   The Wald test is easiest to obtain, but generally performs the poorest in small sample sizes
 
-    -   The Likelihood Ratio test performs the best in small samples. We
-        will discuss it later, including how to obtain the test using
-        post-estimation commands.
+    -   The Likelihood Ratio test performs the best in small samples. We will discuss it later, including how to obtain the test using post-estimation commands.
 
-    -   The Score test is not bad in small samples, but is often hard to
-        obtain from software. It is exactly equal to the Chi-squared
-        test for binary outcomes and categorical predictors.
+    -   The Score test is not bad in small samples, but is often hard to obtain from software. It is exactly equal to the Chi-squared test for binary outcomes and categorical predictors.
 
 #### Bayesian Estimates and Interpretation
 
--   Bayesian approach to the logistic model requires specifying the
-    model, prior distributions, and the likelihood
+-   Bayesian approach to the logistic model requires specifying the model, prior distributions, and the likelihood
 
 -   The model
 
-    -   e.g. a model for the log odds of survival that is linear in the
-        parameters with an intercept and slope for age
+    -   e.g. a model for the log odds of survival that is linear in the parameters with an intercept and slope for age
 
 -   Prior distributions on parameters
 
-    -   For the simple logistic regression model, we have parameters
-        $\beta_0$, and $\beta_1$.
+    -   For the simple logistic regression model, we have parameters $\beta_0$, and $\beta_1$.
 
-    -   For now, we will use default prior distributions that are are
-        intended to be *weakly informative* in that they provide
-        moderate regularization and help stabilize computation. See the
-        [STAN
-        documentation](https://mc-stan.org/rstanarm/reference/priors.html)
-        for more details
+    -   For now, we will use default prior distributions that are are intended to be *weakly informative* in that they provide moderate regularization and help stabilize computation. See the [STAN documentation](https://mc-stan.org/rstanarm/reference/priors.html) for more details
 
     -   Appropriate priors can be based on scientific considerations
 
-    -   Sensitivity analyses can evaluate the the robustness of finding
-        to different prior assumptions
+    -   Sensitivity analyses can evaluate the the robustness of finding to different prior assumptions
 
 -   The likelihood
 
-    -   For a binomial GLM the likelihood for one observation $y$ can be
-        written as a conditionally binomial probability mass function
+    -   For a binomial GLM the likelihood for one observation $y$ can be written as a conditionally binomial probability mass function
 
 $$\binom{n}{y} \pi^{y} (1 - \pi)^{n - y},$$
 
--   $n$ is the known number of trials, $\pi = g^{-1}(\eta)$ is the
-    probability of success and
-    $\eta = \alpha + \mathbf{x}^\top \boldsymbol{\beta}$ is a linear
-    predictor
+-   $n$ is the known number of trials, $\pi = g^{-1}(\eta)$ is the probability of success and $\eta = \alpha + \mathbf{x}^\top \boldsymbol{\beta}$ is a linear predictor
 
 <!-- -->
 
--   For a sample of size $N$, the likelihood of the entire sample is the
-    product of $N$ individual likelihood contributions.
+-   For a sample of size $N$, the likelihood of the entire sample is the product of $N$ individual likelihood contributions.
 
 <!-- -->
 
--   Because $\pi$ is a probability, for a binomial model the *link*
-    function $g$ maps between the unit interval (the support of $\pi$)
-    and the set of all real numbers $\mathbb{R}$. When applied to a
-    linear predictor $\eta$ with values in $\mathbb{R}$, the inverse
-    link function $g^{-1}(\eta)$ therefore returns a valid probability
-    between 0 and 1.
+-   Because $\pi$ is a probability, for a binomial model the *link* function $g$ maps between the unit interval (the support of $\pi$) and the set of all real numbers $\mathbb{R}$. When applied to a linear predictor $\eta$ with values in $\mathbb{R}$, the inverse link function $g^{-1}(\eta)$ therefore returns a valid probability between 0 and 1.
 
 -   The two most common link functions used for binomial GLMs are the
 
     -   [logit](https://en.wikipedia.org/wiki/Logit) and
     -   [probit](https://en.wikipedia.org/wiki/Probit)
 
--   With the logit (or log-odds) link function
-    $g(x) = \ln{\left(\frac{x}{1-x}\right)}$, the likelihood for a
-    single observation becomes
+-   With the logit (or log-odds) link function $g(x) = \ln{\left(\frac{x}{1-x}\right)}$, the likelihood for a single observation becomes
 
 $$\binom{n}{y}\left(\text{logit}^{-1}(\eta)\right)^y 
 \left(1 - \text{logit}^{-1}(\eta)\right)^{n-y} = 
 \binom{n}{y} \left(\frac{e^{\eta}}{1 + e^{\eta}}\right)^{y}
 \left(\frac{1}{1 + e^{\eta}}\right)^{n - y}$$
 
--   With the probit link function $g(x) = \Phi^{-1}(x)$ yields the
-    likelihood
+-   With the probit link function $g(x) = \Phi^{-1}(x)$ yields the likelihood
 
 $$\binom{n}{y} \left(\Phi(\eta)\right)^{y}
 \left(1 - \Phi(\eta)\right)^{n - y},$$
@@ -690,16 +566,11 @@ prior_summary(fit2, digits = 2)
 
     -   Slope for age is of primary scientific importance
 
-    -   *A priori* we assume that no association between age and
-        survival. Specifically, we assumed a Normal prior with location
-        (mean) of 0 and scale (standard devation) of 0.17 for $\beta_1$.
+    -   *A priori* we assume that no association between age and survival. Specifically, we assumed a Normal prior with location (mean) of 0 and scale (standard devation) of 0.17 for $\beta_1$.
 
-    -   Conditional on the data, we estimate that for every 1 year
-        increase in age, the log odds of decreases by -0.0079 (95%
-        credible interval -0.0169 to 0.0004).
+    -   Conditional on the data, we estimate that for every 1 year increase in age, the log odds of decreases by -0.0079 (95% credible interval -0.0169 to 0.0004).
 
-    -   To obtain the posterior odds ratio and 95% credible intervals,
-        some additional commands are needed
+    -   To obtain the posterior odds ratio and 95% credible intervals, some additional commands are needed
 
 ```{r}
 # 1 year change in age
@@ -718,135 +589,91 @@ exp(5*posterior_interval(fit2, prob = 0.95))[2,] # 95% credible interval
 
 ```
 
--   The association between age and probability of survival was
-    estimated using a Bayesian logistic regression model. The model did
-    not adjust for other covariates and assumed a logit link function
-    and Binomial likelihood. We assumed a weakly informative prior
-    distribution for the log odds of survival given age (Normal prior
-    with mean 0 and scale 0.17 for $\beta_1$). Conditional on the data,
-    the posterior mean estimate indicates that comparing two subjects
-    who differ in age by 5 years, the younger subject has a 1.04 fold
-    increased odds of survival compared to the older subject. A 95%
-    credible for this posterior odds ratio is from 1.00 to 1.09.
+-   The association between age and probability of survival was estimated using a Bayesian logistic regression model. The model did not adjust for other covariates and assumed a logit link function and Binomial likelihood. We assumed a weakly informative prior distribution for the log odds of survival given age (Normal prior with mean 0 and scale 0.17 for $\beta_1$). Conditional on the data, the posterior mean estimate indicates that comparing two subjects who differ in age by 5 years, the younger subject has a 1.04 fold increased odds of survival compared to the older subject. A 95% credible for this posterior odds ratio is from 1.00 to 1.09.
 
--   Note that this model does not consider gender, so it is averaging
-    over the males and females. We will revisits this analysis where the
-    age effect is analyzed separately in males and females.
+-   Note that this model does not consider gender, so it is averaging over the males and females. We will revisits this analysis where the age effect is analyzed separately in males and females.
 
 ## Inference with Logistic Regression
 
--   The ideas of Signal and Noise found in simple linear regression do
-    not translate well to logistic regression
+-   The ideas of Signal and Noise found in simple linear regression do not translate well to logistic regression
 
--   We do not tend to quantify an error distribution with logistic
-    regression
+-   We do not tend to quantify an error distribution with logistic regression
 
--   Valid statistical inference (CIs, p-values) about *associations*
-    requires three general assumptions
+-   Valid statistical inference (CIs, p-values) about *associations* requires three general assumptions
 
--   Assumption 1: Approximately Normal distributions for the parameter
-    estimates
+-   Assumption 1: Approximately Normal distributions for the parameter estimates
 
     -   Large N
 
-    -   Need for either robust standard errors or classical logistic
-        regression
+    -   Need for either robust standard errors or classical logistic regression
 
-    -   Definition of large depends on the underlying probabilities
-        (odds)
+    -   Definition of large depends on the underlying probabilities (odds)
 
-    -   Recall the rule of thumb for chi-squared tests based on the
-        expected number of events
+    -   Recall the rule of thumb for chi-squared tests based on the expected number of events
 
 -   Assumption 2: Assumptions about the independence of observations
 
     -   Classical regression: Independence of all observation
 
-    -   Robust standard errors: Correlated observations within
-        identified clusters
+    -   Robust standard errors: Correlated observations within identified clusters
 
--   Assumption 3: Assumptions about variance of observations within
-    groups
+-   Assumption 3: Assumptions about variance of observations within groups
 
     -   Classical regression: Mean-variance relationship for binary data
 
-        -   Classical logistic regression estimates SE using model based
-            estimates
+        -   Classical logistic regression estimates SE using model based estimates
 
-        -   Hence in order to satisfy this requirement, linearity of log
-            odds across groups must hold
+        -   Hence in order to satisfy this requirement, linearity of log odds across groups must hold
 
     -   Robust standard errors
 
         -   Allows unequal variance across groups
 
-        -   Hence, do not need linearity of log odds across groups to
-            hold
+        -   Hence, do not need linearity of log odds across groups to hold
 
-        -   Valid statistical inference (CIs, p-values) about *odds of
-            response in specific groups* requires a further assumption
+        -   Valid statistical inference (CIs, p-values) about *odds of response in specific groups* requires a further assumption
 
 -   Assumption 4: Adequacy of the linear model
 
-    -   If we are trying to borrow information about the log odds from
-        neighboring groups, and we are assuming a straight line
-        relationship, the straight line needs to be true
+    -   If we are trying to borrow information about the log odds from neighboring groups, and we are assuming a straight line relationship, the straight line needs to be true
 
         -   Needed for either classical or robust standard errors
 
-        -   Note that we can model transformations of the measured
-            predictor if we feel a straight line is not appropriate
+        -   Note that we can model transformations of the measured predictor if we feel a straight line is not appropriate
 
-    -   Inference about *individual observations* (prediction intervals,
-        P-values) in specific groups requires no further assumptions
-        because we have binary data
+    -   Inference about *individual observations* (prediction intervals, P-values) in specific groups requires no further assumptions because we have binary data
 
-        -   For binary data, if we know the mean (proportion), we know
-            everything about the distribution including the variance
+        -   For binary data, if we know the mean (proportion), we know everything about the distribution including the variance
 
-        -   This differs from linear regression where we can have a
-            correct model for the mean, but the assumption about the
-            error distribution (Normality, homoskedasticity) can be
-            incorrect
+        -   This differs from linear regression where we can have a correct model for the mean, but the assumption about the error distribution (Normality, homoskedasticity) can be incorrect
 
 ### Interpreting "Positive" Results
 
 -   Slope is statistically different from 0 using robust standard errors
 
--   Observed data is atypical of a setting with no linear trend in odds
-    of response across groups
+-   Observed data is atypical of a setting with no linear trend in odds of response across groups
 
--   Data suggests evidence of a trend toward larger (or smaller) odds in
-    groups having larger values of the predictor
+-   Data suggests evidence of a trend toward larger (or smaller) odds in groups having larger values of the predictor
 
--   (To the extent the data appears linear, estimates of the group odds
-    or probabilities will be reliable)
+-   (To the extent the data appears linear, estimates of the group odds or probabilities will be reliable)
 
 ### Interpreting "Negative" Results
 
--   Many possible reasons why the slope is not statistically different
-    from 0 using robust standard errors
+-   Many possible reasons why the slope is not statistically different from 0 using robust standard errors
 
     -   There may be no association between the response and predictor
 
-    -   There may be an association in the parameter considered, but the
-        best fitting line has zero slope
+    -   There may be an association in the parameter considered, but the best fitting line has zero slope
 
-    -   There may be a first order trend in the log odds, but we lacked
-        the precision to be confident that it truly exists (a type II
-        error)
+    -   There may be a first order trend in the log odds, but we lacked the precision to be confident that it truly exists (a type II error)
 
 ## Example analysis revisited: Effect Modification
 
--   Recall in our Titanic example that the effect of age appeared to
-    differ by sex
+-   Recall in our Titanic example that the effect of age appeared to differ by sex
 
-    -   We ignored this difference earlier, so our estimated age effect
-        was a (weighted) average of the age effect in males and the age
-        effect in female
+    -   We ignored this difference earlier, so our estimated age effect was a (weighted) average of the age effect in males and the age effect in female
 
-    -   Here is the plot again describing the trends we see in survival
-        by age and sex (using plsmo).
+    -   Here is the plot again describing the trends we see in survival by age and sex (using plsmo).
 
 ```{r}
 # | fig-cap: Age versus survival by gender in the Titanic data by age using a super smoother.
@@ -855,23 +682,17 @@ with(titanic,
 )
 ```
 
--   We could describe the observed differences in two way, both being
-    correct
+-   We could describe the observed differences in two way, both being correct
 
     -   Gender modifies the age effect
 
-        -   In males, the probability of survival worsened with age
-            while in female the probability of survival improved with
-            age
-        -   Emphasizes that the female age slope is positive while the
-            male age slope is negative
+        -   In males, the probability of survival worsened with age while in female the probability of survival improved with age
+        -   Emphasizes that the female age slope is positive while the male age slope is negative
 
     -   Age modifies the gender effect
 
-        -   The survival rates of male and females were more similar at
-            younger ages than older ages
-        -   Could specify the odds ratio of survival comparing females
-            to males at specific ages
+        -   The survival rates of male and females were more similar at younger ages than older ages
+        -   Could specify the odds ratio of survival comparing females to males at specific ages
 
 ### Stratified analysis by sex
 
@@ -905,13 +726,10 @@ exp(5*confint.default(fit.titanic.male,"age"))
 
 ### Effect modification using interaction terms
 
--   Instead of fitting two separate models for male and females, we
-    could estimate all parameters in a single regression model
-    -   Let $p_i$ be the probability of survival for passenger $i$ and
-        $\textrm{logit}(p)= \textrm{log}\left(\frac{p}{1-p}\right)$
+-   Instead of fitting two separate models for male and females, we could estimate all parameters in a single regression model
+    -   Let $p_i$ be the probability of survival for passenger $i$ and $\textrm{logit}(p)= \textrm{log}\left(\frac{p}{1-p}\right)$
     -   Let $X_{1i}$ be the age of subject $i$
-    -   Let $X_{2i}$ be an indicator variable for female sex. $X_{2i}=1$
-        if a subject is female and $X_{2i} = 0$ if a subject is male
+    -   Let $X_{2i}$ be an indicator variable for female sex. $X_{2i}=1$ if a subject is female and $X_{2i} = 0$ if a subject is male
 
 $$\textrm{logit}(p_i | X_{1i},X_{2i}) = \beta_0 + \beta_1 * X_{1i} + \beta_{2i} * X_{2i} + \beta_3*X_{1i}*X_{2i}$$
 
@@ -924,10 +742,8 @@ $$\textrm{logit}(p_i | X_{1i}, X_{2i}=0) = \beta_0 + \beta_1 * X_{1i}$$
 $$\textrm{logit}(p | X_{1i}, X_{2i}=1) = (\beta_0+\beta_2) + (\beta_1+\beta_3) * X_{1i}$$
 
 -   $\hat{\beta_1}$ is the estimate age effect in males
--   $\hat{\beta_1} + \hat{\beta_3}$ is the estimated age effect in
-    females
--   $\hat{\beta_3}$ is the estimated *difference* between the age effect
-    in male and the age effect in females
+-   $\hat{\beta_1} + \hat{\beta_3}$ is the estimated age effect in females
+-   $\hat{\beta_3}$ is the estimated *difference* between the age effect in male and the age effect in females
 
 ```{r}
 # female has already been defined in the dataset, but if I wanted to create this variable I could do so
@@ -937,8 +753,7 @@ fit.titanic.interact <- glm(survived ~ age + female + age*female, data=titanic)
 summary(fit.titanic.interact)
 ```
 
--   We can see that the parameter estimates from the interaction model
-    are the same as the estimates from the two stratified models
+-   We can see that the parameter estimates from the interaction model are the same as the estimates from the two stratified models
 
 ```{r}
 # Interaction model
