@@ -1,11 +1,10 @@
 ---
 title: "Flexible Modeling of Continuous Predictors"
 subtitle: "Lecture 11"
-name: notes/Lec11.DoseResponse.qmd
+name: Lec11.DoseResponse.qmd
 ---
 
 ```{r}
-source(file.path('..', 'pander_registry.R'))
 library(rms)
 library(ggplot2)
 library(splines)
@@ -14,6 +13,7 @@ library(lmtest)
 library(sandwich)
 library(car)
 library(knitr)
+tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 ```
 
 # Flexible models of continuous predictors
@@ -890,8 +890,6 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
 
 -   They have different inputs which can result in different model fits
 
--   
-
 ```{r, fig.cap="Natrual spline (with knots at 3.5 and 9.5) compared with restricted cubic spline with parms set to give the same fit.  Both spline approaches impose a linearity constraint at the tails.  Fits are same using these inputs."}
 ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + 
   geom_smooth(method=lm, formula=y ~ ns(x, knots=c(9.5, 15.5)), se=FALSE, aes(color="Blue")) + 
@@ -908,7 +906,7 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
   scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("ns(x, df=3)","rcs(x, nk=5)")) + theme(legend.position = c(0.8, 0.2))
 ```
 
-##### Nautral spline versus piecewise lienar spline
+##### Nautral spline versus piecewise linear spline
 
 ```{r, fig.cap="Natrual spline (3 d.f) compared with restricted cubic spline with knots at 9.5 and 15.5.  Both spline approaches impose a linearity constraint at the tails."}
 ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + 

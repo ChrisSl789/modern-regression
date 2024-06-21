@@ -1,15 +1,15 @@
 ---
 title: "Modeling Effect Modification"
 subtitle: "Lecture 10"
-name: notes/Lec10.Modeling.Effect.Modification.qmd
+name: Lec10.Modeling.Effect.Modification.qmd
 ---
 
 ```{r}
-source(file.path('..', 'pander_registry.R'))
 library(rms)
 library(ggplot2)
 library(biostat3)
 library(car)
+tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 ```
 
 ## Overview

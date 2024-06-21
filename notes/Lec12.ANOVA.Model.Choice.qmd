@@ -1,11 +1,10 @@
 ---
 title: "ANOVA and Model Choice"
 subtitle: "Lecture 12"
-name: notes/Lec12.ANOVA.Model.Choice.qmd
+name: Lec12.ANOVA.Model.Choice.qmd
 ---
 
 ```{r}
-source(file.path('..', 'pander_registry.R'))
 library(rms)
 library(ggplot2)
 library(splines)
@@ -15,6 +14,7 @@ library(sandwich)
 library(car)
 library(kableExtra)
 library(plotrix)
+tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 ```
 
 ## Overview

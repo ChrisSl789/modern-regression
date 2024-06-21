@@ -1,11 +1,11 @@
 ---
 title: "Precision of Statistical Intefence"
 subtitle: "Lecture 05"
-name: notes/Lec05.Precision.qmd
+name: Lec05.Precision.qmd
 ---
 
 ```{r}
-source(file.path('..', 'pander_registry.R'))
+tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 ```
 
 ## Overview

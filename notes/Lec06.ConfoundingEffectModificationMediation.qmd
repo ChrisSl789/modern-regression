@@ -1,11 +1,12 @@
 ---
 title: "Confouding, Effect Modification, and Mediation"
 subtitle: "Lecture 06"
-name: notes/Lec06.ConfoundingEffectModificationMediation.qmd
+name: Lec06.ConfoundingEffectModificationMediation.qmd
 ---
 
 ```{r}
 library(ggplot2)
+tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 ```
 
 ## Overview

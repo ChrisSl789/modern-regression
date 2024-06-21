@@ -1,7 +1,7 @@
 ---
 title: "Simple Linear Regression"
 subtitle: "Lecture 03"
-name: notes/Lec03.SimpleLinearRegression.qmd
+name: Lec03.SimpleLinearRegression.qmd
 ---
 
 ```{r}
@@ -13,7 +13,7 @@ library(dplyr)
 library(rms)
 library(ggplot2)
 library(gglm)
-source(file.path('..', 'pander_registry.R'))
+tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 ```
 
 ## General Regression Setting

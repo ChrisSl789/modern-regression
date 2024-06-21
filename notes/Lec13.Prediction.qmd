@@ -1,13 +1,13 @@
 ---
 title: "Regression Based Prediction"
 subtitle: "Lecture 13"
-name: notes/Lec13.Prediction.qmd
+name: Lec13.Prediction.qmd
 ---
 
 ```{r}
-source(file.path('..', 'pander_registry.R'))
 library(rms)
 library(ggplot2)
+tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 ```
 
 ## Overview

@@ -1,12 +1,12 @@
 ---
 title: "Review of Key Concepts"
 subtitle: "Lecture 02"
-name: notes/Lec02.review.qmd
+name: Lec02.review.qmd
 ---
 
 ```{r}
 library(Exact)
-source(file.path('..', 'pander_registry.R'))
+tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 ```
 
 ## Samples from populations

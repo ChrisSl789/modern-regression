@@ -1,11 +1,11 @@
 ---
 title: "Logistic Regression"
 subtitle: "Lecture 04"
-name: notes/Lec04.Logistic.qmd
+name: Lec04.Logistic.qmd
 ---
 
 ```{r}
-source(file.path('..', 'pander_registry.R'))
+tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 ```
 
 ## General Regression Setting
@@ -325,7 +325,7 @@ plot(function(x) expit(x), -4,4, ylab="Probabilty", xlab="Predictor")
 
 ## Example: Survival on the Titanic and Age
 
--   Dataset at <https://biostat.app.vumc.org/DataSets>
+-   Dataset at <https://statcomp2.app.vumc.org/modern-regression/lectures/data/>
 
 -   Describes the survival status of individual passengers on the Titanic
 

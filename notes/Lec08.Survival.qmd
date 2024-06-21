@@ -1,12 +1,11 @@
 ---
 title: "Introduction to Survival Analysis"
 subtitle: "Lecture 08"
-name: notes/Lec08.Survival.qmd
+name: Lec08.Survival.qmd
 ---
 
 ```{r}
 #| echo: false
-source(file.path('..', 'pander_registry.R'))
 library(rms)
 library(ggplot2)
 library(knitr)
@@ -18,6 +17,7 @@ library(survminer)
 library(dplyr)
 library(flexsurv)
 library(eha)
+tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 ```
 
 ## Acknowledgments

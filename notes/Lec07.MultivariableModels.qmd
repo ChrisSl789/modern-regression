@@ -1,13 +1,13 @@
 ---
 title: "Multivariable Models"
 subtitle: "Lecture 07"
-name: notes/Lec07.MultivariableModels.qmd
+name: Lec07.MultivariableModels.qmd
 ---
 
 ```{r}
-source(file.path('..', 'pander_registry.R'))
 library(rms)
 library(ggplot2)
+tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 ```
 
 ## Overview

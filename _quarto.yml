@@ -87,6 +87,14 @@ website:
             text: Matrix algebra review
           - href: supplemental/Baseline_Change_MACH.pdf
             text: Change from baseline and precision
+      - section: "Statcomp2"
+        contents:
+          - href: https://statcomp2.app.vumc.org/modern-regression/
+            text: "Main directory"
+          - href: https://statcomp2.app.vumc.org/modern-regression/lectures/
+            text: "Lectures"
+          - href: https://statcomp2.app.vumc.org/modern-regression/lectures/data
+            text: "Data"
 
 format:
   html:
