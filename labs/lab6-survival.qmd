@@ -1,11 +1,7 @@
 ---
 title: "Lab 6: Survival Analysis"
 author: "Author"
-format:
-  html:
-    embed-resources: true
-    code-tools: true
-editor: source
+name: labs/lab6-survival.qmd
 toc: true
 ---
 
@@ -20,17 +16,15 @@ All questions relate to the question of whether treatment (DES) and index (a mea
 
 Perform analyses to determine whether the distribution of time to relapse differs across groups defined by treatment and index.
 
-
 ### R functions
 
 Some useful R functions
 
-* Surv
-* survfit
-* survdiff
-* ggsurvplot
-* coxph
-
+-   Surv
+-   survfit
+-   survdiff
+-   ggsurvplot
+-   coxph
 
 ## Setup
 
@@ -49,51 +43,45 @@ library(foreign)
 ### Load data
 
 ```{r}
-cancer <- stata.get("http://biostat.app.vumc.org/wiki/pub/Main/CourseBios312/prostaticcancer.dta")
+cancer <- stata.get("https://biostat.app.vumc.org/wiki/pub/Main/CourseBios312/prostaticcancer.dta")
 names(cancer)
 summary(cancer)
 ```
-
 
 ## Questions
 
 ### 1. Before looking at the data, we should decide if we are going to robust standard errors or not
 
-* What are the benefits of using robust standard errors over classical PH regression?
+-   What are the benefits of using robust standard errors over classical PH regression?
 
-* What are the benefits of using classical standard error over robust standard errors?
+-   What are the benefits of using classical standard error over robust standard errors?
 
-### 2.  Provide suitable descriptive statistics regarding the distribution of time to relapse according to treatment status.
+### 2. Provide suitable descriptive statistics regarding the distribution of time to relapse according to treatment status.
 
-* Create and plot Kaplan-Meier estimate of the survival curves by treatment
+-   Create and plot Kaplan-Meier estimate of the survival curves by treatment
 
-* What is the (approximate) survival estimate at 30 months for each treatment arm? What is it at 60 months?  Obtain the estimate and 95% confidence interval for survival at 30 months.  Interpret the estimate and CI.
+-   What is the (approximate) survival estimate at 30 months for each treatment arm? What is it at 60 months? Obtain the estimate and 95% confidence interval for survival at 30 months. Interpret the estimate and CI.
 
-* What is the estimated median survival time in each treatment arm?  Provide a 95% confidence interval for these estimates.  Interpret the estimate and CI.
+-   What is the estimated median survival time in each treatment arm? Provide a 95% confidence interval for these estimates. Interpret the estimate and CI.
 
 ### 3. List the variables time and status for the subjects with treatment==2
 
-* Be able to interpret what each row indicates in terms of event/censoring time and event/censoring indicator.  That is, which observations are events and which are censored?  When did each occur?
+-   Be able to interpret what each row indicates in terms of event/censoring time and event/censoring indicator. That is, which observations are events and which are censored? When did each occur?
 
-
-* Calculate by hand the Kaplan-Meier estimate of survivorship for the first few event times.  Compare to the plot. At which time points does survivorship decrease?  At which time points does it stay the same?
-
+-   Calculate by hand the Kaplan-Meier estimate of survivorship for the first few event times. Compare to the plot. At which time points does survivorship decrease? At which time points does it stay the same?
 
 ### 4. Perform analysis comparing the instantaneous risk of relapse across groups defined treatment status using the following approaches. Compare the inference obtained from each approach.
 
-* The log rank test (this is a score test)
+-   The log rank test (this is a score test)
 
-* Cox proportional hazard regression using classical standard errors. This will give
-both a Wald and Likelihood Ratio test
+-   Cox proportional hazard regression using classical standard errors. This will give both a Wald and Likelihood Ratio test
 
-* Cox proportional hazard regression using robust standard errors. This will give a Wald test
+-   Cox proportional hazard regression using robust standard errors. This will give a Wald test
 
-* When you "compare the inference obtained...", interpret the hazard ratio and corresponding 95% confidence intervals.
+-   When you "compare the inference obtained...", interpret the hazard ratio and corresponding 95% confidence intervals.
 
 ### 5. Perform a proportional hazards regression comparing the instantaneous risk of relapse across groups defined by Gleason index (index). Compare the inference obtained from each approach.
 
-* Cox proportional hazard regression using classical standard errors.
+-   Cox proportional hazard regression using classical standard errors.
 
-* Cox proportional hazard regression using robust standard errors.
-
-
+-   Cox proportional hazard regression using robust standard errors.

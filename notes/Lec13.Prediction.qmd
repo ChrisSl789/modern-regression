@@ -1,39 +1,13 @@
 ---
 title: "Regression Based Prediction"
 subtitle: "Lecture 13"
-author: "Chris Slaughter"
-footer: "Bios 6312"
-date: last-modified
-format:
-  html:
-    embed-resources: true
-    standalone: true
-    number-sections: true
-    number-depth: 4
-    anchor-sections: true
-    smooth-scroll: true
-    theme: journal
-    toc: true
-    toc-depth: 4
-    toc-title: Contents
-    toc-location: left
-    code-link: false
-    code-tools: true
-    code-fold: true
-    code-block-bg: "#f1f3f5"
-    code-block-border-left: "#31BAE9"
-    reference-location: margin
-    fig-cap-location: margin
-    fontsize: medium
-
-execute:
-   warning: false
-   message: false
+name: Lec13.Prediction.qmd
 ---
 
 ```{r}
 library(rms)
 library(ggplot2)
+tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 ```
 
 ## Overview
@@ -364,7 +338,7 @@ library(ggplot2)
 
 <!-- -->
 
-```         
+```stata
 . gen logfev = log(fev)
 
 . regress logfev height age
@@ -558,7 +532,7 @@ Log likelihood = -158.52851                       Pseudo R2       =     0.2512
 
 ### Example: FEV by age and height
 
-```         
+```stata
 . regress logfev height age
 
       Source |       SS       df       MS              Number of obs =     654
@@ -599,7 +573,7 @@ Log likelihood = -158.52851                       Pseudo R2       =     0.2512
 
 -   We can compare these results to the prediction for summary measures done previously (see below)
 
-    ```         
+    ```
          +-----------------------------------------------------------------+
          |    gmfev    gmlofev    gmhifev    predfev   pre~ofev   predhi~v |
          |-----------------------------------------------------------------|
@@ -621,7 +595,7 @@ Log likelihood = -158.52851                       Pseudo R2       =     0.2512
 
 -   Example: Age is 10 and Height is 66
 
-    ```         
+    ```stata
     . gen sepredict2 = sepredict^2
     . gen sefit2 = sefit^2
     . list sepredict sefit sepredict2 sefit2 if age==10 & heigh==66
@@ -806,7 +780,7 @@ Log likelihood = -158.52851                       Pseudo R2       =     0.2512
 
 <!-- -->
 
-```         
+```stata
 . logit smoker height
 
 Logistic regression                               Number of obs   =        654
@@ -894,7 +868,7 @@ Ho: area(xb1) = area(xb2)
 
 <!-- -->
 
-```         
+```stata
 . 
 . xi: logit smoker age height i.sex fev if training < .6
 i.sex             _Isex_1-2           (_Isex_1 for sex==female omitted)
@@ -972,9 +946,9 @@ Log likelihood = -70.223945                       Pseudo R2       =     0.3629
 
 -   From abstract of paper
 
-    -   "Multivariable regression models are powerful tools that are frequently used in clinical outcomes\... however uncritical application of modeling techniques can result in models that poorly fit the dataset at hand, or, even more likely, inaccurately predict outcomes on new subjects."
+    -   "Multivariable regression models are powerful tools that are frequently used in clinical outcomes... however uncritical application of modeling techniques can result in models that poorly fit the dataset at hand, or, even more likely, inaccurately predict outcomes on new subjects."
 
-    -   "\... predictive accuracy should be unbiasedly validated using bootstrapping or cross-validation before using predictions in new data series."
+    -   "... predictive accuracy should be unbiasedly validated using bootstrapping or cross-validation before using predictions in new data series."
 
 -   Common problem: Number of predictors being considered ($p$) is larger than the number of events ($m$)
 
@@ -1002,7 +976,7 @@ Log likelihood = -70.223945                       Pseudo R2       =     0.3629
 
         -   Scientifically meaningful summary measures
 
--   Step 3: Fit the model and \...
+-   Step 3: Fit the model and ...
 
     -   Evaluate modeling assumptions: Linearity, additivity, distributional assumptions
 
@@ -1040,9 +1014,8 @@ Log likelihood = -70.223945                       Pseudo R2       =     0.3629
 
 <!-- -->
 
-```         
->f <- lrm(y ~ sex*rcs(cholesterol)+pol(age,2)+blood.pressure, x=TRUE, y=TRUE)
-> 
+```r
+> f <- lrm(y ~ sex*rcs(cholesterol)+pol(age,2)+blood.pressure, x=TRUE, y=TRUE)
 > f
 
 Logistic Regression Model
@@ -1076,7 +1049,7 @@ sex=male * cholesterol''  -0.1227 0.6718 -0.18  0.8551
 sex=male * cholesterol'''  0.1315 1.1752  0.11  0.9109  
 ```
 
--   Validation\...
+-   Validation...
 
     -   Backwards stepwise regression
 
@@ -1088,7 +1061,7 @@ sex=male * cholesterol'''  0.1315 1.1752  0.11  0.9109
 
 <!-- -->
 
-```         
+```r
 > validate(f, B=150, bw=TRUE, rule="p", sls=.1, type="individual")
 
                 Backwards Step-down - Original Model

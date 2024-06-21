@@ -1,10 +1,7 @@
 ---
 title: "Lab 2: Assumption in Linear Regression"
 author: "Patrick Ward (original), Chris Slaughter (modifications)"
-format:
-  html:
-    code-tools: true
-editor: visual
+name: labs/lab2-lienarassumptions.qmd
 ---
 
 ## Introduction

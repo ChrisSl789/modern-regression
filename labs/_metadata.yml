@@ -1,0 +1,6 @@
+format:
+  html:
+    code-tools:
+      source: repo
+    embed-resources: true
+editor: visual

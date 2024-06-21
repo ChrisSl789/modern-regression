@@ -1,10 +1,6 @@
 ---
 title: "Quarto Introduction"
 author: "Your Name"
-format:
-  html:
-    code-tools: true
-editor: visual
 ---
 
 ## Learning Objectives

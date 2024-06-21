@@ -1,18 +1,13 @@
 ---
 title: "Lab 7: Poisson Regression and Effect Modification"
 author: "Chris Slaughter"
-format:
-  html:
-    code-tools: true
-    embed-resources: true
-editor: visual
+name: labs/lab7-effectmodification-questions.qmd
 toc: true
 ---
 
 ## Introduction
 
 In this lab, we will estimate the association between salary and gender and consider administrative responsibilities a potential effect modifier. To provide a Poisson Regresion review, we will consider salary to be a rate (dollars per month) and use the following Poisson regression model for the log of the salary rate ($\lambda_i$). We will use robust standard error estimates
-
 
 $\textrm{log}(\lambda_i) = \beta_0 + \beta_M * \textrm{Male} + \beta_A * \textrm{Admin} + \beta_{MA} * \textrm{Male} * \textrm{Admin}$
 
@@ -31,11 +26,9 @@ library(sandwich)
 library(dplyr)
 ```
 
-
 ## Part 1: Initial dataset manipulation
 
-### 1. Read in the salary dataset.  Remove all observations that are not from 1995. Create an indicator variable for male gender
-
+### 1. Read in the salary dataset. Remove all observations that are not from 1995. Create an indicator variable for male gender
 
 ```{r}
 # Initial dataset manipulations
@@ -45,11 +38,9 @@ data95 <- subset(data, year=="95")
 data95$male <- as.numeric(data95$sex=="M")
 ```
 
-
 ## Part 2: Poisson Model
 
-### 2.1 In the above model, we did not specify an offset.  Why was an offset not used needed in this situation?  Give an example of where it might be appropriate to include an offset for the amount of money earned.
-
+### 2.1 In the above model, we did not specify an offset. Why was an offset not used needed in this situation? Give an example of where it might be appropriate to include an offset for the amount of money earned.
 
 ### 2.2 An underlying assumption of the Poisson model is that the mean equals the varaince. Consider the following summary statistics of the mean and the variance of salary overall and by admin duties and sex.
 
@@ -63,11 +54,11 @@ data95 %>% group_by(sex, admin) %>%
 
 ```
 
-#### 2.2.1 For evaluating the model assumption that the mean equals the variance, which set of output (the overall or stratified by admin and sex) corresponds to the effect modification model specified in the introduction?  Is the assumption that mean equals the variance an assumption on the (marginal) distribution of salary or the conditional distribution of salary given covariates?
+#### 2.2.1 For evaluating the model assumption that the mean equals the variance, which set of output (the overall or stratified by admin and sex) corresponds to the effect modification model specified in the introduction? Is the assumption that mean equals the variance an assumption on the (marginal) distribution of salary or the conditional distribution of salary given covariates?
 
-#### 2.2.2 Note that the stratum specific variance estimates are smaller than the overall variance because admin and male are significant predictors of salary.  It is likely that we have not included important covariates from the model (e.g. years of experience, rank, field).  Speculate on how inclusion of additional predictors could impact the conditional variance, and the mean-variance relationship assumption of the Poisson model.
+#### 2.2.2 Note that the stratum specific variance estimates are smaller than the overall variance because admin and male are significant predictors of salary. It is likely that we have not included important covariates from the model (e.g. years of experience, rank, field). Speculate on how inclusion of additional predictors could impact the conditional variance, and the mean-variance relationship assumption of the Poisson model.
 
-#### 2.2.3 Why should we use robust standard error estimates?  Should we base our decision to use robust standard error estimate on exploratory analyses like what is given above?
+#### 2.2.3 Why should we use robust standard error estimates? Should we base our decision to use robust standard error estimate on exploratory analyses like what is given above?
 
 #### 2.2.4 Use the estimates of the stratum-specific means to find the estimate $\beta_0$, $\beta_M$, $\beta_A$, and $\beta_{MA}$ that will be obtained from the Poisson regression model.
 
@@ -99,10 +90,9 @@ For each of the following scientific questions, specify the null and alternative
 
 #### 3.4.2 Is there evidence that gender modifies the difference in salary comparing faculty with administrative duties to faculty without administrative duties?
 
-
 ## Part 4: Comparison to other Poisson models
 
-### 4.1 Impact of not including the effect modifier, $\beta_{MA}$ in the model. Suppose we had fit the following model instead.  What can we say about our estimates of $\beta_M$ and $\beta_A$ from this model? Fit the model to see if you are right.
+### 4.1 Impact of not including the effect modifier, $\beta_{MA}$ in the model. Suppose we had fit the following model instead. What can we say about our estimates of $\beta_M$ and $\beta_A$ from this model? Fit the model to see if you are right.
 
 $\textrm{log}(\lambda_i) = \beta_0 + \beta_M * \textrm{Male} + \beta_A * \textrm{Admin}$
 

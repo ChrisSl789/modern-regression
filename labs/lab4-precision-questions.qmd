@@ -1,11 +1,7 @@
 ---
 title: "Lab 4: Precision and adjustment for baseline"
 author: "Chris Slaughter"
-format:
-  html:
-    code-tools: true
-    embed-resources: true
-editor: visual
+name: labs/lab4-precision-questions.qmd
 toc: true
 ---
 
@@ -143,7 +139,7 @@ pwr.t.test(n=NULL, d=1.8/s3, power=.9)
 
 -   (You would have to know that ANCOVA is equivalent to the linear regression model adjusted for baseline)
 
-```
+```         
 . sampsi 0 1.8, sd(3) pre(1) post(1) r01(.4)
 
 Estimated sample size for two samples with repeated measures
