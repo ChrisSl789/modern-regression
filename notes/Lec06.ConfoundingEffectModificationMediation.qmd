@@ -1,40 +1,12 @@
 ---
 title: "Confouding, Effect Modification, and Mediation"
 subtitle: "Lecture 06"
-author: "Chris Slaughter"
-footer: "Bios 6312"
-date: last-modified
-format:
-  html:
-    embed-resources: true
-    standalone: true
-    number-sections: true
-    number-depth: 4
-    anchor-sections: true
-    smooth-scroll: true
-    theme: journal
-    toc: true
-    toc-depth: 4
-    toc-title: Contents
-    toc-location: left
-    code-link: false
-    code-tools: true
-    code-fold: true
-    code-block-bg: "#f1f3f5"
-    code-block-border-left: "#31BAE9"
-    reference-location: margin
-    fig-cap-location: margin
-    fontsize: medium
-execute:
-   warning: false
-   message: false
-editor: 
-  markdown: 
-    wrap: 72
+name: Lec06.ConfoundingEffectModificationMediation.qmd
 ---
 
 ```{r}
 library(ggplot2)
+tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 ```
 
 ## Overview
@@ -743,7 +715,7 @@ flowchart LR
 ### Adjustment for Covariates
 
 -   We include predictors in an analysis for a number of reasons. In
-    order of importance\...
+    order of importance...
 
     1.  Scientific question
 
@@ -811,7 +783,7 @@ flowchart LR
         knowledge about the possible scientific mechanisms
 
 -   Effect of confounding: A confounder can make the association between
-    the predictor of interest and the response variable look\...
+    the predictor of interest and the response variable look...
 
     -   Stronger than the true association
 

@@ -1,34 +1,7 @@
 ---
 title: "Flexible Modeling of Continuous Predictors"
 subtitle: "Lecture 11"
-author: "Chris Slaughter"
-footer: "Bios 6312"
-date: last-modified
-format:
-  html:
-    embed-resources: true
-    standalone: true
-    number-sections: true
-    number-depth: 4
-    anchor-sections: true
-    smooth-scroll: true
-    theme: journal
-    toc: true
-    toc-depth: 4
-    toc-title: Contents
-    toc-location: left
-    code-link: false
-    code-tools: true
-    code-fold: true
-    code-block-bg: "#f1f3f5"
-    code-block-border-left: "#31BAE9"
-    reference-location: margin
-    fig-cap-location: margin
-    fontsize: medium
-
-execute:
-   warning: false
-   message: false
+name: Lec11.DoseResponse.qmd
 ---
 
 ```{r}
@@ -39,6 +12,8 @@ library(lspline)
 library(lmtest)
 library(sandwich)
 library(car)
+library(knitr)
+tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 ```
 
 # Flexible models of continuous predictors
@@ -442,7 +417,7 @@ lines(lowess(fev$fev ~ fev$height3), lwd=2)
 
 -   Polynomial regression
 
-    -   Fit linear term plus higher order terms (squared, cubic, \...)
+    -   Fit linear term plus higher order terms (squared, cubic, ...)
 
     -   Can fit an arbitrarily-complex function
 
@@ -684,7 +659,7 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
 -   Predicted heights for observed ages from the dummy variable and two polynomial models
 
 ```{r}
-kable(newdata[12:17,], format='html', digits=2)
+newdata[12:17,]
 ```
 
 ## Flexible Methods
@@ -727,7 +702,7 @@ m.poly16 <- lm(height ~ poly(age,16), data=fev)
 m.poly3 <- lm(height ~ poly(age,3), data=fev)
 newdata$ht.poly16 <- predict(m.poly16, newdata)
 newdata$ht.poly3 <- predict(m.poly3, newdata)
-kable(newdata[12:17,], format='html', digits=2)
+newdata[12:17,]
 ```
 
 ### Piecewise Linear Splines
@@ -754,7 +729,7 @@ kable(newdata[12:17,], format='html', digits=2)
 
 -   Stata: `mkspline newvar0 knot1 newvar1 knot2 newvar2 ... knotp newvarp = oldvar`
 
-    -   Would then run regression using newvar0 \... newvarp
+    -   Would then run regression using newvar0 ... newvarp
 
     -   Assumes straight lines between min and knot1; knot1 and knot2; etc.
 
@@ -915,8 +890,6 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
 
 -   They have different inputs which can result in different model fits
 
--   
-
 ```{r, fig.cap="Natrual spline (with knots at 3.5 and 9.5) compared with restricted cubic spline with parms set to give the same fit.  Both spline approaches impose a linearity constraint at the tails.  Fits are same using these inputs."}
 ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + 
   geom_smooth(method=lm, formula=y ~ ns(x, knots=c(9.5, 15.5)), se=FALSE, aes(color="Blue")) + 
@@ -933,7 +906,7 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
   scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("ns(x, df=3)","rcs(x, nk=5)")) + theme(legend.position = c(0.8, 0.2))
 ```
 
-##### Nautral spline versus piecewise lienar spline
+##### Nautral spline versus piecewise linear spline
 
 ```{r, fig.cap="Natrual spline (3 d.f) compared with restricted cubic spline with knots at 9.5 and 15.5.  Both spline approaches impose a linearity constraint at the tails."}
 ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + 

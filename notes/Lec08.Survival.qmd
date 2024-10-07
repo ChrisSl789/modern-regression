@@ -1,34 +1,7 @@
 ---
 title: "Introduction to Survival Analysis"
 subtitle: "Lecture 08"
-author: "Chris Slaughter"
-footer: "Bios 6312"
-date: last-modified
-format:
-  html:
-    embed-resources: true
-    standalone: true
-    number-sections: true
-    number-depth: 4
-    anchor-sections: true
-    smooth-scroll: true
-    theme: journal
-    toc: true
-    toc-depth: 4
-    toc-title: Contents
-    toc-location: left
-    code-link: false
-    code-tools: true
-    code-fold: true
-    code-block-bg: "#f1f3f5"
-    code-block-border-left: "#31BAE9"
-    reference-location: margin
-    fig-cap-location: margin
-    fontsize: medium
-
-execute:
-   warning: false
-   message: false
+name: Lec08.Survival.qmd
 ---
 
 ```{r}
@@ -44,6 +17,7 @@ library(survminer)
 library(dplyr)
 library(flexsurv)
 library(eha)
+tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 ```
 
 ## Acknowledgments
@@ -482,7 +456,7 @@ There was a significant difference in overall survival according to sex in the `
 -   "Baseline hazard" is unspecified. Baseline hazard is similar to an intercept
 
     | Model       | $\textrm{log}(\lambda(t | X_i)) = \textrm{log}(\lambda_{0}(t)) + \beta_1 \times X_i$ |
-    |:------------------------|:----------------------------------------------|
+    |:------------------------|:---------------------------------------------|
     | $X_i = 0$   | log hazard at $t$ is $\textrm{log}(\lambda_{0}(t))$                                  |
     | $X_i = x$   | log hazard at $t$ is $\textrm{log}(\lambda_{0}(t)) + \beta_1 \times x$               |
     | $X_i = x+1$ | log hazard at $t$ is $\textrm{log}(\lambda_{0}(t))+ \beta_1 \times x + \beta_1$      |
@@ -490,7 +464,7 @@ There was a significant difference in overall survival according to sex in the `
 -   Model on the hazard scale is found by exponentiating parameters
 
     | Model       | $\lambda(t | X_i) = \lambda_{0}(t) \times e^{\beta_1 \times X_i}$                |
-    |:------------------------|:----------------------------------------------|
+    |:------------------------|:---------------------------------------------|
     | $X_i = 0$   | hazard at $t$ is $\lambda_{0}(t)$                                                |
     | $X_i = x$   | hazard at $t$ is $\lambda_{0}(t) \times e^{\beta_1 \times x}$                    |
     | $X_i = x+1$ | hazard at $t$ is $\lambda_{0}(t) \times e^{\beta_1 \times x} \times e^{\beta_1}$ |

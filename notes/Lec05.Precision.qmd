@@ -1,36 +1,12 @@
 ---
 title: "Precision of Statistical Intefence"
 subtitle: "Lecture 05"
-author: "Chris Slaughter"
-footer: "Bios 6312"
-format:
-  html:
-    embed-resources: true
-    standalone: true
-    number-sections: true
-    number-depth: 4
-    anchor-sections: true
-    smooth-scroll: true
-    theme: journal
-    toc: true
-    toc-depth: 4
-    toc-title: Contents
-    toc-location: left
-    code-link: false
-    code-tools: true
-    code-fold: true
-    code-block-bg: "#f1f3f5"
-    code-block-border-left: "#31BAE9"
-    reference-location: margin
-    fig-cap-location: margin
-    fontsize: medium
-execute:
-   warning: false
-   message: false
-editor: 
-  markdown: 
-    wrap: 72
+name: Lec05.Precision.qmd
 ---
+
+```{r}
+tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
+```
 
 ## Overview
 
@@ -67,7 +43,7 @@ editor:
 
     -   Hazard ratio
 
--   How to select $\theta$? In order of importance\...
+-   How to select $\theta$? In order of importance...
 
 1.  Scientific (clinical) importance. May be based on current state of
     knowledge
@@ -208,20 +184,12 @@ summary(lm(Y ~ X + W, data=precisiondata))
 ```
 
 ```{r}
-mykable = function(x){
-  knitr::kable(x, row.names = FALSE, align = c("l", "l", "r", "r", "r", "r", "r", "r", "r"),
-               booktabs=TRUE)
-}
-
 library(finalfit)
-library(dplyr)
 
 explanatory = c("X", "W")
 dependent = "Y"
 
-precisiondata %>% 
-  finalfit(dependent, explanatory) %>% mykable()
-
+finalfit(.data = precisiondata, dependent, explanatory)
 ```
 
 ## Sampling Distributions
@@ -382,7 +350,7 @@ legend("top", c("sigma = 1.0","sigma = 1.2"), lty=1:2, inset=0.05)
     -   Then the distribution $Y_i$ could be binary data, Poisson,
         exponential, normal, etc. and the results will hold
 
--   There are ways to decrease $V$ including\...
+-   There are ways to decrease $V$ including...
 
     -   Restrict sample by age, gender, etc.
 
@@ -525,7 +493,7 @@ text(20,.9,"s1 = 3*s2", pos=4)
 
 -   $se(\hat{\theta}) = \sqrt{\frac{V}{n}}$
 
-What is V if \...
+What is V if ...
 
 -   $\rho = 0$ (independent)
 
