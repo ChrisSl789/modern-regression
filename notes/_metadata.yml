@@ -3,8 +3,6 @@ footer: "Bios 6312"
 date: last-modified
 format:
   html:
-    embed-resources: true
-    standalone: true
     number-sections: true
     number-depth: 4
     anchor-sections: true

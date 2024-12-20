@@ -4,8 +4,8 @@ project:
 
 website:
   page-navigation: true
-  title: "BIOS 6312 - Spring 2024"
-  description: "Homepage for BIOS 6312 - Modern Regression at Vanderbilt University, Spring 2024."
+  title: "BIOS 6312 - Spring 2025"
+  description: "Homepage for BIOS 6312 - Modern Regression at Vanderbilt University, Spring 2025."
   site-url: "https://chrissl789.github.io/modern-regression/"
 
   repo-url: "https://github.com/chrissl789/modern-regression"
@@ -15,7 +15,7 @@ website:
 
   page-footer:
     right: "This page is built with [Quarto](https://quarto.org/)."
-    left: "&copy; Copyright 2024, James C Slaughter"
+    left: "&copy; Copyright 2024-2025, James C Slaughter"
     background: "#D9E3E4"
 
   sidebar:
@@ -28,7 +28,7 @@ website:
     contents:
       - section: "Course Information"
         contents:
-          - href: notes/Lec01.Introduction.qmd
+          - href: slides/Lec01.Introduction.qmd
             text: "Introductory Slides"
           - href: syllabus.qmd
           - href: computing.qmd
