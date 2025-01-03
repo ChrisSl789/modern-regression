@@ -13,7 +13,7 @@ Schedule updated `r format(Sys.time(), "%a %b %d %X %Y")`
 
 ```{r}
 #| echo: false
-schedule <- read.csv("b6312-2024-schedule.csv")
+schedule <- read.csv("b6312-2025-schedule.csv")
 schedule$Day <- factor(schedule$Day, levels=1:7, labels=c("Su","M","Tu","W","Th","F","Sa"))
 knitr::kable(schedule)
 ```

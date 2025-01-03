@@ -1,7 +1,7 @@
 ---
 title: "Welcome & Syllabus"
 subtitle: "Lecture 01"
-author: "Dr. Chris Slaughter"
+author: "Chris Slaughter"
 footer: "Bios 6312 - Spring 2024"
 format:
   revealjs:
@@ -35,8 +35,8 @@ options(
 
 ### TA
 
--   Bailu (Lucy) Yan
-    -   bailu.yan\@vanderbilt.edu
+-   Alexis Fleming
+-   Jeffrey Liang
 
 ## Course website(s)
 
