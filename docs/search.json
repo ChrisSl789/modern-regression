@@ -1595,7 +1595,7 @@
     "href": "slides/Lec01.Introduction.html#getting-started",
     "title": "Welcome & Syllabus",
     "section": "Getting started",
-    "text": "Getting started\n\nTo do on your own by Thursday…\n\nDownload and install new versions of R and Rstudio\n\nDetails on course web page, computing\n\n\nI would like everyone (including Stata users) to be able to Render a basic Quarto document\nPlan to start discussing Quarto next Tuesday\n\nIt is difficult to anticipate all issues that might arise, so I would like to resolve any major software issues before then\n\n\n\n\n\nBios 6312 - Spring 2024",
+    "text": "Getting started\n\nTo do on your own by Thursday…\n\nDownload and install new versions of R and Rstudio\n\nDetails on course web page, computing\n\n\nI would like everyone (including Stata users) to be able to Render a basic Quarto document\nPlan to start discussing Quarto next Tuesday\n\nIt is difficult to anticipate all issues that might arise, so I would like to resolve any major software issues before then\n\n\n\n\n\nBios 6312 - Spring 2025",
     "crumbs": [
       "Course Information",
       "Introductory Slides"
@@ -1980,6 +1980,28 @@
     "crumbs": [
       "Course Notes",
       "Precision of Statistical Intefence"
+    ]
+  },
+  {
+    "objectID": "slides/Lec01.Introduction.html#generative-ai-e.g.-chatgpt-1",
+    "href": "slides/Lec01.Introduction.html#generative-ai-e.g.-chatgpt-1",
+    "title": "Welcome & Syllabus",
+    "section": "Generative AI (e.g. ChatGPT)",
+    "text": "Generative AI (e.g. ChatGPT)\n\nShumailov, I., Shumaylov, Z., Zhao, Y. et al. AI models collapse when trained on recursively generated data. Nature 631, 755–759 (2024).\n\n\nAI Collapse",
+    "crumbs": [
+      "Course Information",
+      "Introductory Slides"
+    ]
+  },
+  {
+    "objectID": "slides/Lec01.Introduction.html#ai-collapse",
+    "href": "slides/Lec01.Introduction.html#ai-collapse",
+    "title": "Welcome & Syllabus",
+    "section": "AI collapse",
+    "text": "AI collapse\n\nShumailov, I., Shumaylov, Z., Zhao, Y. et al. AI models collapse when trained on recursively generated data. Nature 631, 755–759 (2024).\n\n\nAI Collapse",
+    "crumbs": [
+      "Course Information",
+      "Introductory Slides"
     ]
   }
 ]

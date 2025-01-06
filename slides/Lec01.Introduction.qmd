@@ -2,7 +2,7 @@
 title: "Welcome & Syllabus"
 subtitle: "Lecture 01"
 author: "Chris Slaughter"
-footer: "Bios 6312 - Spring 2024"
+footer: "Bios 6312 - Spring 2025"
 format:
   revealjs:
     theme: slides.scss
@@ -103,6 +103,12 @@ options(
     -   Help with generating code, or converting code between languages
     -   Help with writing interpretations in more easily understood language
     -   The prompt that you use matters. Also, identical prompts at different times can give different answers
+
+## AI collapse
+
+- Shumailov, I., Shumaylov, Z., Zhao, Y. et al. AI models collapse when trained on recursively generated data. Nature 631, 755–759 (2024).
+
+![AI Collapse](aicollapse.png)
 
 ## Guiding Principles
 
