@@ -4,7 +4,11 @@ title: "Office Hours"
 
 We are available to discuss any questions that you might have at the following times
 
+-  If emailing questions, please send a message to all of us
+
 Chris Slaughter
+
+-  <james.c.slaughter@vumc.org>
 
 -   2525 West End, 11-107
 
@@ -20,8 +24,8 @@ Chris Slaughter
 
 Alexis Fleming
 
--   TBD
+-   <alex.w.fleming@vanderbilt.edu>
 
 Jeffrey Liang
 
--   TBD
+-   <zhuohui.liang@vanderbilt.edu>

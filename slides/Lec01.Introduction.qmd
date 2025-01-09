@@ -225,7 +225,7 @@ options(
 
 ## Getting started
 
--   To do on your own by Thursday...
+-   To do on your own by Tuesday
 
     -   Download and install new versions of R and Rstudio
 
@@ -233,6 +233,6 @@ options(
 
 -   I would like everyone (including Stata users) to be able to Render a basic Quarto document
 
--   Plan to start discussing Quarto next Tuesday
+-   Plan to discuss Quarto intro on Tuesday
 
     -   It is difficult to anticipate all issues that might arise, so I would like to resolve any major software issues before then
