@@ -2,30 +2,30 @@ Week,Day,Date,Topic,"Notes or Lab",Supplemental,Homework,Reading
 1,2,2025/01/06,Introduction,"Welcome and Introduction",,"Install R and Rstudio",
 1,3,2025/01/07,"Review of Key Concepts","Lec 2",,,
 1,5,2025/01/09,"Simple Linear Regression","Lec 3; Quarto Intro",,,"RMB 3.3"
-2,2,2025/01/13,"Simple Linear Regression","Lec 3 ",,,
-2,3,2025/01/14,"Lab: Linear Regression","Lab 1, Lec 3",,,
-2,5,2025/01/16,"Simple Linear Regression","Lec 3, Lab 1","Matrix Algebra Review","HW 1 assigned","RMB 3.2"
+2,2,2025/01/13,"Simple Linear Regression","Lab 1, Lec 3",,,
+2,3,2025/01/14,"Lab: Linear Regression","Lab 1, Lec 3",,"HW 1 assigned",
+2,5,2025/01/16,"Simple Linear Regression","Lec 3, Lab 1","Matrix Algebra Review",,"RMB 3.2"
 3,2,2025/01/20,"No class (MLK day)",,,,
 3,3,2025/01/21,"Simple Linear Regression","Lec 3","Log Transformations",,
-3,5,2025/01/23,"Lab: Linear Regression model assumptions","Lab 2",,,
+3,5,2025/01/23,"Lab: Linear Regression model assumptions","Lab 2",,"HW 1 due; HW 2 assigned",
 4,2,2025/01/27,"Simple Linear Regression","Lec 3",,,
-4,3,2025/01/28,"Logistic Regression","Lec 4",,"HW 1 due; HW 2 assigned","RMB 3.4; 6.1"
+4,3,2025/01/28,"Logistic Regression","Lec 4",,,"RMB 3.4; 6.1"
 4,5,2025/01/30,"Logistic Regression/Precision","Lec 4/Lec 5",,,
 5,2,2025/02/03,"Logistic Regression Lab","Lab 3",,,
-5,3,2025/02/04,Precison/Confouding,"Lec 5/Lec 6",,"HW 2 due; HW 3 assigned","RMB 5.1"
+5,3,2025/02/04,Precison/Confouding,"Lec 5/Lec 6",,,"RMB 5.1"
 5,5,2025/02/06,"Confounding and Effect Modification","Lec 6",,,
 6,2,2025/02/10,"Lab: Precision","Lab 4",,,
-6,3,2025/02/11,"Multivariable Models","Lec 7",,"HW 3 due; HW 4 assigned",
+6,3,2025/02/11,"Multivariable Models","Lec 7",,,
 6,5,2025/02/13,"Multivariable Models","Lec 7",,,
 7,2,2025/02/17,"Lab: Multivariable models","Lab 5",,,
-7,3,2025/02/18,"Model estimation",,,"HW 4 due",
+7,3,2025/02/18,"Model estimation",,,,
 7,5,2025/02/20,"Model estimation",,,,
 8,2,2025/02/24,"  Review",,,,
 8,3,2025/02/25,"Midterm Exam",,,"In class exam",
 8,5,2025/02/27,"Time to event models",,,,"RMB: 3.5; 7.1; 7.2.1-7.2.7"
 9,2,2025/03/03,"   Lab: Go over midterm exam",,,,
 9,3,2025/03/04,"Time to event models",,,,
-9,5,2025/03/06,"Lab: Time to event","Lab 6",,"HW 5 ",
+9,5,2025/03/06,"Lab: Time to event","Lab 6",,,
 10,2,2025/03/10,"Spring Break",,,,
 10,3,2025/03/11,"Spring Break",,,,
 10,5,2025/03/13,"Spring Break",,,,

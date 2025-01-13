@@ -225,7 +225,7 @@ prior_summary(fit1, digits = 2)
 
     -   *A priori* we assume that no association between age and cholesterol. Specifically, we assumed a Normal prior with location (mean) of 0 and scale (standard devation) of 6 for $\beta_1$.
 
-    -   Conditional on the data, we estimate that for every 1 year increase in age, cholesterol increases by 0.32 mg/dl (95% credible interval 0.06 to 0.58).
+    -   Conditional on the data, we estimate that for every 1 year increase in age, cholesterol increases by 0.32 mg/dl (95% credible interval 0.04 to 0.60).
 
 #### Comparison of Frequentist and Bayesian interpretation of the slope
 
