@@ -25,8 +25,8 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
     -   Outcome variable (response variable, ~~dependent variable~~)
 
     -   Grouping variable (covariate, predictor variable, ~~independent variable~~)
-    
-    -   (While "dependent variable" and "independent variable" are commonly used, these imply that a modifiable independent variable is _causing_ a dependent variable to change.  We are fitting models focused on association, not causation.)
+
+    -   (While "dependent variable" and "independent variable" are commonly used, these imply that a modifiable independent variable is *causing* a dependent variable to change. We are fitting models focused on association, not causation.)
 
 -   General goal is to compare distribution of the outcome variable across levels of the grouping variable
 
@@ -681,7 +681,7 @@ gglm(model.y4)
 : Assumption Holds (Yes/No)
 
 | $\hat{\beta}$ | $\hat{\textrm {Var}}_{NR}(\hat{\beta})$ | $\hat{\textrm{ Var}}_R(\hat{\beta})$ |
-|------------------|----------------------------|--------------------------|
+|-------------------|----------------------------|--------------------------|
 | Y             | Y                                       | Y                                    |
 | Y             | M^2^                                    | M^2^                                 |
 | Y             | N                                       | Y                                    |
@@ -876,12 +876,21 @@ robcov(ols(y2 ~ x, data=regassumptions, x=TRUE))
 ```
 | Model                        | Classical Intercept | Robust Intercept | Classical Slope | Robust Slope |
 |---------------|---------------|---------------|---------------|---------------|
-| Age-chol All Assump. hold    |                     |                  |                 |              |
-| Scenario 1 Assump hold       |                     |                  |                 |              |
-| Scenario 3 Increase Variance |                     |                  |                 |              |
-| Scenario 2 Skewed Variance   |                     |                  |                 |              |
+| Age-chol All Assump. hold    | 203.2               | 203.2            | 0.32            | 0.32         |
+| Scenario 1 Assump hold       | 3.34                | 3.34             | 0.23            | 0.23         |
+| Scenario 3 Increase Variance | 5.66                | 5.66             | 0.18            | 0.18         |
+| Scenario 2 Skewed Variance   | 6.93                | 6.93             | 0.20            | 0.20         |
 
-: Comparison of standard error estimates
+: Comparison of point estimates, $\hat{\beta_0}$ and $\hat{\beta_1}$
+
+| Model                        | Classical Intercept | Robust Intercept | Classical Slope | Robust Slope |
+|---------------|---------------|---------------|---------------|---------------|
+| Age-chol All Assump. hold    | 10.31               | 10.38            | 0.137           | 0.138        |
+| Scenario 1 Assump hold       | 0.712               | 0.700            | 0.0123          | 0.0132       |
+| Scenario 3 Increase Variance | 0.919               | 0.596            | 0.0159          | 0.0153       |
+| Scenario 2 Skewed Variance   | 0.291               | 0.353            | 0.00503         | 0.00507      |
+
+: Comparison of standard error estimates, $\hat{\textrm{se}}(\hat{\beta_0})$ and $\hat{\textrm{se}}(\hat{\beta_1})$
 
 -   Point estimates $\hat{\beta_0}$ and $\hat{\beta_1}$ were the same for robust and classical standard error
 

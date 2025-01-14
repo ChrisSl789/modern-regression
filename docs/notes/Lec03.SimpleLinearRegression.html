@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Chris Slaughter">
-<meta name="dcterms.date" content="2025-01-13">
+<meta name="dcterms.date" content="2025-01-14">
 
 <title>Simple Linear Regression – BIOS 6312 - Spring 2025</title>
 <style>
@@ -582,7 +582,7 @@ window.Quarto = {
 <p class="subtitle lead">Lecture 03</p>
 <p class="author">Chris Slaughter</p>
 
-<p class="date">January 13, 2025</p>
+<p class="date">January 14, 2025</p>
 
 </header>
 
@@ -1763,9 +1763,9 @@ Table&nbsp;1: Summary of what is required for valid estimates of <span class="ma
 <table class="caption-top table">
 <caption>Valid Inference (Yes/No/Maybe)</caption>
 <colgroup>
-<col style="width: 25%">
+<col style="width: 26%">
 <col style="width: 38%">
-<col style="width: 36%">
+<col style="width: 35%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -2908,7 +2908,7 @@ Table&nbsp;1: Summary of what is required for valid estimates of <span class="ma
 <section id="comments" class="level3" data-number="8.4">
 <h3 data-number="8.4" class="anchored" data-anchor-id="comments"><span class="header-section-number">8.4</span> Comments</h3>
 <table class="caption-top table">
-<caption>Comparison of standard error estimates</caption>
+<caption>Comparison of point estimates, <span class="math inline">\(\hat{\beta_0}\)</span> and <span class="math inline">\(\hat{\beta_1}\)</span></caption>
 <colgroup>
 <col style="width: 20%">
 <col style="width: 20%">
@@ -2928,31 +2928,80 @@ Table&nbsp;1: Summary of what is required for valid estimates of <span class="ma
 <tbody>
 <tr class="odd">
 <td>Age-chol All Assump. hold</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>203.2</td>
+<td>203.2</td>
+<td>0.32</td>
+<td>0.32</td>
 </tr>
 <tr class="even">
 <td>Scenario 1 Assump hold</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>3.34</td>
+<td>3.34</td>
+<td>0.23</td>
+<td>0.23</td>
 </tr>
 <tr class="odd">
 <td>Scenario 3 Increase Variance</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>5.66</td>
+<td>5.66</td>
+<td>0.18</td>
+<td>0.18</td>
 </tr>
 <tr class="even">
 <td>Scenario 2 Skewed Variance</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>6.93</td>
+<td>6.93</td>
+<td>0.20</td>
+<td>0.20</td>
+</tr>
+</tbody>
+</table>
+<table class="caption-top table">
+<caption>Comparison of standard error estimates, <span class="math inline">\(\hat{\textrm{se}}(\hat{\beta_0})\)</span> and <span class="math inline">\(\hat{\textrm{se}}(\hat{\beta_1})\)</span></caption>
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>Classical Intercept</th>
+<th>Robust Intercept</th>
+<th>Classical Slope</th>
+<th>Robust Slope</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Age-chol All Assump. hold</td>
+<td>10.31</td>
+<td>10.38</td>
+<td>0.137</td>
+<td>0.138</td>
+</tr>
+<tr class="even">
+<td>Scenario 1 Assump hold</td>
+<td>0.712</td>
+<td>0.700</td>
+<td>0.0123</td>
+<td>0.0132</td>
+</tr>
+<tr class="odd">
+<td>Scenario 3 Increase Variance</td>
+<td>0.919</td>
+<td>0.596</td>
+<td>0.0159</td>
+<td>0.0153</td>
+</tr>
+<tr class="even">
+<td>Scenario 2 Skewed Variance</td>
+<td>0.291</td>
+<td>0.353</td>
+<td>0.00503</td>
+<td>0.00507</td>
 </tr>
 </tbody>
 </table>
@@ -3931,8 +3980,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Outcome variable (response variable, ~~dependent variable~~)</span>
 <span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-29"><a href="#cb37-29" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Grouping variable (covariate, predictor variable, ~~independent variable~~)</span>
-<span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb37-31"><a href="#cb37-31" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>(While "dependent variable" and "independent variable" are commonly used, these imply that a modifiable independent variable is _causing_ a dependent variable to change.  We are fitting models focused on association, not causation.)</span>
+<span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-31"><a href="#cb37-31" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>(While "dependent variable" and "independent variable" are commonly used, these imply that a modifiable independent variable is *causing* a dependent variable to change. We are fitting models focused on association, not causation.)</span>
 <span id="cb37-32"><a href="#cb37-32" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-33"><a href="#cb37-33" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>General goal is to compare distribution of the outcome variable across levels of the grouping variable</span>
 <span id="cb37-34"><a href="#cb37-34" aria-hidden="true" tabindex="-1"></a></span>
@@ -4587,7 +4636,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb37-713"><a href="#cb37-713" aria-hidden="true" tabindex="-1"></a>: Assumption Holds (Yes/No)</span>
 <span id="cb37-714"><a href="#cb37-714" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-715"><a href="#cb37-715" aria-hidden="true" tabindex="-1"></a>| $\hat{\beta}$ | $\hat{\textrm {Var}}_{NR}(\hat{\beta})$ | $\hat{\textrm{ Var}}_R(\hat{\beta})$ |</span>
-<span id="cb37-716"><a href="#cb37-716" aria-hidden="true" tabindex="-1"></a>|------------------|----------------------------|--------------------------|</span>
+<span id="cb37-716"><a href="#cb37-716" aria-hidden="true" tabindex="-1"></a>|-------------------|----------------------------|--------------------------|</span>
 <span id="cb37-717"><a href="#cb37-717" aria-hidden="true" tabindex="-1"></a>| Y             | Y                                       | Y                                    |</span>
 <span id="cb37-718"><a href="#cb37-718" aria-hidden="true" tabindex="-1"></a>| Y             | M^2^                                    | M^2^                                 |</span>
 <span id="cb37-719"><a href="#cb37-719" aria-hidden="true" tabindex="-1"></a>| Y             | N                                       | Y                                    |</span>
@@ -4782,357 +4831,366 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb37-918"><a href="#cb37-918" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb37-919"><a href="#cb37-919" aria-hidden="true" tabindex="-1"></a>| Model                        | Classical Intercept | Robust Intercept | Classical Slope | Robust Slope |</span>
 <span id="cb37-920"><a href="#cb37-920" aria-hidden="true" tabindex="-1"></a>|---------------|---------------|---------------|---------------|---------------|</span>
-<span id="cb37-921"><a href="#cb37-921" aria-hidden="true" tabindex="-1"></a>| Age-chol All Assump. hold    |                     |                  |                 |              |</span>
-<span id="cb37-922"><a href="#cb37-922" aria-hidden="true" tabindex="-1"></a>| Scenario 1 Assump hold       |                     |                  |                 |              |</span>
-<span id="cb37-923"><a href="#cb37-923" aria-hidden="true" tabindex="-1"></a>| Scenario 3 Increase Variance |                     |                  |                 |              |</span>
-<span id="cb37-924"><a href="#cb37-924" aria-hidden="true" tabindex="-1"></a>| Scenario 2 Skewed Variance   |                     |                  |                 |              |</span>
+<span id="cb37-921"><a href="#cb37-921" aria-hidden="true" tabindex="-1"></a>| Age-chol All Assump. hold    | 203.2               | 203.2            | 0.32            | 0.32         |</span>
+<span id="cb37-922"><a href="#cb37-922" aria-hidden="true" tabindex="-1"></a>| Scenario 1 Assump hold       | 3.34                | 3.34             | 0.23            | 0.23         |</span>
+<span id="cb37-923"><a href="#cb37-923" aria-hidden="true" tabindex="-1"></a>| Scenario 3 Increase Variance | 5.66                | 5.66             | 0.18            | 0.18         |</span>
+<span id="cb37-924"><a href="#cb37-924" aria-hidden="true" tabindex="-1"></a>| Scenario 2 Skewed Variance   | 6.93                | 6.93             | 0.20            | 0.20         |</span>
 <span id="cb37-925"><a href="#cb37-925" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-926"><a href="#cb37-926" aria-hidden="true" tabindex="-1"></a>: Comparison of standard error estimates</span>
+<span id="cb37-926"><a href="#cb37-926" aria-hidden="true" tabindex="-1"></a>: Comparison of point estimates, $\hat{\beta_0}$ and $\hat{\beta_1}$</span>
 <span id="cb37-927"><a href="#cb37-927" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-928"><a href="#cb37-928" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Point estimates $\hat{\beta_0}$ and $\hat{\beta_1}$ were the same for robust and classical standard error</span>
-<span id="cb37-929"><a href="#cb37-929" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-930"><a href="#cb37-930" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Point estimates $\hat{\textrm{se}}(\hat{\beta_0})$ and $\hat{\textrm{se}}(\hat{\beta_1})$ were different for robust and classical standard error</span>
-<span id="cb37-931"><a href="#cb37-931" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-932"><a href="#cb37-932" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>In general, it is hard to predict the effect of using robust standard errors</span>
-<span id="cb37-933"><a href="#cb37-933" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-934"><a href="#cb37-934" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>These were just a a couple of examples and do not constitute a thorough examination of the impact of using robust standard errors</span>
-<span id="cb37-935"><a href="#cb37-935" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-936"><a href="#cb37-936" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>When the model assumptions hold, for these two scenarios, robust standard error estimates were larger than classical standard error estimates</span>
-<span id="cb37-937"><a href="#cb37-937" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-938"><a href="#cb37-938" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>While this is not unexpected, to formally evaluate the amount of increase would require a statistical simulation</span>
-<span id="cb37-939"><a href="#cb37-939" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-940"><a href="#cb37-940" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Simulate many datasets where the Normality and constant variance assumption holds</span>
-<span id="cb37-941"><a href="#cb37-941" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-942"><a href="#cb37-942" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>For each dataset, estimate $\hat{\textrm{se}}(\hat{\beta_0})$ and $\hat{\textrm{se}}(\hat{\beta_1})$</span>
-<span id="cb37-943"><a href="#cb37-943" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-944"><a href="#cb37-944" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Summarize the results</span>
-<span id="cb37-945"><a href="#cb37-945" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-946"><a href="#cb37-946" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Approach will be covered in a future lab</span>
-<span id="cb37-947"><a href="#cb37-947" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-948"><a href="#cb37-948" aria-hidden="true" tabindex="-1"></a><span class="fu">## Linear Regression and Correlation</span></span>
-<span id="cb37-949"><a href="#cb37-949" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-950"><a href="#cb37-950" aria-hidden="true" tabindex="-1"></a><span class="fu">### Pearson's Correlation</span></span>
-<span id="cb37-951"><a href="#cb37-951" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-952"><a href="#cb37-952" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Notation</span>
-<span id="cb37-953"><a href="#cb37-953" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-954"><a href="#cb37-954" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\rho$ signifies the population value</span>
-<span id="cb37-955"><a href="#cb37-955" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-956"><a href="#cb37-956" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$r$ (or $\hat{\rho}$) is the estimated correlation from data</span>
-<span id="cb37-957"><a href="#cb37-957" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-958"><a href="#cb37-958" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Formula</span>
-<span id="cb37-959"><a href="#cb37-959" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-960"><a href="#cb37-960" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$r = \frac{\Sigma(x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\Sigma(x_i - \bar{x})^2\Sigma(y_i - \bar{y})^2}}$</span>
-<span id="cb37-961"><a href="#cb37-961" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-962"><a href="#cb37-962" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Range: $-1 \leq r \leq 1$</span>
-<span id="cb37-963"><a href="#cb37-963" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-964"><a href="#cb37-964" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Interpretation</span>
-<span id="cb37-965"><a href="#cb37-965" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-966"><a href="#cb37-966" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Measures the linear relationship between $X$ and $Y$</span>
-<span id="cb37-967"><a href="#cb37-967" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-968"><a href="#cb37-968" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Correlation coefficient is a unitless index of strength of association between two variables (+ = positive association, - = negative, 0 = no association)</span>
-<span id="cb37-969"><a href="#cb37-969" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-970"><a href="#cb37-970" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Can test for significant association by testing whether the population correlation is zero t = which is identical to the $t$-test used to test whether the population $r$ is zero; $\textrm{d.f.} = n-2$</span>
-<span id="cb37-971"><a href="#cb37-971" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-972"><a href="#cb37-972" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Use probability calculator for $t$ distribution to get a 2-tailed $P$-value</span>
-<span id="cb37-973"><a href="#cb37-973" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-974"><a href="#cb37-974" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Confidence intervals for population $r$ calculated using Fisher's $Z$ transformation</span>
-<span id="cb37-975"><a href="#cb37-975" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-976"><a href="#cb37-976" aria-hidden="true" tabindex="-1"></a>    $$Z = \frac{1}{2} \textrm{log}_\textrm{e} \left( \frac{1+r}{1-r} \right)$$</span>
-<span id="cb37-977"><a href="#cb37-977" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-978"><a href="#cb37-978" aria-hidden="true" tabindex="-1"></a><span class="in">    -   For large $n$, $Z$ follows a Normal distribution with standard error $\frac{1}{\sqrt{n-3}}$</span></span>
-<span id="cb37-979"><a href="#cb37-979" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-980"><a href="#cb37-980" aria-hidden="true" tabindex="-1"></a><span class="in">    -   To calculate a confidence interval for $r$, first find the confidence interval for $Z$ then transform back to the $r$ scale</span></span>
-<span id="cb37-981"><a href="#cb37-981" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-982"><a href="#cb37-982" aria-hidden="true" tabindex="-1"></a>$$\begin{aligned}</span>
-<span id="cb37-983"><a href="#cb37-983" aria-hidden="true" tabindex="-1"></a> Z &amp; = &amp; \frac{1}{2} \textrm{log}_\textrm{e} \left( \frac{1+r}{1-r} \right) <span class="sc">\\</span></span>
-<span id="cb37-984"><a href="#cb37-984" aria-hidden="true" tabindex="-1"></a> 2*Z &amp; = &amp; \textrm{log}_\textrm{e} \left( \frac{1+r}{1-r} \right) <span class="sc">\\</span></span>
-<span id="cb37-985"><a href="#cb37-985" aria-hidden="true" tabindex="-1"></a> \textrm{exp}(2*Z) &amp; = &amp; \left( \frac{1+r}{1-r} \right) <span class="sc">\\</span></span>
-<span id="cb37-986"><a href="#cb37-986" aria-hidden="true" tabindex="-1"></a> \textrm{exp}(2*Z) * (1-r) &amp; = &amp; 1 + r <span class="sc">\\</span></span>
-<span id="cb37-987"><a href="#cb37-987" aria-hidden="true" tabindex="-1"></a> \textrm{exp}(2*Z) - r * \textrm{exp}(2*Z) &amp; = &amp; 1 + r <span class="sc">\\</span></span>
-<span id="cb37-988"><a href="#cb37-988" aria-hidden="true" tabindex="-1"></a> \textrm{exp}(2*Z) - 1 &amp; = &amp; r * \textrm{exp}(2*Z) + r <span class="sc">\\</span></span>
-<span id="cb37-989"><a href="#cb37-989" aria-hidden="true" tabindex="-1"></a> \textrm{exp}(2*Z) - 1 &amp; = &amp; r \left(\textrm{exp}(2*Z) + 1\right) <span class="sc">\\</span></span>
-<span id="cb37-990"><a href="#cb37-990" aria-hidden="true" tabindex="-1"></a> \frac{\textrm{exp}(2*Z) - 1}{\textrm{exp}(2*Z) + 1} &amp; = &amp; r <span class="sc">\\</span></span>
-<span id="cb37-991"><a href="#cb37-991" aria-hidden="true" tabindex="-1"></a>\end{aligned}$$</span>
-<span id="cb37-992"><a href="#cb37-992" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-993"><a href="#cb37-993" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Example (Altman 89-90): Pearson's $r$ for a study investigating the association of basal metabolic rate with total energy expenditure was calculated to be $0.7283$ in a study of $13$ women. Derive a 95% confidence interval for $r$</span>
-<span id="cb37-994"><a href="#cb37-994" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-995"><a href="#cb37-995" aria-hidden="true" tabindex="-1"></a>    $$Z = \frac{1}{2} \textrm{log}_\textrm{e} \left( \frac{1+r}{1-r} \right) = 0.9251$$</span>
-<span id="cb37-996"><a href="#cb37-996" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-997"><a href="#cb37-997" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The lower limit of a 95% CI for $Z$ is given by $0.9251 + 1.96*\frac{1}{\sqrt{n-3}} = 0.3053$</span>
-<span id="cb37-998"><a href="#cb37-998" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-999"><a href="#cb37-999" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The upper limit is $0.9251 + 1.96*\frac{1}{\sqrt{n-3}} = 1.545$</span>
-<span id="cb37-1000"><a href="#cb37-1000" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1001"><a href="#cb37-1001" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>A 95% CI for the population correlation coefficient is given by transforming these limits from the $Z$ scale back to the $r$ scale.</span>
-<span id="cb37-1002"><a href="#cb37-1002" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1003"><a href="#cb37-1003" aria-hidden="true" tabindex="-1"></a>$$\frac{\textrm{exp}(2*0.3053) - 1}{\textrm{exp}(2*0.3053) + 1} \hspace{.5cm} \textrm{to} \hspace{.5cm}  \frac{\textrm{exp}(2*1.545) - 1}{\textrm{exp}(2*1.545) + 1}$$</span>
-<span id="cb37-1004"><a href="#cb37-1004" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1005"><a href="#cb37-1005" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Which gives a 95% CI from 0.30 to 0.91 for the population correlation</span>
-<span id="cb37-1006"><a href="#cb37-1006" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1009"><a href="#cb37-1009" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb37-1010"><a href="#cb37-1010" aria-hidden="true" tabindex="-1"></a>fisher.z <span class="ot">&lt;-</span> <span class="cf">function</span>(r) {.<span class="dv">5</span> <span class="sc">*</span> <span class="fu">log</span>((<span class="dv">1</span><span class="sc">+</span>r)<span class="sc">/</span>(<span class="dv">1</span><span class="sc">-</span>r))}</span>
-<span id="cb37-1011"><a href="#cb37-1011" aria-hidden="true" tabindex="-1"></a>fisher.z.inv <span class="ot">&lt;-</span> <span class="cf">function</span>(z) {(<span class="fu">exp</span>(<span class="dv">2</span><span class="sc">*</span>z)<span class="sc">-</span><span class="dv">1</span>) <span class="sc">/</span> (<span class="fu">exp</span>(<span class="dv">2</span><span class="sc">*</span>z)<span class="sc">+</span><span class="dv">1</span>)}</span>
-<span id="cb37-1012"><a href="#cb37-1012" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1013"><a href="#cb37-1013" aria-hidden="true" tabindex="-1"></a>fisher.z.se <span class="ot">&lt;-</span> <span class="cf">function</span>(n) {<span class="dv">1</span><span class="sc">/</span><span class="fu">sqrt</span>(n<span class="dv">-3</span>)}</span>
-<span id="cb37-1014"><a href="#cb37-1014" aria-hidden="true" tabindex="-1"></a><span class="fu">fisher.z.inv</span>(<span class="fu">fisher.z</span>(<span class="fl">0.7283</span>)) <span class="co">#Should be original value</span></span>
+<span id="cb37-928"><a href="#cb37-928" aria-hidden="true" tabindex="-1"></a>| Model                        | Classical Intercept | Robust Intercept | Classical Slope | Robust Slope |</span>
+<span id="cb37-929"><a href="#cb37-929" aria-hidden="true" tabindex="-1"></a>|---------------|---------------|---------------|---------------|---------------|</span>
+<span id="cb37-930"><a href="#cb37-930" aria-hidden="true" tabindex="-1"></a>| Age-chol All Assump. hold    | 10.31               | 10.38            | 0.137           | 0.138        |</span>
+<span id="cb37-931"><a href="#cb37-931" aria-hidden="true" tabindex="-1"></a>| Scenario 1 Assump hold       | 0.712               | 0.700            | 0.0123          | 0.0132       |</span>
+<span id="cb37-932"><a href="#cb37-932" aria-hidden="true" tabindex="-1"></a>| Scenario 3 Increase Variance | 0.919               | 0.596            | 0.0159          | 0.0153       |</span>
+<span id="cb37-933"><a href="#cb37-933" aria-hidden="true" tabindex="-1"></a>| Scenario 2 Skewed Variance   | 0.291               | 0.353            | 0.00503         | 0.00507      |</span>
+<span id="cb37-934"><a href="#cb37-934" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-935"><a href="#cb37-935" aria-hidden="true" tabindex="-1"></a>: Comparison of standard error estimates, $\hat{\textrm{se}}(\hat{\beta_0})$ and $\hat{\textrm{se}}(\hat{\beta_1})$</span>
+<span id="cb37-936"><a href="#cb37-936" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-937"><a href="#cb37-937" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Point estimates $\hat{\beta_0}$ and $\hat{\beta_1}$ were the same for robust and classical standard error</span>
+<span id="cb37-938"><a href="#cb37-938" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-939"><a href="#cb37-939" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Point estimates $\hat{\textrm{se}}(\hat{\beta_0})$ and $\hat{\textrm{se}}(\hat{\beta_1})$ were different for robust and classical standard error</span>
+<span id="cb37-940"><a href="#cb37-940" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-941"><a href="#cb37-941" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>In general, it is hard to predict the effect of using robust standard errors</span>
+<span id="cb37-942"><a href="#cb37-942" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-943"><a href="#cb37-943" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>These were just a a couple of examples and do not constitute a thorough examination of the impact of using robust standard errors</span>
+<span id="cb37-944"><a href="#cb37-944" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-945"><a href="#cb37-945" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>When the model assumptions hold, for these two scenarios, robust standard error estimates were larger than classical standard error estimates</span>
+<span id="cb37-946"><a href="#cb37-946" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-947"><a href="#cb37-947" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>While this is not unexpected, to formally evaluate the amount of increase would require a statistical simulation</span>
+<span id="cb37-948"><a href="#cb37-948" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-949"><a href="#cb37-949" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Simulate many datasets where the Normality and constant variance assumption holds</span>
+<span id="cb37-950"><a href="#cb37-950" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-951"><a href="#cb37-951" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>For each dataset, estimate $\hat{\textrm{se}}(\hat{\beta_0})$ and $\hat{\textrm{se}}(\hat{\beta_1})$</span>
+<span id="cb37-952"><a href="#cb37-952" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-953"><a href="#cb37-953" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Summarize the results</span>
+<span id="cb37-954"><a href="#cb37-954" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-955"><a href="#cb37-955" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Approach will be covered in a future lab</span>
+<span id="cb37-956"><a href="#cb37-956" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-957"><a href="#cb37-957" aria-hidden="true" tabindex="-1"></a><span class="fu">## Linear Regression and Correlation</span></span>
+<span id="cb37-958"><a href="#cb37-958" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-959"><a href="#cb37-959" aria-hidden="true" tabindex="-1"></a><span class="fu">### Pearson's Correlation</span></span>
+<span id="cb37-960"><a href="#cb37-960" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-961"><a href="#cb37-961" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Notation</span>
+<span id="cb37-962"><a href="#cb37-962" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-963"><a href="#cb37-963" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\rho$ signifies the population value</span>
+<span id="cb37-964"><a href="#cb37-964" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-965"><a href="#cb37-965" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$r$ (or $\hat{\rho}$) is the estimated correlation from data</span>
+<span id="cb37-966"><a href="#cb37-966" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-967"><a href="#cb37-967" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Formula</span>
+<span id="cb37-968"><a href="#cb37-968" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-969"><a href="#cb37-969" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$r = \frac{\Sigma(x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\Sigma(x_i - \bar{x})^2\Sigma(y_i - \bar{y})^2}}$</span>
+<span id="cb37-970"><a href="#cb37-970" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-971"><a href="#cb37-971" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Range: $-1 \leq r \leq 1$</span>
+<span id="cb37-972"><a href="#cb37-972" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-973"><a href="#cb37-973" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Interpretation</span>
+<span id="cb37-974"><a href="#cb37-974" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-975"><a href="#cb37-975" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Measures the linear relationship between $X$ and $Y$</span>
+<span id="cb37-976"><a href="#cb37-976" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-977"><a href="#cb37-977" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Correlation coefficient is a unitless index of strength of association between two variables (+ = positive association, - = negative, 0 = no association)</span>
+<span id="cb37-978"><a href="#cb37-978" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-979"><a href="#cb37-979" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Can test for significant association by testing whether the population correlation is zero t = which is identical to the $t$-test used to test whether the population $r$ is zero; $\textrm{d.f.} = n-2$</span>
+<span id="cb37-980"><a href="#cb37-980" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-981"><a href="#cb37-981" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Use probability calculator for $t$ distribution to get a 2-tailed $P$-value</span>
+<span id="cb37-982"><a href="#cb37-982" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-983"><a href="#cb37-983" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Confidence intervals for population $r$ calculated using Fisher's $Z$ transformation</span>
+<span id="cb37-984"><a href="#cb37-984" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-985"><a href="#cb37-985" aria-hidden="true" tabindex="-1"></a>    $$Z = \frac{1}{2} \textrm{log}_\textrm{e} \left( \frac{1+r}{1-r} \right)$$</span>
+<span id="cb37-986"><a href="#cb37-986" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-987"><a href="#cb37-987" aria-hidden="true" tabindex="-1"></a><span class="in">    -   For large $n$, $Z$ follows a Normal distribution with standard error $\frac{1}{\sqrt{n-3}}$</span></span>
+<span id="cb37-988"><a href="#cb37-988" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-989"><a href="#cb37-989" aria-hidden="true" tabindex="-1"></a><span class="in">    -   To calculate a confidence interval for $r$, first find the confidence interval for $Z$ then transform back to the $r$ scale</span></span>
+<span id="cb37-990"><a href="#cb37-990" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-991"><a href="#cb37-991" aria-hidden="true" tabindex="-1"></a>$$\begin{aligned}</span>
+<span id="cb37-992"><a href="#cb37-992" aria-hidden="true" tabindex="-1"></a> Z &amp; = &amp; \frac{1}{2} \textrm{log}_\textrm{e} \left( \frac{1+r}{1-r} \right) <span class="sc">\\</span></span>
+<span id="cb37-993"><a href="#cb37-993" aria-hidden="true" tabindex="-1"></a> 2*Z &amp; = &amp; \textrm{log}_\textrm{e} \left( \frac{1+r}{1-r} \right) <span class="sc">\\</span></span>
+<span id="cb37-994"><a href="#cb37-994" aria-hidden="true" tabindex="-1"></a> \textrm{exp}(2*Z) &amp; = &amp; \left( \frac{1+r}{1-r} \right) <span class="sc">\\</span></span>
+<span id="cb37-995"><a href="#cb37-995" aria-hidden="true" tabindex="-1"></a> \textrm{exp}(2*Z) * (1-r) &amp; = &amp; 1 + r <span class="sc">\\</span></span>
+<span id="cb37-996"><a href="#cb37-996" aria-hidden="true" tabindex="-1"></a> \textrm{exp}(2*Z) - r * \textrm{exp}(2*Z) &amp; = &amp; 1 + r <span class="sc">\\</span></span>
+<span id="cb37-997"><a href="#cb37-997" aria-hidden="true" tabindex="-1"></a> \textrm{exp}(2*Z) - 1 &amp; = &amp; r * \textrm{exp}(2*Z) + r <span class="sc">\\</span></span>
+<span id="cb37-998"><a href="#cb37-998" aria-hidden="true" tabindex="-1"></a> \textrm{exp}(2*Z) - 1 &amp; = &amp; r \left(\textrm{exp}(2*Z) + 1\right) <span class="sc">\\</span></span>
+<span id="cb37-999"><a href="#cb37-999" aria-hidden="true" tabindex="-1"></a> \frac{\textrm{exp}(2*Z) - 1}{\textrm{exp}(2*Z) + 1} &amp; = &amp; r <span class="sc">\\</span></span>
+<span id="cb37-1000"><a href="#cb37-1000" aria-hidden="true" tabindex="-1"></a>\end{aligned}$$</span>
+<span id="cb37-1001"><a href="#cb37-1001" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1002"><a href="#cb37-1002" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Example (Altman 89-90): Pearson's $r$ for a study investigating the association of basal metabolic rate with total energy expenditure was calculated to be $0.7283$ in a study of $13$ women. Derive a 95% confidence interval for $r$</span>
+<span id="cb37-1003"><a href="#cb37-1003" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1004"><a href="#cb37-1004" aria-hidden="true" tabindex="-1"></a>    $$Z = \frac{1}{2} \textrm{log}_\textrm{e} \left( \frac{1+r}{1-r} \right) = 0.9251$$</span>
+<span id="cb37-1005"><a href="#cb37-1005" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1006"><a href="#cb37-1006" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The lower limit of a 95% CI for $Z$ is given by $0.9251 + 1.96*\frac{1}{\sqrt{n-3}} = 0.3053$</span>
+<span id="cb37-1007"><a href="#cb37-1007" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1008"><a href="#cb37-1008" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The upper limit is $0.9251 + 1.96*\frac{1}{\sqrt{n-3}} = 1.545$</span>
+<span id="cb37-1009"><a href="#cb37-1009" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1010"><a href="#cb37-1010" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>A 95% CI for the population correlation coefficient is given by transforming these limits from the $Z$ scale back to the $r$ scale.</span>
+<span id="cb37-1011"><a href="#cb37-1011" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1012"><a href="#cb37-1012" aria-hidden="true" tabindex="-1"></a>$$\frac{\textrm{exp}(2*0.3053) - 1}{\textrm{exp}(2*0.3053) + 1} \hspace{.5cm} \textrm{to} \hspace{.5cm}  \frac{\textrm{exp}(2*1.545) - 1}{\textrm{exp}(2*1.545) + 1}$$</span>
+<span id="cb37-1013"><a href="#cb37-1013" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1014"><a href="#cb37-1014" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Which gives a 95% CI from 0.30 to 0.91 for the population correlation</span>
 <span id="cb37-1015"><a href="#cb37-1015" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1016"><a href="#cb37-1016" aria-hidden="true" tabindex="-1"></a><span class="fu">fisher.z</span>(<span class="fl">0.7283</span>)</span>
-<span id="cb37-1017"><a href="#cb37-1017" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1018"><a href="#cb37-1018" aria-hidden="true" tabindex="-1"></a><span class="fu">fisher.z</span>(<span class="fl">0.7283</span>)<span class="sc">-</span><span class="fl">1.96</span><span class="sc">*</span><span class="fu">fisher.z.se</span>(<span class="dv">13</span>)</span>
-<span id="cb37-1019"><a href="#cb37-1019" aria-hidden="true" tabindex="-1"></a><span class="fu">fisher.z</span>(<span class="fl">0.7283</span>)<span class="sc">+</span><span class="fl">1.96</span><span class="sc">*</span><span class="fu">fisher.z.se</span>(<span class="dv">13</span>)</span>
-<span id="cb37-1020"><a href="#cb37-1020" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1021"><a href="#cb37-1021" aria-hidden="true" tabindex="-1"></a><span class="fu">fisher.z.inv</span>(<span class="fu">fisher.z</span>(<span class="fl">0.7283</span>)<span class="sc">+</span><span class="fu">c</span>(<span class="sc">-</span><span class="fl">1.96</span>, <span class="fl">1.96</span>)<span class="sc">*</span><span class="fu">fisher.z.se</span>(<span class="dv">13</span>))</span>
-<span id="cb37-1022"><a href="#cb37-1022" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1023"><a href="#cb37-1023" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-1018"><a href="#cb37-1018" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-1019"><a href="#cb37-1019" aria-hidden="true" tabindex="-1"></a>fisher.z <span class="ot">&lt;-</span> <span class="cf">function</span>(r) {.<span class="dv">5</span> <span class="sc">*</span> <span class="fu">log</span>((<span class="dv">1</span><span class="sc">+</span>r)<span class="sc">/</span>(<span class="dv">1</span><span class="sc">-</span>r))}</span>
+<span id="cb37-1020"><a href="#cb37-1020" aria-hidden="true" tabindex="-1"></a>fisher.z.inv <span class="ot">&lt;-</span> <span class="cf">function</span>(z) {(<span class="fu">exp</span>(<span class="dv">2</span><span class="sc">*</span>z)<span class="sc">-</span><span class="dv">1</span>) <span class="sc">/</span> (<span class="fu">exp</span>(<span class="dv">2</span><span class="sc">*</span>z)<span class="sc">+</span><span class="dv">1</span>)}</span>
+<span id="cb37-1021"><a href="#cb37-1021" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1022"><a href="#cb37-1022" aria-hidden="true" tabindex="-1"></a>fisher.z.se <span class="ot">&lt;-</span> <span class="cf">function</span>(n) {<span class="dv">1</span><span class="sc">/</span><span class="fu">sqrt</span>(n<span class="dv">-3</span>)}</span>
+<span id="cb37-1023"><a href="#cb37-1023" aria-hidden="true" tabindex="-1"></a><span class="fu">fisher.z.inv</span>(<span class="fu">fisher.z</span>(<span class="fl">0.7283</span>)) <span class="co">#Should be original value</span></span>
 <span id="cb37-1024"><a href="#cb37-1024" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1025"><a href="#cb37-1025" aria-hidden="true" tabindex="-1"></a><span class="fu">### Relationship to regression</span></span>
+<span id="cb37-1025"><a href="#cb37-1025" aria-hidden="true" tabindex="-1"></a><span class="fu">fisher.z</span>(<span class="fl">0.7283</span>)</span>
 <span id="cb37-1026"><a href="#cb37-1026" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1027"><a href="#cb37-1027" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Pearson's correlation ($\rho$) is directly related to linear regression</span>
-<span id="cb37-1028"><a href="#cb37-1028" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1029"><a href="#cb37-1029" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Correlation treats $Y$ and $X$ symmetrically, but we can relate</span>
-<span id="cb37-1030"><a href="#cb37-1030" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1031"><a href="#cb37-1031" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$E<span class="co">[</span><span class="ot">Y | X</span><span class="co">]</span>$ as a function of $X$</span>
-<span id="cb37-1032"><a href="#cb37-1032" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1033"><a href="#cb37-1033" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$E<span class="co">[</span><span class="ot">Y | X</span><span class="co">]</span> = \beta_0 + \beta_1 X$</span>
-<span id="cb37-1034"><a href="#cb37-1034" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1035"><a href="#cb37-1035" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\beta_1 = \rho \frac{\sigma_Y}{\sigma_X}$</span>
-<span id="cb37-1036"><a href="#cb37-1036" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1037"><a href="#cb37-1037" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$E<span class="co">[</span><span class="ot">Y | X</span><span class="co">]</span>$: mean $Y$ withing groups having equal $X$</span>
-<span id="cb37-1038"><a href="#cb37-1038" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1039"><a href="#cb37-1039" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\beta_1$: difference in mean $Y$ per 1 unit difference in $X$</span>
-<span id="cb37-1040"><a href="#cb37-1040" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1041"><a href="#cb37-1041" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\rho$: true correlation between $Y$ and $X$</span>
-<span id="cb37-1042"><a href="#cb37-1042" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1043"><a href="#cb37-1043" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\sigma_Y$: standard deviation of $Y$</span>
-<span id="cb37-1044"><a href="#cb37-1044" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1045"><a href="#cb37-1045" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\sigma_X$: standard deviation of $X$</span>
-<span id="cb37-1046"><a href="#cb37-1046" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1047"><a href="#cb37-1047" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>More interpretable formulation of $\rho$</span>
-<span id="cb37-1048"><a href="#cb37-1048" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1049"><a href="#cb37-1049" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\rho \approx \beta \sqrt{\frac{\textrm{Var}(X)}{\beta^2\textrm{Var}(X) + \textrm{Var}(Y | X = x)}}$</span>
-<span id="cb37-1050"><a href="#cb37-1050" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1051"><a href="#cb37-1051" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\beta$: slope between $Y$ and $X$</span>
-<span id="cb37-1052"><a href="#cb37-1052" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1053"><a href="#cb37-1053" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\textrm{Var}(X)$: variance of $X$ in the sample</span>
-<span id="cb37-1054"><a href="#cb37-1054" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1055"><a href="#cb37-1055" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\textrm{Var}(Y | X = x)$: variance of $Y$ in groups having the same value of $X$ (the vertical spread of data)</span>
-<span id="cb37-1056"><a href="#cb37-1056" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1057"><a href="#cb37-1057" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Correlation tends to increase in absolute value as</span>
-<span id="cb37-1058"><a href="#cb37-1058" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1059"><a href="#cb37-1059" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The absolute value of the slope of the line increases</span>
-<span id="cb37-1060"><a href="#cb37-1060" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1061"><a href="#cb37-1061" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The variance of data decreases within groups that share a common value of $X$</span>
-<span id="cb37-1062"><a href="#cb37-1062" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1063"><a href="#cb37-1063" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The variance of $X$ increases</span>
-<span id="cb37-1064"><a href="#cb37-1064" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1065"><a href="#cb37-1065" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Scientific uses of correlation</span>
-<span id="cb37-1066"><a href="#cb37-1066" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1067"><a href="#cb37-1067" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The slope between $X$ and $Y$ is of scientific interest</span>
-<span id="cb37-1068"><a href="#cb37-1068" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1069"><a href="#cb37-1069" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The variance of $Y$ given $X=x$ is partly of scientific interest, but can also be impacted by restricting sampling to certain values of another variable</span>
-<span id="cb37-1070"><a href="#cb37-1070" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1071"><a href="#cb37-1071" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>The variance of height given age is less if sampling just males than if sampling both sexes</span>
-<span id="cb37-1072"><a href="#cb37-1072" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1073"><a href="#cb37-1073" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>The variance of $X$ is often set by study design (which is often not of scientific interest)</span>
-<span id="cb37-1074"><a href="#cb37-1074" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1075"><a href="#cb37-1075" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Hypothesis tests for a nonzero correlation are exactly the same as a test for a nonzero slope in classical linear regression</span>
-<span id="cb37-1076"><a href="#cb37-1076" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1077"><a href="#cb37-1077" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The statistical significance of a given value of $\rho$ depends only on the sample size</span>
-<span id="cb37-1078"><a href="#cb37-1078" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1079"><a href="#cb37-1079" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Correlation is more of a statistical measure than a scientific measure</span>
-<span id="cb37-1080"><a href="#cb37-1080" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1081"><a href="#cb37-1081" aria-hidden="true" tabindex="-1"></a><span class="fu">## Regression on Geometric Means: Log transformations</span></span>
-<span id="cb37-1082"><a href="#cb37-1082" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1083"><a href="#cb37-1083" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Geometric means of distributions are typically analyzed by using linear regression on the log transformed outcome</span>
-<span id="cb37-1084"><a href="#cb37-1084" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1085"><a href="#cb37-1085" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Used for inference under the following circumstances</span>
-<span id="cb37-1086"><a href="#cb37-1086" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1087"><a href="#cb37-1087" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>We are (scientifically) interested in multiplicative rather than additive models</span>
-<span id="cb37-1088"><a href="#cb37-1088" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1089"><a href="#cb37-1089" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>We want to down-weight the impact of outliers</span>
-<span id="cb37-1090"><a href="#cb37-1090" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1091"><a href="#cb37-1091" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The standard deviation of the response in a groups is proportional to the mean</span>
-<span id="cb37-1092"><a href="#cb37-1092" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1093"><a href="#cb37-1093" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>"Error is $\pm 10\%$" instead of "Error is $\pm 10$"</span>
-<span id="cb37-1094"><a href="#cb37-1094" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1095"><a href="#cb37-1095" aria-hidden="true" tabindex="-1"></a><span class="fu">### Interpretation of Parameters</span></span>
-<span id="cb37-1096"><a href="#cb37-1096" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1097"><a href="#cb37-1097" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Linear regression on the log transformed $Y$</span>
-<span id="cb37-1098"><a href="#cb37-1098" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1099"><a href="#cb37-1099" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Note that in statistics $\textrm{log}$ almost always refers the the natural log ($\textrm{log}_e$)</span>
-<span id="cb37-1100"><a href="#cb37-1100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1101"><a href="#cb37-1101" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Model: $E<span class="co">[</span><span class="ot">\textrm{log} Y_i | X_i</span><span class="co">]</span> = \beta_0 + \beta_1 \times X_i$</span>
-<span id="cb37-1102"><a href="#cb37-1102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1103"><a href="#cb37-1103" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = 0$: $E<span class="co">[</span><span class="ot">\textrm{log} Y_i | X_i = 0</span><span class="co">]</span> = \beta_0$</span>
-<span id="cb37-1104"><a href="#cb37-1104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1105"><a href="#cb37-1105" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = x$: $E<span class="co">[</span><span class="ot">\textrm{log} Y_i | X_i = x</span><span class="co">]</span> = \beta_0 + \beta_1 \times x$</span>
-<span id="cb37-1106"><a href="#cb37-1106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1107"><a href="#cb37-1107" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = x+1$: $E<span class="co">[</span><span class="ot">\textrm{log} Y_i | X_i = x + 1</span><span class="co">]</span> = \beta_0 + \beta_1 \times x + \beta_1$</span>
-<span id="cb37-1108"><a href="#cb37-1108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1109"><a href="#cb37-1109" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Restate the model as log link for geometric mean</span>
-<span id="cb37-1110"><a href="#cb37-1110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1111"><a href="#cb37-1111" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Model: $\textrm{log GM}<span class="co">[</span><span class="ot">Y_i | X_i</span><span class="co">]</span> = \beta_0 + \beta_1 \times X_i$</span>
-<span id="cb37-1112"><a href="#cb37-1112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1113"><a href="#cb37-1113" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = 0$: $\textrm{log GM}<span class="co">[</span><span class="ot">Y_i | X_i = 0</span><span class="co">]</span> = \beta_0$</span>
-<span id="cb37-1114"><a href="#cb37-1114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1115"><a href="#cb37-1115" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = x$: $\textrm{log GM}<span class="co">[</span><span class="ot">Y_i | X_i = x</span><span class="co">]</span> = \beta_0 + \beta_1 \times x$</span>
-<span id="cb37-1116"><a href="#cb37-1116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1117"><a href="#cb37-1117" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = x+1$: $\textrm{log GM}<span class="co">[</span><span class="ot">Y_i | X_i = x + 1</span><span class="co">]</span> = \beta_0 + \beta_1 \times x + \beta_1$</span>
-<span id="cb37-1118"><a href="#cb37-1118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1119"><a href="#cb37-1119" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Interpretation of parameters by back-transforming model</span>
-<span id="cb37-1120"><a href="#cb37-1120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1121"><a href="#cb37-1121" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Model: $\textrm{GM}<span class="co">[</span><span class="ot">Y_i | X_i</span><span class="co">]</span> = e^{\beta_0} \times e^{\beta_1 \times X_i}$</span>
-<span id="cb37-1122"><a href="#cb37-1122" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1123"><a href="#cb37-1123" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = 0$: $\textrm{GM}<span class="co">[</span><span class="ot">Y_i | X_i = 0</span><span class="co">]</span> = e^{\beta_0}$</span>
-<span id="cb37-1124"><a href="#cb37-1124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1125"><a href="#cb37-1125" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = x$: $\textrm{GM}<span class="co">[</span><span class="ot">Y_i | X_i = x</span><span class="co">]</span> = e^{\beta_0} \times e^{\beta_1 \times x}$</span>
-<span id="cb37-1126"><a href="#cb37-1126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1127"><a href="#cb37-1127" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = x+1$: $\textrm{GM}<span class="co">[</span><span class="ot">Y_i | X_i = x + 1</span><span class="co">]</span> = e^{\beta_0} \times e^{\beta_1 \times x} \times e^{\beta_1}$</span>
-<span id="cb37-1128"><a href="#cb37-1128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1129"><a href="#cb37-1129" aria-hidden="true" tabindex="-1"></a><span class="fu">### Example: FEV with Height</span></span>
-<span id="cb37-1130"><a href="#cb37-1130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1131"><a href="#cb37-1131" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Question: How does FEV differ across height groups?</span>
-<span id="cb37-1132"><a href="#cb37-1132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1133"><a href="#cb37-1133" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Scientific justification for summarizing with geometric mean</span>
-<span id="cb37-1134"><a href="#cb37-1134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1135"><a href="#cb37-1135" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>FEV is a volume</span>
-<span id="cb37-1136"><a href="#cb37-1136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1137"><a href="#cb37-1137" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Height is a linear dimension</span>
-<span id="cb37-1138"><a href="#cb37-1138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1139"><a href="#cb37-1139" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Each dimension of lung size is proportional to height</span>
-<span id="cb37-1140"><a href="#cb37-1140" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1141"><a href="#cb37-1141" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Standard deviation is likely proportional to height</span>
-<span id="cb37-1142"><a href="#cb37-1142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1143"><a href="#cb37-1143" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Science: $FEV \propto Height^3$ or $\sqrt<span class="co">[</span><span class="ot">3</span><span class="co">]</span>{FEV} \propto Height$</span>
-<span id="cb37-1144"><a href="#cb37-1144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1145"><a href="#cb37-1145" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Statistics: $\textrm{log}(FEV) \propto 3 \textrm{ log}(Height)$</span>
-<span id="cb37-1146"><a href="#cb37-1146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1147"><a href="#cb37-1147" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Science dictates model choice</span>
-<span id="cb37-1148"><a href="#cb37-1148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1149"><a href="#cb37-1149" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Statistical preference for (any) transformations of response</span>
-<span id="cb37-1150"><a href="#cb37-1150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1151"><a href="#cb37-1151" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>May transform to equal variance across groups</span>
-<span id="cb37-1152"><a href="#cb37-1152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1153"><a href="#cb37-1153" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Homoscedasticity allows for easier inference</span>
-<span id="cb37-1154"><a href="#cb37-1154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1155"><a href="#cb37-1155" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Statistical preference for a log transformation</span>
-<span id="cb37-1156"><a href="#cb37-1156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1157"><a href="#cb37-1157" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Easier interpretation: multiplicative model</span>
-<span id="cb37-1158"><a href="#cb37-1158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1159"><a href="#cb37-1159" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Compare groups using ratios</span>
-<span id="cb37-1160"><a href="#cb37-1160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1161"><a href="#cb37-1161" aria-hidden="true" tabindex="-1"></a><span class="fu">### Log Transformed Predictors</span></span>
-<span id="cb37-1162"><a href="#cb37-1162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1163"><a href="#cb37-1163" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Interpretation of log predictor and log link for response</span>
-<span id="cb37-1164"><a href="#cb37-1164" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1165"><a href="#cb37-1165" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Log link used to model the geometric mean of $Y$</span>
-<span id="cb37-1166"><a href="#cb37-1166" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1167"><a href="#cb37-1167" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Exponentiated slope estimates ratio of geometric means across groups</span>
-<span id="cb37-1168"><a href="#cb37-1168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1169"><a href="#cb37-1169" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Log transformation of predictor compares groups with a $k$-fold difference in there measured predictors</span>
-<span id="cb37-1170"><a href="#cb37-1170" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1171"><a href="#cb37-1171" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Estimated ratio of geometric means</span>
-<span id="cb37-1172"><a href="#cb37-1172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1173"><a href="#cb37-1173" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\exp (\textrm{log}(k) \times \beta_1) = k^{\beta_1}$</span>
-<span id="cb37-1174"><a href="#cb37-1174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1175"><a href="#cb37-1175" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Interpretation of model</span>
-<span id="cb37-1176"><a href="#cb37-1176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1177"><a href="#cb37-1177" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\textrm{log GM}<span class="co">[</span><span class="ot">FEV_i | log (height_i)</span><span class="co">]</span> = -11.9 + 3.12 \times log(height_i)$</span>
-<span id="cb37-1178"><a href="#cb37-1178" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1179"><a href="#cb37-1179" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Estimate ratio of geometric mean FEV for two groups differing by $10\%$ in height (a 1.1 fold difference in height)</span>
-<span id="cb37-1180"><a href="#cb37-1180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1181"><a href="#cb37-1181" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>To find: Exponentiate $1.1$ to the slope: $1.1^{3.12} = 1.35$</span>
-<span id="cb37-1182"><a href="#cb37-1182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1183"><a href="#cb37-1183" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>"Group that is 10% taller is estimated to have a geometric mean FEV that is 1.35 times higher (35% higher)"</span>
-<span id="cb37-1184"><a href="#cb37-1184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1185"><a href="#cb37-1185" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Why transform the predictor?</span>
-<span id="cb37-1186"><a href="#cb37-1186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1187"><a href="#cb37-1187" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Typically chosen according to whether the data are likely to follow a straight line relationship</span>
-<span id="cb37-1188"><a href="#cb37-1188" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1189"><a href="#cb37-1189" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Linearity necessary to predict the values of the parameter in individual groups</span>
-<span id="cb37-1190"><a href="#cb37-1190" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1191"><a href="#cb37-1191" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Linearity is not necessary to estimate existence of an association</span>
-<span id="cb37-1192"><a href="#cb37-1192" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1193"><a href="#cb37-1193" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Linearity is not necessary to estimate a first order trend in the parameter across groups having the sampled distribution of the predictor</span>
-<span id="cb37-1194"><a href="#cb37-1194" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1195"><a href="#cb37-1195" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>(Inference about these two questions will tend to be conservative if linearity does not hold)</span>
-<span id="cb37-1196"><a href="#cb37-1196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1197"><a href="#cb37-1197" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Rarely do we know which transformation of the predictor provides the best linear fit</span>
-<span id="cb37-1198"><a href="#cb37-1198" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1199"><a href="#cb37-1199" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>As always, there is significant danger in using the data to estimate the best transformation to use</span>
-<span id="cb37-1200"><a href="#cb37-1200" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1201"><a href="#cb37-1201" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>If there is no association of any kind between the response and the predictor, a linear fit (with a zero slope) is correct</span>
-<span id="cb37-1202"><a href="#cb37-1202" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1203"><a href="#cb37-1203" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Trying to detect a transformation is thus an informal test for an association (multiple testing, which inflates type I error rate)</span>
-<span id="cb37-1204"><a href="#cb37-1204" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1205"><a href="#cb37-1205" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>It is best to choose transformations of the predictor on scientific grounds</span>
-<span id="cb37-1206"><a href="#cb37-1206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1207"><a href="#cb37-1207" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>In practice, it is often true that mean functions are well approximated by a straight line over a small range of the data</span>
-<span id="cb37-1208"><a href="#cb37-1208" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1209"><a href="#cb37-1209" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Example: In the FEV dataset, the logarithm of height is approximately linear over the range of heights sampled (look at the plot)</span>
-<span id="cb37-1210"><a href="#cb37-1210" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1211"><a href="#cb37-1211" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>We can often choose untransformed predictors when science would suggest a non-linear association</span>
-<span id="cb37-1212"><a href="#cb37-1212" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1213"><a href="#cb37-1213" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Can have major advantages in interpreting the results of the analysis</span>
-<span id="cb37-1214"><a href="#cb37-1214" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1215"><a href="#cb37-1215" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>In the FEV example, it is far more natural to compare heights by difference than by ratios</span>
-<span id="cb37-1216"><a href="#cb37-1216" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1217"><a href="#cb37-1217" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>We would rather characterize two children as differing by 4 inches in height rather than as the 44 inch child being 10% taller than the 40 inch child</span>
-<span id="cb37-1218"><a href="#cb37-1218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1219"><a href="#cb37-1219" aria-hidden="true" tabindex="-1"></a><span class="fu">### Looking Ahead to Multivariable Models</span></span>
-<span id="cb37-1220"><a href="#cb37-1220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1221"><a href="#cb37-1221" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The relative importance of having the "true" transformation for a predictor depends on the statistical role</span>
-<span id="cb37-1222"><a href="#cb37-1222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1223"><a href="#cb37-1223" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Predictor of Interest</span>
-<span id="cb37-1224"><a href="#cb37-1224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1225"><a href="#cb37-1225" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Effect Modifiers</span>
-<span id="cb37-1226"><a href="#cb37-1226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1227"><a href="#cb37-1227" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Confounders</span>
-<span id="cb37-1228"><a href="#cb37-1228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1229"><a href="#cb37-1229" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Precision variables</span>
-<span id="cb37-1230"><a href="#cb37-1230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1231"><a href="#cb37-1231" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>We treat these variables different when planning our analysis</span>
-<span id="cb37-1232"><a href="#cb37-1232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1233"><a href="#cb37-1233" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Predictor of Interest (should be pre-specified)</span>
-<span id="cb37-1234"><a href="#cb37-1234" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1235"><a href="#cb37-1235" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>In general, don't worry about modeling the exact association until you have even established an association (binary search)</span>
-<span id="cb37-1236"><a href="#cb37-1236" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1237"><a href="#cb37-1237" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Need to have a prespecified model for the POI</span>
-<span id="cb37-1238"><a href="#cb37-1238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1239"><a href="#cb37-1239" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Searching for the best fit can inflate the type I error</span>
-<span id="cb37-1240"><a href="#cb37-1240" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1241"><a href="#cb37-1241" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Make most accurate, precise inference about the presence of the association first</span>
-<span id="cb37-1242"><a href="#cb37-1242" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1243"><a href="#cb37-1243" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Exploratory models can suggest models for future analyses</span>
-<span id="cb37-1244"><a href="#cb37-1244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1245"><a href="#cb37-1245" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Effect Modifiers (difficult to do right anyway)</span>
-<span id="cb37-1246"><a href="#cb37-1246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1247"><a href="#cb37-1247" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Modeling of effect modifiers is invariably just a test for the existence of an interaction</span>
-<span id="cb37-1248"><a href="#cb37-1248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1249"><a href="#cb37-1249" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>We rarely have a lot of precision to answer questions in subgroups of the data</span>
-<span id="cb37-1250"><a href="#cb37-1250" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1251"><a href="#cb37-1251" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Patterns of interaction can be so complex that it is unlikely that we will really capture the interactions across all subgroups in a single model</span>
-<span id="cb37-1252"><a href="#cb37-1252" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1253"><a href="#cb37-1253" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Typically, we would restrict future studies to analyses treating subgroups separately</span>
-<span id="cb37-1254"><a href="#cb37-1254" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1255"><a href="#cb37-1255" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Confounders (matters the most)</span>
-<span id="cb37-1256"><a href="#cb37-1256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1257"><a href="#cb37-1257" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>It is important to have an appropriate model of the association between the confounder and the response</span>
-<span id="cb37-1258"><a href="#cb37-1258" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1259"><a href="#cb37-1259" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Failure to accurately model the confounder means that some residual confounding will exist</span>
-<span id="cb37-1260"><a href="#cb37-1260" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1261"><a href="#cb37-1261" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>However, searching for the best model may inflate the type I error for inference about the predictor of interest by overstating the precision of the study</span>
-<span id="cb37-1262"><a href="#cb37-1262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1263"><a href="#cb37-1263" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Luckily, we rarely care about inference for the confounder, so we are free to use inefficient means of adjustment (e.g. a stratified analysis)</span>
-<span id="cb37-1264"><a href="#cb37-1264" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1265"><a href="#cb37-1265" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Precision Variables</span>
-<span id="cb37-1266"><a href="#cb37-1266" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1267"><a href="#cb37-1267" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>When modeling precision variables, it is rarely worth the effort to use the "best" transformation</span>
-<span id="cb37-1268"><a href="#cb37-1268" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1269"><a href="#cb37-1269" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>We usually capture the largest part of the added precision using crude models</span>
-<span id="cb37-1270"><a href="#cb37-1270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1271"><a href="#cb37-1271" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>We generally do not care about estimating association between the response and the precision variable</span>
-<span id="cb37-1272"><a href="#cb37-1272" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-1273"><a href="#cb37-1273" aria-hidden="true" tabindex="-1"></a><span class="ss">            -   </span>Most often, precision variables represent known effects on the response</span>
+<span id="cb37-1027"><a href="#cb37-1027" aria-hidden="true" tabindex="-1"></a><span class="fu">fisher.z</span>(<span class="fl">0.7283</span>)<span class="sc">-</span><span class="fl">1.96</span><span class="sc">*</span><span class="fu">fisher.z.se</span>(<span class="dv">13</span>)</span>
+<span id="cb37-1028"><a href="#cb37-1028" aria-hidden="true" tabindex="-1"></a><span class="fu">fisher.z</span>(<span class="fl">0.7283</span>)<span class="sc">+</span><span class="fl">1.96</span><span class="sc">*</span><span class="fu">fisher.z.se</span>(<span class="dv">13</span>)</span>
+<span id="cb37-1029"><a href="#cb37-1029" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1030"><a href="#cb37-1030" aria-hidden="true" tabindex="-1"></a><span class="fu">fisher.z.inv</span>(<span class="fu">fisher.z</span>(<span class="fl">0.7283</span>)<span class="sc">+</span><span class="fu">c</span>(<span class="sc">-</span><span class="fl">1.96</span>, <span class="fl">1.96</span>)<span class="sc">*</span><span class="fu">fisher.z.se</span>(<span class="dv">13</span>))</span>
+<span id="cb37-1031"><a href="#cb37-1031" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1032"><a href="#cb37-1032" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-1033"><a href="#cb37-1033" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1034"><a href="#cb37-1034" aria-hidden="true" tabindex="-1"></a><span class="fu">### Relationship to regression</span></span>
+<span id="cb37-1035"><a href="#cb37-1035" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1036"><a href="#cb37-1036" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Pearson's correlation ($\rho$) is directly related to linear regression</span>
+<span id="cb37-1037"><a href="#cb37-1037" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1038"><a href="#cb37-1038" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Correlation treats $Y$ and $X$ symmetrically, but we can relate</span>
+<span id="cb37-1039"><a href="#cb37-1039" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1040"><a href="#cb37-1040" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$E<span class="co">[</span><span class="ot">Y | X</span><span class="co">]</span>$ as a function of $X$</span>
+<span id="cb37-1041"><a href="#cb37-1041" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1042"><a href="#cb37-1042" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$E<span class="co">[</span><span class="ot">Y | X</span><span class="co">]</span> = \beta_0 + \beta_1 X$</span>
+<span id="cb37-1043"><a href="#cb37-1043" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1044"><a href="#cb37-1044" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\beta_1 = \rho \frac{\sigma_Y}{\sigma_X}$</span>
+<span id="cb37-1045"><a href="#cb37-1045" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1046"><a href="#cb37-1046" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$E<span class="co">[</span><span class="ot">Y | X</span><span class="co">]</span>$: mean $Y$ withing groups having equal $X$</span>
+<span id="cb37-1047"><a href="#cb37-1047" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1048"><a href="#cb37-1048" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\beta_1$: difference in mean $Y$ per 1 unit difference in $X$</span>
+<span id="cb37-1049"><a href="#cb37-1049" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1050"><a href="#cb37-1050" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\rho$: true correlation between $Y$ and $X$</span>
+<span id="cb37-1051"><a href="#cb37-1051" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1052"><a href="#cb37-1052" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\sigma_Y$: standard deviation of $Y$</span>
+<span id="cb37-1053"><a href="#cb37-1053" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1054"><a href="#cb37-1054" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\sigma_X$: standard deviation of $X$</span>
+<span id="cb37-1055"><a href="#cb37-1055" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1056"><a href="#cb37-1056" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>More interpretable formulation of $\rho$</span>
+<span id="cb37-1057"><a href="#cb37-1057" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1058"><a href="#cb37-1058" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\rho \approx \beta \sqrt{\frac{\textrm{Var}(X)}{\beta^2\textrm{Var}(X) + \textrm{Var}(Y | X = x)}}$</span>
+<span id="cb37-1059"><a href="#cb37-1059" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1060"><a href="#cb37-1060" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\beta$: slope between $Y$ and $X$</span>
+<span id="cb37-1061"><a href="#cb37-1061" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1062"><a href="#cb37-1062" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\textrm{Var}(X)$: variance of $X$ in the sample</span>
+<span id="cb37-1063"><a href="#cb37-1063" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1064"><a href="#cb37-1064" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\textrm{Var}(Y | X = x)$: variance of $Y$ in groups having the same value of $X$ (the vertical spread of data)</span>
+<span id="cb37-1065"><a href="#cb37-1065" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1066"><a href="#cb37-1066" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Correlation tends to increase in absolute value as</span>
+<span id="cb37-1067"><a href="#cb37-1067" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1068"><a href="#cb37-1068" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The absolute value of the slope of the line increases</span>
+<span id="cb37-1069"><a href="#cb37-1069" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1070"><a href="#cb37-1070" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The variance of data decreases within groups that share a common value of $X$</span>
+<span id="cb37-1071"><a href="#cb37-1071" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1072"><a href="#cb37-1072" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The variance of $X$ increases</span>
+<span id="cb37-1073"><a href="#cb37-1073" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1074"><a href="#cb37-1074" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Scientific uses of correlation</span>
+<span id="cb37-1075"><a href="#cb37-1075" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1076"><a href="#cb37-1076" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The slope between $X$ and $Y$ is of scientific interest</span>
+<span id="cb37-1077"><a href="#cb37-1077" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1078"><a href="#cb37-1078" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The variance of $Y$ given $X=x$ is partly of scientific interest, but can also be impacted by restricting sampling to certain values of another variable</span>
+<span id="cb37-1079"><a href="#cb37-1079" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1080"><a href="#cb37-1080" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>The variance of height given age is less if sampling just males than if sampling both sexes</span>
+<span id="cb37-1081"><a href="#cb37-1081" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1082"><a href="#cb37-1082" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>The variance of $X$ is often set by study design (which is often not of scientific interest)</span>
+<span id="cb37-1083"><a href="#cb37-1083" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1084"><a href="#cb37-1084" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Hypothesis tests for a nonzero correlation are exactly the same as a test for a nonzero slope in classical linear regression</span>
+<span id="cb37-1085"><a href="#cb37-1085" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1086"><a href="#cb37-1086" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The statistical significance of a given value of $\rho$ depends only on the sample size</span>
+<span id="cb37-1087"><a href="#cb37-1087" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1088"><a href="#cb37-1088" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Correlation is more of a statistical measure than a scientific measure</span>
+<span id="cb37-1089"><a href="#cb37-1089" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1090"><a href="#cb37-1090" aria-hidden="true" tabindex="-1"></a><span class="fu">## Regression on Geometric Means: Log transformations</span></span>
+<span id="cb37-1091"><a href="#cb37-1091" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1092"><a href="#cb37-1092" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Geometric means of distributions are typically analyzed by using linear regression on the log transformed outcome</span>
+<span id="cb37-1093"><a href="#cb37-1093" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1094"><a href="#cb37-1094" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Used for inference under the following circumstances</span>
+<span id="cb37-1095"><a href="#cb37-1095" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1096"><a href="#cb37-1096" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>We are (scientifically) interested in multiplicative rather than additive models</span>
+<span id="cb37-1097"><a href="#cb37-1097" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1098"><a href="#cb37-1098" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>We want to down-weight the impact of outliers</span>
+<span id="cb37-1099"><a href="#cb37-1099" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1100"><a href="#cb37-1100" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>The standard deviation of the response in a groups is proportional to the mean</span>
+<span id="cb37-1101"><a href="#cb37-1101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1102"><a href="#cb37-1102" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>"Error is $\pm 10\%$" instead of "Error is $\pm 10$"</span>
+<span id="cb37-1103"><a href="#cb37-1103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1104"><a href="#cb37-1104" aria-hidden="true" tabindex="-1"></a><span class="fu">### Interpretation of Parameters</span></span>
+<span id="cb37-1105"><a href="#cb37-1105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1106"><a href="#cb37-1106" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Linear regression on the log transformed $Y$</span>
+<span id="cb37-1107"><a href="#cb37-1107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1108"><a href="#cb37-1108" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Note that in statistics $\textrm{log}$ almost always refers the the natural log ($\textrm{log}_e$)</span>
+<span id="cb37-1109"><a href="#cb37-1109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1110"><a href="#cb37-1110" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Model: $E<span class="co">[</span><span class="ot">\textrm{log} Y_i | X_i</span><span class="co">]</span> = \beta_0 + \beta_1 \times X_i$</span>
+<span id="cb37-1111"><a href="#cb37-1111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1112"><a href="#cb37-1112" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = 0$: $E<span class="co">[</span><span class="ot">\textrm{log} Y_i | X_i = 0</span><span class="co">]</span> = \beta_0$</span>
+<span id="cb37-1113"><a href="#cb37-1113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1114"><a href="#cb37-1114" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = x$: $E<span class="co">[</span><span class="ot">\textrm{log} Y_i | X_i = x</span><span class="co">]</span> = \beta_0 + \beta_1 \times x$</span>
+<span id="cb37-1115"><a href="#cb37-1115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1116"><a href="#cb37-1116" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = x+1$: $E<span class="co">[</span><span class="ot">\textrm{log} Y_i | X_i = x + 1</span><span class="co">]</span> = \beta_0 + \beta_1 \times x + \beta_1$</span>
+<span id="cb37-1117"><a href="#cb37-1117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1118"><a href="#cb37-1118" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Restate the model as log link for geometric mean</span>
+<span id="cb37-1119"><a href="#cb37-1119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1120"><a href="#cb37-1120" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Model: $\textrm{log GM}<span class="co">[</span><span class="ot">Y_i | X_i</span><span class="co">]</span> = \beta_0 + \beta_1 \times X_i$</span>
+<span id="cb37-1121"><a href="#cb37-1121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1122"><a href="#cb37-1122" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = 0$: $\textrm{log GM}<span class="co">[</span><span class="ot">Y_i | X_i = 0</span><span class="co">]</span> = \beta_0$</span>
+<span id="cb37-1123"><a href="#cb37-1123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1124"><a href="#cb37-1124" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = x$: $\textrm{log GM}<span class="co">[</span><span class="ot">Y_i | X_i = x</span><span class="co">]</span> = \beta_0 + \beta_1 \times x$</span>
+<span id="cb37-1125"><a href="#cb37-1125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1126"><a href="#cb37-1126" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = x+1$: $\textrm{log GM}<span class="co">[</span><span class="ot">Y_i | X_i = x + 1</span><span class="co">]</span> = \beta_0 + \beta_1 \times x + \beta_1$</span>
+<span id="cb37-1127"><a href="#cb37-1127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1128"><a href="#cb37-1128" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Interpretation of parameters by back-transforming model</span>
+<span id="cb37-1129"><a href="#cb37-1129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1130"><a href="#cb37-1130" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Model: $\textrm{GM}<span class="co">[</span><span class="ot">Y_i | X_i</span><span class="co">]</span> = e^{\beta_0} \times e^{\beta_1 \times X_i}$</span>
+<span id="cb37-1131"><a href="#cb37-1131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1132"><a href="#cb37-1132" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = 0$: $\textrm{GM}<span class="co">[</span><span class="ot">Y_i | X_i = 0</span><span class="co">]</span> = e^{\beta_0}$</span>
+<span id="cb37-1133"><a href="#cb37-1133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1134"><a href="#cb37-1134" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = x$: $\textrm{GM}<span class="co">[</span><span class="ot">Y_i | X_i = x</span><span class="co">]</span> = e^{\beta_0} \times e^{\beta_1 \times x}$</span>
+<span id="cb37-1135"><a href="#cb37-1135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1136"><a href="#cb37-1136" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>When $X_i = x+1$: $\textrm{GM}<span class="co">[</span><span class="ot">Y_i | X_i = x + 1</span><span class="co">]</span> = e^{\beta_0} \times e^{\beta_1 \times x} \times e^{\beta_1}$</span>
+<span id="cb37-1137"><a href="#cb37-1137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1138"><a href="#cb37-1138" aria-hidden="true" tabindex="-1"></a><span class="fu">### Example: FEV with Height</span></span>
+<span id="cb37-1139"><a href="#cb37-1139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1140"><a href="#cb37-1140" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Question: How does FEV differ across height groups?</span>
+<span id="cb37-1141"><a href="#cb37-1141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1142"><a href="#cb37-1142" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Scientific justification for summarizing with geometric mean</span>
+<span id="cb37-1143"><a href="#cb37-1143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1144"><a href="#cb37-1144" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>FEV is a volume</span>
+<span id="cb37-1145"><a href="#cb37-1145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1146"><a href="#cb37-1146" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Height is a linear dimension</span>
+<span id="cb37-1147"><a href="#cb37-1147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1148"><a href="#cb37-1148" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Each dimension of lung size is proportional to height</span>
+<span id="cb37-1149"><a href="#cb37-1149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1150"><a href="#cb37-1150" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Standard deviation is likely proportional to height</span>
+<span id="cb37-1151"><a href="#cb37-1151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1152"><a href="#cb37-1152" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Science: $FEV \propto Height^3$ or $\sqrt<span class="co">[</span><span class="ot">3</span><span class="co">]</span>{FEV} \propto Height$</span>
+<span id="cb37-1153"><a href="#cb37-1153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1154"><a href="#cb37-1154" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Statistics: $\textrm{log}(FEV) \propto 3 \textrm{ log}(Height)$</span>
+<span id="cb37-1155"><a href="#cb37-1155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1156"><a href="#cb37-1156" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Science dictates model choice</span>
+<span id="cb37-1157"><a href="#cb37-1157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1158"><a href="#cb37-1158" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Statistical preference for (any) transformations of response</span>
+<span id="cb37-1159"><a href="#cb37-1159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1160"><a href="#cb37-1160" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>May transform to equal variance across groups</span>
+<span id="cb37-1161"><a href="#cb37-1161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1162"><a href="#cb37-1162" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Homoscedasticity allows for easier inference</span>
+<span id="cb37-1163"><a href="#cb37-1163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1164"><a href="#cb37-1164" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Statistical preference for a log transformation</span>
+<span id="cb37-1165"><a href="#cb37-1165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1166"><a href="#cb37-1166" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Easier interpretation: multiplicative model</span>
+<span id="cb37-1167"><a href="#cb37-1167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1168"><a href="#cb37-1168" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Compare groups using ratios</span>
+<span id="cb37-1169"><a href="#cb37-1169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1170"><a href="#cb37-1170" aria-hidden="true" tabindex="-1"></a><span class="fu">### Log Transformed Predictors</span></span>
+<span id="cb37-1171"><a href="#cb37-1171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1172"><a href="#cb37-1172" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Interpretation of log predictor and log link for response</span>
+<span id="cb37-1173"><a href="#cb37-1173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1174"><a href="#cb37-1174" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Log link used to model the geometric mean of $Y$</span>
+<span id="cb37-1175"><a href="#cb37-1175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1176"><a href="#cb37-1176" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Exponentiated slope estimates ratio of geometric means across groups</span>
+<span id="cb37-1177"><a href="#cb37-1177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1178"><a href="#cb37-1178" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Log transformation of predictor compares groups with a $k$-fold difference in there measured predictors</span>
+<span id="cb37-1179"><a href="#cb37-1179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1180"><a href="#cb37-1180" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Estimated ratio of geometric means</span>
+<span id="cb37-1181"><a href="#cb37-1181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1182"><a href="#cb37-1182" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\exp (\textrm{log}(k) \times \beta_1) = k^{\beta_1}$</span>
+<span id="cb37-1183"><a href="#cb37-1183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1184"><a href="#cb37-1184" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Interpretation of model</span>
+<span id="cb37-1185"><a href="#cb37-1185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1186"><a href="#cb37-1186" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$\textrm{log GM}<span class="co">[</span><span class="ot">FEV_i | log (height_i)</span><span class="co">]</span> = -11.9 + 3.12 \times log(height_i)$</span>
+<span id="cb37-1187"><a href="#cb37-1187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1188"><a href="#cb37-1188" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Estimate ratio of geometric mean FEV for two groups differing by $10\%$ in height (a 1.1 fold difference in height)</span>
+<span id="cb37-1189"><a href="#cb37-1189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1190"><a href="#cb37-1190" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>To find: Exponentiate $1.1$ to the slope: $1.1^{3.12} = 1.35$</span>
+<span id="cb37-1191"><a href="#cb37-1191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1192"><a href="#cb37-1192" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>"Group that is 10% taller is estimated to have a geometric mean FEV that is 1.35 times higher (35% higher)"</span>
+<span id="cb37-1193"><a href="#cb37-1193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1194"><a href="#cb37-1194" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Why transform the predictor?</span>
+<span id="cb37-1195"><a href="#cb37-1195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1196"><a href="#cb37-1196" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Typically chosen according to whether the data are likely to follow a straight line relationship</span>
+<span id="cb37-1197"><a href="#cb37-1197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1198"><a href="#cb37-1198" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Linearity necessary to predict the values of the parameter in individual groups</span>
+<span id="cb37-1199"><a href="#cb37-1199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1200"><a href="#cb37-1200" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Linearity is not necessary to estimate existence of an association</span>
+<span id="cb37-1201"><a href="#cb37-1201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1202"><a href="#cb37-1202" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Linearity is not necessary to estimate a first order trend in the parameter across groups having the sampled distribution of the predictor</span>
+<span id="cb37-1203"><a href="#cb37-1203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1204"><a href="#cb37-1204" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>(Inference about these two questions will tend to be conservative if linearity does not hold)</span>
+<span id="cb37-1205"><a href="#cb37-1205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1206"><a href="#cb37-1206" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Rarely do we know which transformation of the predictor provides the best linear fit</span>
+<span id="cb37-1207"><a href="#cb37-1207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1208"><a href="#cb37-1208" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>As always, there is significant danger in using the data to estimate the best transformation to use</span>
+<span id="cb37-1209"><a href="#cb37-1209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1210"><a href="#cb37-1210" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>If there is no association of any kind between the response and the predictor, a linear fit (with a zero slope) is correct</span>
+<span id="cb37-1211"><a href="#cb37-1211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1212"><a href="#cb37-1212" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Trying to detect a transformation is thus an informal test for an association (multiple testing, which inflates type I error rate)</span>
+<span id="cb37-1213"><a href="#cb37-1213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1214"><a href="#cb37-1214" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>It is best to choose transformations of the predictor on scientific grounds</span>
+<span id="cb37-1215"><a href="#cb37-1215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1216"><a href="#cb37-1216" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>In practice, it is often true that mean functions are well approximated by a straight line over a small range of the data</span>
+<span id="cb37-1217"><a href="#cb37-1217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1218"><a href="#cb37-1218" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Example: In the FEV dataset, the logarithm of height is approximately linear over the range of heights sampled (look at the plot)</span>
+<span id="cb37-1219"><a href="#cb37-1219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1220"><a href="#cb37-1220" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>We can often choose untransformed predictors when science would suggest a non-linear association</span>
+<span id="cb37-1221"><a href="#cb37-1221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1222"><a href="#cb37-1222" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Can have major advantages in interpreting the results of the analysis</span>
+<span id="cb37-1223"><a href="#cb37-1223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1224"><a href="#cb37-1224" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>In the FEV example, it is far more natural to compare heights by difference than by ratios</span>
+<span id="cb37-1225"><a href="#cb37-1225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1226"><a href="#cb37-1226" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>We would rather characterize two children as differing by 4 inches in height rather than as the 44 inch child being 10% taller than the 40 inch child</span>
+<span id="cb37-1227"><a href="#cb37-1227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1228"><a href="#cb37-1228" aria-hidden="true" tabindex="-1"></a><span class="fu">### Looking Ahead to Multivariable Models</span></span>
+<span id="cb37-1229"><a href="#cb37-1229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1230"><a href="#cb37-1230" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The relative importance of having the "true" transformation for a predictor depends on the statistical role</span>
+<span id="cb37-1231"><a href="#cb37-1231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1232"><a href="#cb37-1232" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Predictor of Interest</span>
+<span id="cb37-1233"><a href="#cb37-1233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1234"><a href="#cb37-1234" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Effect Modifiers</span>
+<span id="cb37-1235"><a href="#cb37-1235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1236"><a href="#cb37-1236" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Confounders</span>
+<span id="cb37-1237"><a href="#cb37-1237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1238"><a href="#cb37-1238" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Precision variables</span>
+<span id="cb37-1239"><a href="#cb37-1239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1240"><a href="#cb37-1240" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>We treat these variables different when planning our analysis</span>
+<span id="cb37-1241"><a href="#cb37-1241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1242"><a href="#cb37-1242" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Predictor of Interest (should be pre-specified)</span>
+<span id="cb37-1243"><a href="#cb37-1243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1244"><a href="#cb37-1244" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>In general, don't worry about modeling the exact association until you have even established an association (binary search)</span>
+<span id="cb37-1245"><a href="#cb37-1245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1246"><a href="#cb37-1246" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Need to have a prespecified model for the POI</span>
+<span id="cb37-1247"><a href="#cb37-1247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1248"><a href="#cb37-1248" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Searching for the best fit can inflate the type I error</span>
+<span id="cb37-1249"><a href="#cb37-1249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1250"><a href="#cb37-1250" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Make most accurate, precise inference about the presence of the association first</span>
+<span id="cb37-1251"><a href="#cb37-1251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1252"><a href="#cb37-1252" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Exploratory models can suggest models for future analyses</span>
+<span id="cb37-1253"><a href="#cb37-1253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1254"><a href="#cb37-1254" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Effect Modifiers (difficult to do right anyway)</span>
+<span id="cb37-1255"><a href="#cb37-1255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1256"><a href="#cb37-1256" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Modeling of effect modifiers is invariably just a test for the existence of an interaction</span>
+<span id="cb37-1257"><a href="#cb37-1257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1258"><a href="#cb37-1258" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>We rarely have a lot of precision to answer questions in subgroups of the data</span>
+<span id="cb37-1259"><a href="#cb37-1259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1260"><a href="#cb37-1260" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Patterns of interaction can be so complex that it is unlikely that we will really capture the interactions across all subgroups in a single model</span>
+<span id="cb37-1261"><a href="#cb37-1261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1262"><a href="#cb37-1262" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Typically, we would restrict future studies to analyses treating subgroups separately</span>
+<span id="cb37-1263"><a href="#cb37-1263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1264"><a href="#cb37-1264" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Confounders (matters the most)</span>
+<span id="cb37-1265"><a href="#cb37-1265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1266"><a href="#cb37-1266" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>It is important to have an appropriate model of the association between the confounder and the response</span>
+<span id="cb37-1267"><a href="#cb37-1267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1268"><a href="#cb37-1268" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Failure to accurately model the confounder means that some residual confounding will exist</span>
+<span id="cb37-1269"><a href="#cb37-1269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1270"><a href="#cb37-1270" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>However, searching for the best model may inflate the type I error for inference about the predictor of interest by overstating the precision of the study</span>
+<span id="cb37-1271"><a href="#cb37-1271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1272"><a href="#cb37-1272" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Luckily, we rarely care about inference for the confounder, so we are free to use inefficient means of adjustment (e.g. a stratified analysis)</span>
+<span id="cb37-1273"><a href="#cb37-1273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1274"><a href="#cb37-1274" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Precision Variables</span>
+<span id="cb37-1275"><a href="#cb37-1275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1276"><a href="#cb37-1276" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>When modeling precision variables, it is rarely worth the effort to use the "best" transformation</span>
+<span id="cb37-1277"><a href="#cb37-1277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1278"><a href="#cb37-1278" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>We usually capture the largest part of the added precision using crude models</span>
+<span id="cb37-1279"><a href="#cb37-1279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1280"><a href="#cb37-1280" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>We generally do not care about estimating association between the response and the precision variable</span>
+<span id="cb37-1281"><a href="#cb37-1281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-1282"><a href="#cb37-1282" aria-hidden="true" tabindex="-1"></a><span class="ss">            -   </span>Most often, precision variables represent known effects on the response</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
