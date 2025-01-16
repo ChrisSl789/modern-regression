@@ -888,7 +888,7 @@ robcov(ols(y2 ~ x, data=regassumptions, x=TRUE))
 | Age-chol All Assump. hold    | 10.31               | 10.38            | 0.137           | 0.138        |
 | Scenario 1 Assump hold       | 0.712               | 0.700            | 0.0123          | 0.0132       |
 | Scenario 3 Increase Variance | 0.919               | 0.596            | 0.0159          | 0.0153       |
-| Scenario 2 Skewed Variance   | 0.291               | 0.353            | 0.00503         | 0.00507      |
+| Scenario 2 Skewed Variance   | 0.291               | 0.353            | 0.00503         | 0.00557      |
 
 : Comparison of standard error estimates, $\hat{\textrm{se}}(\hat{\beta_0})$ and $\hat{\textrm{se}}(\hat{\beta_1})$
 
