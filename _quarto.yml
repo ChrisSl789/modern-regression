@@ -45,6 +45,8 @@ website:
           - href: notes/Lec07.MultivariableModels.qmd
           - href: notes/Set2.pdf
             text: "Model Estimation"
+          - href: notes/Set6.pdf
+            text: "Weighted Regression"
           - href: notes/Lec08.Survival.qmd
           - href: notes/Lec09.Poisson.qmd
           - href: notes/Lec10.Modeling.Effect.Modification.qmd
