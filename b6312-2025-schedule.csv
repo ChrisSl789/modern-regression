@@ -10,12 +10,12 @@ Week,Day,Date,Topic,"Notes or Lab",Supplemental,Homework,Reading
 3,5,2025/01/23,"Logistic Regression","Lec 4",,"HW 1 due; HW 2 assigned",
 4,2,2025/01/27,"Logistic Regression","Lec 4",,,
 4,3,2025/01/28,"Logistic Regression Lab","Lab 3",,,"RMB 3.4; 6.1"
-4,5,2025/01/30,Precision,,,,
+4,5,2025/01/30,Precision,,,"HW 3 assigned",
 5,2,2025/02/03,"Lab: Precision","Lab 3",,,
-5,3,2025/02/04,Precison/Confouding,"Lec 5/Lec 6",,,"RMB 5.1"
+5,3,2025/02/04,Precison/Confouding,"Lec 5/Lec 6",,"HW 2 due","RMB 5.1"
 5,5,2025/02/06,"Confounding and Effect Modification","Lec 6",,,
 6,2,2025/02/10,"Lab: Multivariable models","Lab 4",,,
-6,3,2025/02/11,"Multivariable Models","Lec 7",,,
+6,3,2025/02/11,"Multivariable Models","Lec 7",,"HW 3 due",
 6,5,2025/02/13,"Multivariable Models","Lec 7",,,
 7,2,2025/02/17,"Model estimation",,,,
 7,3,2025/02/18,"Model estimation",,,,

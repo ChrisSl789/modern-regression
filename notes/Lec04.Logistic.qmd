@@ -631,7 +631,7 @@ exp(5*posterior_interval(fit2, prob = 0.95))[2,] # 95% credible interval
 
         -   Hence, do not need linearity of log odds across groups to hold
 
-        -   Valid statistical inference (CIs, p-values) about *odds of response in specific groups* requires a further assumption
+-   Valid statistical inference (CIs, p-values) about *odds of response in specific groups* requires a further assumption
 
 -   Assumption 4: Adequacy of the linear model
 
@@ -699,14 +699,14 @@ with(titanic,
 -   The log odds of survival in females
 
 ```{r}
-fit.titanic.female <- glm(survived ~ age, data=titanic, subset=sex=="female")
+fit.titanic.female <- glm(survived ~ age, data=titanic, subset=sex=="female", family="binomial")
 fit.titanic.female
 ```
 
 -   The log odds of survival in males
 
 ```{r}
-fit.titanic.male <- glm(survived ~ age, data=titanic, subset=sex=="male")
+fit.titanic.male <- glm(survived ~ age, data=titanic, subset=sex=="male", family="binomial")
 fit.titanic.male
 ```
 
@@ -749,7 +749,7 @@ $$\textrm{logit}(p | X_{1i}, X_{2i}=1) = (\beta_0+\beta_2) + (\beta_1+\beta_3) *
 # female has already been defined in the dataset, but if I wanted to create this variable I could do so
 titanic$female <- (titanic$sex=="female")+0
 
-fit.titanic.interact <- glm(survived ~ age + female + age*female, data=titanic)
+fit.titanic.interact <- glm(survived ~ age + female + age*female, data=titanic, family="binomial")
 summary(fit.titanic.interact)
 ```
 

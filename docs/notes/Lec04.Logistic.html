@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Chris Slaughter">
-<meta name="dcterms.date" content="2024-10-07">
+<meta name="dcterms.date" content="2025-01-28">
 
 <title>Logistic Regression – BIOS 6312 - Spring 2025</title>
 <style>
@@ -549,7 +549,7 @@ window.Quarto = {
 <p class="subtitle lead">Lecture 04</p>
 <p class="author">Chris Slaughter</p>
 
-<p class="date">October 7, 2024</p>
+<p class="date">January 28, 2025</p>
 
 </header>
 
@@ -1715,9 +1715,9 @@ window.Quarto = {
 <ul>
 <li><p>Allows unequal variance across groups</p></li>
 <li><p>Hence, do not need linearity of log odds across groups to hold</p></li>
+</ul></li>
+</ul></li>
 <li><p>Valid statistical inference (CIs, p-values) about <em>odds of response in specific groups</em> requires a further assumption</p></li>
-</ul></li>
-</ul></li>
 <li><p>Assumption 4: Adequacy of the linear model</p>
 <ul>
 <li><p>If we are trying to borrow information about the log odds from neighboring groups, and we are assuming a straight line relationship, the straight line needs to be true</p>
@@ -1801,42 +1801,42 @@ window.Quarto = {
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>fit.titanic.female <span class="ot">&lt;-</span> <span class="fu">glm</span>(survived <span class="sc">~</span> age, <span class="at">data=</span>titanic, <span class="at">subset=</span>sex<span class="sc">==</span><span class="st">"female"</span>)</span>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>fit.titanic.female <span class="ot">&lt;-</span> <span class="fu">glm</span>(survived <span class="sc">~</span> age, <span class="at">data=</span>titanic, <span class="at">subset=</span>sex<span class="sc">==</span><span class="st">"female"</span>, <span class="at">family=</span><span class="st">"binomial"</span>)</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>fit.titanic.female</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
-<caption>Fitting generalized (gaussian/identity) linear model: survived ~ age</caption>
+<caption>Fitting generalized (binomial/logit) linear model: survived ~ age</caption>
 <colgroup>
 <col style="width: 25%">
-<col style="width: 16%">
+<col style="width: 15%">
 <col style="width: 18%">
 <col style="width: 13%">
-<col style="width: 15%">
+<col style="width: 16%">
 </colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: center;">&nbsp;</th>
 <th style="text-align: center;">Estimate</th>
 <th style="text-align: center;">Std. Error</th>
-<th style="text-align: center;">t value</th>
-<th style="text-align: center;">Pr(&gt;|t|)</th>
+<th style="text-align: center;">z value</th>
+<th style="text-align: center;">Pr(&gt;|z|)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: center;"><strong>(Intercept)</strong></td>
-<td style="text-align: center;">0.6376443</td>
-<td style="text-align: center;">0.0480881</td>
-<td style="text-align: center;">13.2599</td>
-<td style="text-align: center;">0.000000</td>
+<td style="text-align: center;">0.493374</td>
+<td style="text-align: center;">0.2541885</td>
+<td style="text-align: center;">1.9410</td>
+<td style="text-align: center;">0.0522612</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;"><strong>age</strong></td>
-<td style="text-align: center;">0.0040064</td>
-<td style="text-align: center;">0.0014948</td>
-<td style="text-align: center;">2.6802</td>
-<td style="text-align: center;">0.007673</td>
+<td style="text-align: center;">0.022516</td>
+<td style="text-align: center;">0.0085354</td>
+<td style="text-align: center;">2.6379</td>
+<td style="text-align: center;">0.0083415</td>
 </tr>
 </tbody>
 </table>
@@ -1856,15 +1856,15 @@ window.Quarto = {
 </tr>
 <tr class="odd">
 <td style="text-align: center;"><strong>Null Deviance</strong></td>
-<td style="text-align: center;">72.2474</td>
+<td style="text-align: center;">434.161</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;"><strong>Residual Deviance</strong></td>
-<td style="text-align: center;">70.9275</td>
+<td style="text-align: center;">426.878</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;"><strong>AIC</strong></td>
-<td style="text-align: center;">447.749</td>
+<td style="text-align: center;">430.878</td>
 </tr>
 </tbody>
 </table>
@@ -1877,42 +1877,42 @@ window.Quarto = {
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>fit.titanic.male <span class="ot">&lt;-</span> <span class="fu">glm</span>(survived <span class="sc">~</span> age, <span class="at">data=</span>titanic, <span class="at">subset=</span>sex<span class="sc">==</span><span class="st">"male"</span>)</span>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>fit.titanic.male <span class="ot">&lt;-</span> <span class="fu">glm</span>(survived <span class="sc">~</span> age, <span class="at">data=</span>titanic, <span class="at">subset=</span>sex<span class="sc">==</span><span class="st">"male"</span>, <span class="at">family=</span><span class="st">"binomial"</span>)</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>fit.titanic.male</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
-<caption>Fitting generalized (gaussian/identity) linear model: survived ~ age</caption>
+<caption>Fitting generalized (binomial/logit) linear model: survived ~ age</caption>
 <colgroup>
 <col style="width: 25%">
-<col style="width: 18%">
+<col style="width: 15%">
 <col style="width: 18%">
 <col style="width: 13%">
-<col style="width: 18%">
+<col style="width: 16%">
 </colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: center;">&nbsp;</th>
 <th style="text-align: center;">Estimate</th>
 <th style="text-align: center;">Std. Error</th>
-<th style="text-align: center;">t value</th>
-<th style="text-align: center;">Pr(&gt;|t|)</th>
+<th style="text-align: center;">z value</th>
+<th style="text-align: center;">Pr(&gt;|z|)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: center;"><strong>(Intercept)</strong></td>
-<td style="text-align: center;">0.3163374</td>
-<td style="text-align: center;">0.0369819</td>
-<td style="text-align: center;">8.5538</td>
-<td style="text-align: center;">0.00000000</td>
+<td style="text-align: center;">-0.66076</td>
+<td style="text-align: center;">0.2248071</td>
+<td style="text-align: center;">-2.9392</td>
+<td style="text-align: center;">0.0032902</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;"><strong>age</strong></td>
-<td style="text-align: center;">-0.0036348</td>
-<td style="text-align: center;">0.0010958</td>
-<td style="text-align: center;">-3.3171</td>
-<td style="text-align: center;">0.00095962</td>
+<td style="text-align: center;">-0.02376</td>
+<td style="text-align: center;">0.0072757</td>
+<td style="text-align: center;">-3.2657</td>
+<td style="text-align: center;">0.0010921</td>
 </tr>
 </tbody>
 </table>
@@ -1932,15 +1932,15 @@ window.Quarto = {
 </tr>
 <tr class="odd">
 <td style="text-align: center;"><strong>Null Deviance</strong></td>
-<td style="text-align: center;">107.302</td>
+<td style="text-align: center;">667.847</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;"><strong>Residual Deviance</strong></td>
-<td style="text-align: center;">105.532</td>
+<td style="text-align: center;">656.557</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;"><strong>AIC</strong></td>
-<td style="text-align: center;">669.059</td>
+<td style="text-align: center;">660.557</td>
 </tr>
 </tbody>
 </table>
@@ -1960,7 +1960,7 @@ window.Quarto = {
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>     age 
-1.020234 </code></pre>
+1.119161 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
@@ -1983,8 +1983,8 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td style="text-align: center;"><strong>age</strong></td>
-<td style="text-align: center;">1.0054</td>
-<td style="text-align: center;">1.0353</td>
+<td style="text-align: center;">1.0294</td>
+<td style="text-align: center;">1.2168</td>
 </tr>
 </tbody>
 </table>
@@ -1996,7 +1996,7 @@ window.Quarto = {
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>      age 
-0.9819903 </code></pre>
+0.8879858 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
@@ -2006,7 +2006,7 @@ window.Quarto = {
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 13%">
-<col style="width: 12%">
+<col style="width: 13%">
 <col style="width: 13%">
 </colgroup>
 <thead>
@@ -2019,8 +2019,8 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td style="text-align: center;"><strong>age</strong></td>
-<td style="text-align: center;">0.9715</td>
-<td style="text-align: center;">0.99259</td>
+<td style="text-align: center;">0.82688</td>
+<td style="text-align: center;">0.95361</td>
 </tr>
 </tbody>
 </table>
@@ -2058,14 +2058,14 @@ window.Quarto = {
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># female has already been defined in the dataset, but if I wanted to create this variable I could do so</span></span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>titanic<span class="sc">$</span>female <span class="ot">&lt;-</span> (titanic<span class="sc">$</span>sex<span class="sc">==</span><span class="st">"female"</span>)<span class="sc">+</span><span class="dv">0</span></span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>fit.titanic.interact <span class="ot">&lt;-</span> <span class="fu">glm</span>(survived <span class="sc">~</span> age <span class="sc">+</span> female <span class="sc">+</span> age<span class="sc">*</span>female, <span class="at">data=</span>titanic)</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>fit.titanic.interact <span class="ot">&lt;-</span> <span class="fu">glm</span>(survived <span class="sc">~</span> age <span class="sc">+</span> female <span class="sc">+</span> age<span class="sc">*</span>female, <span class="at">data=</span>titanic, <span class="at">family=</span><span class="st">"binomial"</span>)</span>
 <span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit.titanic.interact)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 25%">
-<col style="width: 18%">
+<col style="width: 16%">
 <col style="width: 18%">
 <col style="width: 13%">
 <col style="width: 18%">
@@ -2075,42 +2075,42 @@ window.Quarto = {
 <th style="text-align: center;">&nbsp;</th>
 <th style="text-align: center;">Estimate</th>
 <th style="text-align: center;">Std. Error</th>
-<th style="text-align: center;">t value</th>
-<th style="text-align: center;">Pr(&gt;|t|)</th>
+<th style="text-align: center;">z value</th>
+<th style="text-align: center;">Pr(&gt;|z|)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: center;"><strong>(Intercept)</strong></td>
-<td style="text-align: center;">0.3163374</td>
-<td style="text-align: center;">0.0379435</td>
-<td style="text-align: center;">8.3371</td>
-<td style="text-align: center;">0.0000e+00</td>
+<td style="text-align: center;">-0.660761</td>
+<td style="text-align: center;">0.2248071</td>
+<td style="text-align: center;">-2.9392</td>
+<td style="text-align: center;">3.2902e-03</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;"><strong>age</strong></td>
-<td style="text-align: center;">-0.0036348</td>
-<td style="text-align: center;">0.0011242</td>
-<td style="text-align: center;">-3.2331</td>
-<td style="text-align: center;">1.2631e-03</td>
+<td style="text-align: center;">-0.023760</td>
+<td style="text-align: center;">0.0072757</td>
+<td style="text-align: center;">-3.2657</td>
+<td style="text-align: center;">1.0921e-03</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;"><strong>female</strong></td>
-<td style="text-align: center;">0.3213069</td>
-<td style="text-align: center;">0.0597572</td>
-<td style="text-align: center;">5.3769</td>
-<td style="text-align: center;">9.3500e-08</td>
+<td style="text-align: center;">1.154134</td>
+<td style="text-align: center;">0.3393376</td>
+<td style="text-align: center;">3.4011</td>
+<td style="text-align: center;">6.7106e-04</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;"><strong>age:female</strong></td>
-<td style="text-align: center;">0.0076412</td>
-<td style="text-align: center;">0.0018230</td>
-<td style="text-align: center;">4.1916</td>
-<td style="text-align: center;">3.0052e-05</td>
+<td style="text-align: center;">0.046276</td>
+<td style="text-align: center;">0.0112156</td>
+<td style="text-align: center;">4.1260</td>
+<td style="text-align: center;">3.6909e-05</td>
 </tr>
 </tbody>
 </table>
-<p>(Dispersion parameter for gaussian family taken to be 0.1693472 )</p>
+<p>(Dispersion parameter for binomial family taken to be 1 )</p>
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 29%">
@@ -2119,17 +2119,17 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td style="text-align: center;">Null deviance:</td>
-<td style="text-align: center;">252.69 on 1045 degrees of freedom</td>
+<td style="text-align: center;">1414.6 on 1045 degrees of freedom</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">Residual deviance:</td>
-<td style="text-align: center;">176.46 on 1042 degrees of freedom</td>
+<td style="text-align: center;">1083.4 on 1042 degrees of freedom</td>
 </tr>
 </tbody>
 </table>
 <p>(263 observations deleted due to missingness)</p>
-<p>AIC: 1116.92</p>
-<p>Number of Fisher Scoring Iterations: 2</p>
+<p>AIC: 1091.44</p>
+<p>Number of Fisher Scoring Iterations: 4</p>
 </div>
 </div>
 <ul>
@@ -2142,8 +2142,8 @@ window.Quarto = {
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(fit.titanic.interact)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code> (Intercept)          age       female   age:female 
- 0.316337448 -0.003634770  0.321306890  0.007641206 </code></pre>
+<pre><code>(Intercept)         age      female  age:female 
+-0.66076066 -0.02375991  1.15413441  0.04627571 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
@@ -2152,7 +2152,7 @@ window.Quarto = {
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>(Intercept)         age 
- 0.31633745 -0.00363477 </code></pre>
+-0.66076066 -0.02375991 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
@@ -2161,7 +2161,7 @@ window.Quarto = {
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>(Intercept)         age 
-0.637644338 0.004006436 </code></pre>
+ 0.49337375  0.02251581 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
@@ -2170,15 +2170,15 @@ window.Quarto = {
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>(Intercept) 
-  0.6376443 </code></pre>
+  0.4933738 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(fit.titanic.interact)[<span class="dv">2</span>] <span class="sc">+</span> <span class="fu">coef</span>(fit.titanic.interact)[<span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>        age 
-0.004006436 </code></pre>
+<pre><code>       age 
+0.02251581 </code></pre>
 </div>
 </div>
 
@@ -3449,7 +3449,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb54-657"><a href="#cb54-657" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb54-658"><a href="#cb54-658" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Hence, do not need linearity of log odds across groups to hold</span>
 <span id="cb54-659"><a href="#cb54-659" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-660"><a href="#cb54-660" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Valid statistical inference (CIs, p-values) about *odds of response in specific groups* requires a further assumption</span>
+<span id="cb54-660"><a href="#cb54-660" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Valid statistical inference (CIs, p-values) about *odds of response in specific groups* requires a further assumption</span>
 <span id="cb54-661"><a href="#cb54-661" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb54-662"><a href="#cb54-662" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Assumption 4: Adequacy of the linear model</span>
 <span id="cb54-663"><a href="#cb54-663" aria-hidden="true" tabindex="-1"></a></span>
@@ -3517,14 +3517,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb54-727"><a href="#cb54-727" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The log odds of survival in females</span>
 <span id="cb54-728"><a href="#cb54-728" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb54-731"><a href="#cb54-731" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb54-732"><a href="#cb54-732" aria-hidden="true" tabindex="-1"></a>fit.titanic.female <span class="ot">&lt;-</span> <span class="fu">glm</span>(survived <span class="sc">~</span> age, <span class="at">data=</span>titanic, <span class="at">subset=</span>sex<span class="sc">==</span><span class="st">"female"</span>)</span>
+<span id="cb54-732"><a href="#cb54-732" aria-hidden="true" tabindex="-1"></a>fit.titanic.female <span class="ot">&lt;-</span> <span class="fu">glm</span>(survived <span class="sc">~</span> age, <span class="at">data=</span>titanic, <span class="at">subset=</span>sex<span class="sc">==</span><span class="st">"female"</span>, <span class="at">family=</span><span class="st">"binomial"</span>)</span>
 <span id="cb54-733"><a href="#cb54-733" aria-hidden="true" tabindex="-1"></a>fit.titanic.female</span>
 <span id="cb54-734"><a href="#cb54-734" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb54-735"><a href="#cb54-735" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb54-736"><a href="#cb54-736" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The log odds of survival in males</span>
 <span id="cb54-737"><a href="#cb54-737" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb54-740"><a href="#cb54-740" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb54-741"><a href="#cb54-741" aria-hidden="true" tabindex="-1"></a>fit.titanic.male <span class="ot">&lt;-</span> <span class="fu">glm</span>(survived <span class="sc">~</span> age, <span class="at">data=</span>titanic, <span class="at">subset=</span>sex<span class="sc">==</span><span class="st">"male"</span>)</span>
+<span id="cb54-741"><a href="#cb54-741" aria-hidden="true" tabindex="-1"></a>fit.titanic.male <span class="ot">&lt;-</span> <span class="fu">glm</span>(survived <span class="sc">~</span> age, <span class="at">data=</span>titanic, <span class="at">subset=</span>sex<span class="sc">==</span><span class="st">"male"</span>, <span class="at">family=</span><span class="st">"binomial"</span>)</span>
 <span id="cb54-742"><a href="#cb54-742" aria-hidden="true" tabindex="-1"></a>fit.titanic.male</span>
 <span id="cb54-743"><a href="#cb54-743" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb54-744"><a href="#cb54-744" aria-hidden="true" tabindex="-1"></a></span>
@@ -3567,7 +3567,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb54-785"><a href="#cb54-785" aria-hidden="true" tabindex="-1"></a><span class="co"># female has already been defined in the dataset, but if I wanted to create this variable I could do so</span></span>
 <span id="cb54-786"><a href="#cb54-786" aria-hidden="true" tabindex="-1"></a>titanic<span class="sc">$</span>female <span class="ot">&lt;-</span> (titanic<span class="sc">$</span>sex<span class="sc">==</span><span class="st">"female"</span>)<span class="sc">+</span><span class="dv">0</span></span>
 <span id="cb54-787"><a href="#cb54-787" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-788"><a href="#cb54-788" aria-hidden="true" tabindex="-1"></a>fit.titanic.interact <span class="ot">&lt;-</span> <span class="fu">glm</span>(survived <span class="sc">~</span> age <span class="sc">+</span> female <span class="sc">+</span> age<span class="sc">*</span>female, <span class="at">data=</span>titanic)</span>
+<span id="cb54-788"><a href="#cb54-788" aria-hidden="true" tabindex="-1"></a>fit.titanic.interact <span class="ot">&lt;-</span> <span class="fu">glm</span>(survived <span class="sc">~</span> age <span class="sc">+</span> female <span class="sc">+</span> age<span class="sc">*</span>female, <span class="at">data=</span>titanic, <span class="at">family=</span><span class="st">"binomial"</span>)</span>
 <span id="cb54-789"><a href="#cb54-789" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit.titanic.interact)</span>
 <span id="cb54-790"><a href="#cb54-790" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb54-791"><a href="#cb54-791" aria-hidden="true" tabindex="-1"></a></span>
