@@ -320,8 +320,13 @@ plot(function(x) expit(x), -4,4, ylab="Probabilty", xlab="Predictor")
 -   R Commands
 
     -   With rms package, `lrm(respvar ~ predvar, ...)`
+    
+       - `robcov(fit)` gives robust standard error estimates in `lrm'
 
     -   In general, `glm(respvar ~ predvar, family=“binomial”)`
+    
+       - `sandwich()` in the sandwich library can give robust standard errors when using `glm`
+    
 
 ## Example: Survival on the Titanic and Age
 

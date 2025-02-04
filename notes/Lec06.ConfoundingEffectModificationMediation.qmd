@@ -11,26 +11,19 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
 ## Overview
 
--   Most often scientific questions are translated into comparing the
-    distribution of some response variable across groups of interest
+-   Most often scientific questions are translated into comparing the distribution of some response variable across groups of interest
 
--   Groups are defined by the predictor of interest (POI). Regression
-    methods allow for either categorical or continuous predictors of
-    interest
+-   Groups are defined by the predictor of interest (POI). Regression methods allow for either categorical or continuous predictors of interest
 
-    -   Categorical predictors of interest: Treatment or control,
-        knockout or
+    -   Categorical predictors of interest: Treatment or control, knockout or
 
         wild type, ethnic group
 
-    -   Continuous predictors of interest: Age, BMI, cholesterol, blood
-        pressure
+    -   Continuous predictors of interest: Age, BMI, cholesterol, blood pressure
 
--   Often we need to consider additional variables other than the
-    predictor of interest to answer our scientific question
+-   Often we need to consider additional variables other than the predictor of interest to answer our scientific question
 
--   Covariates other than the predictor of of interest are included in
-    the regression model as
+-   Covariates other than the predictor of of interest are included in the regression model as
 
     -   Effect modifiers
 
@@ -44,16 +37,13 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
 ## Effect Modification
 
--   The association between the Response and the Predictor of Interest
-    differs in strata defined by the effect modifier
+-   The association between the Response and the Predictor of Interest differs in strata defined by the effect modifier
 
--   Statistical term: "Interaction" between the effect modifier and the
-    POI
+-   Statistical term: "Interaction" between the effect modifier and the POI
 
 ### Effect modification depends on the measure of effect that you choose
 
--   Choice of summary measure: mean, median, geometric mean, odds,
-    hazard
+-   Choice of summary measure: mean, median, geometric mean, odds, hazard
 
 -   Choice of comparisons across groups: differences, ratios
 
@@ -70,11 +60,9 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 | Diff     | -13   | 0    | -13    | -9     |
 | Ratio    | 0.90  | 1    | 0.90   | 0.93   |
 
--   Effect modification by gender exists if the effect of smoking in
-    males is different from the effect of smoking in females
+-   Effect modification by gender exists if the effect of smoking in males is different from the effect of smoking in females
 
-    -   Compare the diff (or ratio) for the mean (or median) in women to
-        the diff (or ratio) for the mean (or median) in men
+    -   Compare the diff (or ratio) for the mean (or median) in women to the diff (or ratio) for the mean (or median) in men
 
 -   Effect modification for mean, not as much for median
 
@@ -106,8 +94,7 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 | Diff     | -0.06      | -0.10      | -0.16 | -0.16 |
 | Ratio    | 0.62       | 0.62       | 0.16  | 0.54  |
 
--   Proportion: No effect modification for ratio, small amount for
-    difference
+-   Proportion: No effect modification for ratio, small amount for difference
 
 -   Odds: No effect modification for difference, yes for ratio
 
@@ -164,21 +151,15 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
 #### Summary comments on examples
 
--   If there is an effect, will see effect modification on at least one
-    of the difference and ratio scale
+-   If there is an effect, will see effect modification on at least one of the difference and ratio scale
 
--   If there is no effect (example 6), will see no effect modification
-    on both difference and ratio scale
+-   If there is no effect (example 6), will see no effect modification on both difference and ratio scale
 
--   In real world, will usually see effect modification on both scales.
-    The real question is "Is the effect modification scientifically
-    meaningful?"
+-   In real world, will usually see effect modification on both scales. The real question is "Is the effect modification scientifically meaningful?"
 
-    -   If we find there is important effect modification, science will
-        go forward estimating effects separately
+    -   If we find there is important effect modification, science will go forward estimating effects separately
 
-    -   Models with interaction terms are useful for testing if effect
-        modification is present (statistically)
+    -   Models with interaction terms are useful for testing if effect modification is present (statistically)
 
 <!-- -->
 
@@ -192,8 +173,7 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
     -   Compare the ratio of ratios, not the difference
 
-    -   We might consider ratios to be more different when both ratios
-        are $>1$ than when both are $<1$. But, that would be wrong.
+    -   We might consider ratios to be more different when both ratios are $>1$ than when both are $<1$. But, that would be wrong.
 
 ### Analysis of Effect Modification
 
@@ -201,8 +181,7 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
     -   Conduct analysis within each stratum separately
 
-    -   If we want to estimate the degree of effect modification or test
-        its existence, use a regression model including
+    -   If we want to estimate the degree of effect modification or test its existence, use a regression model including
 
         -   Predictor of interest (main effect)
 
@@ -212,42 +191,31 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
     #### Impact of ignoring effect modification
 
-    -   By design or mistake, we sometimes do not model effect
-        modification
+    -   By design or mistake, we sometimes do not model effect modification
 
     -   Might perform
 
         -   Unadjusted analysis: POI only
 
-        -   Adjusted analysis: POI and third variable, but no
-            interaction term
+        -   Adjusted analysis: POI and third variable, but no interaction term
 
-    -   If effect modification exists, an unadjusted analysis will give
-        different results according to the association between the POI
-        and effect modifier in the sample
+    -   If effect modification exists, an unadjusted analysis will give different results according to the association between the POI and effect modifier in the sample
 
 -   If the POI and the effect modifier are not associated
 
-    -   Unadjusted analysis tends toward an (approximate) weighted
-        average of the stratum specific effects
+    -   Unadjusted analysis tends toward an (approximate) weighted average of the stratum specific effects
 
         -   With means, exactly a weighted average
 
-        -   With odds and hazards, an approximate weighted average
-            (because they are non-linear functions of the mean)
+        -   With odds and hazards, an approximate weighted average (because they are non-linear functions of the mean)
 
 -   If the POI and the effect modifier are associated in the sample
 
-    -   The "average" effect is confounded and thus unreliable
-        (variables can be both effect modifiers and confounders)
+    -   The "average" effect is confounded and thus unreliable (variables can be both effect modifiers and confounders)
 
--   If effect modification exists, an analysis adjusting only for the
-    third variable (but no interaction) will tend toward a weighted
-    average of the stratum specific effects
+-   If effect modification exists, an analysis adjusting only for the third variable (but no interaction) will tend toward a weighted average of the stratum specific effects
 
-    -   Hence, an association in one stratum and not the other will make
-        an adjusted analysis look like an association (provide the
-        sample size is large enough)
+    -   Hence, an association in one stratum and not the other will make an adjusted analysis look like an association (provide the sample size is large enough)
 
 ## Confounding
 
@@ -255,11 +223,9 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
 -   Confounding has its roots in Simpson's Paradox
 
--   Given binary variables $Y$ (response), $X$ (POI), and $Z$ (strata)
-    it is possible to have ...
+-   Given binary variables $Y$ (response), $X$ (POI), and $Z$ (strata) it is possible to have ...
 
-$$\textrm{Pr}(Y=1 | X=1, Z=1) > \textrm{Pr}(Y=1 | X=0, Z=1)$$
-$$\textrm{Pr}(Y=1 | X=1, Z=0) > \textrm{Pr}(Y=1 | X=0, Z=0)$$
+$$\textrm{Pr}(Y=1 | X=1, Z=1) > \textrm{Pr}(Y=1 | X=0, Z=1)$$ $$\textrm{Pr}(Y=1 | X=1, Z=0) > \textrm{Pr}(Y=1 | X=0, Z=0)$$
 
 ... but to also have ...
 
@@ -268,8 +234,7 @@ $$\textrm{Pr}(Y=1 | X=1) < \textrm{Pr}(Y=1 | X=0)$$
 #### Example: Probability of death (Y) at two hospitals (X) stratified by poor patient condition (Z)
 
 -   Question: Which hospital do you want to be treated at?
-    -   Consider the results overall (averaging over Z) and conditional
-        on Z below
+    -   Consider the results overall (averaging over Z) and conditional on Z below
 
 | Overall    | Died | Survived | Death Rate |
 |------------|------|----------|------------|
@@ -286,45 +251,35 @@ $$\textrm{Pr}(Y=1 | X=1) < \textrm{Pr}(Y=1 | X=0)$$
 | Hospital A     | 8    | 192      | 4.0%       |
 | Hospital B     | 57   | 1443     | 3.8%       |
 
--   Ignoring condition, Hospital B has a **higher** death rather.
-    However, within both poor and good condition, Hospital B has a
-    **lower** death rate.
+-   Ignoring condition, Hospital B has a **higher** death rather. However, within both poor and good condition, Hospital B has a **lower** death rate.
 
-    -   Poor condition is a confounder. Hospital B has more subjects
-        with poor condition and subjects with poor condition have a
-        higher death rate.
+    -   Poor condition is a confounder. Hospital B has more subjects with poor condition and subjects with poor condition have a higher death rate.
 
 ### Definition of Confounding
 
--   The association between a predictor of interest and the response is
-    confounded by a third variable if
+-   The association between a predictor of interest and the response is confounded by a third variable if
 
-    -   The third variable is associated with the predictor of interest
-        in the sample, AND
+    -   The third variable is associated with the predictor of interest in the sample, AND
 
     -   The third variable is associated with the response
 
         -   Causally (in truth)
 
-        -   In groups that are homogeneous with respect to the predictor
-            of interest
+        -   In groups that are homogeneous with respect to the predictor of interest
 
         -   Not in the causal pathway of interest
 
--   We must consider our belief about the causal relationships among the
-    measured variables
+-   We must consider our belief about the causal relationships among the measured variables
 
     -   There is no statistical test for causality
 
     -   Inference about causation comes only from the study design
 
-    -   BUT, consideration of the causal relationships helps us to
-        decide which statistical questions to answer
+    -   BUT, consideration of the causal relationships helps us to decide which statistical questions to answer
 
 -   Classic confounder
 
-    -   A clear case of confounding occurs when some third variable is a
-        "cause" of both the POI and response
+    -   A clear case of confounding occurs when some third variable is a "cause" of both the POI and response
     -   We generally adjust for such a confounder
 
 #### Directed Acyclyic Graph
@@ -336,8 +291,7 @@ flowchart LR
   Z[Confounder] -- Causal --> Y[Outcome]
 ```
 
--   Example: Ice cream (POI), murder rate (outcome), and temperature
-    (confounder) in New York City during the summer
+-   Example: Ice cream (POI), murder rate (outcome), and temperature (confounder) in New York City during the summer
 
 ```{mermaid}
 flowchart LR
@@ -352,17 +306,13 @@ flowchart LR
 
 -   Not a confounder, so we would not adjust for such a variable
 
--   If we did adjust, we would lose ability to detect associations
-    between the POI and the outcome
+-   If we did adjust, we would lose ability to detect associations between the POI and the outcome
 
--   Example: Second hand smoke (POI), stunted growth (confounder), FEV1
-    (outcome)
+-   Example: Second hand smoke (POI), stunted growth (confounder), FEV1 (outcome)
 
-    -   Scientific question is about the impact of smoking on lung
-        function
+    -   Scientific question is about the impact of smoking on lung function
 
-        -   Stunted growth addresses lung anatomy, not lung function,
-            which we don't care about it
+        -   Stunted growth addresses lung anatomy, not lung function, which we don't care about it
 
 ```{mermaid}
 flowchart LR
@@ -373,15 +323,11 @@ flowchart LR
 
 ##### A variable in the causal pathway *not* of interest
 
--   However, we want to adjust for a variable in a causal pathway that
-    is not of interest
-    -   Example: Work stress causing ulcers by hormonal effects versus
-        alcoholism
+-   However, we want to adjust for a variable in a causal pathway that is not of interest
+    -   Example: Work stress causing ulcers by hormonal effects versus alcoholism
     -   Directed Acyclyic Graph
-        -   We can adjust for alcoholism to estimate the path through
-            horomonal effects
-        -   Alternatively, we can adjust for hormonal effects to
-            estimate the effect through alcoholism
+        -   We can adjust for alcoholism to estimate the path through horomonal effects
+        -   Alternatively, we can adjust for hormonal effects to estimate the effect through alcoholism
 
 ```{mermaid}
 flowchart LR
@@ -395,11 +341,9 @@ flowchart LR
 
 -   Adjustment for a surrogate is a bad idea
 
--   As the name implies, surrogates are a substitute for the response
-    variable
+-   As the name implies, surrogates are a substitute for the response variable
 
--   Directed Acyclyic Graph where forced vital capacity (FVC) is a
-    surrogate for forced exp
+-   Directed Acyclyic Graph where forced vital capacity (FVC) is a surrogate for forced exp
 
 ```{mermaid}
 flowchart LR
@@ -409,167 +353,98 @@ flowchart LR
 
 ##### Many other (complicated) patterns possible
 
--   Greenland, Pearl, and Robins. Causal Diagrams for Epidemiologic
-    Research. Epidemiology. (1999) <http://www.jstor.org/stable/3702180>
+-   Greenland, Pearl, and Robins. Causal Diagrams for Epidemiologic Research. Epidemiology. (1999) <http://www.jstor.org/stable/3702180>
 -   <https://www.dagitty.net/>
 
 ### Diagnosing Confounding
 
--   Confounding typically produces a difference between unadjusted and
-    adjusted analyses
+-   Confounding typically produces a difference between unadjusted and adjusted analyses
 
     -   This symptom is not proof of confounding
 
         -   Such a difference can occur when there is no confounding
 
-        -   Symptom is more indicative of confounding when modeling
-            means (linear regression) than when modeling odds (logistic
-            regression) or hazards (Cox, proportional hazards
-            regression)
+        -   Symptom is more indicative of confounding when modeling means (linear regression) than when modeling odds (logistic regression) or hazards (Cox, proportional hazards regression)
 
--   Estimates of association from unadjusted analysis are markedly
-    different from estimates of association from adjusted analysis
+-   Estimates of association from unadjusted analysis are markedly different from estimates of association from adjusted analysis
 
-    -   Association within each stratum is similar to each other, but
-        different from the association in the combined data
+    -   Association within each stratum is similar to each other, but different from the association in the combined data
 
--   In linear regression, differences between adjusted and unadjusted
-    analyses are diagnostic of confounding
+-   In linear regression, differences between adjusted and unadjusted analyses are diagnostic of confounding
 
-    -   Precision variables tend to change standard errors, but not
-        slope estimates
+    -   Precision variables tend to change standard errors, but not slope estimates
 
-    -   Effect modification would show differences between adjusted
-        analysis and unadjusted analysis, but would also show different
-        associations in the strata
+    -   Effect modification would show differences between adjusted analysis and unadjusted analysis, but would also show different associations in the strata
 
--   More difficult to diagnosis confounding with non-linear functions of
-    the mean
+-   More difficult to diagnosis confounding with non-linear functions of the mean
 
-    -   Common non-linear functions: Odds (odds ratios), hazards (hazard
-        ratios)
+    -   Common non-linear functions: Odds (odds ratios), hazards (hazard ratios)
 
-    -   May show the symptoms of confounding when confounding is not
-        present
+    -   May show the symptoms of confounding when confounding is not present
 
     -   Adjusting for precision variables can appear to be confounding
 
-    -   In logistic and PH regression, difference between adjusted and
-        unadjusted analyses are more difficult to judge
+    -   In logistic and PH regression, difference between adjusted and unadjusted analyses are more difficult to judge
 
-        -   Comparison in more homogeneous groups (i.e. after adjustment
-            for a precision variable) will drive slope estimates away
-            from the null
+        -   Comparison in more homogeneous groups (i.e. after adjustment for a precision variable) will drive slope estimates away from the null
 
 -   Example: Suppose you have a sample where 50% of the subjects die
 
     -   What is the variability? $p*(1-p)=0.25$
 
-    -   We can reduce this variability by changing $p$, the probability
-        of death
+    -   We can reduce this variability by changing $p$, the probability of death
 
-    -   Estimate $p$ in different stratum. One stratum may have a higher
-        $p$, another a lower $p$.
+    -   Estimate $p$ in different stratum. One stratum may have a higher $p$, another a lower $p$.
 
-        -   e.g. Stratum 1, 20% death rate and Stratum 2 an 80% death
-            rate.
+        -   e.g. Stratum 1, 20% death rate and Stratum 2 an 80% death rate.
 
-    -   By making the estimate more precise, we have also impacted the
-        mean
+    -   By making the estimate more precise, we have also impacted the mean
 
 ## Mediating variables
 
--   A mediating variable is a predictor hypothesized to lie on the
-    causal pathway between a predictor of interest and the outcome
+-   A mediating variable is a predictor hypothesized to lie on the causal pathway between a predictor of interest and the outcome
 
--   Whether or not to adjust for a mediating variable depends on the
-    scientific question of interest
+-   Whether or not to adjust for a mediating variable depends on the scientific question of interest
 
-    -   Without adjustment, we are estimating the **total** (causal)
-        effect of the predictor of interest via all pathways on the
-        outcome
+    -   Without adjustment, we are estimating the **total** (causal) effect of the predictor of interest via all pathways on the outcome
 
-    -   If we adjust for a mediator, we are estimating the **direct**
-        (causal) effect via other pathways that do not involve the
-        mediator
+    -   If we adjust for a mediator, we are estimating the **direct** (causal) effect via other pathways that do not involve the mediator
 
--   If a potential mediator is identified *a priori* on scientific
-    grounds, we can estimate the **direct** effect via pathways other
-    than the mediator, the **indirect** effect through the mediator, and
-    the degree of mediation (e.g. **proportion mediated**).
+-   If a potential mediator is identified *a priori* on scientific grounds, we can estimate the **direct** effect via pathways other than the mediator, the **indirect** effect through the mediator, and the degree of mediation (e.g. **proportion mediated**).
 
--   Example: Depression (predictor) and Crohn's Disease activitity
-    (outcome) with possible mediators being physical activity, smoking,
-    and sleep quality
+-   Example: Depression (predictor) and Crohn's Disease activitity (outcome) with possible mediators being physical activity, smoking, and sleep quality
 
-    -   Mediation models were considered using baseline, 6-month, and
-        12-month follow-up data
+    -   Mediation models were considered using baseline, 6-month, and 12-month follow-up data
 
-    -   Depression at baseline was the predictor of interest, mediators
-        were assessed at 6 months, and disease activity at 12 months was
-        the outcome.
+    -   Depression at baseline was the predictor of interest, mediators were assessed at 6 months, and disease activity at 12 months was the outcome.
 
-    -   To establish and estimate the mediation effect, we utilized the
-        four steps originally outlined by Barron and Kenny [^1]
+    -   To establish and estimate the mediation effect, we utilized the four steps originally outlined by Barron and Kenny [^1]
 
-        -   First, we tested that there was a significant effect of
-            depression at baseline with disease activity at 12 months to
-            establish there was an effect to be mediated
+        -   First, we tested that there was a significant effect of depression at baseline with disease activity at 12 months to establish there was an effect to be mediated
 
-        -   Second, we estimated the correlation between depression at
-            baseline and each of the potential mediators measured at 6
-            months
+        -   Second, we estimated the correlation between depression at baseline and each of the potential mediators measured at 6 months
 
-        -   Third, we tested if each of the mediators at 6 months was
-            associated with disease activity at 12 months while
-            controlling for disease activity at baseline.
+        -   Third, we tested if each of the mediators at 6 months was associated with disease activity at 12 months while controlling for depression at baseline.
 
-        -   Fourth, the mediation package in R was used to estimate
-            various quantities for causal mediation analysis, including
-            average causal mediation effects (indirect effect), average
-            direct effects, proportions mediated, and total effect. This
-            step involves combining estimates from the mediator model
-            (mediator at 6 months outcome, depression at baseline the
-            predictor) and estimates from the outcome model (disease
-            activity at 12 months outcome, mediator at 6 months and
-            depression at baseline as predictors of interest, and
-            controlling for disease activity at baseline) efficiently
-            and with appropriate standard error estimates.
+        -   Fourth, the mediation package in R was used to estimate various quantities for causal mediation analysis, including average causal mediation effects (indirect effect), average direct effects, proportions mediated, and total effect. This step involves combining estimates from the mediator model (mediator at 6 months outcome, depression at baseline the predictor) and estimates from the outcome model (disease activity at 12 months outcome, mediator at 6 months and depression at baseline as predictors of interest, and controlling for disease activity at baseline) efficiently and with appropriate standard error estimates.
 
     -   Results
 
-[^1]: Baron RM, Kenny DA. The moderator-mediator variable distinction in
-    social psychological research: conceptual, strategic, and
-    statistical considerations. J Pers Soc Psychol. 1986
-    Dec;51(6):1173-82. doi: 10.1037//0022-3514.51.6.1173. PMID: 3806354.
+[^1]: Baron RM, Kenny DA. The moderator-mediator variable distinction in social psychological research: conceptual, strategic, and statistical considerations. J Pers Soc Psychol. 1986 Dec;51(6):1173-82. doi: 10.1037//0022-3514.51.6.1173. PMID: 3806354.
 
-![Multiple mediation model path diagram and estimates from structural
-equations model. Part A shows the total effect of depression at baseline
-on disease activity at 12 months is that, per one unit increase in
-depression, disease activity increases by 2.90. Part B show the
-associations of depression at baseline, mediators at 6 months, and
-disease activity at 12 months. Individual mediation effects are found by
-multiplying a by b for each mediator. Of the 2.90 total effect, 0.005
-went through sleep, 0.138 went through smoking and 0.107 went through
-activity. Summing these three value, a total of 0.250 (8.6% mediated)
-when through the three
-mediators.](figures/multiplemediation.png){width="150%"}
+![Multiple mediation model path diagram and estimates from structural equations model. Part A shows the total effect of depression at baseline on disease activity at 12 months is that, per one unit increase in depression, disease activity increases by 2.90. Part B show the associations of depression at baseline, mediators at 6 months, and disease activity at 12 months. Individual mediation effects are found by multiplying a by b for each mediator. Of the 2.90 total effect, 0.005 went through sleep, 0.138 went through smoking and 0.107 went through activity. Summing these three value, a total of 0.250 (8.6% mediated) when through the three mediators.](figures/multiplemediation.png){width="150%"}
 
 ## Precision Variables
 
 ### Overview
 
--   Sometimes the scientific question to be answered is chosen based on
-    which questions can be answered most precisely
+-   Sometimes the scientific question to be answered is chosen based on which questions can be answered most precisely
 
--   In general, questions can be answered more precisely when the within
-    group distribution is less variable
+-   In general, questions can be answered more precisely when the within group distribution is less variable
 
--   Comparing groups that are similar with respect to other important
-    risk factors decreases variability
+-   Comparing groups that are similar with respect to other important risk factors decreases variability
 
--   The precision variability is independent of the cause of the
-    response
+-   The precision variability is independent of the cause of the response
 
 -   If we adjust for such a variable, we tend to gain precision
 
@@ -585,22 +460,19 @@ flowchart LR
 
 #### Precision for Difference of Independent Means
 
--   Independent observations where group 1 has a different mean and
-    variance than group 2
+-   Independent observations where group 1 has a different mean and variance than group 2
 
     -   $\textrm{ind } Y_{ij} \sim (\mu_j, \sigma_j^2), j = 1, 2; i = 1, \ldots, n_j$
 
     -   $n = n_1 + n_2$; $r = n_1 / n_2$
 
-    -   $\theta = \mu_1 - \mu_2$,
-        $\hat{\theta} = \overline{Y}_1 - \overline{Y}_2$
+    -   $\theta = \mu_1 - \mu_2$, $\hat{\theta} = \overline{Y}_1 - \overline{Y}_2$
 
     -   $V = (r+1)(\frac{\sigma_1^2}{r} + \sigma_2^2)$
 
     -   $se(\hat{\theta}) = \sqrt{\frac{V}{n}} = \sqrt{\frac{\sigma_1^2}{n_1} + \frac{\sigma_2^2}{n_2}}$
 
--   Might control for some variable in order to decrease the within
-    group variability
+-   Might control for some variable in order to decrease the within group variability
 
     -   Restrict population sampled
 
@@ -614,25 +486,21 @@ flowchart LR
 
     -   $\textrm{ind } Y_i | X_i ~ \sim(\beta_0 + \beta_1 X_i, \sigma^2_{Y|X}), i = 1, \ldots, n$
 
-    -   $\theta = \beta_1, \hat{\theta} = \hat{\beta_1}$ from LS
-        regression
+    -   $\theta = \beta_1, \hat{\theta} = \hat{\beta_1}$ from LS regression
 
     -   $V = \frac{\sigma^2_{Y|X}}{\textrm{Var}(X)}$
 
     -   $se(\hat{\theta}) = \sqrt{\frac{\hat{\sigma}^2_{Y|X}}{n \hat{\textrm{Var}}(X)}}$
 
--   Adjusting for covariates ($W$) decreases the within group standard
-    deviation
+-   Adjusting for covariates ($W$) decreases the within group standard deviation
 
     -   $\textrm{Var}(Y | X)$ versus $\textrm{Var}(Y | X, W)$
 
--   Independent continuous outcome associated with covariate ($X$) and
-    precision variable ($W$)
+-   Independent continuous outcome associated with covariate ($X$) and precision variable ($W$)
 
     -   $\textrm{ind } Y_i | X_i, W_i ~ \sim(\beta_0 + \beta_1 X_i + \beta_2 W_i, \sigma^2_{Y|X,W}), i = 1, \ldots, n$
 
-    -   $\theta = \beta_1, \hat{\theta} = \hat{\beta_1}$ from LS
-        regression
+    -   $\theta = \beta_1, \hat{\theta} = \hat{\beta_1}$ from LS regression
 
     -   $V = \frac{\sigma^2_{Y|X,W}}{\textrm{Var}(X)(1-r^2_{X,W})}$
 
@@ -642,13 +510,11 @@ flowchart LR
 
 #### Precision for Difference of Proportions
 
--   When analyzing proportions (means), the mean variance relationship
-    is critical
+-   When analyzing proportions (means), the mean variance relationship is critical
 
     -   Precision is greatest when proportion is close to 0 or 1
 
-    -   Greater homogeneity of groups makes results more deterministic
-        (this is the goal, at least)
+    -   Greater homogeneity of groups makes results more deterministic (this is the goal, at least)
 
 -   Independent binary outcomes
 
@@ -656,8 +522,7 @@ flowchart LR
 
     -   $n = n_1 + n_2; r = n_1 / n_2$
 
-    -   $\theta = p_1 - p_2$,
-        $\hat{\theta} = \hat{p}_1 - \hat{p_2} = \overline{Y}_1 - \overline{Y}_2$
+    -   $\theta = p_1 - p_2$, $\hat{\theta} = \hat{p}_1 - \hat{p_2} = \overline{Y}_1 - \overline{Y}_2$
 
     -   $\sigma^2_j = p_j(1-p_j)$
 
@@ -667,30 +532,23 @@ flowchart LR
 
 #### Precision for Odds
 
--   When analyzing odds (a nonlinear function of the mean), adjusting
-    for precision variables results in more extreme estimates
+-   When analyzing odds (a nonlinear function of the mean), adjusting for precision variables results in more extreme estimates
 
 -   $\textrm{Odds} = \frac{p}{1-p}$
 
--   Odds using average of stratum specific $p$ is not the average of
-    stratum specific odds
+-   Odds using average of stratum specific $p$ is not the average of stratum specific odds
 
 -   Example: Stroke by smoking (in CVD strata)
 
-    -   No association between smoking and CVD in the sample: 10%
-        smokers in subjects with and without CVD
+    -   No association between smoking and CVD in the sample: 10% smokers in subjects with and without CVD
 
     -   CVD (precision variable) associated with stroke (outcome)
 
-        -   CVD is not a confounder, but it is clearly a precision
-            variable
+        -   CVD is not a confounder, but it is clearly a precision variable
 
-    -   Within each CVD stratum, the (adjusted) odds ratio for stroke by
-        smoking is 2.0.
+    -   Within each CVD stratum, the (adjusted) odds ratio for stroke by smoking is 2.0.
 
-    -   Overall, the unadjusted odds ratio is 1.8. That is, the
-        unadjusted odds ratio is attenuated toward the null compared to
-        the adjusted odds ratios
+    -   Overall, the unadjusted odds ratio is 1.8. That is, the unadjusted odds ratio is attenuated toward the null compared to the adjusted odds ratios
 
         | No CVD    | N     | p    | Odds |
         |-----------|-------|------|------|
@@ -714,8 +572,7 @@ flowchart LR
 
 ### Adjustment for Covariates
 
--   We include predictors in an analysis for a number of reasons. In
-    order of importance...
+-   We include predictors in an analysis for a number of reasons. In order of importance...
 
     1.  Scientific question
 
@@ -727,70 +584,51 @@ flowchart LR
 
     3.  Gain precision
 
--   Adjustment for covariates changes the question being answered by the
-    statistical analysis
+-   Adjustment for covariates changes the question being answered by the statistical analysis
 
-    -   Adjustments can be made to isolate associations that are of
-        particular interest
+    -   Adjustments can be made to isolate associations that are of particular interest
 
-    -   When consulting with a scientist, it is often difficult to
-        decide whether the interest in an additional covariate is due to
-        confounding, effect modification, or precision
+    -   When consulting with a scientist, it is often difficult to decide whether the interest in an additional covariate is due to confounding, effect modification, or precision
 
-        -   The distinction is important because I tend to treat these
-            variable differently in the analysis
+        -   The distinction is important because I tend to treat these variable differently in the analysis
 
-    -   Often the scientific question dictates inclusion of particular
-        predictors
+    -   Often the scientific question dictates inclusion of particular predictors
 
-        -   Predictor of interest: The scientific parameter of interest
-            can be modeled by multiple predictors (e.g. dummy variables,
-            polynomials, splines)
+        -   Predictor of interest: The scientific parameter of interest can be modeled by multiple predictors (e.g. dummy variables, polynomials, splines)
 
-        -   Effect Modifiers: The scientific question relates to the
-            detection of effect modification
+        -   Effect Modifiers: The scientific question relates to the detection of effect modification
 
-        -   Confounders: The scientific question may be state in terms
-            of adjusting for known (or suspected) confounders
+        -   Confounders: The scientific question may be state in terms of adjusting for known (or suspected) confounders
 
 ### Confounder Detection
 
 -   Unanticipated confounding
 
-    -   Some times we must explore our data to assess whether our
-        results were confounded by some variable
+    -   Some times we must explore our data to assess whether our results were confounded by some variable
 
-    -   Goal is to assess the "independent effect" of the predictor of
-        interest on the outcome
+    -   Goal is to assess the "independent effect" of the predictor of interest on the outcome
 
 -   Confounders
 
-    -   Variables (causally) predictive of the outcome, but not in the
-        causal pathway
+    -   Variables (causally) predictive of the outcome, but not in the causal pathway
 
-        -   Best method: Think about the scientific problem beforehand
-            (perhaps draw DAG)
+        -   Best method: Think about the scientific problem beforehand (perhaps draw DAG)
 
         -   Using data, often assessed in the control group
 
-    -   Variables associated with the predictor of interest in the
-        sample
+    -   Variables associated with the predictor of interest in the sample
 
-        -   Note that statistical significance is not relevant because
-            this tells us about associations in the population
+        -   Note that statistical significance is not relevant because this tells us about associations in the population
 
-    -   Detection of confounding ultimately must rely on our best
-        knowledge about the possible scientific mechanisms
+    -   Detection of confounding ultimately must rely on our best knowledge about the possible scientific mechanisms
 
--   Effect of confounding: A confounder can make the association between
-    the predictor of interest and the response variable look...
+-   Effect of confounding: A confounder can make the association between the predictor of interest and the response variable look...
 
     -   Stronger than the true association
 
     -   Weaker than the true association
 
-    -   The complete reverse of the true association ("qualitative
-        confounding")
+    -   The complete reverse of the true association ("qualitative confounding")
 
 ## Graphical Methods for Visualizing Effect Modification, Confounding, and Precision
 
@@ -808,8 +646,7 @@ flowchart LR
 
 -   Estimates of treatment effect differ among strata
 
-    -   When analyzing difference of means of continuous data,
-        stratified smooth curves of the data are non-parallel
+    -   When analyzing difference of means of continuous data, stratified smooth curves of the data are non-parallel
 
     -   Graphical techniques difficult in other settings
 
@@ -881,8 +718,7 @@ segments(x0=0.6, x1= 1, y0=coef(m1)[1] + 0.6*coef(m1)[2]+ 3*coef(m1)[3], y1=coef
 
     -   Distribution of POI same across strata
 
-    -   Unadjusted and adjusted analyses give similar estimates but with
-        smaller standard errors
+    -   Unadjusted and adjusted analyses give similar estimates but with smaller standard errors
 
 ```{r}
 set.seed(1231)

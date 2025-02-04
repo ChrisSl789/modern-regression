@@ -108,3 +108,13 @@ In part 2, we will estimate the association between salary and gender. First, we
 #### 5.2. Fit logistic regression model 3.2. Save the deviance from this model.
 
 #### 5.3. Subtract the deviance obtained from 5.2 from the deviance obtained from 5.1. Compare this result to the likelihood ratio test statistic given in the output from model 3.2 (and 2.1)
+
+
+### 6. Robust standard error estimates
+
+#### 6.1 Using robust standard error estimates, fit the logistic regression model of male on salhigh.  Compare the robust estimates of beta and the standard error of beta to the classical approach.
+
+#### 6.2 Using robust standard error estimates, fit the logistic regression model of yrssince95 on salhigh.  Compare the robust estimates of beta and the standard error of beta to the classical approach.
+
+
+
