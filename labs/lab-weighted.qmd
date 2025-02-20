@@ -1,0 +1,102 @@
+---
+title: "(Mini) Lab: Weighted Regression"
+author: "Chris Slaughter"
+name: labs/lab-weighted.qmd
+toc: true
+---
+
+
+## Preliminary
+
+### Goals
+
+1. Implement weighted regression (using inverse variance weights) in R.  Compare the unweighted, weighted estimates.  Also compare the standard error estimates.
+
+2. Demonstrate how R does not handle frequency weights appropriately using the weights option.
+
+
+### Packages
+
+```{r}
+library(ggplot2)
+library(sandwich)
+library(lmtest)
+```
+
+### Data
+
+```{r}
+fev <- read.table("http://www.emersonstatistics.com/Datasets/fev.txt", header = TRUE)
+fev$ht3 <- fev$height^3/1E5
+```
+
+## Descriptive plots
+
+### FEV and height
+
+```{r}
+ggplot(fev, aes(y=fev, x=height)) + geom_point() + geom_smooth(method="lm")
+```
+
+### FEV and height cubed
+
+```{r}
+ggplot(fev, aes(y=fev, x=ht3)) + geom_point() + geom_smooth(method="lm")
+```
+
+## Linear regression results
+
+### Unweighted, classical and sandwich
+
+```{r}
+m1 <- lm(fev ~ ht3, data=fev)
+coeftest(m1) # Classical std error
+coeftest(m1, vcov=sandwich) # Sandwich estimator
+```
+
+```{r}
+fev$wts <- 1/(fev$ht3)^2
+m2 <- lm(fev ~ ht3, weights=wts, data=fev)
+coeftest(m2)
+coeftest(m2, vcov=sandwich)
+```
+
+### Comparison of standard errors
+
+|                         |            |          |
+|-------------------------|------------|----------|
+|                         | Unweighted | Weighted |
+| Classical (model based) | 0.0255     | 0.0221   |
+| Robust                  | 0.0299     | 0.0242   |
+
+## Note on Frequency weights in R
+
+Note that R does frequency (replication) weights incorrectly. The simplest answer as to why this is the case is that frequency weights are not very useful in practice and require different methodology to implement. See the Details of the help(lm) for details on the problem. In the example below, the standard errors are not the same.
+
+If you look closely at the output below, the estimate and the standard error of height from m3 (all weights set to 2) is the same as m1 above (unweighted, which implicitly is all weights set to 1). R is almost certainly standardizing the weights so that they sum to one. That is, in m1, every observation gets weight of $1/n$; In m3, every observation gets a weight of $2/2n=1/n$.
+
+```{r}
+# For simplicity, just say every observation observed twice
+fev$freqwts <- rep(2, nrow(fev))
+
+m3 <- lm(fev ~ ht3, data=fev, weights=freqwts)
+coeftest(m3)
+coeftest(m3, vcov=sandwich)
+
+fev.big <- rbind(fev,fev)
+m4 <- lm(fev ~ ht3, data=fev.big)
+coeftest(m4)
+coeftest(m4, vcov=sandwich)
+```
+
+m4 gives the correct results for the frequency weights. By doubling the sample size, we have decreased the standard errors of beta0 and beta1 by (about) the square root of 2.
+
+```{r}
+sqrt(diag(vcov(m1)))
+sqrt(diag(vcov(m4)))
+
+sqrt(diag(vcov(m1))) / sqrt(diag(vcov(m4)))
+sqrt(2)
+
+```
+

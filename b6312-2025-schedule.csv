@@ -15,11 +15,11 @@ Week,Day,Date,Topic,"Notes or Lab",Supplemental,Homework,Reading
 5,3,2025/02/04,Precison/Confouding,"Lec 5/Lec 6",,"HW 2 due","RMB 5.1"
 5,5,2025/02/06,"Confounding and Effect Modification","Lec 6",,,
 6,2,2025/02/10,"Lab: Multivariable models","Lab 4",,,
-6,3,2025/02/11,"Multivariable Models","Lec 7",,"HW 3 due",
+6,3,2025/02/11,"Multivariable Models","Lec 7",,"HW 3 due; HW4 assigned",
 6,5,2025/02/13,"Multivariable Models","Lec 7",,,
 7,2,2025/02/17,"Model estimation",,,,
-7,3,2025/02/18,"Model estimation",,,,
-7,5,2025/02/20,"Weighted regression",,,,
+7,3,2025/02/18,"Model estimation",,,"HW 4 due",
+7,5,2025/02/20,"Weighted regression","Mini Lab, weighted Regression",,,
 8,2,2025/02/24,"  Review",,,,
 8,3,2025/02/25,"Midterm Exam",,,"In class exam",
 8,5,2025/02/27,"Time to event models",,,,"RMB: 3.5; 7.1; 7.2.1-7.2.7"
@@ -32,7 +32,7 @@ Week,Day,Date,Topic,"Notes or Lab",Supplemental,Homework,Reading
 11,2,2025/03/17,"Poisson Regression",,,,
 11,3,2025/03/18,"Modeling effect Modification",,,,
 11,5,2025/03/20,"Modeling effect Modification",,,"HW 5 due",
-12,2,2025/03/24,"   No Lab",,,"Take Home Exam",
+12,2,2025/03/24,"   No Lab (Take home exam)",,,"Take Home Exam",
 12,3,2025/03/25,"Lab: Poisson Models and Effect Modfiction",,,"HW 6",
 12,5,2025/03/27,"Multinomial and Ordinal Regression",,,,
 13,2,2025/03/31,"Lab: Discrete Outcome Regression",,,,

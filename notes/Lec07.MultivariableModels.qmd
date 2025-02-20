@@ -256,7 +256,7 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
 <!-- -->
 
-```stata        
+``` stata
 . cc full female if year==95, by(field)
 
            field |       OR       [95% Conf. Interval]   M-H Weight
@@ -318,7 +318,7 @@ m.unadj
 summary(m.unadj)
 ```
 
-```stata
+``` stata
 Logistic regression                               Number of obs   =       1597
                                                   LR chi2(1)      =     109.43
                                                   Prob > chi2     =     0.0000
@@ -360,7 +360,7 @@ m.unadj.prof
 summary(m.unadj.prof)
 ```
 
-```stata
+``` stata
 . sort field
 . by field: logistic full female if year==95
 
@@ -415,7 +415,7 @@ m.adj
 summary(m.adj)
 ```
 
-```stata
+``` stata
 . xi: logistic full female i.field if year==95
 i.field           _Ifield_1-3         (_Ifield_1 for field==Arts omitted)
 
@@ -529,7 +529,7 @@ partial.tables[,,'Prof']
 
 ::: center
 |                          |                                                        |
-|:----------------------|:------------------------------------------------|
+|:----------------------|:-----------------------------------------------|
 | $Y_i$                    | Response measured on the $i$th subject                 |
 | $X_i$                    | Value of the predictor measured on the $i$th subject   |
 | $W_{1i}, W_{2i}, \ldots$ | Value of the adjustment variable for the $i$th subject |
@@ -666,7 +666,7 @@ robcov(m.adj2)
 
 <!-- -->
 
-```stata
+``` stata
 . regress logfev smoker if age>=9, robust
 
 Linear regression                                      Number of obs =     439
@@ -905,7 +905,7 @@ Linear regression                                      Number of obs =     439
     -   $\gamma_2 \neq 0$
 
         |            |                True Value                |                      Estimates                       |
-        |---------------|:-----------------------:|:------------------------------:|
+        |-----------------|:----------------------:|:-----------------------------:|
         | Slopes     |           $\beta_1 = \gamma_1$           |        $\hat{\beta}_1 \approx \hat{\gamma}_1$        |
         | Std Errors | $se(\hat{\beta}_1) > se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) > \hat{se}(\hat{\gamma}_1)$ |
 
@@ -920,7 +920,7 @@ Linear regression                                      Number of obs =     439
     -   Standard errors reflect the mean-variance relationship
 
         |                         |                True Value                |                      Estimates                       |
-        |------------------|:----------------------:|:-----------------------------:|
+        |------------------|:----------------------:|:----------------------------:|
         | Slopes if $\beta_1 > 0$ |           $\beta_1 < \gamma_1$           |           $\hat{\beta}_1 < \hat{\gamma}_1$           |
         | Slopes if $\beta_1 < 0$ |           $\beta_1 > \gamma_1$           |           $\hat{\beta}_1 > \hat{\gamma}_1$           |
         | Std Errors              | $se(\hat{\beta}_1) < se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) < \hat{se}(\hat{\gamma}_1)$ |
@@ -942,7 +942,7 @@ Linear regression                                      Number of obs =     439
     -   Standard errors reflect the mean-variance relationship (virtually no effect on power)
 
         |            |                   True Value                   |                         Estimates                          |
-        |---------------|:-----------------------:|:------------------------------:|
+        |-----------------|:----------------------:|:-----------------------------:|
         | Slopes     |              $\beta_1 = \gamma_1$              |           $\hat{\beta}_1 \approx \hat{\gamma}_1$           |
         | Std Errors | $se(\hat{\beta}_1) \approx se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) \approx \hat{se}(\hat{\gamma}_1)$ |
 
@@ -955,7 +955,7 @@ Linear regression                                      Number of obs =     439
     -   Standard errors stay fairly constant (complicated result of binomial mean-variance relationship)
 
         |                         |                   True Value                   |                         Estimates                          |
-        |-----------------|:-----------------------:|:-----------------------------:|
+        |------------------|:----------------------:|:----------------------------:|
         | Slopes if $\beta_1 > 0$ |              $\beta_1 < \gamma_1$              |              $\hat{\beta}_1 < \hat{\gamma}_1$              |
         | Slopes if $\beta_1 < 0$ |              $\beta_1 > \gamma_1$              |              $\hat{\beta}_1 > \hat{\gamma}_1$              |
         | Std Errors              | $se(\hat{\beta}_1) \approx se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) \approx \hat{se}(\hat{\gamma}_1)$ |
@@ -973,7 +973,7 @@ Linear regression                                      Number of obs =     439
     -   $\gamma_2 \neq 0$
 
         |            |                True Value                |                      Estimates                       |
-        |---------------|:-----------------------:|:------------------------------:|
+        |-----------------|:----------------------:|:-----------------------------:|
         | Slopes     |           $\beta_1 = \gamma_1$           |           $\hat{\beta}_1 = \hat{\gamma}_1$           |
         | Std Errors | $se(\hat{\beta}_1) = se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) > \hat{se}(\hat{\gamma}_1)$ |
 
@@ -990,7 +990,7 @@ Linear regression                                      Number of obs =     439
     -   $\gamma_2 \neq 0$
 
         |            |                             True Value                              |                                                          Estimates                                                           |
-        |--------------|:------------------:|:------------------------------------:|
+        |-----------------|:-----------------:|:----------------------------------:|
         | Slopes     | $\beta_1 = \gamma_1 + \rho_{XW} \frac{\sigma_W}{\sigma_X} \gamma_2$ | $\hat{\beta}_1 = \hat{\gamma}_1\left(1 + \hat{\gamma}_2 r_{XW} \left[\frac{s_W}{s_X(r_{YX} - r_{YW} r_{XW}} \right] \right)$ |
         | Std Errors |        $se(\hat{\beta}_1) \{>, =, or <\} se(\hat{\gamma}_1)$        |                              $\hat{se}(\hat{\beta}_1) \{>, =, or <\} \hat{se}(\hat{\gamma}_1)$                               |
 
@@ -1007,7 +1007,7 @@ Linear regression                                      Number of obs =     439
     -   As in linear regression, anything can happen
 
         |            |                      True Value                       |                             Estimates                             |
-        |---------------|:------------------------:|:------------------------------:|
+        |-----------------|:-----------------------:|:----------------------------:|
         | Slopes     |           $\beta_1 \{>, =, or <\} \gamma_1$           |           $\hat{\beta}_1 \{>, =, or <\} \hat{\gamma}_1$           |
         | Std Errors | $se(\hat{\beta}_1) \{>, =, or <\} se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) \{>, =, or <\} \hat{se}(\hat{\gamma}_1)$ |
 
@@ -1026,7 +1026,7 @@ Linear regression                                      Number of obs =     439
     -   $\gamma_2 = 0$
 
         |            |                True Value                |                                                          Estimates                                                           |
-        |--------------|:------------:|:------------------------------------------:|
+        |----------------|:--------------:|:--------------------------------------:|
         | Slopes     |           $\beta_1 = \gamma_1$           | $\hat{\beta}_1 = \hat{\gamma}_1\left(1 + \hat{\gamma}_2 r_{XW} \left[\frac{s_W}{s_X(r_{YX} - r_{YW} r_{XW}} \right] \right)$ |
         | Std Errors | $se(\hat{\beta}_1) < se(\hat{\gamma}_1)$ |                                     $\hat{se}(\hat{\beta}_1) < \hat{se}(\hat{\gamma}_1)$                                     |
 
@@ -1037,7 +1037,7 @@ Linear regression                                      Number of obs =     439
     -   Similar to linear regression
 
         |            |                True Value                |                      Estimates                       |
-        |---------------|:-----------------------:|:------------------------------:|
+        |-----------------|:----------------------:|:-----------------------------:|
         | Slopes     |           $\beta_1 = \gamma_1$           |    $\hat{\beta}_1 \{>, =, or <\} \hat{\gamma}_1$     |
         | Std Errors | $se(\hat{\beta}_1) < se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) < \hat{se}(\hat{\gamma}_1)$ |
 
@@ -1052,7 +1052,7 @@ Linear regression                                      Number of obs =     439
 -   Inclusion of irrelevant variables results in slight loss in precision in all regressions
 
     |            |                True Value                |                      Estimates                       |
-    |---------------|:-----------------------:|:------------------------------:|
+    |-----------------|:----------------------:|:-----------------------------:|
     | Slopes     |           $\beta_1 = \gamma_1$           |           $\hat{\beta}_1= \hat{\gamma}_1$            |
     | Std Errors | $se(\hat{\beta}_1) = se(\hat{\gamma}_1)$ | $\hat{se}(\hat{\beta}_1) < \hat{se}(\hat{\gamma}_1)$ |
 
@@ -1094,7 +1094,7 @@ Linear regression                                      Number of obs =     439
 robcov(m.unadj)
 ```
 
-```stata
+``` stata
 . regress logfev smoker if age>=9, robust
 
 Linear regression                                      Number of obs =     439
@@ -1132,7 +1132,7 @@ Linear regression                                      Number of obs =     439
 
         -   Calculations: $e^{.102} = 1.108; e^{.040} = 1.041; e^{0.165} = 1.179$
 
-        -   (Note that $e^x$ is approximately $(1+x)$ for $x$ close to 1)
+        -   (Note that $e^x$ is approximately $(1+x)$ for $x$ close to 0)
 
     -   Because smoker is a binary variable, this analysis is nearly identical to a two sample t-test allowing for unequal variances
 
@@ -1142,7 +1142,7 @@ Linear regression                                      Number of obs =     439
 robcov(m.adj1)
 ```
 
-```stata
+``` stata
 . regress logfev smoker age if age>=9, robust
 
 Linear regression                                      Number of obs =     439
@@ -1195,9 +1195,9 @@ Linear regression                                      Number of obs =     439
 
         -   Age is associated with smoking in the sample
 
-            -   Mean (SD) of age in analyzed smokers: 11.1 (2.04)
+            -   Mean (SD) of age in analyzed non-smokers: 11.1 (2.04)
 
-            -   Mean (SD) of age in analyzed nonsmokers: 13.5 (2.34)
+            -   Mean (SD) of age in analyzed smokers: 13.5 (2.34)
 
     -   Effect of age adjustment on precision
 
@@ -1213,7 +1213,7 @@ Linear regression                                      Number of obs =     439
 robcov(m.adj2)
 ```
 
-```stata
+``` stata
 . regress logfev smoker age loght if age >=9, robust
 
 Linear regression                                      Number of obs =     439
@@ -1308,7 +1308,7 @@ lrm.adj3 <- lrm(fevbin ~ smoker + age + loght, data=fev)
 
 <!-- -->
 
-```stata
+``` stata
 . logit fevbin smoker if age>=9
 Logistic regression                               Number of obs   =        439
                                                   LR chi2(1)      =      15.81

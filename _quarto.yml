@@ -66,6 +66,7 @@ website:
           - href: labs/lab2-linearassumptions.qmd
           - href: labs/lab3-logistic-questions.qmd
           - href: labs/lab4-precision-questions.qmd
+          - href: labs/lab-weighted.qmd
           - href: labs/lab5-multivariable.qmd
           - href: labs/lab6-survival.qmd
           - href: labs/lab7-effectmodification-questions.qmd
