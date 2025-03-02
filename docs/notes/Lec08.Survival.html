@@ -3695,7 +3695,7 @@ S(t) = \exp(-H(t))
 h(t) = \lambda p t^{p-1}
 \]</span></p>
 <p><span class="math display">\[
-\lambda = \textrm{exp}(\beta_1 X)
+\lambda = \textrm{exp}(\beta_0 + \beta_1 X)
 \]</span></p></li>
 <li><p>For the Weibull accelerated failure time model with one covariate (<span class="math inline">\(X\)</span>)</p>
 <p><span class="math display">\[
@@ -4125,8 +4125,8 @@ L(\boldsymbol{\beta}; \mathbf{y}, \mathbf{X}) = \prod_{i=1}^n \left( \pi_i \righ
 <ul>
 <li><p>Suppose we assume a Weibull distribution for survival time. The parameters of interest, <span class="math inline">\(\boldsymbol{\theta}\)</span>, typically include:</p>
 <ul>
-<li><p><span class="math inline">\(\boldsymbol{\beta}\)</span>: Regression coefficients for covariates (bold to emphasize their vector nature) to impact the shape parameter of the Weibull distribution</p></li>
-<li><p><span class="math inline">\(p\)</span>: Scale parameter of the Weibull distribution.</p></li>
+<li><p><span class="math inline">\(\boldsymbol{\beta}\)</span>: Regression coefficients for covariates (bold to emphasize their vector nature) to impact the scale parameter of the Weibull distribution</p></li>
+<li><p><span class="math inline">\(p\)</span>: Shape parameter of the Weibull distribution.</p></li>
 </ul></li>
 </ul>
 <p>The likelihood for the observed survival data <span class="math inline">\((t_i, \delta_i)\)</span> is expressed as:</p>
@@ -4138,7 +4138,7 @@ L(\boldsymbol{\theta}; \mathbf{t}, \boldsymbol{\delta}) = \prod_{i=1}^n \left[h(
 <li><p><span class="math inline">\(t_i\)</span>: Survival time for the <span class="math inline">\(i\)</span>-th individual.</p></li>
 <li><p><span class="math inline">\(\delta_i\)</span>: Censoring indicator, where <span class="math inline">\(\delta_i = 1\)</span> if the event is observed and <span class="math inline">\(\delta_i = 0\)</span> if the data is censored.</p></li>
 <li><p><span class="math inline">\(\mathbf{t}\)</span> and <span class="math inline">\(\boldsymbol{\delta}\)</span>: Vectors of survival times and censoring indicators.</p></li>
-<li><p><span class="math inline">\(\lambda = \exp(\mathbf{X}\boldsymbol{\beta})\)</span></p></li>
+<li><p><span class="math inline">\(\lambda = \exp(\mathbf{X}\boldsymbol{\beta})\)</span>: Scale parameter is modeled as a function of covariates</p></li>
 </ul>
 </section>
 <section id="prior-distributions-1" class="level4" data-number="6.4.2">
@@ -4149,7 +4149,7 @@ L(\boldsymbol{\theta}; \mathbf{t}, \boldsymbol{\delta}) = \prod_{i=1}^n \left[h(
 \pi(\boldsymbol{\beta}) \sim \mathcal{N}(\boldsymbol{\mu}_\beta, \mathbf{\Sigma}_\beta),
 \]</span> where <span class="math inline">\(\boldsymbol{\mu}_\beta\)</span> is the mean vector and <span class="math inline">\(\mathbf{\Sigma}_\beta\)</span> is the covariance matrix.</p></li>
 <li><p><strong>For <span class="math inline">\(p\)</span></strong>: Weakly informative prior, such as Gamma distributions or other appropriate priors based on prior knowledge.</p></li>
-<li><p>These priors, combined with the likelihood, provide the posterior distribution for inference.</p></li>
+<li><p>These priors combined with the likelihood provide the posterior distribution used for inference.</p></li>
 </ul>
 </section>
 </section>
@@ -5904,7 +5904,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb47-1023"><a href="#cb47-1023" aria-hidden="true" tabindex="-1"></a>        $$</span>
 <span id="cb47-1024"><a href="#cb47-1024" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-1025"><a href="#cb47-1025" aria-hidden="true" tabindex="-1"></a>        $$</span>
-<span id="cb47-1026"><a href="#cb47-1026" aria-hidden="true" tabindex="-1"></a>        \lambda = \textrm{exp}(\beta_1 X)</span>
+<span id="cb47-1026"><a href="#cb47-1026" aria-hidden="true" tabindex="-1"></a>        \lambda = \textrm{exp}(\beta_0 + \beta_1 X)</span>
 <span id="cb47-1027"><a href="#cb47-1027" aria-hidden="true" tabindex="-1"></a>        $$</span>
 <span id="cb47-1028"><a href="#cb47-1028" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-1029"><a href="#cb47-1029" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>For the Weibull accelerated failure time model with one covariate ($X$)</span>
@@ -6099,9 +6099,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb47-1224"><a href="#cb47-1224" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-1225"><a href="#cb47-1225" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Suppose we assume a Weibull distribution for survival time.  The parameters of interest, $\boldsymbol{\theta}$, typically include:</span>
 <span id="cb47-1226"><a href="#cb47-1226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-1227"><a href="#cb47-1227" aria-hidden="true" tabindex="-1"></a><span class="ss">   * </span>$\boldsymbol{\beta}$: Regression coefficients for covariates (bold to emphasize their vector nature) to impact the shape parameter of the Weibull distribution</span>
+<span id="cb47-1227"><a href="#cb47-1227" aria-hidden="true" tabindex="-1"></a><span class="ss">   * </span>$\boldsymbol{\beta}$: Regression coefficients for covariates (bold to emphasize their vector nature) to impact the scale parameter of the Weibull distribution</span>
 <span id="cb47-1228"><a href="#cb47-1228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-1229"><a href="#cb47-1229" aria-hidden="true" tabindex="-1"></a><span class="ss">   * </span>$p$: Scale parameter of the Weibull distribution.</span>
+<span id="cb47-1229"><a href="#cb47-1229" aria-hidden="true" tabindex="-1"></a><span class="ss">   * </span>$p$: Shape parameter of the Weibull distribution.</span>
 <span id="cb47-1230"><a href="#cb47-1230" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-1231"><a href="#cb47-1231" aria-hidden="true" tabindex="-1"></a>The likelihood for the observed survival data $(t_i, \delta_i)$ is expressed as:</span>
 <span id="cb47-1232"><a href="#cb47-1232" aria-hidden="true" tabindex="-1"></a></span>
@@ -6117,7 +6117,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb47-1242"><a href="#cb47-1242" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-1243"><a href="#cb47-1243" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>$\mathbf{t}$ and $\boldsymbol{\delta}$: Vectors of survival times and censoring indicators.</span>
 <span id="cb47-1244"><a href="#cb47-1244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-1245"><a href="#cb47-1245" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>$\lambda = \exp(\mathbf{X}\boldsymbol{\beta})$</span>
+<span id="cb47-1245"><a href="#cb47-1245" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>$\lambda = \exp(\mathbf{X}\boldsymbol{\beta})$: Scale parameter is modeled as a function of covariates</span>
 <span id="cb47-1246"><a href="#cb47-1246" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-1247"><a href="#cb47-1247" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Prior Distributions</span></span>
 <span id="cb47-1248"><a href="#cb47-1248" aria-hidden="true" tabindex="-1"></a></span>
@@ -6130,7 +6130,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb47-1255"><a href="#cb47-1255" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb47-1256"><a href="#cb47-1256" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**For $p$**: Weakly informative prior, such as Gamma distributions or other appropriate priors based on prior knowledge.</span>
 <span id="cb47-1257"><a href="#cb47-1257" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-1258"><a href="#cb47-1258" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>These priors, combined with the likelihood, provide the posterior distribution for inference.</span>
+<span id="cb47-1258"><a href="#cb47-1258" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>These priors combined with the likelihood provide the posterior distribution used for inference.</span>
 <span id="cb47-1259"><a href="#cb47-1259" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-1260"><a href="#cb47-1260" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-1261"><a href="#cb47-1261" aria-hidden="true" tabindex="-1"></a><span class="fu">### Bayesian Cox-type Models for Time to Event Data</span></span>

@@ -983,7 +983,7 @@ legend("topright", col=c(1,1,2,2), lty=c(1,2,1,2),
         $$
 
         $$
-        \lambda = \textrm{exp}(\beta_1 X)
+        \lambda = \textrm{exp}(\beta_0 + \beta_1 X)
         $$
 
     -   For the Weibull accelerated failure time model with one covariate ($X$)
@@ -1178,9 +1178,9 @@ This likelihood serves as the basis for updating the posterior distribution when
 
 * Suppose we assume a Weibull distribution for survival time.  The parameters of interest, $\boldsymbol{\theta}$, typically include:
 
-   * $\boldsymbol{\beta}$: Regression coefficients for covariates (bold to emphasize their vector nature) to impact the shape parameter of the Weibull distribution
+   * $\boldsymbol{\beta}$: Regression coefficients for covariates (bold to emphasize their vector nature) to impact the scale parameter of the Weibull distribution
 
-   * $p$: Scale parameter of the Weibull distribution.
+   * $p$: Shape parameter of the Weibull distribution.
 
 The likelihood for the observed survival data $(t_i, \delta_i)$ is expressed as:
 
@@ -1196,7 +1196,7 @@ where:
 
 * $\mathbf{t}$ and $\boldsymbol{\delta}$: Vectors of survival times and censoring indicators.
 
-* $\lambda = \exp(\mathbf{X}\boldsymbol{\beta})$
+* $\lambda = \exp(\mathbf{X}\boldsymbol{\beta})$: Scale parameter is modeled as a function of covariates
 
 #### Prior Distributions
 
@@ -1209,7 +1209,7 @@ where:
   
 - **For $p$**: Weakly informative prior, such as Gamma distributions or other appropriate priors based on prior knowledge.
 
-* These priors, combined with the likelihood, provide the posterior distribution for inference.
+* These priors combined with the likelihood provide the posterior distribution used for inference.
 
 
 ### Bayesian Cox-type Models for Time to Event Data
