@@ -22,7 +22,7 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
 ## Acknowledgments
 
-Parts of the introductory material is borrowed from Emily Zabor's [introduction to survival analysis in R](https://www.emilyzabor.com/tutorials/survival_analysis_in_r_tutorial.html).
+Parts of the introductory material are borrowed from Emily Zabor's [introduction to survival analysis in R](https://www.emilyzabor.com/tutorials/survival_analysis_in_r_tutorial.html).
 
 ## Background
 
@@ -317,7 +317,7 @@ $$\Big(1 - \frac{121}{228}\Big) \times 100 = 47\%$$ You get an **incorrect** est
 
 Recall the **correct** estimate of the $1$-year probability of survival, accounting for censoring using the Kaplan-Meier method, was `r round(summary(s1, times = 365.25)$surv * 100)`%.
 
-Ignoring censoring leads to an **overestimate** of the overall survival probability. Imagine two studies, each with 228 subjects. There are 165 deaths in each study. Censoring is ignored in one (blue line), censoring is accounted for in the other (yellow line). The censored subjects only contribute information for a portion of the follow-up time, and then fall out of the risk set, thus pulling down the cumulative probability of survival. Ignoring censoring erroneously treats patients who are censored as part of the risk set for the entire follow-up period.
+Ignoring censoring leads to an **overestimate** of the overall survival probability. Imagine two studies, each with 228 subjects. There are 165 deaths in each study. Censoring is ignored in one , censoring is accounted for in the other. The censored subjects only contribute information for a portion of the follow-up time, and then fall out of the risk set, thus pulling down the cumulative probability of survival. Ignoring censoring erroneously treats patients who are censored as part of the risk set for the entire follow-up period.
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE, fig.height = 6}
 fakedata2 <- 
@@ -385,7 +385,7 @@ fit.sex <- survfit(Surv(time, status) ~ sex, data=lung)
 ggsurvplot(fit.sex, data=lung, pval=TRUE)
 ```
 
-There was a significant difference in overall survival according to sex in the `lung` data, with a p-value of p = 'round(1-pchisq(survdiff(Surv(time, status) \~ sex, data = lung)\$chisq, 1),3)'.
+There was a significant difference in overall survival according to sex in the `lung` data, with a p-value of p = `r round(1-pchisq(survdiff(Surv(time, status) ~ sex, data = lung)$chisq, 1),4)`.
 
 ## Semi-parametric regression (Cox proportional hazards model)
 
@@ -456,7 +456,7 @@ There was a significant difference in overall survival according to sex in the `
 -   "Baseline hazard" is unspecified. Baseline hazard is similar to an intercept
 
     | Model       | $\textrm{log}(\lambda(t | X_i)) = \textrm{log}(\lambda_{0}(t)) + \beta_1 \times X_i$ |
-    |:------------------------|:---------------------------------------------|
+    |:-------------------------|:---------------------------------------------|
     | $X_i = 0$   | log hazard at $t$ is $\textrm{log}(\lambda_{0}(t))$                                  |
     | $X_i = x$   | log hazard at $t$ is $\textrm{log}(\lambda_{0}(t)) + \beta_1 \times x$               |
     | $X_i = x+1$ | log hazard at $t$ is $\textrm{log}(\lambda_{0}(t))+ \beta_1 \times x + \beta_1$      |
@@ -464,7 +464,7 @@ There was a significant difference in overall survival according to sex in the `
 -   Model on the hazard scale is found by exponentiating parameters
 
     | Model       | $\lambda(t | X_i) = \lambda_{0}(t) \times e^{\beta_1 \times X_i}$                |
-    |:------------------------|:---------------------------------------------|
+    |:-------------------------|:---------------------------------------------|
     | $X_i = 0$   | hazard at $t$ is $\lambda_{0}(t)$                                                |
     | $X_i = x$   | hazard at $t$ is $\lambda_{0}(t) \times e^{\beta_1 \times x}$                    |
     | $X_i = x+1$ | hazard at $t$ is $\lambda_{0}(t) \times e^{\beta_1 \times x} \times e^{\beta_1}$ |
@@ -976,7 +976,7 @@ legend("topright", col=c(1,1,2,2), lty=c(1,2,1,2),
 
 -   How the model is parameterized will either give a proportional hazards or accelerated failure time interpretation
 
-    -   For the Weibull proportional hazards model with one covariate (\$X\$)
+    -   For the Weibull proportional hazards model with one covariate ($X$)
 
         $$
         h(t) = \lambda p t^{p-1}
@@ -986,7 +986,7 @@ legend("topright", col=c(1,1,2,2), lty=c(1,2,1,2),
         \lambda = \textrm{exp}(\beta_1 X)
         $$
 
-    -   For the Weibull accelerated failure time model with one covariate (\$X\$)
+    -   For the Weibull accelerated failure time model with one covariate ($X$)
 
         $$
         S(t) = exp(-\lambda t^p)
@@ -1060,8 +1060,277 @@ The statements are more awkward when the acceleration factor is less than 1. We 
 
 -   If goal is prediction, appropriate parametric models (perhaps with additional flexibility) may outperform the Cox model
 
--   Bayesian approach to fitting survival models are most often based on parametric approaches
+
+## Bayesian Time to Event Models
+
+
+-   Bayesian approaches to fitting survival models are often based on parametric approaches or approaches that attempt to mimic the Cox model
 
     -   It is relatively straight forward to fit Bayesian models using parametric distributions like Weibull
 
-    -   Models that attempt to recreate a Cox-like models are more complex because of the flexibility of the baseline hazard function
+    -   Models that attempt to recreate a Cox-like models are more complex because it can be difficult to recreate the flexibility of the baseline hazard function needed
+    
+    
+### Review: Bayesian Analysis
+
+* The Bayesian Paradigm provides a framework for incorporating prior knowledge with observed data through the use of probability models. In this approach:
+
+-   **Posterior distribution** is obtained by combining:
+    1.  The **Likelihood**: $L(\mathbf{\theta}; \mathbf{x})$, representing the probability of the observed data $\mathbf{x}$ given the model parameters $\mathbf{\theta}$.
+    2.  The **Prior Distribution**: $\pi(\mathbf{\theta})$, reflecting prior beliefs or information about $\mathbf{\theta}$.
+
+* Mathematically, the posterior distribution is expressed as:
+
+$$
+p(\mathbf{\theta} \mid \text{data}) \propto L(\mathbf{\theta}; \mathbf{x}) \cdot \pi(\mathbf{\theta})
+$$
+
+* This illustrates the key Bayesian principle: beliefs about $\mathbf{\theta}$ (the **posterior distribution**) are updated by combining new evidence (the **likelihood**) with prior knowledge (the **prior distribution**).
+
+### Review: Linear Regression
+
+* The Bayesian paradigm can be applied to the linear regression model, where the parameters of interest, $\boldsymbol{\theta} = (\boldsymbol{\beta}, \sigma)$, consist of:
+
+   -   $\boldsymbol{\beta}$: The regression coefficients (bold to emphasize their vector nature).
+   -   $\sigma$: The standard deviation of the residuals, representing the variability not explained by the model.
+
+#### Likelihood
+
+* In classical linear regression, the **Likelihood** $L(\boldsymbol{\theta}; \mathbf{x})$ is modeled as a Normal distribution with mean $\mathbf{X} \boldsymbol{\beta}$ and variance $\sigma^2$, where $\mathbf{X}$ is the design matrix of predictors.
+
+* The likelihood can be expressed as a product of individual likelihoods for each data point $i$, given by:
+
+$$
+L(\boldsymbol{\theta}; \mathbf{x}) = \prod_{i=1}^n L_i(\boldsymbol{\theta}; \mathbf{x}_i)
+$$
+
+* For classical linear regression (assuming a Normal distribution) this becomes:
+
+$$
+L(\boldsymbol{\theta}; \mathbf{y}, \mathbf{X}) = \prod_{i=1}^n \frac{1}{\sqrt{2 \pi \sigma^2}} \exp \left( -\frac{(y_i - \mathbf{x}_i^\top \boldsymbol{\beta})^2}{2 \sigma^2} \right)
+$$
+
+-   $y_i$: Observed outcome for the $i$-th data point
+-   $\mathbf{x}_i^T$: Row vector of predictors for the $i$-th data point.
+-   $\boldsymbol{\beta}$: Coefficients for the predictors
+-   $\sigma^2$: Variance of the residuals.
+
+#### Prior Distributions
+
+In the Bayesian framework, prior distributions are assigned to the parameters of interest to reflect prior beliefs or knowledge about their values before observing the data. For Bayesian linear regression, typical priors (but not the only priors) include:
+
+-   **For** $\boldsymbol{\beta}$: A multivariate Normal distribution: $$
+    \pi(\boldsymbol{\beta}) \sim \mathcal{N}(\boldsymbol{\mu}_\beta, \mathbf{\Sigma}_\beta)
+    $$ where $\boldsymbol{\mu}_\beta$ is the mean vector and $\mathbf{\Sigma}_\beta$ is the covariance matrix, encoding the prior beliefs about $\boldsymbol{\beta}$.
+
+-   **For** $\sigma$: An exponential distribution: $$
+    \pi(\sigma) \sim \text{Exponential}(\lambda)
+    $$ where $\lambda$ is a rate parameter. In **rstanarm** and **stan_glm**, $\lambda$ is weakly informative and scaled based on the data, often reflecting the standard deviation of the outcome variable.
+
+#### Posterior distribution
+
+* These priors, combined with the likelihood, form the basis for the posterior distribution, which is proportional to the product of the likelihood and the priors.
+
+* This model encodes several key assumptions:
+
+   1 **Linearity**: The relationship between the predictors and the outcome is linear, expressed as the expected value $\mathbb{E}[Y] = \mathbf{X} \boldsymbol{\beta}$.
+
+   2 **Homoskedasticity**: The variance of the residuals $\text{Var}(\varepsilon_i) = \sigma^2$ is constant across all levels of the predictors.
+
+   3 **Normality of the residuals**: $\epsilon_i \sim N(0, \sigma^2)$
+
+### Review: Logistic Regression
+
+* The Bayesian Paradigm can be applied to the logistic regression model, where the parameters of interest are $\boldsymbol{\theta} = \boldsymbol{\beta}$,
+
+* In logistic regression, the Bayesian approach models the probability of a binary outcome $y_i \in \{0, 1\}$ as a function of the predictors $\mathbf{x}_i$ and the regression coefficients $\boldsymbol{\beta}$. The likelihood for the observed data is expressed as:
+
+$$
+L(\boldsymbol{\beta}; \mathbf{y}, \mathbf{X}) = \prod_{i=1}^n \left( \pi_i \right)^{y_i} \left( 1 - \pi_i \right)^{1 - y_i}
+$$
+
+
+* $\pi_i = \text{logit}^{-1}(\mathbf{x}_i^\top \boldsymbol{\beta}) = \frac{\exp(\mathbf{x}_i^\top \boldsymbol{\beta})}{1 + \exp(\mathbf{x}_i^\top \boldsymbol{\beta})}$
+* $y_i$: Observed binary outcome for the $i$-th data point.
+* $\mathbf{x}_i^\top$: Row vector of predictors for the $i$-th data point. 
+* $\boldsymbol{\beta}$: Regression coefficients.
+
+This likelihood serves as the basis for updating the posterior distribution when combined with appropriate prior distributions on $\boldsymbol{\beta}$.
+
+
+* See [Logistic Regression Notes](Lec04.Logistic.qmd#sec-bayeslogistic) for additional details
+
+
+### Bayesian Parametric Survival Analysis
+
+
+* The Bayesian approach to parametric survival models follow a similar procedure to linear and logistic regression
+
+   * A likelihood is specified based on the assumed underlying probability distribution
+   
+   
+   * Prior distributions are specified for the parameters in the model
+   
+   * The posterior distribution is updated combining the likelihood and the prior
+
+
+#### Example: Weibull model, Bayesian approach
+
+* Suppose we assume a Weibull distribution for survival time.  The parameters of interest, $\boldsymbol{\theta}$, typically include:
+
+   * $\boldsymbol{\beta}$: Regression coefficients for covariates (bold to emphasize their vector nature) to impact the shape parameter of the Weibull distribution
+
+   * $p$: Scale parameter of the Weibull distribution.
+
+The likelihood for the observed survival data $(t_i, \delta_i)$ is expressed as:
+
+$$
+L(\boldsymbol{\theta}; \mathbf{t}, \boldsymbol{\delta}) = \prod_{i=1}^n \left[h(t_i; \lambda, p)^{\delta_i} \cdot S(t_i; \lambda, p)^{1 - \delta_i}\right],
+$$
+
+where:
+
+* $t_i$: Survival time for the $i$-th individual.
+
+* $\delta_i$: Censoring indicator, where $\delta_i = 1$ if the event is observed and $\delta_i = 0$ if the data is censored.
+
+* $\mathbf{t}$ and $\boldsymbol{\delta}$: Vectors of survival times and censoring indicators.
+
+* $\lambda = \exp(\mathbf{X}\boldsymbol{\beta})$
+
+#### Prior Distributions
+
+* In the Bayesian framework, prior distributions are assigned to the model parameters:
+- **For $\boldsymbol{\beta}$**: A multivariate Normal distribution:
+  $$
+  \pi(\boldsymbol{\beta}) \sim \mathcal{N}(\boldsymbol{\mu}_\beta, \mathbf{\Sigma}_\beta),
+  $$
+  where $\boldsymbol{\mu}_\beta$ is the mean vector and $\mathbf{\Sigma}_\beta$ is the covariance matrix.
+  
+- **For $p$**: Weakly informative prior, such as Gamma distributions or other appropriate priors based on prior knowledge.
+
+* These priors, combined with the likelihood, provide the posterior distribution for inference.
+
+
+### Bayesian Cox-type Models for Time to Event Data
+
+- There is no direct analog of the Cox model in the Bayesian paradigm.  The reason for this relates to the partial likelihood.
+
+- Cox models are estimated by maximizing the partial likelihood, which does not include the baseline hazard function
+
+The partial likelihood for the Cox model is given by:
+
+$$
+L_p(\boldsymbol{\beta}) = \prod_{i:\delta_i=1} h_0(t_i) \exp(\mathbf{x}_i^\top \boldsymbol{\beta}) \Bigg/ \sum_{j \in R(t_i)} h_0(t_i) \exp(\mathbf{x}_j^\top \boldsymbol{\beta}),
+$$
+
+where:
+
+* $h_0(t_i)$: Baseline hazard function at time $t_i$.
+
+* $\boldsymbol{\beta}$: Regression coefficients.
+
+* $\mathbf{x}_i$: Covariates for the $i$-th individual.
+
+* $R(t_i)$: Risk set at time $t_i$, i.e., individuals still at risk just before time $t_i$.
+
+The baseline hazard cancels out, so the partial likelihood simplifies to:
+
+$$
+L_p(\boldsymbol{\beta}) = \prod_{i:\delta_i=1} \frac{\exp(\mathbf{x}_i^\top \boldsymbol{\beta})}{\sum_{j \in R(t_i)} \exp(\mathbf{x}_j^\top \boldsymbol{\beta})}.
+$$
+
+* Key point: In a frequentist analysis, $\beta$ is maximized irrespective of the baseline hazard
+
+* In a Bayesian analysis, the unspecified baseline hazard function $h_0(t)$ cannot be ignored.  An additional approach is required to estimate the baseline hazard alongside $\boldsymbol{\beta}$. 
+
+* Methods often involve modeling the baseline hazard explicitly, such as using splines or piecewise constant functions.  Alternatively, latent processes can allow flexible modeling and full Bayesian inference.
+
+   1. **Piecewise Exponential Model**: The time axis is divided into predefined intervals, and the baseline hazard is assumed to be constant within each interval. This approach offers flexibility while maintaining computational simplicity.
+
+```{r}
+#| label: fig-piecewise-exponential
+#| fig-cap: "Piecewise Exponential Hazard Function"
+library(ggplot2)
+
+plot_data <- data.frame(
+  from_time = seq(0, 4, by = 1),
+  to_time = seq(1, 5, by = 1),
+  hazard = c(0.5, 1, 1.5, 0.8, 0.3)
+)
+ggplot(plot_data) + geom_segment(aes(x = from_time, xend = to_time, y = hazard, yend = hazard))  +
+  labs(
+    x = "Time",
+    y = "Hazard"
+  ) +
+  theme_minimal() + 
+  ylim(0,1.6)
+```
+
+
+   2. **Spline-Based Methods**: The baseline hazard is modeled using splines, such as cubic splines or B-splines, allowing for a smooth and flexible representation of the hazard function over time.
+
+```{r}
+#| label: fig-spline-hazard
+#| fig-cap: "Spline-Based Hazard Function"
+
+# Load necessary libraries
+library(ggplot2)
+library(splines)
+
+# Define time points and a base positive hazard function (example)
+time_points <- seq(0, 5, length.out = 100)
+base_hazard <- abs(0.5 + 0.3 * time_points - 0.1 * time_points^2)  # Ensure hazards are positive
+noise <- abs(rnorm(length(time_points), mean = 0, sd = 0.05))  # Add positive noise
+hazard_values <- base_hazard + noise
+
+# Fit a cubic spline to the hazard function
+spline_fit <- smooth.spline(time_points, hazard_values)
+
+# Create data for plotting the spline
+spline_data <- data.frame(
+  time = spline_fit$x,
+  hazard = spline_fit$y
+)
+
+# Plot the spline-based hazard function
+ggplot(data = spline_data, aes(x = time, y = hazard)) +
+  geom_line(color = "blue", size = 1) +
+  labs(
+    x = "Time",
+    y = "Hazard"
+  ) +
+  theme_minimal() +
+  ylim(0, NA)  # Set y-axis lower bound to 0
+```
+
+
+   3. **Dirichlet Process Priors**: The baseline hazard is modeled nonparametrically using a Dirichlet process prior. This approach provides flexibility in estimating the hazard function by letting the data inform its shape, while still incorporating prior beliefs.
+
+   4. **Others**: Machine learning and other approaches
+
+
+### R-Related Software for Bayesian Survival Analysis
+
+There are several R packages that support Bayesian survival analysis.
+
+- **`stan_surv` in `rstanarm`**:
+
+   * This function implements Bayesian survival analysis using flexible parametric models. It can handle a variety of survival models, including those with user-specified baseline hazard functions
+   
+   * It is currently (March, 2025) available in the development version of `rstanarm`, which is why it is not demonstrating it.
+   
+   *  [Estimating Survival (Time-to-Event) Models with rstanarm](https://stan-dev.r-universe.dev/articles/rstanarm/surv.html)
+
+
+- **`brms`**
+
+   * The `brms` package allows for Bayesian survival models using flexible formula syntax
+   
+   * Supports parametric survival distributions and can be used to specify custom hazard models.
+   
+   * [Bayesian Regression Models using STAN](https://paul-buerkner.github.io/brms/)
+   
+* Both packages are use-friendly front ends for [Stan: Software for Bayesian Analysis](https://mc-stan.org/)
+
+

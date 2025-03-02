@@ -12,7 +12,6 @@ format:
     number-depth: 4
     anchor-sections: true
     smooth-scroll: true
-    theme: journal
     toc: true
     toc-depth: 4
     toc-title: Contents

@@ -495,7 +495,7 @@ finalfit(.data = titanic, dependent, explanatory)
 
     -   The Score test is not bad in small samples, but is often hard to obtain from software. It is exactly equal to the Chi-squared test for binary outcomes and categorical predictors.
 
-#### Bayesian Estimates and Interpretation
+#### Bayesian Estimates and Interpretation {#sec-bayeslogistic}
 
 -   Bayesian approach to the logistic model requires specifying the model, prior distributions, and the likelihood
 
