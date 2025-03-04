@@ -899,7 +899,7 @@ plot.data2$value[plot.data2$type==4] <-
 
 plot.data2$type <- factor(plot.data2$type, levels=1:4, labels=c("F (CDF)","f (PDF)", "S = 1 - F", "h = f / S" ))
 
-plot.data2$loc2 <- paste("scale =", plot.data2$loc)
+plot.data2$loc2 <- paste("shape =", plot.data2$loc)
 
 ggplot(plot.data2, aes(x=t, y=value)) + geom_line() + facet_grid(type ~ loc2, scales="free_y") + theme_bw()
 ```
@@ -1318,7 +1318,7 @@ There are several R packages that support Bayesian survival analysis.
 
    * This function implements Bayesian survival analysis using flexible parametric models. It can handle a variety of survival models, including those with user-specified baseline hazard functions
    
-   * It is currently (March, 2025) available in the development version of `rstanarm`, which is why it is not demonstrating it.
+   * It is currently (March, 2025) available in the development version of `rstanarm`, so I am not demonstrating it.
    
    *  [Estimating Survival (Time-to-Event) Models with rstanarm](https://stan-dev.r-universe.dev/articles/rstanarm/surv.html)
 

@@ -263,7 +263,7 @@ coeftest(m1.poisson, vcov=sandwich)
 confint(coeftest(m1.poisson, vcov=sandwich))
 ```
 
-```stata         
+``` stata
 . poisson events bmi, offset(logmins) robust
 
 Iteration 0:   log pseudolikelihood =  -11360.89  
@@ -312,6 +312,7 @@ Log pseudolikelihood =  -11360.89                 Pseudo R2       =     0.0520
 
 ## Example: Acid reflux and BMI by esophagitis status
 
+
 ### BMI modeled as a linear term
 
 -   The following results compare using a Poisson model to a linear regression model
@@ -324,15 +325,15 @@ Log pseudolikelihood =  -11360.89                 Pseudo R2       =     0.0520
 
 #### R: Poisson regression of events with offset for log(total time monitored)
 
+
 ```{r}
 m2.poisson <- glm(events ~ bmi + esop + offset(log(totalmins)), data=bmi.data, family="poisson")
 m2.poisson
+
 coeftest(m2.poisson, vcov=sandwich)
 confint(coeftest(m2.poisson, vcov=sandwich))
-
-# Equivalent command
-#coefci(m2.poisson, vcov=sandwich)
 ```
+
 
 #### R: Linear regression of rate (events/time) as outcome
 
@@ -346,7 +347,7 @@ confint(coeftest(m2.lm, vcov=sandwich))
 
 #### Stata Output
 
-```stata
+``` stata
 . poisson events bmi esop, offset(logmins) robust
 
 Poisson regression                                Number of obs   =        279
@@ -398,16 +399,16 @@ Linear regression                                      Number of obs =     279
 
     -   Remember the above rates are for a 2-minute time interval. To convert to daily rates, multiply by 720
 
-        ```{r}
-        # Predicted events per two minute time interval
-        predict(m2.lm, newdata=data.frame(bmi=30,esop=1))
-        exp(predict(m2.poisson, newdata=data.frame(bmi=30,esop=1,totalmins=1), type="link"))
+```{r}
+# Predicted events per two minute time interval
+predict(m2.lm, newdata=data.frame(bmi=30,esop=1))
+exp(predict(m2.poisson, newdata=data.frame(bmi=30,esop=1,totalmins=1), type="link"))
 
 
-        # Predicted events per day (720 2-minute time intervals per day)
-        predict(m2.lm, newdata=data.frame(bmi=30,esop=1))*720
-        exp(predict(m2.poisson, newdata=data.frame(bmi=30,esop=1,totalmins=720), type="link"))
-        ```
+# Predicted events per day (720 2-minute time intervals per day)
+predict(m2.lm, newdata=data.frame(bmi=30,esop=1))*720
+exp(predict(m2.poisson, newdata=data.frame(bmi=30,esop=1,totalmins=720), type="link"))
+```
 
 ```{r}
 bmi.data$esop.factor <- factor(bmi.data$esop, levels=0:1, labels=c("Esop Neg", "Esop Pos"))
@@ -485,3 +486,144 @@ legend("bottomright", c("Esophagitis Pos","Esophagitis Neg"), inset=0.05, col="B
         -   A priori, I would be less inclined to believe a linear function captures the true mean relationship
 
         -   To answer this scientific question, a spline analysis is preferred
+
+### Bayesian Poisson Regression
+
+#### Likelihood Function
+
+-   The Bayesian analysis begins by specifying the likelihood and prior distributions.
+
+-   For the Poisson model, the likelihood function can bewritten as:
+
+$$L(y | \lambda) = \prod_{i=1}^{n} \frac{e^{-\lambda_i} 
+\lambda_i^{y_i}}{y_i!}$$
+
+where $y_i$ is the observed count for each observation $i$, and $\lambda_i$ is the expected count.
+
+-   In a Poisson regression model, $\lambda$ is modeled as a function of the covariates **X** and coefficients $\boldsymbol{\beta}$, such that:
+
+$$\lambda = \exp(\textbf{X} \boldsymbol{\beta})$$
+
+-   This equation links the expected counts to the linear predictor, allowing for the estimation of the effects of the covariates on the response variable.
+
+-   (With the Poisson likelihood, we are still assuming the mean is equal to the variance)
+
+#### Prior specification
+
+-   As with any Bayesian analysis, prior distributions must be specified for all parameters in the model
+
+-   For the Poisson, $\boldsymbol{theta} = \boldsymbol{\beta}$
+
+-   A convenient choice of prior distribution for $\boldsymbol{\beta}$ is the Multivariable Normal distribution
+
+$$
+\pi(\boldsymbol{\beta}) \sim \mathcal{N}(\boldsymbol{\mu}, \boldsymbol{\Sigma})
+$$
+
+-   Here, $\boldsymbol{\mu}$ represents the mean vector of the prior distribution, and $\boldsymbol{\Sigma}$ represents the covariance matrix.
+
+-   The prior mean $\boldsymbol{\mu}$ and covariance $\boldsymbol{\Sigma}$ can be chosen based on prior knowledge or elicited from experts, or can be set to non-informative values for a more objective analysis.
+
+#### Posterior Distribution
+
+-   The posterior distribution of $\boldsymbol{\beta}$ is proportional to the product of the likelihood function and the prior distribution:
+
+$$
+\pi(\boldsymbol{\beta} | \textbf{y}) \propto L(\textbf{y} | \lambda) 
+\cdot f(\boldsymbol{\beta})
+$$
+
+-   Substituting the Poisson likelihood and multivariate normal prior, we get:
+
+$$\pi(\boldsymbol{\beta} | \textbf{y}) \propto \prod_{i=1}^{n} 
+\frac{e^{-\lambda_i} \lambda_i^{y_i}}{y_i!} \cdot \frac{1}{\sqrt{(2\pi)^p 
+|\boldsymbol{\Sigma}|}} \exp\left(-\frac{1}{2} (\boldsymbol{\beta} - 
+\boldsymbol{\mu})^T \boldsymbol{\Sigma}^{-1} (\boldsymbol{\beta} - 
+\boldsymbol{\mu})\right)
+$$
+
+-   Where $\lambda_i = \exp(\textbf{x}_i \cdot \boldsymbol{\beta})$, and $p$ is the number of regression coefficients.
+
+-   The posterior distribution is typically complex and does not have a closed-form expression, requiring numerical methods such as Markov chain Monte Carlo (MCMC) for inference.
+
+    -   In this course, we have been using `rstanarm` and `stan_glm` to perform MCMC
+
+### Bayesian Poisson regression example
+
+\*To fit a Bayesian Poisson regression model using the `rstanarm` package, we can use the `stan_glm()` function.
+
+\*The following code specifies a Bayesian model that is equivalent to the earlier frequentist model with bmi and esop and an offset
+
+```{r}
+library(rstanarm)
+
+m2.bayes.poisson <- stan_glm(
+  events ~ bmi + esop + offset(log(totalmins)),
+  data = bmi.data,
+  family = poisson(link = "log"),
+  prior = normal(location = 0, scale = 1),
+  prior_intercept = normal(location = 0, scale = 1),
+  refresh=0,
+  seed=12345
+)
+summary(m2.bayes.poisson, digits=4, prob=c(.025, .5, .975))
+```
+
+-   In this code:
+
+    -   `events ~ bmi + esop + offset(log(totalmins))` specifies the model formula.
+    -   `family = poisson(link = "log")` specifies a Poisson distribution with a log link function
+    -   `prior = normal(location = 0, scale = 1)` and `prior_intercept = normal(location = 0, scale = 1)` specify priors for the regression coefficients and intercept.
+    -   `seed = 1234` sets a random seed to ensure reproducibility of the results.
+    -   `refresh = 0` suppresses the progress bar during model fitting.
+
+-   And a summary of the prior distributions used
+
+```{r}
+prior_summary(m2.bayes.poisson, digits = 2)
+```
+
+#### Plot of Prior, Likelihood, Posterior
+
+-   The following shows the prior, likelihood and the posterior for the Poisson model of the $\beta$ for BMI.
+
+```{r}
+
+plp.plotdata <- data.frame(post.draws=as.matrix(m2.bayes.poisson)[,"bmi"])
+
+density_plot <- ggplot(plp.plotdata, aes(x = post.draws)) +
+  geom_density(aes(fill = "Posterior (MCMC)"), color = NA, alpha = 0.5) +
+  labs(x = "BMI", y = "Density") +
+  scale_fill_manual(values = c("Posterior (MCMC)" = "blue")) +
+  stat_function(fun = dnorm, args = list(mean = 0.02, sd = .001), aes(color = "Prior"), size=1) +
+  scale_color_manual(name="Legend", values = c("Prior" = "red", "Likelihood (Asymptotic)" = "green")) +
+  stat_function(fun = dnorm, args = list(mean = coef(m2.poisson)["bmi"], sd = 
+sqrt(vcov(m2.poisson)["bmi","bmi"])), aes(color = "Likelihood (Asymptotic)"), size=1) +
+  theme_minimal() + theme(legend.title=element_blank())
+
+print(density_plot)
+```
+
+-   Here is just the posterior distributions for BMI and `esop`
+
+```{r}
+library(bayesplot)
+mcmc_dens(m2.bayes.poisson, pars=c("bmi","esop")) +
+  labs(title = "Posterior Distribution of bmi",
+       subtitle = "Bayesian Poisson Regression Model",
+       x = "Value", y = "Density") +
+  theme_classic()
+```
+
+```{r}
+ posterior_vs_prior(m2.bayes.poisson, pars=c("bmi","esop"))
+```
+
+```{r}
+rbind(glm=coef(m2.poisson),
+      Bayes.weak=coef(m2.bayes.poisson))
+
+rbind(glm=sqrt(diag(vcov(m2.poisson))),
+      Bayes.weak=sqrt(diag(vcov(m2.bayes.poisson))))
+
+```
