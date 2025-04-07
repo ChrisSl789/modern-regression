@@ -55,6 +55,7 @@ website:
           - href: notes/Lec11.DoseResponse.qmd
           - href: notes/Lec12.ANOVA.Model.Choice.qmd
           - href: notes/Lec13.Prediction.qmd
+          - href: notes/BayesDiagnostics.qmd
           - href: notes/Set13.pdf
             text: "Missing Data"
           - href: notes/Set14.pdf

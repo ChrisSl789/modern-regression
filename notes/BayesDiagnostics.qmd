@@ -1,0 +1,49 @@
+---
+title: "Bayesian Model Diagnostics"
+subtitle: "Links to additional lecture"
+name: BayesDiagnositics.qmd
+---
+
+## Background
+
+-   To date, We have primarily discussed frequentist regression model diagnostics
+
+    -   Methods to evaluate linearity, homoskedasticity, independence, Normality of the residuals
+
+-   Diagnostics are also important in Bayesian data analysis
+
+    -   All statistical models are sets of assumptions about the data generating process, and estimation will be meaningless or misleading if theses assumptions do not hold for the data
+
+    -   Modeling assumptions are encoded in the Bayesian model statement by the assume likelihood and prior distributions for parameters in the model
+
+-   [We will discuss the following notes in class](https://bookdown.org/marklhc/notes_bookdown/)
+
+-   First, introduce the [linear model](https://bookdown.org/marklhc/notes_bookdown/linear-models.html) they consider
+
+    -   Child test scores (outcome) on maternal IQ and graduation from high school
+
+    -   Unadjusted, adjusted, and effect modifciation models are considered
+
+    -   Key point: With resepect to confounding, effect modification, and precision the Bayesian approach does not differ from the frequentist approach
+
+-   Second, discuss [model diagnostics](https://bookdown.org/marklhc/notes_bookdown/model-diagnostics.html) as they pertain the Bayesian model
+
+    -   Posterior predictive checks
+
+        -   A posterior predictive check is the comparison between what the fitted model predicts and the observed data.
+
+        -   Aim is to detect if the model is inadequate to describe the data
+
+        -   $f(y^\textrm{rep} | y) = \int f(y^\textrm{rep} | \theta) p(\theta | y) \textrm{d}\theta$
+
+        -   Posterior predictive checks (via the predictive distribution) involve a double-use of the data, which violates the likelihood principle. However, arguments have been made in favor of posterior predictive checks, provided that usage is limited to measures of discrepancy to study model adequacy, not for model comparison and inference (Meng 1994).
+
+    -   Marginal model plots
+
+        -   The plot compares the observed data to the predictions made by the model, averaged over the posterior distribution of the model parameters.
+
+    -   Bayes robust approaches
+
+        -   Non-normal errors (t-distribution)
+
+        -   Modeling heteroskedasticity
