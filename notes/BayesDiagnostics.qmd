@@ -4,29 +4,29 @@ subtitle: "Links to additional lecture"
 name: BayesDiagnositics.qmd
 ---
 
-## Background
+## Overview
 
--   To date, We have primarily discussed frequentist regression model diagnostics
+-   To date, we have primarily discussed frequentist regression model diagnostics
 
-    -   Methods to evaluate linearity, homoskedasticity, independence, Normality of the residuals
+    -   Methods to evaluate linearity, homoskedasticity, independence, Normality of the residuals (conditional on covariates)
 
 -   Diagnostics are also important in Bayesian data analysis
 
     -   All statistical models are sets of assumptions about the data generating process, and estimation will be meaningless or misleading if theses assumptions do not hold for the data
 
-    -   Modeling assumptions are encoded in the Bayesian model statement by the assume likelihood and prior distributions for parameters in the model
+    -   Modeling assumptions are encoded in the Bayesian model statement by the assumed likelihood and prior distributions for parameters in the model
 
--   [We will discuss the following notes in class](https://bookdown.org/marklhc/notes_bookdown/)
+-   [We will discuss a select amount of the following notes in class](https://bookdown.org/marklhc/notes_bookdown/)
 
--   First, introduce the [linear model](https://bookdown.org/marklhc/notes_bookdown/linear-models.html) they consider
+-   First, introduce the [linear model](https://bookdown.org/marklhc/notes_bookdown/linear-models.html) considered
 
     -   Child test scores (outcome) on maternal IQ and graduation from high school
 
     -   Unadjusted, adjusted, and effect modifciation models are considered
 
-    -   Key point: With resepect to confounding, effect modification, and precision the Bayesian approach does not differ from the frequentist approach
+    -   Key point: With respect to confounding, effect modification, and precision the Bayesian approach does not differ from the frequentist approach
 
--   Second, discuss [model diagnostics](https://bookdown.org/marklhc/notes_bookdown/model-diagnostics.html) as they pertain the Bayesian model
+-   Second, discuss [model diagnostics](https://bookdown.org/marklhc/notes_bookdown/model-diagnostics.html) as they pertain to the Bayesian model
 
     -   Posterior predictive checks
 

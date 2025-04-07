@@ -505,7 +505,7 @@ window.Quarto = {
     <h2 id="toc-title">Contents</h2>
    
   <ul>
-  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background"><span class="header-section-number">1</span> Background</a></li>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">1</span> Overview</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/chrissl789/modern-regression/edit/main/notes/BayesDiagnostics.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/chrissl789/modern-regression/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
 </nav>
@@ -535,26 +535,26 @@ window.Quarto = {
 </header>
 
 
-<section id="background" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="background"><span class="header-section-number">1</span> Background</h2>
+<section id="overview" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="overview"><span class="header-section-number">1</span> Overview</h2>
 <ul>
-<li><p>To date, We have primarily discussed frequentist regression model diagnostics</p>
+<li><p>To date, we have primarily discussed frequentist regression model diagnostics</p>
 <ul>
-<li>Methods to evaluate linearity, homoskedasticity, independence, Normality of the residuals</li>
+<li>Methods to evaluate linearity, homoskedasticity, independence, Normality of the residuals (conditional on covariates)</li>
 </ul></li>
 <li><p>Diagnostics are also important in Bayesian data analysis</p>
 <ul>
 <li><p>All statistical models are sets of assumptions about the data generating process, and estimation will be meaningless or misleading if theses assumptions do not hold for the data</p></li>
-<li><p>Modeling assumptions are encoded in the Bayesian model statement by the assume likelihood and prior distributions for parameters in the model</p></li>
+<li><p>Modeling assumptions are encoded in the Bayesian model statement by the assumed likelihood and prior distributions for parameters in the model</p></li>
 </ul></li>
-<li><p><a href="https://bookdown.org/marklhc/notes_bookdown/">We will discuss the following notes in class</a></p></li>
-<li><p>First, introduce the <a href="https://bookdown.org/marklhc/notes_bookdown/linear-models.html">linear model</a> they consider</p>
+<li><p><a href="https://bookdown.org/marklhc/notes_bookdown/">We will discuss a select amount of the following notes in class</a></p></li>
+<li><p>First, introduce the <a href="https://bookdown.org/marklhc/notes_bookdown/linear-models.html">linear model</a> considered</p>
 <ul>
 <li><p>Child test scores (outcome) on maternal IQ and graduation from high school</p></li>
 <li><p>Unadjusted, adjusted, and effect modifciation models are considered</p></li>
-<li><p>Key point: With resepect to confounding, effect modification, and precision the Bayesian approach does not differ from the frequentist approach</p></li>
+<li><p>Key point: With respect to confounding, effect modification, and precision the Bayesian approach does not differ from the frequentist approach</p></li>
 </ul></li>
-<li><p>Second, discuss <a href="https://bookdown.org/marklhc/notes_bookdown/model-diagnostics.html">model diagnostics</a> as they pertain the Bayesian model</p>
+<li><p>Second, discuss <a href="https://bookdown.org/marklhc/notes_bookdown/model-diagnostics.html">model diagnostics</a> as they pertain to the Bayesian model</p>
 <ul>
 <li><p>Posterior predictive checks</p>
 <ul>
@@ -1214,29 +1214,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="an">name:</span><span class="co"> BayesDiagnositics.qmd</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## Background</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## Overview</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>To date, We have primarily discussed frequentist regression model diagnostics</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>To date, we have primarily discussed frequentist regression model diagnostics</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Methods to evaluate linearity, homoskedasticity, independence, Normality of the residuals</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Methods to evaluate linearity, homoskedasticity, independence, Normality of the residuals (conditional on covariates)</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Diagnostics are also important in Bayesian data analysis</span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>All statistical models are sets of assumptions about the data generating process, and estimation will be meaningless or misleading if theses assumptions do not hold for the data</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Modeling assumptions are encoded in the Bayesian model statement by the assume likelihood and prior distributions for parameters in the model</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Modeling assumptions are encoded in the Bayesian model statement by the assumed likelihood and prior distributions for parameters in the model</span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">We will discuss the following notes in class</span><span class="co">](https://bookdown.org/marklhc/notes_bookdown/)</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="co">[</span><span class="ot">We will discuss a select amount of the following notes in class</span><span class="co">](https://bookdown.org/marklhc/notes_bookdown/)</span></span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>First, introduce the <span class="co">[</span><span class="ot">linear model</span><span class="co">](https://bookdown.org/marklhc/notes_bookdown/linear-models.html)</span> they consider</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>First, introduce the <span class="co">[</span><span class="ot">linear model</span><span class="co">](https://bookdown.org/marklhc/notes_bookdown/linear-models.html)</span> considered</span>
 <span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Child test scores (outcome) on maternal IQ and graduation from high school</span>
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Unadjusted, adjusted, and effect modifciation models are considered</span>
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Key point: With resepect to confounding, effect modification, and precision the Bayesian approach does not differ from the frequentist approach</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Key point: With respect to confounding, effect modification, and precision the Bayesian approach does not differ from the frequentist approach</span>
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Second, discuss <span class="co">[</span><span class="ot">model diagnostics</span><span class="co">](https://bookdown.org/marklhc/notes_bookdown/model-diagnostics.html)</span> as they pertain the Bayesian model</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Second, discuss <span class="co">[</span><span class="ot">model diagnostics</span><span class="co">](https://bookdown.org/marklhc/notes_bookdown/model-diagnostics.html)</span> as they pertain to the Bayesian model</span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Posterior predictive checks</span>
 <span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
