@@ -1038,13 +1038,13 @@ ConvertWeibull(fit2)
 
 From the Weibull regression model, we can estimate both the hazard ratio and acceleration factor.
 
-Comparing females to males, females have a 0.59 fold hazard (risk) of death compared to males. We are 95% confident the true hazard ratio is between a 0.43 and 0.82 fold increase. Since the hazard ratio does not contain 1, females are at a significantly decreased hazard of death compared to females.
+Comparing females to males, females have a 0.59 fold hazard (risk) of death compared to males. We are 95% confident the true hazard ratio is between a 0.43 and 0.82 fold increase. Since the hazard ratio does not contain 1, females are at a significantly decreased hazard of death compared to males.
 
-Comparing females to males, females have a median (or any other quantile) survival times that is 1.49 times the median (or other quantile) survival time in males. We are 95% confident that the true acceleration factor is between 1.16 and 1.91.
+Comparing females to males, females have a median (or any other quantile) survival time that is 1.49 fold larger than the median (or other quantile) survival time in males. We are 95% confident that the true acceleration factor (time ratio) is between 1.16 and 1.91.
 
 The statements are more awkward when the hard ratio is less than 1. We could flip the estimates (e.g $0.5922^{-1}$) and say that the males have a 1.69 fold increased hazard (risk) of death compared to females.
 
--   Note that a hazard ratio greater than one is harmful for survival while an acceleration factor greater than one is beneficial for survival. One is the null values for both interpretations.
+-   Note that a hazard ratio greater than one is harmful for survival while an acceleration factor (time ratio) greater than one is beneficial for survival. One is the null values for both interpretations.
 
 ### Other parametric models
 
