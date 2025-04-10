@@ -17,6 +17,7 @@ library(survminer)
 library(dplyr)
 library(flexsurv)
 library(eha)
+library(SurvRegCensCov)
 tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 ```
 
@@ -1002,28 +1003,15 @@ legend("topright", col=c(1,1,2,2), lty=c(1,2,1,2),
         \frac{1}{\lambda^{1/p}} = \textrm{exp}(\alpha_0 + \alpha_1 X)
         $$
 
--   R default is to give the proportional hazards parameterization. The hazard ratio is found by exponentiation of the slope as we have done with other models
+-   R 'survreg' default is to give the accelerate failure time parameterization. The acceleration factor (time ratio) is found by exponentiation of the slope as we have done with other models
 
--   Compare to females, males are at a 1.48 fold increased risk (hazard) of death.
+-   Compare to males, females have survival quantiles that are 1.48 larger than males.  That is median survival time, 25th percentile of survival time, or \texit{any other} quantile of survival time is 1.48 times larger in females.
 
 ```{r}
 summary(fit2)
 exp(coef(fit2))
 exp(confint.default(fit2))
 ```
-
--   To obtain the accelerated failure time interpretation, the Weibull model needs to be reparameterized so the output coefficients can be directly interpreted. We also have to exponeniate the coefficient estimates as we are comparing fold differences in survival quantiles.
-
-```{r}
-m.aft <- aftreg(formula = Surv(time, status) ~ sex, data = lung,
-                         dist = "weibull")
-m.aft
-exp(confint(m.aft))
-```
-
--   Acceleration factor (males compared to females) is 0.673
-
-    -   Comparison of survival times, with males having shorter survival times at all percentiles
 
 ```{r}
 # 25th, 50th, and 75th percentiles of survival time in males
@@ -1033,18 +1021,28 @@ ptime1[pct%in%c("0.25","0.5","0.75")]
 ptime2[pct%in%c("0.25","0.5","0.75")]
 
 # Ratios is constant (accelerated failure-time assumption)
-ptime1[pct%in%c("0.25","0.5","0.75")] / ptime2[pct%in%c("0.25","0.5","0.75")]
+ptime2[pct%in%c("0.25","0.5","0.75")] / ptime1[pct%in%c("0.25","0.5","0.75")]
 ```
+
+-   To obtain the hazard ratio interpretation, the Weibull model needs to be reparameterized so the output coefficients can be directly interpreted. 
+
+```{r}
+ConvertWeibull(fit2)
+```
+
+-   Hazard ratio (females compared to males) is 0.592
+
+    -   Females have decreased hazard of death at all time point.  Hazard of death in females divided by the hazard of death in males is 0.592 at all time points (proportional hazards)
 
 -   Summary interpretation of both PH and AFT
 
 From the Weibull regression model, we can estimate both the hazard ratio and acceleration factor.
 
-Comparing males to females, males have a 1.48 fold increased hazard (risk) of death compared to females. We are 95% confident the true hazard ratio is between a 1.16 and 1.91 fold increase. Since the hazard ratio does not contain 1, males are at a significantly increased hazard of death compared to females.
+Comparing females to males, females have a 0.59 fold hazard (risk) of death compared to males. We are 95% confident the true hazard ratio is between a 0.43 and 0.82 fold increase. Since the hazard ratio does not contain 1, females are at a significantly decreased hazard of death compared to females.
 
-Comparing males to females, males have a median (or any other quantile) survival times that is 0.673 times the median (or other quantile) survival time in females. We are 95% confident that the true acceleration factor is between 0.52 and 0.85.
+Comparing females to males, females have a median (or any other quantile) survival times that is 1.49 times the median (or other quantile) survival time in males. We are 95% confident that the true acceleration factor is between 1.16 and 1.91.
 
-The statements are more awkward when the acceleration factor is less than 1. We could flip the estimates (e.g $0.673^{-1}$) and say that the median (or other quantile) survival time in females is 1.49 times longer than it is in males to be less awkward.
+The statements are more awkward when the hard ratio is less than 1. We could flip the estimates (e.g $0.5922^{-1}$) and say that the males have a 1.69 fold increased hazard (risk) of death compared to females.
 
 -   Note that a hazard ratio greater than one is harmful for survival while an acceleration factor greater than one is beneficial for survival. One is the null values for both interpretations.
 

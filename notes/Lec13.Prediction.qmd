@@ -338,7 +338,7 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
 <!-- -->
 
-```stata
+``` stata
 . gen logfev = log(fev)
 
 . regress logfev height age
@@ -532,7 +532,7 @@ Log likelihood = -158.52851                       Pseudo R2       =     0.2512
 
 ### Example: FEV by age and height
 
-```stata
+``` stata
 . regress logfev height age
 
       Source |       SS       df       MS              Number of obs =     654
@@ -573,7 +573,7 @@ Log likelihood = -158.52851                       Pseudo R2       =     0.2512
 
 -   We can compare these results to the prediction for summary measures done previously (see below)
 
-    ```
+    ```         
          +-----------------------------------------------------------------+
          |    gmfev    gmlofev    gmhifev    predfev   pre~ofev   predhi~v |
          |-----------------------------------------------------------------|
@@ -595,7 +595,7 @@ Log likelihood = -158.52851                       Pseudo R2       =     0.2512
 
 -   Example: Age is 10 and Height is 66
 
-    ```stata
+    ``` stata
     . gen sepredict2 = sepredict^2
     . gen sefit2 = sefit^2
     . list sepredict sefit sepredict2 sefit2 if age==10 & heigh==66
@@ -634,7 +634,7 @@ Log likelihood = -158.52851                       Pseudo R2       =     0.2512
 
 -   Estimated mean: $\hat{\beta}_0 + \hat{\beta}_1 X_i \sim N\left(\beta_0 + \beta_1 X_i, \sigma^2 V\right)$
 
--   Predicted mean: $\hat{\beta}_0 + \hat{\beta}_1 X_i + \epsilon_i \sim N\left(\beta_0 + \beta_1 X_i, \sigma^2 (1 + V)\right)$
+-   Predicted value of individual observation: $\hat{\beta}_0 + \hat{\beta}_1 X_i + \epsilon_i \sim N\left(\beta_0 + \beta_1 X_i, \sigma^2 (1 + V)\right)$
 
     -   $V = \frac{1}{n} + \frac{(X_h - \overline{X})^2}{\sum_{i=1}^n (X_i - \overline{X})^2}$
 
@@ -780,7 +780,7 @@ Log likelihood = -158.52851                       Pseudo R2       =     0.2512
 
 <!-- -->
 
-```stata
+``` stata
 . logit smoker height
 
 Logistic regression                               Number of obs   =        654
@@ -868,7 +868,7 @@ Ho: area(xb1) = area(xb2)
 
 <!-- -->
 
-```stata
+``` stata
 . 
 . xi: logit smoker age height i.sex fev if training < .6
 i.sex             _Isex_1-2           (_Isex_1 for sex==female omitted)
@@ -1014,7 +1014,7 @@ Log likelihood = -70.223945                       Pseudo R2       =     0.3629
 
 <!-- -->
 
-```r
+``` r
 > f <- lrm(y ~ sex*rcs(cholesterol)+pol(age,2)+blood.pressure, x=TRUE, y=TRUE)
 > f
 
@@ -1061,7 +1061,7 @@ sex=male * cholesterol'''  0.1315 1.1752  0.11  0.9109
 
 <!-- -->
 
-```r
+``` r
 > validate(f, B=150, bw=TRUE, rule="p", sls=.1, type="individual")
 
                 Backwards Step-down - Original Model

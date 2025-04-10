@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Chris Slaughter">
-<meta name="dcterms.date" content="2024-10-07">
+<meta name="dcterms.date" content="2025-04-10">
 
 <title>Regression Based Prediction – BIOS 6312 - Spring 2025</title>
 <style>
@@ -569,7 +569,7 @@ window.Quarto = {
 <p class="subtitle lead">Lecture 13</p>
 <p class="author">Chris Slaughter</p>
 
-<p class="date">October 7, 2024</p>
+<p class="date">April 10, 2025</p>
 
 </header>
 
@@ -1175,7 +1175,7 @@ window.Quarto = {
 <li><span class="math inline">\(\epsilon_i \sim N(0, \sigma^2)\)</span></li>
 </ul></li>
 <li><p>Estimated mean: <span class="math inline">\(\hat{\beta}_0 + \hat{\beta}_1 X_i \sim N\left(\beta_0 + \beta_1 X_i, \sigma^2 V\right)\)</span></p></li>
-<li><p>Predicted mean: <span class="math inline">\(\hat{\beta}_0 + \hat{\beta}_1 X_i + \epsilon_i \sim N\left(\beta_0 + \beta_1 X_i, \sigma^2 (1 + V)\right)\)</span></p>
+<li><p>Predicted value of individual observation: <span class="math inline">\(\hat{\beta}_0 + \hat{\beta}_1 X_i + \epsilon_i \sim N\left(\beta_0 + \beta_1 X_i, \sigma^2 (1 + V)\right)\)</span></p>
 <ul>
 <li><p><span class="math inline">\(V = \frac{1}{n} + \frac{(X_h - \overline{X})^2}{\sum_{i=1}^n (X_i - \overline{X})^2}\)</span></p></li>
 <li><p><span class="math inline">\(X_h\)</span> is the chosen value of the covariate (e.g.&nbsp;age==10)</p></li>
@@ -2602,7 +2602,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb10-340"><a href="#cb10-340" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-341"><a href="#cb10-341" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- --&gt;</span></span>
 <span id="cb10-342"><a href="#cb10-342" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-343"><a href="#cb10-343" aria-hidden="true" tabindex="-1"></a><span class="in">```stata</span></span>
+<span id="cb10-343"><a href="#cb10-343" aria-hidden="true" tabindex="-1"></a><span class="in">``` stata</span></span>
 <span id="cb10-344"><a href="#cb10-344" aria-hidden="true" tabindex="-1"></a><span class="in">. gen logfev = log(fev)</span></span>
 <span id="cb10-345"><a href="#cb10-345" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-346"><a href="#cb10-346" aria-hidden="true" tabindex="-1"></a><span class="in">. regress logfev height age</span></span>
@@ -2796,7 +2796,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb10-534"><a href="#cb10-534" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-535"><a href="#cb10-535" aria-hidden="true" tabindex="-1"></a><span class="fu">### Example: FEV by age and height</span></span>
 <span id="cb10-536"><a href="#cb10-536" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-537"><a href="#cb10-537" aria-hidden="true" tabindex="-1"></a><span class="in">```stata</span></span>
+<span id="cb10-537"><a href="#cb10-537" aria-hidden="true" tabindex="-1"></a><span class="in">``` stata</span></span>
 <span id="cb10-538"><a href="#cb10-538" aria-hidden="true" tabindex="-1"></a><span class="in">. regress logfev height age</span></span>
 <span id="cb10-539"><a href="#cb10-539" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-540"><a href="#cb10-540" aria-hidden="true" tabindex="-1"></a><span class="in">      Source |       SS       df       MS              Number of obs =     654</span></span>
@@ -2837,7 +2837,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb10-575"><a href="#cb10-575" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-576"><a href="#cb10-576" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>We can compare these results to the prediction for summary measures done previously (see below)</span>
 <span id="cb10-577"><a href="#cb10-577" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-578"><a href="#cb10-578" aria-hidden="true" tabindex="-1"></a>    <span class="in">```</span></span>
+<span id="cb10-578"><a href="#cb10-578" aria-hidden="true" tabindex="-1"></a>    <span class="in">```         </span></span>
 <span id="cb10-579"><a href="#cb10-579" aria-hidden="true" tabindex="-1"></a><span class="in">         +-----------------------------------------------------------------+</span></span>
 <span id="cb10-580"><a href="#cb10-580" aria-hidden="true" tabindex="-1"></a><span class="in">         |    gmfev    gmlofev    gmhifev    predfev   pre~ofev   predhi~v |</span></span>
 <span id="cb10-581"><a href="#cb10-581" aria-hidden="true" tabindex="-1"></a><span class="in">         |-----------------------------------------------------------------|</span></span>
@@ -2859,7 +2859,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb10-597"><a href="#cb10-597" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-598"><a href="#cb10-598" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Example: Age is 10 and Height is 66</span>
 <span id="cb10-599"><a href="#cb10-599" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-600"><a href="#cb10-600" aria-hidden="true" tabindex="-1"></a>    <span class="in">```stata</span></span>
+<span id="cb10-600"><a href="#cb10-600" aria-hidden="true" tabindex="-1"></a>    <span class="in">``` stata</span></span>
 <span id="cb10-601"><a href="#cb10-601" aria-hidden="true" tabindex="-1"></a><span class="in">    . gen sepredict2 = sepredict^2</span></span>
 <span id="cb10-602"><a href="#cb10-602" aria-hidden="true" tabindex="-1"></a><span class="in">    . gen sefit2 = sefit^2</span></span>
 <span id="cb10-603"><a href="#cb10-603" aria-hidden="true" tabindex="-1"></a><span class="in">    . list sepredict sefit sepredict2 sefit2 if age==10 &amp; heigh==66</span></span>
@@ -2898,7 +2898,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb10-636"><a href="#cb10-636" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-637"><a href="#cb10-637" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Estimated mean: $\hat{\beta}_0 + \hat{\beta}_1 X_i \sim N\left(\beta_0 + \beta_1 X_i, \sigma^2 V\right)$</span>
 <span id="cb10-638"><a href="#cb10-638" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-639"><a href="#cb10-639" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Predicted mean: $\hat{\beta}_0 + \hat{\beta}_1 X_i + \epsilon_i \sim N\left(\beta_0 + \beta_1 X_i, \sigma^2 (1 + V)\right)$</span>
+<span id="cb10-639"><a href="#cb10-639" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Predicted value of individual observation: $\hat{\beta}_0 + \hat{\beta}_1 X_i + \epsilon_i \sim N\left(\beta_0 + \beta_1 X_i, \sigma^2 (1 + V)\right)$</span>
 <span id="cb10-640"><a href="#cb10-640" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-641"><a href="#cb10-641" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>$V = \frac{1}{n} + \frac{(X_h - \overline{X})^2}{\sum_{i=1}^n (X_i - \overline{X})^2}$</span>
 <span id="cb10-642"><a href="#cb10-642" aria-hidden="true" tabindex="-1"></a></span>
@@ -3044,7 +3044,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb10-782"><a href="#cb10-782" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-783"><a href="#cb10-783" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- --&gt;</span></span>
 <span id="cb10-784"><a href="#cb10-784" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-785"><a href="#cb10-785" aria-hidden="true" tabindex="-1"></a><span class="in">```stata</span></span>
+<span id="cb10-785"><a href="#cb10-785" aria-hidden="true" tabindex="-1"></a><span class="in">``` stata</span></span>
 <span id="cb10-786"><a href="#cb10-786" aria-hidden="true" tabindex="-1"></a><span class="in">. logit smoker height</span></span>
 <span id="cb10-787"><a href="#cb10-787" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-788"><a href="#cb10-788" aria-hidden="true" tabindex="-1"></a><span class="in">Logistic regression                               Number of obs   =        654</span></span>
@@ -3132,7 +3132,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb10-870"><a href="#cb10-870" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-871"><a href="#cb10-871" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- --&gt;</span></span>
 <span id="cb10-872"><a href="#cb10-872" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-873"><a href="#cb10-873" aria-hidden="true" tabindex="-1"></a><span class="in">```stata</span></span>
+<span id="cb10-873"><a href="#cb10-873" aria-hidden="true" tabindex="-1"></a><span class="in">``` stata</span></span>
 <span id="cb10-874"><a href="#cb10-874" aria-hidden="true" tabindex="-1"></a><span class="in">. </span></span>
 <span id="cb10-875"><a href="#cb10-875" aria-hidden="true" tabindex="-1"></a><span class="in">. xi: logit smoker age height i.sex fev if training &lt; .6</span></span>
 <span id="cb10-876"><a href="#cb10-876" aria-hidden="true" tabindex="-1"></a><span class="in">i.sex             _Isex_1-2           (_Isex_1 for sex==female omitted)</span></span>
@@ -3278,7 +3278,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb10-1016"><a href="#cb10-1016" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-1017"><a href="#cb10-1017" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- --&gt;</span></span>
 <span id="cb10-1018"><a href="#cb10-1018" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-1019"><a href="#cb10-1019" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb10-1019"><a href="#cb10-1019" aria-hidden="true" tabindex="-1"></a><span class="in">``` r</span></span>
 <span id="cb10-1020"><a href="#cb10-1020" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> f <span class="ot">&lt;-</span> <span class="fu">lrm</span>(y <span class="sc">~</span> sex<span class="sc">*</span><span class="fu">rcs</span>(cholesterol)<span class="sc">+</span><span class="fu">pol</span>(age,<span class="dv">2</span>)<span class="sc">+</span>blood.pressure, <span class="at">x=</span><span class="cn">TRUE</span>, <span class="at">y=</span><span class="cn">TRUE</span>)</span>
 <span id="cb10-1021"><a href="#cb10-1021" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> f</span>
 <span id="cb10-1022"><a href="#cb10-1022" aria-hidden="true" tabindex="-1"></a></span>
@@ -3325,7 +3325,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb10-1063"><a href="#cb10-1063" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-1064"><a href="#cb10-1064" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- --&gt;</span></span>
 <span id="cb10-1065"><a href="#cb10-1065" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-1066"><a href="#cb10-1066" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb10-1066"><a href="#cb10-1066" aria-hidden="true" tabindex="-1"></a><span class="in">``` r</span></span>
 <span id="cb10-1067"><a href="#cb10-1067" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">validate</span>(f, <span class="at">B=</span><span class="dv">150</span>, <span class="at">bw=</span><span class="cn">TRUE</span>, <span class="at">rule=</span><span class="st">"p"</span>, <span class="at">sls=</span>.<span class="dv">1</span>, <span class="at">type=</span><span class="st">"individual"</span>)</span>
 <span id="cb10-1068"><a href="#cb10-1068" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-1069"><a href="#cb10-1069" aria-hidden="true" tabindex="-1"></a>                Backwards Step<span class="sc">-</span>down <span class="sc">-</span> Original Model</span>
