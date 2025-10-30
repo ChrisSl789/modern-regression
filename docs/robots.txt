@@ -1,1 +1,5 @@
+<<<<<<< Updated upstream
 Sitemap: https://chrissl789.github.io/modern-regression/sitemap.xml
+=======
+Sitemap: https://bios6312.github.io/website/sitemap.xml
+>>>>>>> Stashed changes
