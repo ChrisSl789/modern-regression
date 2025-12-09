@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.7.32">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Chris Slaughter">
-<meta name="dcterms.date" content="2024-10-07">
+<meta name="dcterms.date" content="2025-10-30">
 
 <title>Flexible Modeling of Continuous Predictors – BIOS 6312 - Spring 2025</title>
 <style>
@@ -23,8 +23,9 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 /* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -35,7 +36,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -67,17 +68,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../">
 <link href="../notes/Lec12.ANOVA.Model.Choice.html" rel="next">
 <link href="../notes/Set8.pdf" rel="prev">
-<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-c437abfaa50d34d00910df3552cd5d13.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-1965ed886599d4b20805420ccffa35d1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-c437abfaa50d34d00910df3552cd5d13.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -140,10 +144,173 @@ window.Quarto = {
 <link rel="stylesheet" href="../styles.css">
 <meta property="og:title" content="Flexible Modeling of Continuous Predictors – BIOS 6312 - Spring 2025">
 <meta property="og:description" content="Lecture 11">
+<meta property="og:image" content="https://chrissl789.github.io/modern-regression/notes/figures/quote-all-models-are-approximations-essentially-all-models-are-wrong-but-some-are-useful-however-george-e-p-box-98-93-58.jpg">
 <meta property="og:site_name" content="BIOS 6312 - Spring 2025">
 </head>
 
-<body class="nav-sidebar docked slimcontent">
+<body class="nav-sidebar docked slimcontent quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -565,7 +732,8 @@ window.Quarto = {
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
     </div>
 <!-- main -->
-<main class="content page-columns page-full" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notes/Lec02.review.html">Course Notes</a></li><li class="breadcrumb-item"><a href="../notes/Lec11.DoseResponse.html">Flexible Modeling of Continuous Predictors</a></li></ol></nav><h1 class="title display-7">Flexible Modeling of Continuous Predictors</h1></header>
+
 
 <header id="title-block-header">
 
@@ -577,11 +745,11 @@ window.Quarto = {
 
 </div>
 
-<div class="quarto-title-block d-none d-lg-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notes/Lec02.review.html">Course Notes</a></li><li class="breadcrumb-item"><a href="../notes/Lec11.DoseResponse.html">Flexible Modeling of Continuous Predictors</a></li></ol></nav><div><h1 class="title">Flexible Modeling of Continuous Predictors</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<div class="quarto-title-block d-none d-lg-block"><div><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 <p class="subtitle lead">Lecture 11</p>
 <p class="author">Chris Slaughter</p>
 
-<p class="date">October 7, 2024</p>
+<p class="date">October 30, 2025</p>
 
 </header>
 
@@ -2682,434 +2850,306 @@ window.Quarto = {
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
     }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
     }
-  }
-  toggleBodyColorPrimary();  
-  const disableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'prefetch';
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
     }
-  }
-  const enableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'stylesheet';
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
     }
-  }
-  const manageTransitions = (selector, allowTransitions) => {
-    const els = window.document.querySelectorAll(selector);
-    for (let i=0; i < els.length; i++) {
-      const el = els[i];
-      if (allowTransitions) {
-        el.classList.remove('notransition');
-      } else {
-        el.classList.add('notransition');
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
       }
     }
-  }
-  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-    let newTheme = '';
-    if(darkModeDefault) {
-      newTheme = isAlternate ? baseTheme : alternateTheme;
-    } else {
-      newTheme = isAlternate ? alternateTheme : baseTheme;
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
     }
-    const changeGiscusTheme = () => {
-      // From: https://github.com/giscus/giscus/issues/336
-      const sendMessage = (message) => {
-        const iframe = document.querySelector('iframe.giscus-frame');
-        if (!iframe) return;
-        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/chrissl789\.github\.io\/modern-regression\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
-      sendMessage({
-        setConfig: {
-          theme: newTheme
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
         }
       });
     }
-    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-    if (isGiscussLoaded) {
-      changeGiscusTheme();
-    }
-  }
-  const toggleColorMode = (alternate) => {
-    // Switch the stylesheets
-    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-    manageTransitions('#quarto-margin-sidebar .nav-link', false);
-    if (alternate) {
-      enableStylesheet(alternateStylesheets);
-      for (const sheetNode of alternateStylesheets) {
-        if (sheetNode.id === "quarto-bootstrap") {
-          toggleBodyColorMode(sheetNode);
-        }
-      }
-    } else {
-      disableStylesheet(alternateStylesheets);
-      toggleBodyColorPrimary();
-    }
-    manageTransitions('#quarto-margin-sidebar .nav-link', true);
-    // Switch the toggles
-    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-    for (let i=0; i < toggles.length; i++) {
-      const toggle = toggles[i];
-      if (toggle) {
-        if (alternate) {
-          toggle.classList.add("alternate");     
-        } else {
-          toggle.classList.remove("alternate");
-        }
-      }
-    }
-    // Hack to workaround the fact that safari doesn't
-    // properly recolor the scrollbar when toggling (#1455)
-    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-      manageTransitions("body", false);
-      window.scrollTo(0, 1);
-      setTimeout(() => {
-        window.scrollTo(0, 0);
-        manageTransitions("body", true);
-      }, 40);  
-    }
-  }
-  const isFileUrl = () => { 
-    return window.location.protocol === 'file:';
-  }
-  const hasAlternateSentinel = () => {  
-    let styleSentinel = getColorSchemeSentinel();
-    if (styleSentinel !== null) {
-      return styleSentinel === "alternate";
-    } else {
-      return false;
-    }
-  }
-  const setStyleSentinel = (alternate) => {
-    const value = alternate ? "alternate" : "default";
-    if (!isFileUrl()) {
-      window.localStorage.setItem("quarto-color-scheme", value);
-    } else {
-      localAlternateSentinel = value;
-    }
-  }
-  const getColorSchemeSentinel = () => {
-    if (!isFileUrl()) {
-      const storageValue = window.localStorage.getItem("quarto-color-scheme");
-      return storageValue != null ? storageValue : localAlternateSentinel;
-    } else {
-      return localAlternateSentinel;
-    }
-  }
-  const darkModeDefault = false;
-  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-  // Dark / light mode switch
-  window.quartoToggleColorScheme = () => {
-    // Read the current dark / light value 
-    let toAlternate = !hasAlternateSentinel();
-    toggleColorMode(toAlternate);
-    setStyleSentinel(toAlternate);
-    toggleGiscusIfUsed(toAlternate, darkModeDefault);
-  };
-  // Ensure there is a toggle, if there isn't float one in the top right
-  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-    const a = window.document.createElement('a');
-    a.classList.add('top-right');
-    a.classList.add('quarto-color-scheme-toggle');
-    a.href = "";
-    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-    const i = window.document.createElement("i");
-    i.classList.add('bi');
-    a.appendChild(i);
-    window.document.body.appendChild(a);
-  }
-  // Switch to dark mode if need be
-  if (hasAlternateSentinel()) {
-    toggleColorMode(true);
-  } else {
-    toggleColorMode(false);
-  }
-  const icon = "";
-  const anchorJS = new window.AnchorJS();
-  anchorJS.options = {
-    placement: 'right',
-    icon: icon
-  };
-  anchorJS.add('.anchored');
-  const isCodeAnnotation = (el) => {
-    for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {                     
-        return true;
-      }
-    }
-    return false;
-  }
-  const onCopySuccess = function(e) {
-    // button target
-    const button = e.trigger;
-    // don't keep focus
-    button.blur();
-    // flash "checked"
-    button.classList.add('code-copy-button-checked');
-    var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "Copied!");
-    let tooltip;
-    if (window.bootstrap) {
-      button.setAttribute("data-bs-toggle", "tooltip");
-      button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "Copied!");
-      tooltip = new bootstrap.Tooltip(button, 
-        { trigger: "manual", 
-          customClass: "code-copy-button-tooltip",
-          offset: [0, -8]});
-      tooltip.show();    
-    }
-    setTimeout(function() {
-      if (tooltip) {
-        tooltip.hide();
-        button.removeAttribute("data-bs-title");
-        button.removeAttribute("data-bs-toggle");
-        button.removeAttribute("data-bs-placement");
-      }
-      button.setAttribute("title", currentTitle);
-      button.classList.remove('code-copy-button-checked');
-    }, 1000);
-    // clear code selection
-    e.clearSelection();
-  }
-  const getTextToCopy = function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-    text: getTextToCopy
-  });
-  clipboard.on('success', onCopySuccess);
-  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
-    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-      text: getTextToCopy,
-      container: window.document.getElementById('quarto-embedded-source-code-modal')
-    });
-    clipboardModal.on('success', onCopySuccess);
-  }
-  const viewSource = window.document.getElementById('quarto-view-source') ||
-                     window.document.getElementById('quarto-code-tools-source');
-  if (viewSource) {
-    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
-    viewSource.addEventListener("click", function(e) {
-      if (sourceUrl) {
-        // rstudio viewer pane
-        if (/\bcapabilities=\b/.test(window.location)) {
-          window.open(sourceUrl);
-        } else {
-          window.location.href = sourceUrl;
-        }
-      } else {
-        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
-        modal.show();
-      }
-      return false;
-    });
-  }
-  function toggleCodeHandler(show) {
-    return function(e) {
-      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
-      for (let i=0; i<detailsSrc.length; i++) {
-        const details = detailsSrc[i].parentElement;
-        if (show) {
-          details.open = true;
-        } else {
-          details.removeAttribute("open");
-        }
-      }
-      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
-      const fromCls = show ? "hidden" : "unhidden";
-      const toCls = show ? "unhidden" : "hidden";
-      for (let i=0; i<cellCodeDivs.length; i++) {
-        const codeDiv = cellCodeDivs[i];
-        if (codeDiv.classList.contains(fromCls)) {
-          codeDiv.classList.remove(fromCls);
-          codeDiv.classList.add(toCls);
-        } 
-      }
-      return false;
-    }
-  }
-  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
-  if (hideAllCode) {
-    hideAllCode.addEventListener("click", toggleCodeHandler(false));
-  }
-  const showAllCode = window.document.getElementById("quarto-show-all-code");
-  if (showAllCode) {
-    showAllCode.addEventListener("click", toggleCodeHandler(true));
-  }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp("https:\/\/chrissl789\.github\.io\/modern-regression\/");
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
-      }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-    const config = {
-      allowHTML: true,
-      maxWidth: 500,
-      delay: 100,
-      arrow: false,
-      appendTo: function(el) {
-          return el.parentElement;
-      },
-      interactive: true,
-      interactiveBorder: 10,
-      theme: 'quarto',
-      placement: 'bottom-start',
-    };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
-    window.tippy(el, config); 
-  }
-  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-  for (var i=0; i<noterefs.length; i++) {
-    const ref = noterefs[i];
-    tippyHover(ref, function() {
-      // use id or data attribute instead here
-      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-      try { href = new URL(href).hash; } catch {}
-      const id = href.replace(/^#\/?/, "");
-      const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
-        }
-      }
-    }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
           }
         }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
         }
-        return container.innerHTML
       } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
         if (window.Quarto?.typesetMath) {
           window.Quarto.typesetMath(note);
         }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      // TODO in 1.5, we should make sure this works without a callout special case
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
       }
     }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
           }
         } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
           .then(res => res.text())
           .then(html => {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
+            const note = htmlDoc.querySelector('main.content');
             if (note !== null) {
-              const html = processXRef(id, note);
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
               instance.setContent(html);
             } 
           }).finally(() => {
@@ -3117,185 +3157,161 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
-    });
-  }
-      let selectedAnnoteEl;
-      const selectorForAnnotation = ( cell, annotation) => {
-        let cellAttr = 'data-code-cell="' + cell + '"';
-        let lineAttr = 'data-code-annotation="' +  annotation + '"';
-        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-        return selector;
-      }
-      const selectCodeLines = (annoteEl) => {
-        const doc = window.document;
-        const targetCell = annoteEl.getAttribute("data-target-cell");
-        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-        const lineIds = lines.map((line) => {
-          return targetCell + "-" + line;
-        })
-        let top = null;
-        let height = null;
-        let parent = null;
-        if (lineIds.length > 0) {
-            //compute the position of the single el (top and bottom and make a div)
-            const el = window.document.getElementById(lineIds[0]);
-            top = el.offsetTop;
-            height = el.offsetHeight;
-            parent = el.parentElement.parentElement;
-          if (lineIds.length > 1) {
-            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-            height = bottom - top;
-          }
-          if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it 
-            let div = window.document.getElementById("code-annotation-line-highlight");
-            if (div === null) {
-              div = window.document.createElement("div");
-              div.setAttribute("id", "code-annotation-line-highlight");
-              div.style.position = 'absolute';
-              parent.appendChild(div);
-            }
-            div.style.top = top - 2 + "px";
-            div.style.height = height + 4 + "px";
-            div.style.left = 0;
-            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-            if (gutterDiv === null) {
-              gutterDiv = window.document.createElement("div");
-              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-              gutterDiv.style.position = 'absolute';
-              const codeCell = window.document.getElementById(targetCell);
-              const gutter = codeCell.querySelector('.code-annotation-gutter');
-              gutter.appendChild(gutterDiv);
-            }
-            gutterDiv.style.top = top - 2 + "px";
-            gutterDiv.style.height = height + 4 + "px";
-          }
-          selectedAnnoteEl = annoteEl;
-        }
-      };
-      const unselectCodeLines = () => {
-        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-        elementsIds.forEach((elId) => {
-          const div = window.document.getElementById(elId);
-          if (div) {
-            div.remove();
-          }
-        });
-        selectedAnnoteEl = undefined;
-      };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
-          }
-        });
-      }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
-      }
-    } else {
-      return undefined;
-    }
-  };
-  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-  for (var i=0; i<bibliorefs.length; i++) {
-    const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
-          }
-          popup.appendChild(citeDiv);
-        });
-        return popup.innerHTML;
+      }, function(instance) {
       });
     }
-  }
-});
-</script>
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="../notes/Set8.pdf" class="pagination-link" aria-label="Multinomial and Ordinal Regression">
@@ -3589,12 +3605,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb37-281"><a href="#cb37-281" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>It is common in biology, medicine, and science to find "S-shaped" dose-response curves</span>
 <span id="cb37-282"><a href="#cb37-282" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-283"><a href="#cb37-283" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.cap="S-shaped dose response curve fit with loess smoother"}</span></span>
-<span id="cb37-284"><a href="#cb37-284" aria-hidden="true" tabindex="-1"></a><span class="in">set.seed(1234)</span></span>
-<span id="cb37-285"><a href="#cb37-285" aria-hidden="true" tabindex="-1"></a><span class="in">n &lt;- 100</span></span>
-<span id="cb37-286"><a href="#cb37-286" aria-hidden="true" tabindex="-1"></a><span class="in">plotdata &lt;- data.frame(x=1:n,</span></span>
-<span id="cb37-287"><a href="#cb37-287" aria-hidden="true" tabindex="-1"></a><span class="in">                       y=20 + 50 / (1+exp(-.15*(1:n-50))))</span></span>
-<span id="cb37-288"><a href="#cb37-288" aria-hidden="true" tabindex="-1"></a><span class="in">plotdata$y &lt;- plotdata$y + rnorm(n,0,4)</span></span>
-<span id="cb37-289"><a href="#cb37-289" aria-hidden="true" tabindex="-1"></a><span class="in">ggplot(plotdata, aes(x=x, y=y)) + geom_point() + theme_bw() + geom_smooth()</span></span>
+<span id="cb37-284"><a href="#cb37-284" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb37-285"><a href="#cb37-285" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb37-286"><a href="#cb37-286" aria-hidden="true" tabindex="-1"></a>plotdata <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x=</span><span class="dv">1</span><span class="sc">:</span>n,</span>
+<span id="cb37-287"><a href="#cb37-287" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y=</span><span class="dv">20</span> <span class="sc">+</span> <span class="dv">50</span> <span class="sc">/</span> (<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(<span class="sc">-</span>.<span class="dv">15</span><span class="sc">*</span>(<span class="dv">1</span><span class="sc">:</span>n<span class="dv">-50</span>))))</span>
+<span id="cb37-288"><a href="#cb37-288" aria-hidden="true" tabindex="-1"></a>plotdata<span class="sc">$</span>y <span class="ot">&lt;-</span> plotdata<span class="sc">$</span>y <span class="sc">+</span> <span class="fu">rnorm</span>(n,<span class="dv">0</span>,<span class="dv">4</span>)</span>
+<span id="cb37-289"><a href="#cb37-289" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(plotdata, <span class="fu">aes</span>(<span class="at">x=</span>x, <span class="at">y=</span>y)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span>
 <span id="cb37-290"><a href="#cb37-290" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb37-291"><a href="#cb37-291" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-292"><a href="#cb37-292" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>If we happen to sample over the entire range of $X$ (in this example, from 0 to 100), we will would observe all parts of the S-curve</span>
@@ -3602,8 +3618,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb37-294"><a href="#cb37-294" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>However, if we were only to sample from a limited range of $X$, we might observe only parts of the curve where it was approximately linear</span>
 <span id="cb37-295"><a href="#cb37-295" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-296"><a href="#cb37-296" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.cap="The S-shaped dose response curve fit is approximately linear within three ranges of X."}</span></span>
-<span id="cb37-297"><a href="#cb37-297" aria-hidden="true" tabindex="-1"></a><span class="in">plotdata$xint &lt;- cut(plotdata$x, c(0,30,70,100))</span></span>
-<span id="cb37-298"><a href="#cb37-298" aria-hidden="true" tabindex="-1"></a><span class="in">ggplot(plotdata, aes(x=x, y=y)) + facet_wrap(~ xint) + geom_point() + theme_bw() + geom_smooth()</span></span>
+<span id="cb37-297"><a href="#cb37-297" aria-hidden="true" tabindex="-1"></a>plotdata<span class="sc">$</span>xint <span class="ot">&lt;-</span> <span class="fu">cut</span>(plotdata<span class="sc">$</span>x, <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">30</span>,<span class="dv">70</span>,<span class="dv">100</span>))</span>
+<span id="cb37-298"><a href="#cb37-298" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(plotdata, <span class="fu">aes</span>(<span class="at">x=</span>x, <span class="at">y=</span>y)) <span class="sc">+</span> <span class="fu">facet_wrap</span>(<span class="sc">~</span> xint) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span>
 <span id="cb37-299"><a href="#cb37-299" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb37-300"><a href="#cb37-300" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-301"><a href="#cb37-301" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Even if we expect a complex dose response relationship, we must also consider the range of dose that we are sampling over when considering the needed complexity of the model</span>
@@ -3685,32 +3701,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb37-379"><a href="#cb37-379" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Ex: log transformations will sometimes address apparent threshold effects</span>
 <span id="cb37-380"><a href="#cb37-380" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-381"><a href="#cb37-381" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.cap="Log transformation addresses threshold effect in untransformed X"}</span></span>
-<span id="cb37-382"><a href="#cb37-382" aria-hidden="true" tabindex="-1"></a><span class="in">set.seed(33)</span></span>
-<span id="cb37-383"><a href="#cb37-383" aria-hidden="true" tabindex="-1"></a><span class="in">n &lt;- 200</span></span>
+<span id="cb37-382"><a href="#cb37-382" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">33</span>)</span>
+<span id="cb37-383"><a href="#cb37-383" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">200</span></span>
 <span id="cb37-384"><a href="#cb37-384" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-385"><a href="#cb37-385" aria-hidden="true" tabindex="-1"></a><span class="in">x &lt;- runif(n)</span></span>
-<span id="cb37-386"><a href="#cb37-386" aria-hidden="true" tabindex="-1"></a><span class="in">logx &lt;- log(x)</span></span>
+<span id="cb37-385"><a href="#cb37-385" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(n)</span>
+<span id="cb37-386"><a href="#cb37-386" aria-hidden="true" tabindex="-1"></a>logx <span class="ot">&lt;-</span> <span class="fu">log</span>(x)</span>
 <span id="cb37-387"><a href="#cb37-387" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-388"><a href="#cb37-388" aria-hidden="true" tabindex="-1"></a><span class="in">y &lt;- 0 + logx + rnorm(n)</span></span>
-<span id="cb37-389"><a href="#cb37-389" aria-hidden="true" tabindex="-1"></a><span class="in">par(mfrow=c(1,2))</span></span>
-<span id="cb37-390"><a href="#cb37-390" aria-hidden="true" tabindex="-1"></a><span class="in">plot(x,y, main="Untransformed")</span></span>
-<span id="cb37-391"><a href="#cb37-391" aria-hidden="true" tabindex="-1"></a><span class="in">lines(lowess(y~x), lwd=2)</span></span>
+<span id="cb37-388"><a href="#cb37-388" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="sc">+</span> logx <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb37-389"><a href="#cb37-389" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb37-390"><a href="#cb37-390" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x,y, <span class="at">main=</span><span class="st">"Untransformed"</span>)</span>
+<span id="cb37-391"><a href="#cb37-391" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">lowess</span>(y<span class="sc">~</span>x), <span class="at">lwd=</span><span class="dv">2</span>)</span>
 <span id="cb37-392"><a href="#cb37-392" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-393"><a href="#cb37-393" aria-hidden="true" tabindex="-1"></a><span class="in">plot(logx, y, main="Log Transformed X")</span></span>
-<span id="cb37-394"><a href="#cb37-394" aria-hidden="true" tabindex="-1"></a><span class="in">lines(lowess(y ~ logx), lwd=2)</span></span>
+<span id="cb37-393"><a href="#cb37-393" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(logx, y, <span class="at">main=</span><span class="st">"Log Transformed X"</span>)</span>
+<span id="cb37-394"><a href="#cb37-394" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">lowess</span>(y <span class="sc">~</span> logx), <span class="at">lwd=</span><span class="dv">2</span>)</span>
 <span id="cb37-395"><a href="#cb37-395" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb37-396"><a href="#cb37-396" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-397"><a href="#cb37-397" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Ex: cubing height produces a more linear association with FEV</span>
 <span id="cb37-398"><a href="#cb37-398" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-399"><a href="#cb37-399" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.cap="Cubing height produces a more linear association with FEV"}</span></span>
-<span id="cb37-400"><a href="#cb37-400" aria-hidden="true" tabindex="-1"></a><span class="in">fev &lt;- read.csv(file="data/FEV.csv")</span></span>
-<span id="cb37-401"><a href="#cb37-401" aria-hidden="true" tabindex="-1"></a><span class="in">par(mfrow=c(1,2))</span></span>
-<span id="cb37-402"><a href="#cb37-402" aria-hidden="true" tabindex="-1"></a><span class="in">plot(fev$height, fev$fev, main="Untransformed", pch='.', xlab="Height",ylab="FEV")</span></span>
-<span id="cb37-403"><a href="#cb37-403" aria-hidden="true" tabindex="-1"></a><span class="in">lines(lowess(fev$fev ~ fev$height), lwd=2)</span></span>
+<span id="cb37-400"><a href="#cb37-400" aria-hidden="true" tabindex="-1"></a>fev <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file=</span><span class="st">"data/FEV.csv"</span>)</span>
+<span id="cb37-401"><a href="#cb37-401" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb37-402"><a href="#cb37-402" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fev<span class="sc">$</span>height, fev<span class="sc">$</span>fev, <span class="at">main=</span><span class="st">"Untransformed"</span>, <span class="at">pch=</span><span class="st">'.'</span>, <span class="at">xlab=</span><span class="st">"Height"</span>,<span class="at">ylab=</span><span class="st">"FEV"</span>)</span>
+<span id="cb37-403"><a href="#cb37-403" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">lowess</span>(fev<span class="sc">$</span>fev <span class="sc">~</span> fev<span class="sc">$</span>height), <span class="at">lwd=</span><span class="dv">2</span>)</span>
 <span id="cb37-404"><a href="#cb37-404" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-405"><a href="#cb37-405" aria-hidden="true" tabindex="-1"></a><span class="in">fev$height3 &lt;- fev$height^3</span></span>
-<span id="cb37-406"><a href="#cb37-406" aria-hidden="true" tabindex="-1"></a><span class="in">plot(fev$height3, fev$fev, main="Cubed Height", pch='.', xlab="Height^3",ylab="FEV")</span></span>
-<span id="cb37-407"><a href="#cb37-407" aria-hidden="true" tabindex="-1"></a><span class="in">lines(lowess(fev$fev ~ fev$height3), lwd=2)</span></span>
+<span id="cb37-405"><a href="#cb37-405" aria-hidden="true" tabindex="-1"></a>fev<span class="sc">$</span>height3 <span class="ot">&lt;-</span> fev<span class="sc">$</span>height<span class="sc">^</span><span class="dv">3</span></span>
+<span id="cb37-406"><a href="#cb37-406" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fev<span class="sc">$</span>height3, fev<span class="sc">$</span>fev, <span class="at">main=</span><span class="st">"Cubed Height"</span>, <span class="at">pch=</span><span class="st">'.'</span>, <span class="at">xlab=</span><span class="st">"Height^3"</span>,<span class="at">ylab=</span><span class="st">"FEV"</span>)</span>
+<span id="cb37-407"><a href="#cb37-407" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">lowess</span>(fev<span class="sc">$</span>fev <span class="sc">~</span> fev<span class="sc">$</span>height3), <span class="at">lwd=</span><span class="dv">2</span>)</span>
 <span id="cb37-408"><a href="#cb37-408" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb37-409"><a href="#cb37-409" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-410"><a href="#cb37-410" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>1:Many transformations</span>
@@ -3885,7 +3901,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb37-591"><a href="#cb37-591" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-592"><a href="#cb37-592" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Intercept corresponds to the mean salary in the Other field</span>
 <span id="cb37-593"><a href="#cb37-593" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-594"><a href="#cb37-594" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>These faculty will have both arts==0 and prof==0</span>
+<span id="cb37-594"><a href="#cb37-594" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>These faculty will have both arts<span class="al">==0 and prof==</span>0</span>
 <span id="cb37-595"><a href="#cb37-595" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-596"><a href="#cb37-596" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Estimated mean salary of \$6292 per month (95% CI: <span class="sc">\[</span>6172, 6411<span class="sc">\]</span>)</span>
 <span id="cb37-597"><a href="#cb37-597" aria-hidden="true" tabindex="-1"></a></span>
@@ -3893,7 +3909,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb37-599"><a href="#cb37-599" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-600"><a href="#cb37-600" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Slope for arts is difference in mean salary between Fine Arts and Other fields</span>
 <span id="cb37-601"><a href="#cb37-601" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-602"><a href="#cb37-602" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Fine Arts faculty will have arts==1 and prof==0; Other faculty will have arts==0 and prof==0</span>
+<span id="cb37-602"><a href="#cb37-602" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Fine Arts faculty will have arts<span class="al">==1 and prof==0; Other faculty will have arts==0 and prof==</span>0</span>
 <span id="cb37-603"><a href="#cb37-603" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-604"><a href="#cb37-604" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Estimated difference in mean salary is \$1014 lower (95% CI: <span class="sc">\[</span>808, 1219<span class="sc">\]</span> lower salary)</span>
 <span id="cb37-605"><a href="#cb37-605" aria-hidden="true" tabindex="-1"></a></span>
@@ -3901,7 +3917,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb37-607"><a href="#cb37-607" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-608"><a href="#cb37-608" aria-hidden="true" tabindex="-1"></a><span class="ss">    -   </span>Slope for prof is difference in mean salary between Professional and Other fields</span>
 <span id="cb37-609"><a href="#cb37-609" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-610"><a href="#cb37-610" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Professional faculty will have arts==0 and prof==1; Other faculty will have arts==0 and prof==0</span>
+<span id="cb37-610"><a href="#cb37-610" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Professional faculty will have arts<span class="al">==0 and prof==1; Other faculty will have arts==0 and prof==</span>0</span>
 <span id="cb37-611"><a href="#cb37-611" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-612"><a href="#cb37-612" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>Estimated difference in mean salary is \$1225 higher (95% CI: <span class="sc">\[</span>963, 1487<span class="sc">\]</span> higher salary)</span>
 <span id="cb37-613"><a href="#cb37-613" aria-hidden="true" tabindex="-1"></a></span>
@@ -3945,11 +3961,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb37-653"><a href="#cb37-653" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Modeling with dummy variables ignores order of predictor of interest</span>
 <span id="cb37-654"><a href="#cb37-654" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-655"><a href="#cb37-655" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.cap="Red points are means at each level of age"}</span></span>
-<span id="cb37-656"><a href="#cb37-656" aria-hidden="true" tabindex="-1"></a><span class="in">m.dummy &lt;- lm(height ~ factor(age), data=fev)</span></span>
-<span id="cb37-657"><a href="#cb37-657" aria-hidden="true" tabindex="-1"></a><span class="in">newdata &lt;- data.frame(age=3:19)</span></span>
-<span id="cb37-658"><a href="#cb37-658" aria-hidden="true" tabindex="-1"></a><span class="in">newdata$ht.dummy &lt;- predict(m.dummy, newdata=newdata)</span></span>
-<span id="cb37-659"><a href="#cb37-659" aria-hidden="true" tabindex="-1"></a><span class="in">ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +</span></span>
-<span id="cb37-660"><a href="#cb37-660" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3)</span></span>
+<span id="cb37-656"><a href="#cb37-656" aria-hidden="true" tabindex="-1"></a>m.dummy <span class="ot">&lt;-</span> <span class="fu">lm</span>(height <span class="sc">~</span> <span class="fu">factor</span>(age), <span class="at">data=</span>fev)</span>
+<span id="cb37-657"><a href="#cb37-657" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">age=</span><span class="dv">3</span><span class="sc">:</span><span class="dv">19</span>)</span>
+<span id="cb37-658"><a href="#cb37-658" aria-hidden="true" tabindex="-1"></a>newdata<span class="sc">$</span>ht.dummy <span class="ot">&lt;-</span> <span class="fu">predict</span>(m.dummy, <span class="at">newdata=</span>newdata)</span>
+<span id="cb37-659"><a href="#cb37-659" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fev, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>height)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb37-660"><a href="#cb37-660" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data=</span>newdata, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>ht.dummy), <span class="at">col=</span><span class="st">"red"</span>, <span class="at">size=</span><span class="dv">3</span>)</span>
 <span id="cb37-661"><a href="#cb37-661" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb37-662"><a href="#cb37-662" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-663"><a href="#cb37-663" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The red points in the plot represents the mean height by subgroups defined by years of age</span>
@@ -4001,10 +4017,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb37-711"><a href="#cb37-711" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>A polynomial of lesser degree could also be considered. I show a model that includes polynomials for age up to degree 3 in the following plot. It is also less stable near the upper and lower bounds of age, but not as obviously so as the 16 degree polynomial.</span>
 <span id="cb37-712"><a href="#cb37-712" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-713"><a href="#cb37-713" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.cap="Sixteen degree and three degree polynomial model"}</span></span>
-<span id="cb37-714"><a href="#cb37-714" aria-hidden="true" tabindex="-1"></a><span class="in">ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + </span></span>
-<span id="cb37-715"><a href="#cb37-715" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_smooth(method=lm, formula=y ~ poly(x,16), se=FALSE) + </span></span>
-<span id="cb37-716"><a href="#cb37-716" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_smooth(method=lm, formula=y ~ poly(x,3), se=FALSE, col="Green") +</span></span>
-<span id="cb37-717"><a href="#cb37-717" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3)</span></span>
+<span id="cb37-714"><a href="#cb37-714" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fev, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>height)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb37-715"><a href="#cb37-715" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">formula=</span>y <span class="sc">~</span> <span class="fu">poly</span>(x,<span class="dv">16</span>), <span class="at">se=</span><span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb37-716"><a href="#cb37-716" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">formula=</span>y <span class="sc">~</span> <span class="fu">poly</span>(x,<span class="dv">3</span>), <span class="at">se=</span><span class="cn">FALSE</span>, <span class="at">col=</span><span class="st">"Green"</span>) <span class="sc">+</span></span>
+<span id="cb37-717"><a href="#cb37-717" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data=</span>newdata, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>ht.dummy), <span class="at">col=</span><span class="st">"red"</span>, <span class="at">size=</span><span class="dv">3</span>)</span>
 <span id="cb37-718"><a href="#cb37-718" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb37-719"><a href="#cb37-719" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-722"><a href="#cb37-722" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
@@ -4048,10 +4064,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb37-760"><a href="#cb37-760" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The following results will look at age and height using linear splines with 2 knots and 4 knots</span>
 <span id="cb37-761"><a href="#cb37-761" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-762"><a href="#cb37-762" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.cap="Piecewise linear splines with 2 or 4 knots.  Red points are mean height at each subgroup of age."}</span></span>
-<span id="cb37-763"><a href="#cb37-763" aria-hidden="true" tabindex="-1"></a><span class="in">ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + </span></span>
-<span id="cb37-764"><a href="#cb37-764" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_smooth(method=lm, formula=y ~ lspline(x, knots=c(9.5,15.5)), se=FALSE) + </span></span>
-<span id="cb37-765"><a href="#cb37-765" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_smooth(method=lm, formula=y ~ lspline(x, knots=c(6.5,9.5,12.5,15.5)), se=FALSE, col="Green") +</span></span>
-<span id="cb37-766"><a href="#cb37-766" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3)</span></span>
+<span id="cb37-763"><a href="#cb37-763" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fev, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>height)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb37-764"><a href="#cb37-764" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">formula=</span>y <span class="sc">~</span> <span class="fu">lspline</span>(x, <span class="at">knots=</span><span class="fu">c</span>(<span class="fl">9.5</span>,<span class="fl">15.5</span>)), <span class="at">se=</span><span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb37-765"><a href="#cb37-765" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">formula=</span>y <span class="sc">~</span> <span class="fu">lspline</span>(x, <span class="at">knots=</span><span class="fu">c</span>(<span class="fl">6.5</span>,<span class="fl">9.5</span>,<span class="fl">12.5</span>,<span class="fl">15.5</span>)), <span class="at">se=</span><span class="cn">FALSE</span>, <span class="at">col=</span><span class="st">"Green"</span>) <span class="sc">+</span></span>
+<span id="cb37-766"><a href="#cb37-766" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data=</span>newdata, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>ht.dummy), <span class="at">col=</span><span class="st">"red"</span>, <span class="at">size=</span><span class="dv">3</span>)</span>
 <span id="cb37-767"><a href="#cb37-767" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-768"><a href="#cb37-768" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb37-769"><a href="#cb37-769" aria-hidden="true" tabindex="-1"></a></span>
@@ -4167,31 +4183,31 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb37-889"><a href="#cb37-889" aria-hidden="true" tabindex="-1"></a><span class="fu">##### B-spline versus polynomial function</span></span>
 <span id="cb37-890"><a href="#cb37-890" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-891"><a href="#cb37-891" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.cap="B-Spline with 3 degrees of freedom is the same as a 3 degree of polynomial. Two lines are not visible because the blue and green line are on top of each other."}</span></span>
-<span id="cb37-892"><a href="#cb37-892" aria-hidden="true" tabindex="-1"></a><span class="in">ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + </span></span>
-<span id="cb37-893"><a href="#cb37-893" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_smooth(method=lm, formula=y ~ poly(x, 3), se=FALSE, aes(color="Blue")) + </span></span>
-<span id="cb37-894"><a href="#cb37-894" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_smooth(method=lm, formula=y ~ bs(x,3), se=FALSE, aes(col="Green")) +</span></span>
-<span id="cb37-895"><a href="#cb37-895" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="Red", size=3) + </span></span>
-<span id="cb37-896"><a href="#cb37-896" aria-hidden="true" tabindex="-1"></a><span class="in">  scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("poly(x,3)","bs(x,3)")) + theme(legend.position = c(0.8, 0.2))</span></span>
+<span id="cb37-892"><a href="#cb37-892" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fev, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>height)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb37-893"><a href="#cb37-893" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">formula=</span>y <span class="sc">~</span> <span class="fu">poly</span>(x, <span class="dv">3</span>), <span class="at">se=</span><span class="cn">FALSE</span>, <span class="fu">aes</span>(<span class="at">color=</span><span class="st">"Blue"</span>)) <span class="sc">+</span> </span>
+<span id="cb37-894"><a href="#cb37-894" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">formula=</span>y <span class="sc">~</span> <span class="fu">bs</span>(x,<span class="dv">3</span>), <span class="at">se=</span><span class="cn">FALSE</span>, <span class="fu">aes</span>(<span class="at">col=</span><span class="st">"Green"</span>)) <span class="sc">+</span></span>
+<span id="cb37-895"><a href="#cb37-895" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data=</span>newdata, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>ht.dummy), <span class="at">col=</span><span class="st">"Red"</span>, <span class="at">size=</span><span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb37-896"><a href="#cb37-896" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">name=</span><span class="st">"Model"</span>, <span class="at">values=</span><span class="fu">c</span>(<span class="st">"Blue"</span>, <span class="st">"Green"</span>), <span class="at">labels=</span><span class="fu">c</span>(<span class="st">"poly(x,3)"</span>,<span class="st">"bs(x,3)"</span>)) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>))</span>
 <span id="cb37-897"><a href="#cb37-897" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb37-898"><a href="#cb37-898" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-899"><a href="#cb37-899" aria-hidden="true" tabindex="-1"></a><span class="fu">##### B-spline versus piecewise linear spline, function</span></span>
 <span id="cb37-900"><a href="#cb37-900" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-901"><a href="#cb37-901" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.cap="B-Spline with 3 degrees of freedom and knots at 9.5 and 15.5 compared to piecewise linear spline with knots at 9.5 and 15.5"}</span></span>
-<span id="cb37-902"><a href="#cb37-902" aria-hidden="true" tabindex="-1"></a><span class="in">ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + </span></span>
-<span id="cb37-903"><a href="#cb37-903" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_smooth(method=lm, formula=y ~ lspline(x,knots=c(9.5, 15.5)), se=FALSE, aes(color="Blue")) + </span></span>
-<span id="cb37-904"><a href="#cb37-904" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_smooth(method=lm, formula=y ~ bs(x,knots=c(9.5, 15.5), degree=3), se=FALSE, aes(color="Green")) +</span></span>
-<span id="cb37-905"><a href="#cb37-905" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3) + </span></span>
-<span id="cb37-906"><a href="#cb37-906" aria-hidden="true" tabindex="-1"></a><span class="in">  scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("lspline(x,knots=c(9.5, 15.5))","bs(x,knots=c(9.5, 15.5)")) + theme(legend.position = c(0.8, 0.2))</span></span>
+<span id="cb37-902"><a href="#cb37-902" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fev, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>height)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb37-903"><a href="#cb37-903" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">formula=</span>y <span class="sc">~</span> <span class="fu">lspline</span>(x,<span class="at">knots=</span><span class="fu">c</span>(<span class="fl">9.5</span>, <span class="fl">15.5</span>)), <span class="at">se=</span><span class="cn">FALSE</span>, <span class="fu">aes</span>(<span class="at">color=</span><span class="st">"Blue"</span>)) <span class="sc">+</span> </span>
+<span id="cb37-904"><a href="#cb37-904" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">formula=</span>y <span class="sc">~</span> <span class="fu">bs</span>(x,<span class="at">knots=</span><span class="fu">c</span>(<span class="fl">9.5</span>, <span class="fl">15.5</span>), <span class="at">degree=</span><span class="dv">3</span>), <span class="at">se=</span><span class="cn">FALSE</span>, <span class="fu">aes</span>(<span class="at">color=</span><span class="st">"Green"</span>)) <span class="sc">+</span></span>
+<span id="cb37-905"><a href="#cb37-905" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data=</span>newdata, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>ht.dummy), <span class="at">col=</span><span class="st">"red"</span>, <span class="at">size=</span><span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb37-906"><a href="#cb37-906" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">name=</span><span class="st">"Model"</span>, <span class="at">values=</span><span class="fu">c</span>(<span class="st">"Blue"</span>, <span class="st">"Green"</span>), <span class="at">labels=</span><span class="fu">c</span>(<span class="st">"lspline(x,knots=c(9.5, 15.5))"</span>,<span class="st">"bs(x,knots=c(9.5, 15.5)"</span>)) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>))</span>
 <span id="cb37-907"><a href="#cb37-907" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb37-908"><a href="#cb37-908" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-909"><a href="#cb37-909" aria-hidden="true" tabindex="-1"></a><span class="fu">##### B-spline versus natural spline</span></span>
 <span id="cb37-910"><a href="#cb37-910" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-911"><a href="#cb37-911" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.cap="B-Spline with 3 degrees of freedom and knots at 9.5 and 15 compared to ns (3 df).  The enforcement of the linearity constraint beyond the boundary knots is particular apparent for the natural spline at the low end of age."}</span></span>
-<span id="cb37-912"><a href="#cb37-912" aria-hidden="true" tabindex="-1"></a><span class="in">ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + </span></span>
-<span id="cb37-913"><a href="#cb37-913" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_smooth(method=lm, formula=y ~ ns(x, df=3), se=FALSE, aes(color="Blue")) + </span></span>
-<span id="cb37-914"><a href="#cb37-914" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_smooth(method=lm, formula=y ~ bs(x,3, knots=c(9.5, 15.5)), se=FALSE, aes(color="Green")) +</span></span>
-<span id="cb37-915"><a href="#cb37-915" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3)+  </span></span>
-<span id="cb37-916"><a href="#cb37-916" aria-hidden="true" tabindex="-1"></a><span class="in">  scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("ns(x, df=3)","bs(x,3, knots=c(9.5, 15.5)")) + theme(legend.position = c(0.8, 0.2))</span></span>
+<span id="cb37-912"><a href="#cb37-912" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fev, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>height)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb37-913"><a href="#cb37-913" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">formula=</span>y <span class="sc">~</span> <span class="fu">ns</span>(x, <span class="at">df=</span><span class="dv">3</span>), <span class="at">se=</span><span class="cn">FALSE</span>, <span class="fu">aes</span>(<span class="at">color=</span><span class="st">"Blue"</span>)) <span class="sc">+</span> </span>
+<span id="cb37-914"><a href="#cb37-914" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">formula=</span>y <span class="sc">~</span> <span class="fu">bs</span>(x,<span class="dv">3</span>, <span class="at">knots=</span><span class="fu">c</span>(<span class="fl">9.5</span>, <span class="fl">15.5</span>)), <span class="at">se=</span><span class="cn">FALSE</span>, <span class="fu">aes</span>(<span class="at">color=</span><span class="st">"Green"</span>)) <span class="sc">+</span></span>
+<span id="cb37-915"><a href="#cb37-915" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data=</span>newdata, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>ht.dummy), <span class="at">col=</span><span class="st">"red"</span>, <span class="at">size=</span><span class="dv">3</span>)<span class="sc">+</span>  </span>
+<span id="cb37-916"><a href="#cb37-916" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">name=</span><span class="st">"Model"</span>, <span class="at">values=</span><span class="fu">c</span>(<span class="st">"Blue"</span>, <span class="st">"Green"</span>), <span class="at">labels=</span><span class="fu">c</span>(<span class="st">"ns(x, df=3)"</span>,<span class="st">"bs(x,3, knots=c(9.5, 15.5)"</span>)) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>))</span>
 <span id="cb37-917"><a href="#cb37-917" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb37-918"><a href="#cb37-918" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-919"><a href="#cb37-919" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Nautral spline versus restricted cubic spline</span></span>
@@ -4201,29 +4217,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb37-923"><a href="#cb37-923" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>They have different inputs which can result in different model fits</span>
 <span id="cb37-924"><a href="#cb37-924" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-925"><a href="#cb37-925" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.cap="Natrual spline (with knots at 3.5 and 9.5) compared with restricted cubic spline with parms set to give the same fit.  Both spline approaches impose a linearity constraint at the tails.  Fits are same using these inputs."}</span></span>
-<span id="cb37-926"><a href="#cb37-926" aria-hidden="true" tabindex="-1"></a><span class="in">ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + </span></span>
-<span id="cb37-927"><a href="#cb37-927" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_smooth(method=lm, formula=y ~ ns(x, knots=c(9.5, 15.5)), se=FALSE, aes(color="Blue")) + </span></span>
-<span id="cb37-928"><a href="#cb37-928" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_smooth(method=lm, formula=y ~ rcs(x, parms=c(0, 9.5, 15.5, 19)), se=FALSE, aes(color="Green")) +</span></span>
-<span id="cb37-929"><a href="#cb37-929" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3) +  </span></span>
-<span id="cb37-930"><a href="#cb37-930" aria-hidden="true" tabindex="-1"></a><span class="in">  scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("ns(x, knots=c(9.5, 15.5)","rcs(x, parms=c(0, 9.5, 15.5, 19)")) + theme(legend.position = c(0.8, 0.2))</span></span>
+<span id="cb37-926"><a href="#cb37-926" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fev, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>height)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb37-927"><a href="#cb37-927" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">formula=</span>y <span class="sc">~</span> <span class="fu">ns</span>(x, <span class="at">knots=</span><span class="fu">c</span>(<span class="fl">9.5</span>, <span class="fl">15.5</span>)), <span class="at">se=</span><span class="cn">FALSE</span>, <span class="fu">aes</span>(<span class="at">color=</span><span class="st">"Blue"</span>)) <span class="sc">+</span> </span>
+<span id="cb37-928"><a href="#cb37-928" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">formula=</span>y <span class="sc">~</span> <span class="fu">rcs</span>(x, <span class="at">parms=</span><span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">9.5</span>, <span class="fl">15.5</span>, <span class="dv">19</span>)), <span class="at">se=</span><span class="cn">FALSE</span>, <span class="fu">aes</span>(<span class="at">color=</span><span class="st">"Green"</span>)) <span class="sc">+</span></span>
+<span id="cb37-929"><a href="#cb37-929" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data=</span>newdata, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>ht.dummy), <span class="at">col=</span><span class="st">"red"</span>, <span class="at">size=</span><span class="dv">3</span>) <span class="sc">+</span>  </span>
+<span id="cb37-930"><a href="#cb37-930" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">name=</span><span class="st">"Model"</span>, <span class="at">values=</span><span class="fu">c</span>(<span class="st">"Blue"</span>, <span class="st">"Green"</span>), <span class="at">labels=</span><span class="fu">c</span>(<span class="st">"ns(x, knots=c(9.5, 15.5)"</span>,<span class="st">"rcs(x, parms=c(0, 9.5, 15.5, 19)"</span>)) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>))</span>
 <span id="cb37-931"><a href="#cb37-931" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb37-932"><a href="#cb37-932" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-933"><a href="#cb37-933" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.cap="Natrual cubic spline (3 d.f) compared with restricted cubic spline using default inputs.  Both spline approaches impose a linearity constraint at the tails, but with different default knot locations the fits are different."}</span></span>
-<span id="cb37-934"><a href="#cb37-934" aria-hidden="true" tabindex="-1"></a><span class="in">ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + </span></span>
-<span id="cb37-935"><a href="#cb37-935" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_smooth(method=lm, formula=y ~ ns(x, df=3), se=FALSE, aes(color="Blue")) + </span></span>
-<span id="cb37-936"><a href="#cb37-936" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_smooth(method=lm, formula=y ~ rcs(x, nk=5), se=FALSE, aes(color="Green")) +</span></span>
-<span id="cb37-937"><a href="#cb37-937" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3) +  </span></span>
-<span id="cb37-938"><a href="#cb37-938" aria-hidden="true" tabindex="-1"></a><span class="in">  scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("ns(x, df=3)","rcs(x, nk=5)")) + theme(legend.position = c(0.8, 0.2))</span></span>
+<span id="cb37-934"><a href="#cb37-934" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fev, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>height)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb37-935"><a href="#cb37-935" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">formula=</span>y <span class="sc">~</span> <span class="fu">ns</span>(x, <span class="at">df=</span><span class="dv">3</span>), <span class="at">se=</span><span class="cn">FALSE</span>, <span class="fu">aes</span>(<span class="at">color=</span><span class="st">"Blue"</span>)) <span class="sc">+</span> </span>
+<span id="cb37-936"><a href="#cb37-936" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">formula=</span>y <span class="sc">~</span> <span class="fu">rcs</span>(x, <span class="at">nk=</span><span class="dv">5</span>), <span class="at">se=</span><span class="cn">FALSE</span>, <span class="fu">aes</span>(<span class="at">color=</span><span class="st">"Green"</span>)) <span class="sc">+</span></span>
+<span id="cb37-937"><a href="#cb37-937" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data=</span>newdata, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>ht.dummy), <span class="at">col=</span><span class="st">"red"</span>, <span class="at">size=</span><span class="dv">3</span>) <span class="sc">+</span>  </span>
+<span id="cb37-938"><a href="#cb37-938" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">name=</span><span class="st">"Model"</span>, <span class="at">values=</span><span class="fu">c</span>(<span class="st">"Blue"</span>, <span class="st">"Green"</span>), <span class="at">labels=</span><span class="fu">c</span>(<span class="st">"ns(x, df=3)"</span>,<span class="st">"rcs(x, nk=5)"</span>)) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>))</span>
 <span id="cb37-939"><a href="#cb37-939" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb37-940"><a href="#cb37-940" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-941"><a href="#cb37-941" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Nautral spline versus piecewise linear spline</span></span>
 <span id="cb37-942"><a href="#cb37-942" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-943"><a href="#cb37-943" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.cap="Natrual spline (3 d.f) compared with restricted cubic spline with knots at 9.5 and 15.5.  Both spline approaches impose a linearity constraint at the tails."}</span></span>
-<span id="cb37-944"><a href="#cb37-944" aria-hidden="true" tabindex="-1"></a><span class="in">ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + </span></span>
-<span id="cb37-945"><a href="#cb37-945" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_smooth(method=lm, formula=y ~ ns(x, df=3), se=FALSE, aes(color="Blue")) + </span></span>
-<span id="cb37-946"><a href="#cb37-946" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_smooth(method=lm, formula=y ~ lspline(x, knots=c(9.5,15.5)), se=FALSE, aes(color="Green")) +</span></span>
-<span id="cb37-947"><a href="#cb37-947" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3) +  </span></span>
-<span id="cb37-948"><a href="#cb37-948" aria-hidden="true" tabindex="-1"></a><span class="in">  scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("ns(x, df=3)","lspline(x, knots=c(9.5,15.5)")) + theme(legend.position = c(0.8, 0.2))</span></span>
+<span id="cb37-944"><a href="#cb37-944" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fev, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>height)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb37-945"><a href="#cb37-945" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">formula=</span>y <span class="sc">~</span> <span class="fu">ns</span>(x, <span class="at">df=</span><span class="dv">3</span>), <span class="at">se=</span><span class="cn">FALSE</span>, <span class="fu">aes</span>(<span class="at">color=</span><span class="st">"Blue"</span>)) <span class="sc">+</span> </span>
+<span id="cb37-946"><a href="#cb37-946" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">formula=</span>y <span class="sc">~</span> <span class="fu">lspline</span>(x, <span class="at">knots=</span><span class="fu">c</span>(<span class="fl">9.5</span>,<span class="fl">15.5</span>)), <span class="at">se=</span><span class="cn">FALSE</span>, <span class="fu">aes</span>(<span class="at">color=</span><span class="st">"Green"</span>)) <span class="sc">+</span></span>
+<span id="cb37-947"><a href="#cb37-947" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data=</span>newdata, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>ht.dummy), <span class="at">col=</span><span class="st">"red"</span>, <span class="at">size=</span><span class="dv">3</span>) <span class="sc">+</span>  </span>
+<span id="cb37-948"><a href="#cb37-948" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">name=</span><span class="st">"Model"</span>, <span class="at">values=</span><span class="fu">c</span>(<span class="st">"Blue"</span>, <span class="st">"Green"</span>), <span class="at">labels=</span><span class="fu">c</span>(<span class="st">"ns(x, df=3)"</span>,<span class="st">"lspline(x, knots=c(9.5,15.5)"</span>)) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>))</span>
 <span id="cb37-949"><a href="#cb37-949" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb37-950"><a href="#cb37-950" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-951"><a href="#cb37-951" aria-hidden="true" tabindex="-1"></a><span class="fu">## Summary comments</span></span>
@@ -4308,8 +4324,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb37-1030"><a href="#cb37-1030" aria-hidden="true" tabindex="-1"></a><span class="ss">        -   </span>If it is not a straight line, a flexible spline can capture the assocation while a linear term cannot (spline would more completly adjust for confouding)</span>
 <span id="cb37-1031"><a href="#cb37-1031" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-1032"><a href="#cb37-1032" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.cap="Linear (sraight line) and natural spline (3 d.f.) fits to log of FEV and height.  The relationship is approximately a straight line, which can be capture by either assuming a straight line association or allowing for a flexible fit."}</span></span>
-<span id="cb37-1033"><a href="#cb37-1033" aria-hidden="true" tabindex="-1"></a><span class="in">ggplot(fev, aes(x=height, y=logfev)) + geom_point() + geom_smooth(method=lm, se=FALSE) +</span></span>
-<span id="cb37-1034"><a href="#cb37-1034" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_smooth(method=lm, formula=y ~ ns(x, df=3), se=FALSE, color="Green")</span></span>
+<span id="cb37-1033"><a href="#cb37-1033" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fev, <span class="fu">aes</span>(<span class="at">x=</span>height, <span class="at">y=</span>logfev)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">se=</span><span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb37-1034"><a href="#cb37-1034" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">formula=</span>y <span class="sc">~</span> <span class="fu">ns</span>(x, <span class="at">df=</span><span class="dv">3</span>), <span class="at">se=</span><span class="cn">FALSE</span>, <span class="at">color=</span><span class="st">"Green"</span>)</span>
 <span id="cb37-1035"><a href="#cb37-1035" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb37-1036"><a href="#cb37-1036" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-1037"><a href="#cb37-1037" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Example interpretation for linear model with FEV as outcome, smoking the predictor of interest controlling for age and height. There are 654 observations in the dataset, so allowed model complexity is at least 43 degrees of freedom.</span>

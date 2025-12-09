@@ -5,7 +5,6 @@ const headroomChanged = new CustomEvent("quarto-hrChanged", {
   composed: false,
 });
 
-<<<<<<< Updated upstream
 const announceDismiss = () => {
   const annEl = window.document.getElementById("quarto-announcement");
   if (annEl) {
@@ -45,11 +44,6 @@ window.document.addEventListener("DOMContentLoaded", function () {
 
   announceRegister();
 
-=======
-window.document.addEventListener("DOMContentLoaded", function () {
-  let init = false;
-
->>>>>>> Stashed changes
   // Manage the back to top button, if one is present.
   let lastScrollTop = window.pageYOffset || document.documentElement.scrollTop;
   const scrollDownBuffer = 5;
@@ -127,7 +121,6 @@ window.document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-<<<<<<< Updated upstream
   function dashboardOffset() {
     const dashboardNavEl = window.document.getElementById(
       "quarto-dashboard-header"
@@ -139,8 +132,6 @@ window.document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-=======
->>>>>>> Stashed changes
   function updateDocumentOffsetWithoutAnimation() {
     updateDocumentOffset(false);
   }
@@ -148,11 +139,7 @@ window.document.addEventListener("DOMContentLoaded", function () {
   function updateDocumentOffset(animated) {
     // set body offset
     const topOffset = headerOffset();
-<<<<<<< Updated upstream
     const bodyOffset = topOffset + footerOffset() + dashboardOffset();
-=======
-    const bodyOffset = topOffset + footerOffset();
->>>>>>> Stashed changes
     const bodyEl = window.document.body;
     bodyEl.setAttribute("data-bs-offset", topOffset);
     bodyEl.style.paddingTop = topOffset + "px";
@@ -265,15 +252,9 @@ window.document.addEventListener("DOMContentLoaded", function () {
   // Observe size changed for the header
   const headerEl = window.document.querySelector("header.fixed-top");
   if (headerEl && window.ResizeObserver) {
-<<<<<<< Updated upstream
     const observer = new window.ResizeObserver(() => {
       setTimeout(updateDocumentOffsetWithoutAnimation, 0);
     });
-=======
-    const observer = new window.ResizeObserver(
-      updateDocumentOffsetWithoutAnimation
-    );
->>>>>>> Stashed changes
     observer.observe(headerEl, {
       attributes: true,
       childList: true,
@@ -292,10 +273,7 @@ window.document.addEventListener("DOMContentLoaded", function () {
     const links = window.document.querySelectorAll("a");
     for (let i = 0; i < links.length; i++) {
       if (links[i].href) {
-<<<<<<< Updated upstream
         links[i].dataset.originalHref = links[i].href;
-=======
->>>>>>> Stashed changes
         links[i].href = links[i].href.replace(/\/index\.html/, "/");
       }
     }
@@ -303,11 +281,7 @@ window.document.addEventListener("DOMContentLoaded", function () {
     // Fixup any sharing links that require urls
     // Append url to any sharing urls
     const sharingLinks = window.document.querySelectorAll(
-<<<<<<< Updated upstream
       "a.sidebar-tools-main-item, a.quarto-navigation-tool, a.quarto-navbar-tools, a.quarto-navbar-tools-item"
-=======
-      "a.sidebar-tools-main-item"
->>>>>>> Stashed changes
     );
     for (let i = 0; i < sharingLinks.length; i++) {
       const sharingLink = sharingLinks[i];

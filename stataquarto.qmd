@@ -1,11 +1,10 @@
 ---
 title: "Stata testing"
-format: docx
 ---
 
 ```{r, echo=FALSE, message=FALSE}
 # Statamarkdown: https://github.com/hemken/Statamarkdown
-devtools::install_github("Hemken/Statamarkdown")
+#devtools::install_github("Hemken/Statamarkdown")
 library(Statamarkdown)
 ```
 

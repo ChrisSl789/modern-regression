@@ -425,7 +425,6 @@ From linear regression analysis, we estimate that for each year difference in ag
 
         -   $V[\epsilon_i] = \sigma^2$ (constant variance assumption)
 
-```{=tex}
 \newcommand\Ybd{{\boldsymbol{Y}}}
 \newcommand\Xbd{{\boldsymbol{X}}}
 \newcommand\betabd{{\boldsymbol{\beta}}}
@@ -433,7 +432,7 @@ From linear regression analysis, we estimate that for each year difference in ag
 \newcommand\zerovec{{\boldsymbol{0}}}
 \newcommand\onevec{{\boldsymbol{1}}}
 \newcommand\eye{{\boldsymbol{I}}}
-```
+
 -   Matrix notation: ${\boldsymbol{Y}}= {\boldsymbol{X}}{\boldsymbol{\beta}}+ {\boldsymbol{\epsilon}}$
 
 ${\boldsymbol{Y}}= \left( \begin{array}{c} Y_1 \\ Y_2 \\ \vdots \\ Y_n \end{array} \right)_{n\times1}$ ${\boldsymbol{X}}= \left( \begin{array}{cc} 1 & x_1 \\ 1 & x_2 \\ \vdots & \vdots \\ 1 & x_n \end{array} \right)_{n\times2}$ ${\boldsymbol{\beta}}= \left( \begin{array}{c} \beta_0 \\ \beta_1 \\ \end{array} \right)_{2\times1}$ ${\boldsymbol{\epsilon}}= \left( \begin{array}{c} \epsilon_1 \\ \epsilon_2 \\ \vdots \\ \epsilon_n \end{array} \right)_{n\times1}$
@@ -681,15 +680,15 @@ gglm(model.y4)
 : Assumption Holds (Yes/No)
 
 | $\hat{\beta}$ | $\hat{\textrm {Var}}_{NR}(\hat{\beta})$ | $\hat{\textrm{ Var}}_R(\hat{\beta})$ |
-|-------------------|----------------------------|--------------------------|
-| Y             | Y                                       | Y                                    |
-| Y             | M^2^                                    | M^2^                                 |
-| Y             | N                                       | Y                                    |
-| Y             | N                                       | M^2^                                 |
-| M^1^          | N                                       | M^3^                                 |
-| M^1^          | N                                       | M^2,3^                               |
-| M^1^          | N                                       | M^2^                                 |
-| M^1^          | N                                       | M^2,3^                               |
+|----|----|----|
+| Y | Y | Y |
+| Y | M^2^ | M^2^ |
+| Y | N | Y |
+| Y | N | M^2^ |
+| M^1^ | N | M^3^ |
+| M^1^ | N | M^2,3^ |
+| M^1^ | N | M^2^ |
+| M^1^ | N | M^2,3^ |
 
 : Valid Inference (Yes/No/Maybe)
 
@@ -870,25 +869,24 @@ robcov(ols(y2 ~ x, data=regassumptions, x=TRUE))
 
 ### Comments
 
-```{=tex}
 \newcommand\seb0{{\hat{\textrm{se}}(\hat{\beta_0})}}
 \newcommand\seb1{\hat{\textrm{se}}(\hat{\beta_1})}
-```
-| Model                        | Classical Intercept | Robust Intercept | Classical Slope | Robust Slope |
-|---------------|---------------|---------------|---------------|---------------|
-| Age-chol All Assump. hold    | 203.2               | 203.2            | 0.32            | 0.32         |
-| Scenario 1 Assump hold       | 3.34                | 3.34             | 0.23            | 0.23         |
-| Scenario 3 Increase Variance | 5.66                | 5.66             | 0.18            | 0.18         |
-| Scenario 2 Skewed Variance   | 6.93                | 6.93             | 0.20            | 0.20         |
+
+| Model | Classical Intercept | Robust Intercept | Classical Slope | Robust Slope |
+|----|----|----|----|----|
+| Age-chol All Assump. hold | 203.2 | 203.2 | 0.32 | 0.32 |
+| Scenario 1 Assump hold | 3.34 | 3.34 | 0.23 | 0.23 |
+| Scenario 3 Increase Variance | 5.66 | 5.66 | 0.18 | 0.18 |
+| Scenario 2 Skewed Variance | 6.93 | 6.93 | 0.20 | 0.20 |
 
 : Comparison of point estimates, $\hat{\beta_0}$ and $\hat{\beta_1}$
 
-| Model                        | Classical Intercept | Robust Intercept | Classical Slope | Robust Slope |
-|---------------|---------------|---------------|---------------|---------------|
-| Age-chol All Assump. hold    | 10.31               | 10.38            | 0.137           | 0.138        |
-| Scenario 1 Assump hold       | 0.712               | 0.700            | 0.0123          | 0.0132       |
-| Scenario 3 Increase Variance | 0.919               | 0.596            | 0.0159          | 0.0153       |
-| Scenario 2 Skewed Variance   | 0.291               | 0.353            | 0.00503         | 0.00557      |
+| Model | Classical Intercept | Robust Intercept | Classical Slope | Robust Slope |
+|----|----|----|----|----|
+| Age-chol All Assump. hold | 10.31 | 10.38 | 0.137 | 0.138 |
+| Scenario 1 Assump hold | 0.712 | 0.700 | 0.0123 | 0.0132 |
+| Scenario 3 Increase Variance | 0.919 | 0.596 | 0.0159 | 0.0153 |
+| Scenario 2 Skewed Variance | 0.291 | 0.353 | 0.00503 | 0.00557 |
 
 : Comparison of standard error estimates, $\hat{\textrm{se}}(\hat{\beta_0})$ and $\hat{\textrm{se}}(\hat{\beta_1})$
 

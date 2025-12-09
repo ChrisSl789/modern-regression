@@ -43,11 +43,7 @@ window.document.addEventListener("DOMContentLoaded", function (_event) {
   const mainEl = window.document.querySelector("main");
 
   // highlight matches on the page
-<<<<<<< Updated upstream
   if (query && mainEl) {
-=======
-  if (query !== null && mainEl) {
->>>>>>> Stashed changes
     // perform any highlighting
     highlight(escapeRegExp(query), mainEl);
 
@@ -61,11 +57,7 @@ window.document.addEventListener("DOMContentLoaded", function (_event) {
   // (e.g. if the user edits the query or clears it)
   let highlighting = true;
   const resetHighlighting = (searchTerm) => {
-<<<<<<< Updated upstream
     if (mainEl && highlighting && query && searchTerm !== query) {
-=======
-    if (mainEl && highlighting && query !== null && searchTerm !== query) {
->>>>>>> Stashed changes
       clearHighlight(query, mainEl);
       highlighting = false;
     }
@@ -106,10 +98,7 @@ window.document.addEventListener("DOMContentLoaded", function (_event) {
     classNames: {
       form: "d-flex",
     },
-<<<<<<< Updated upstream
     placeholder: language["search-text-placeholder"],
-=======
->>>>>>> Stashed changes
     translations: {
       clearButtonTitle: language["search-clear-button-title"],
       detachedCancelButtonText: language["search-detached-cancel-button-title"],
@@ -122,11 +111,8 @@ window.document.addEventListener("DOMContentLoaded", function (_event) {
       return item.href;
     },
     onStateChange({ state }) {
-<<<<<<< Updated upstream
       // If this is a file URL, note that
 
-=======
->>>>>>> Stashed changes
       // Perhaps reset highlighting
       resetHighlighting(state.query);
 
@@ -376,12 +362,8 @@ window.document.addEventListener("DOMContentLoaded", function (_event) {
                 state,
                 setActiveItemId,
                 setContext,
-<<<<<<< Updated upstream
                 refresh,
                 quartoSearchOptions
-=======
-                refresh
->>>>>>> Stashed changes
               );
             },
           },
@@ -396,7 +378,6 @@ window.document.addEventListener("DOMContentLoaded", function (_event) {
     focusSearchInput();
   };
 
-<<<<<<< Updated upstream
   document.addEventListener("keyup", (event) => {
     const { key } = event;
     const kbds = quartoSearchOptions["keyboard-shortcut"];
@@ -423,8 +404,6 @@ window.document.addEventListener("DOMContentLoaded", function (_event) {
     }
   });
 
-=======
->>>>>>> Stashed changes
   // Remove the labeleledby attribute since it is pointing
   // to a non-existent label
   if (quartoSearchOptions.type === "overlay") {
@@ -436,7 +415,6 @@ window.document.addEventListener("DOMContentLoaded", function (_event) {
     }
   }
 
-<<<<<<< Updated upstream
   function throttle(func, wait) {
     let waiting = false;
     return function () {
@@ -461,13 +439,6 @@ window.document.addEventListener("DOMContentLoaded", function (_event) {
       setIsOpen(false);
     }
   }, 50);
-=======
-  // If the main document scrolls dismiss the search results
-  // (otherwise, since they're floating in the document they can scroll with the document)
-  window.document.body.onscroll = () => {
-    setIsOpen(false);
-  };
->>>>>>> Stashed changes
 
   if (showSearchResults) {
     setIsOpen(true);
@@ -507,7 +478,6 @@ function configurePlugins(quartoSearchOptions) {
         const algoliaInsightsPlugin = createAlgoliaInsightsPlugin({
           insightsClient: window.aa,
           onItemsChange({ insights, insightsEvents }) {
-<<<<<<< Updated upstream
             const events = insightsEvents.flatMap((event) => {
               // This API limits the number of items per event to 20
               const chunkSize = 20;
@@ -529,17 +499,6 @@ function configurePlugins(quartoSearchOptions) {
             for (const event of events) {
               insights.viewedObjectIDs(event);
             }
-=======
-            const events = insightsEvents.map((event) => {
-              const maxEvents = event.objectIDs.slice(0, 20);
-              return {
-                ...event,
-                objectIDs: maxEvents,
-              };
-            });
-
-            insights.viewedObjectIDs(...events);
->>>>>>> Stashed changes
           },
         });
         return algoliaInsightsPlugin;
@@ -715,7 +674,6 @@ function showCopyLink(query, options) {
 /* Search Index Handling */
 // create the index
 var fuseIndex = undefined;
-<<<<<<< Updated upstream
 var shownWarning = false;
 
 // fuse index options
@@ -740,22 +698,6 @@ async function readSearchData() {
       return;
     }
     const fuse = new window.Fuse([], kFuseIndexOptions);
-=======
-async function readSearchData() {
-  // Initialize the search index on demand
-  if (fuseIndex === undefined) {
-    // create fuse index
-    const options = {
-      keys: [
-        { name: "title", weight: 20 },
-        { name: "section", weight: 20 },
-        { name: "text", weight: 10 },
-      ],
-      ignoreLocation: true,
-      threshold: 0.1,
-    };
-    const fuse = new window.Fuse([], options);
->>>>>>> Stashed changes
 
     // fetch the main search.json
     const response = await fetch(offsetURL("search.json"));
@@ -775,10 +717,7 @@ async function readSearchData() {
       );
     }
   }
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
   return fuseIndex;
 }
 
@@ -807,12 +746,8 @@ function renderItem(
   state,
   setActiveItemId,
   setContext,
-<<<<<<< Updated upstream
   refresh,
   quartoSearchOptions
-=======
-  refresh
->>>>>>> Stashed changes
 ) {
   switch (item.type) {
     case kItemTypeDoc:
@@ -822,13 +757,9 @@ function renderItem(
         item.title,
         item.section,
         item.text,
-<<<<<<< Updated upstream
         item.href,
         item.crumbs,
         quartoSearchOptions
-=======
-        item.href
->>>>>>> Stashed changes
       );
     case kItemTypeMore:
       return createMoreCard(
@@ -853,7 +784,6 @@ function renderItem(
   }
 }
 
-<<<<<<< Updated upstream
 function createDocumentCard(
   createElement,
   icon,
@@ -864,14 +794,10 @@ function createDocumentCard(
   crumbs,
   quartoSearchOptions
 ) {
-=======
-function createDocumentCard(createElement, icon, title, section, text, href) {
->>>>>>> Stashed changes
   const iconEl = createElement("i", {
     class: `bi bi-${icon} search-result-icon`,
   });
   const titleEl = createElement("p", { class: "search-result-title" }, title);
-<<<<<<< Updated upstream
   const titleContents = [iconEl, titleEl];
   const showParent = quartoSearchOptions["show-item-context"];
   if (crumbs && showParent) {
@@ -898,12 +824,6 @@ function createDocumentCard(createElement, icon, title, section, text, href) {
     "div",
     { class: "search-result-title-container" },
     titleContents
-=======
-  const titleContainerEl = createElement(
-    "div",
-    { class: "search-result-title-container" },
-    [iconEl, titleEl]
->>>>>>> Stashed changes
   );
 
   const textEls = [];
@@ -1285,7 +1205,6 @@ function algoliaSearch(query, limit, algoliaOptions) {
         const remappedHits = response.hits.map((hit) => {
           return hit.map((item) => {
             const newItem = { ...item };
-<<<<<<< Updated upstream
             ["href", "section", "title", "text", "crumbs"].forEach(
               (keyName) => {
                 const mappedName = indexFields[keyName];
@@ -1299,19 +1218,6 @@ function algoliaSearch(query, limit, algoliaOptions) {
                 }
               }
             );
-=======
-            ["href", "section", "title", "text"].forEach((keyName) => {
-              const mappedName = indexFields[keyName];
-              if (
-                mappedName &&
-                item[mappedName] !== undefined &&
-                mappedName !== keyName
-              ) {
-                newItem[keyName] = item[mappedName];
-                delete newItem[mappedName];
-              }
-            });
->>>>>>> Stashed changes
             newItem.text = highlightMatch(query, newItem.text);
             return newItem;
           });
@@ -1322,7 +1228,6 @@ function algoliaSearch(query, limit, algoliaOptions) {
   });
 }
 
-<<<<<<< Updated upstream
 let subSearchTerm = undefined;
 let subSearchFuse = undefined;
 const kFuseMaxWait = 125;
@@ -1351,10 +1256,6 @@ async function fuseSearch(query, fuse, fuseOptions) {
   const now = performance.now();
 
   const results = resultsRaw.map((result) => {
-=======
-function fuseSearch(query, fuse, fuseOptions) {
-  return fuse.search(query, fuseOptions).map((result) => {
->>>>>>> Stashed changes
     const addParam = (url, name, value) => {
       const anchorParts = url.split("#");
       const baseUrl = anchorParts[0];
@@ -1368,7 +1269,6 @@ function fuseSearch(query, fuse, fuseOptions) {
       section: result.item.section,
       href: addParam(result.item.href, kQueryArg, query),
       text: highlightMatch(query, result.item.text),
-<<<<<<< Updated upstream
       crumbs: result.item.crumbs,
     };
   });
@@ -1387,8 +1287,4 @@ function fuseSearch(query, fuse, fuseOptions) {
     });
   }
   return results;
-=======
-    };
-  });
->>>>>>> Stashed changes
 }
