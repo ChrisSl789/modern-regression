@@ -9,7 +9,7 @@
 <meta name="author" content="Chris Slaughter">
 <meta name="dcterms.date" content="2025-10-30">
 
-<title>Confouding, Effect Modification, and Mediation – BIOS 6312 - Spring 2025</title>
+<title>Confouding, Effect Modification, and Mediation – BIOS 6312 - Spring 2026</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -145,10 +145,10 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="../styles.css">
-<meta property="og:title" content="Confouding, Effect Modification, and Mediation – BIOS 6312 - Spring 2025">
+<meta property="og:title" content="Confouding, Effect Modification, and Mediation – BIOS 6312 - Spring 2026">
 <meta property="og:description" content="Lecture 06">
 <meta property="og:image" content="https://chrissl789.github.io/modern-regression/notes/figures/multiplemediation.png">
-<meta property="og:site_name" content="BIOS 6312 - Spring 2025">
+<meta property="og:site_name" content="BIOS 6312 - Spring 2026">
 <meta property="og:image:height" content="540">
 <meta property="og:image:width" content="960">
 </head>
@@ -339,7 +339,7 @@ window.Quarto = {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-center sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="../">BIOS 6312 - Spring 2025</a> 
+      <a href="../">BIOS 6312 - Spring 2026</a> 
         <div class="sidebar-tools-main">
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
@@ -363,6 +363,12 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Schedule</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../slides/Lec01.Introduction.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Introductory Slides</span></a>
   </div>
@@ -370,7 +376,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../syllabus.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Syllabus BIOS 6312</span></a>
+ <span class="menu-text">Syllabus</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -383,12 +389,6 @@ window.Quarto = {
   <div class="sidebar-item-container"> 
   <a href="../officehours.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Office Hours</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Schedule</span></a>
   </div>
 </li>
       </ul>
@@ -730,7 +730,7 @@ window.Quarto = {
   <li><a href="#precision-variables-1" id="toc-precision-variables-1" class="nav-link" data-scroll-target="#precision-variables-1"><span class="header-section-number">7.3</span> Precision Variables</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/chrissl789/modern-regression/edit/main/notes/Lec06.ConfoundingEffectModificationMediation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/chrissl789/modern-regression/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/chrissl789/modern-regression/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
@@ -2096,6 +2096,11 @@ window.Quarto = {
           if (link.dataset.originalHref !== undefined) {
             link.href = link.dataset.originalHref;
           }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
         }
       }
     function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
@@ -3166,11 +3171,11 @@ window.Quarto = {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>© Copyright 2024-2025, James C Slaughter</p>
+<p>© Copyright 2024-2026, James C Slaughter</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/chrissl789/modern-regression/edit/main/notes/Lec06.ConfoundingEffectModificationMediation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/chrissl789/modern-regression/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/chrissl789/modern-regression/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p>This page is built with <a href="https://quarto.org/">Quarto</a>.</p>
 </div>
