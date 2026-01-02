@@ -1,11 +1,11 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.8)  21 DEC 2025 10:56
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2026.1.2)  2 JAN 2026 12:42
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **syllabus.tex
 (./syllabus.tex
 LaTeX2e <2025-11-01>
-L3 programming layer <2025-11-14>
+L3 programming layer <2025-12-29>
 (c:/Users/jslau/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/koma-script/scrartcl.cls
 Document Class: scrartcl 2025/12/01 v3.49 KOMA-Script document class (article)
 (c:/Users/jslau/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/koma-script/scrkbase.sty
@@ -215,7 +215,7 @@ LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 )) (c:/Users/jslau/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/iftex/iftex.sty
 Package: iftex 2024/12/12 v1.0g TeX engine tests
 ) (c:/Users/jslau/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/unicode-math/unicode-math.sty (c:/Users/jslau/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3kernel/expl3.sty
-Package: expl3 2025-11-14 L3 programming layer (loader) 
+Package: expl3 2025-12-29 L3 programming layer (loader) 
 (c:/Users/jslau/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-xetex.def
 File: l3backend-xetex.def 2025-10-09 L3 backend support: XeTeX
 \g__graphics_track_int=\count292
@@ -503,15 +503,15 @@ Package graphics Info: Driver file: xetex.def on input line 106.
 )
 \pandoc@box=\box65
 (c:/Users/jslau/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/babel/babel.sty
-Package: babel 2025/11/23 v25.16 The multilingual framework for LuaLaTeX, pdfLaTeX and XeLaTeX
+Package: babel 2025/12/30 v25.18 The multilingual framework for LuaLaTeX, pdfLaTeX and XeLaTeX
 \babel@savecnt=\count322
-LaTeX Encoding Info:    Redeclaring text command \ij (encoding OT1) on input line 2050.
-LaTeX Encoding Info:    Redeclaring text command \IJ (encoding OT1) on input line 2052.
-LaTeX Encoding Info:    Redeclaring text command \ij (encoding T1) on input line 2054.
-LaTeX Encoding Info:    Redeclaring text command \IJ (encoding T1) on input line 2055.
-LaTeX Encoding Info:    Ignoring declaration for text command \ij (encoding ?) on input line 2056.
-LaTeX Encoding Info:    Ignoring declaration for text command \IJ (encoding ?) on input line 2058.
-LaTeX Encoding Info:    Ignoring declaration for text command \SS (encoding ?) on input line 2083.
+LaTeX Encoding Info:    Redeclaring text command \ij (encoding OT1) on input line 2068.
+LaTeX Encoding Info:    Redeclaring text command \IJ (encoding OT1) on input line 2070.
+LaTeX Encoding Info:    Redeclaring text command \ij (encoding T1) on input line 2072.
+LaTeX Encoding Info:    Redeclaring text command \IJ (encoding T1) on input line 2073.
+LaTeX Encoding Info:    Ignoring declaration for text command \ij (encoding ?) on input line 2074.
+LaTeX Encoding Info:    Ignoring declaration for text command \IJ (encoding ?) on input line 2076.
+LaTeX Encoding Info:    Ignoring declaration for text command \SS (encoding ?) on input line 2101.
 \U@D=\dimen182
 \l@unhyphenated=\language3
 (c:/Users/jslau/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/babel/xebabel.def)
@@ -519,7 +519,7 @@ LaTeX Encoding Info:    Ignoring declaration for text command \SS (encoding ?) o
 \bbl@dirlevel=\count323
 (c:/Users/jslau/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/babel/locale/en/babel-english.tex)
 Package babel Info: Importing font and identification data for english
-(babel)             from babel-en.ini. Reported on input line 4298.
+(babel)             from babel-en.ini. Reported on input line 4321.
 (c:/Users/jslau/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/babel/errbabel.def)
 
 ! Package babel Error: Unknown option 'english'.
@@ -530,13 +530,15 @@ Package babel Info: Importing font and identification data for english
 (babel)                  need in some distributions a separate
 (babel)                  installation
 (babel)                * If installed, check there isn’t an old
-(babel)                  version of the required files in your system.
+(babel)                  version of the required files in your system
+(babel)                * If it's an unsupported language, create it with
+(babel)                \babelprovide(see the manual).
 
 See the babel package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.4298 \bbl@tempb
+l.4321 \bbl@tempb
                  
 Valid options are, among others: shorthands=, KeepShorthandsActive,
 activeacute, activegrave, noconfigs, safe=, main=, math=
@@ -544,10 +546,10 @@ headfoot=, strings=, config=, hyphenmap=, or a language name.
 
  
 Here is how much of TeX's memory you used:
- 13818 strings out of 470195
- 295153 string characters out of 5476640
+ 13820 strings out of 470195
+ 295121 string characters out of 5477187
  991051 words of memory out of 5000000
- 42319 multiletter control sequences out of 15000+600000
+ 42325 multiletter control sequences out of 15000+600000
  627737 words of font info for 42 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  108i,1n,107p,11230b,341s stack positions out of 10000i,1000n,20000p,200000b,200000s
