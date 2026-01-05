@@ -1748,7 +1748,7 @@
     "href": "slides/Lec01.Introduction.html#course-team",
     "title": "Welcome & Syllabus",
     "section": "Course Team",
-    "text": "Course Team\nInstructor\n\nChris Slaughter\n\njames.c.slaughter@vumc.org (best)\njames.c.slaughter@vanderbilt.edu (checked ~ weekly)\nOffice: 2525 West End, 11-127\n\n\n\nTA\n\nAlexis Fleming\nJeffrey Liang",
+    "text": "Course Team\nInstructor\n\nChris Slaughter\n\njames.c.slaughter@vumc.org (best)\njames.c.slaughter@vanderbilt.edu (checked ~ weekly)\nOffice: 2525 West End, 11-127\n\n\n\nTA\n\nChih-Ting Yang\nHaoyang Yi",
     "crumbs": [
       "Course Information",
       "Introductory Slides"
@@ -1759,7 +1759,7 @@
     "href": "slides/Lec01.Introduction.html#course-websites",
     "title": "Welcome & Syllabus",
     "section": "Course website(s)",
-    "text": "Course website(s)\n\nhttps://chrissl789.github.io/modern-regression/\n\nCourse notes\n\nHTML, PDF, Quarto (.qmd)\n\nDaily schedule\nLinks to course tools\n\nBrightspace\n\nAnnouncements\nSubmit homework\nGradebook\nFERPA compliance\n\nThe Family Educational Rights and Privacy Act (FERPA) is a federal law enacted in 1974 that protects the privacy of student education records.",
+    "text": "Course website(s)\n\nhttps://chrissl789.github.io/modern-regression/\n\nCourse notes\n\nHTML, PDF, Quarto (.qmd)\n\nDaily schedule\nLinks to course tools\n\nBrightspace\n\nAnnouncements\nSubmit homework and manage grades\nFERPA compliance\n\nThe Family Educational Rights and Privacy Act (FERPA) is a federal law enacted in 1974 that protects the privacy of student education records.",
     "crumbs": [
       "Course Information",
       "Introductory Slides"
@@ -1792,7 +1792,7 @@
     "href": "slides/Lec01.Introduction.html#software-rstudio-and-quarto",
     "title": "Welcome & Syllabus",
     "section": "Software – Rstudio and Quarto",
-    "text": "Software – Rstudio and Quarto\n\nCourse notes rendered using Quarto with R code integrated\n\nQuarto allows for creating dynamic content using embedded R (or other software) code\nWill allow you to see all code used to generate notes\n\nI will highlight important R code\n\nI am still learning Quarto, so it has more features than I will likely use\n\nQuarto introduction covered in first lab",
+    "text": "Software – Rstudio and Quarto\n\nCourse notes rendered using Quarto with R code integrated\n\nQuarto allows for creating dynamic content using embedded R (or other software) code\nWill allow you to see all code used to generate notes\n\nI will highlight important R code\n\nI am still learning Quarto and it is evolving, so it has more features than I will likely use\n\nQuarto introduction covered tomorrow",
     "crumbs": [
       "Course Information",
       "Introductory Slides"
@@ -1810,11 +1810,44 @@
     ]
   },
   {
-    "objectID": "slides/Lec01.Introduction.html#generative-ai-e.g.-chatgpt",
-    "href": "slides/Lec01.Introduction.html#generative-ai-e.g.-chatgpt",
+    "objectID": "slides/Lec01.Introduction.html#generative-ai-e.g.-chatgpt-claude",
+    "href": "slides/Lec01.Introduction.html#generative-ai-e.g.-chatgpt-claude",
     "title": "Welcome & Syllabus",
-    "section": "Generative AI (e.g. ChatGPT)",
-    "text": "Generative AI (e.g. ChatGPT)\n\nTwo definitions of generative AI, from ChatGPT 3.5\n\nGenerative AI is a type of artificial intelligence that can create new, original content by learning patterns from existing data and using them to generate new outputs.\nGenerative AI refers to the use of machine learning algorithms to generate new and original content, such as images, text, and music.\n\nI prefer to use the tools available to VUMC\nAs with any tool, use with caution\n\nHelp with generating code, or converting code between languages\nHelp with writing interpretations in more easily understood language\nThe prompt that you use matters. Also, identical prompts at different times can give different answers",
+    "section": "Generative AI (e.g. ChatGPT, Claude)",
+    "text": "Generative AI (e.g. ChatGPT, Claude)\n\nSee syllabus for complete statement on the permitted uses of generative AI in this course\nIf any questions, ask the instructor for clarifications\nAs with any tool, use with caution\n\nHelp with generating code, or converting code between languages\nHelp with editing interpretations in more easily understood language\nThe prompt that you use matters. Also, identical prompts at different times can give different answers",
+    "crumbs": [
+      "Course Information",
+      "Introductory Slides"
+    ]
+  },
+  {
+    "objectID": "slides/Lec01.Introduction.html#my-views-on-generative-ai",
+    "href": "slides/Lec01.Introduction.html#my-views-on-generative-ai",
+    "title": "Welcome & Syllabus",
+    "section": "My views on generative AI",
+    "text": "My views on generative AI\n\nRapidly evolving with many potential applications\nBest used when you are the expert and AI is the assistant\n\nIf prompted correctly, AI can help you think through a problem, but you have to know the right prompts to use and evaluate critically\n“Is my regression model good” vs “I am concerned about heteroskedasticity in my linear regression model. What diagnostic tests and remedies should I consider? What are the problems with using a p-value to test for heteroskedasticity like you said to do?”\n\nWe work with highly confidential data in Biostatistics\n\nNever upload data to AI platforms",
+    "crumbs": [
+      "Course Information",
+      "Introductory Slides"
+    ]
+  },
+  {
+    "objectID": "slides/Lec01.Introduction.html#key-limitations-of-ai",
+    "href": "slides/Lec01.Introduction.html#key-limitations-of-ai",
+    "title": "Welcome & Syllabus",
+    "section": "Key limitations of AI",
+    "text": "Key limitations of AI\n\nNo true uncertainty quantification. Generated text is confidently stated as being accurate.\nTraining data is a frozen snapshot. Models do not learn new information after training.\nNo reasoning from first principles for complex problems. Pattern recognition provides median responses.\nAI lowers barriers to performing analysis, but doing the right analysis remains complex.\n\nThis course is designed to build foundation for right-tail analytical ability - understanding why methods work and when standard approaches fail.",
+    "crumbs": [
+      "Course Information",
+      "Introductory Slides"
+    ]
+  },
+  {
+    "objectID": "slides/Lec01.Introduction.html#key-skills-for-effective-statistical-practice-essential-foundations-for-ai-use",
+    "href": "slides/Lec01.Introduction.html#key-skills-for-effective-statistical-practice-essential-foundations-for-ai-use",
+    "title": "Welcome & Syllabus",
+    "section": "Key skills for effective statistical practice (essential foundations for AI use)",
+    "text": "Key skills for effective statistical practice (essential foundations for AI use)\n\nSpecification: Translating scientific questions into appropriate statistical approaches\nVerification: Recognizing when output is wrong or incomplete, knowing what diagnostics to check\nAssumption evaluation: Judging whether a method is appropriate given study design\nInterpretation: Understanding what results mean in scientific context\nIn this course, assignments will systematically build these fundamental skills, positioning you as the expert in evaluating and improving AI-generated outputs",
     "crumbs": [
       "Course Information",
       "Introductory Slides"
@@ -1825,7 +1858,7 @@
     "href": "slides/Lec01.Introduction.html#ai-collapse",
     "title": "Welcome & Syllabus",
     "section": "AI collapse",
-    "text": "AI collapse\n\nShumailov, I., Shumaylov, Z., Zhao, Y. et al. AI models collapse when trained on recursively generated data. Nature 631, 755–759 (2024).\n\n\nAI Collapse",
+    "text": "AI collapse\n\nAI “thinks” differently than people do. Iteration often makes things worse, unlike human refinement.\nShumailov, I., Shumaylov, Z., Zhao, Y. et al. AI models collapse when trained on recursively generated data. Nature 631, 755–759 (2024).\n\n\nAI Collapse",
     "crumbs": [
       "Course Information",
       "Introductory Slides"

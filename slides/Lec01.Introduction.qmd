@@ -1,8 +1,7 @@
 ---
 title: "Welcome & Syllabus"
 subtitle: "Lecture 01"
-author: "Chris Slaughter"
-footer: "Bios 6312 - Spring 2025"
+footer: "Bios 6312 - Spring 2026"
 format:
   revealjs:
     theme: slides.scss
@@ -35,8 +34,8 @@ options(
 
 ### TA
 
--   Alexis Fleming
--   Jeffrey Liang
+-   Chih-Ting Yang
+-   Haoyang Yi
 
 ## Course website(s)
 
@@ -50,8 +49,7 @@ options(
 -   [Brightspace](https://brightspace.vanderbilt.edu)
 
     -   Announcements
-    -   Submit homework
-    -   Gradebook
+    -   Submit homework and manage grades
     -   FERPA compliance
         -   The Family Educational Rights and Privacy Act (FERPA) is a federal law enacted in 1974 that protects the privacy of student education records.
 
@@ -81,8 +79,8 @@ options(
     -   [Quarto](https://quarto.org) allows for creating dynamic content using embedded R (or other software) code
     -   Will allow you to see all code used to generate notes
         -   I will highlight important R code
-    -   I am still learning Quarto, so it has more features than I will likely use
--   Quarto introduction covered in first lab
+    -   I am still learning Quarto and it is evolving, so it has more features than I will likely use
+-   Quarto introduction covered tomorrow
 
 ## Software -- Stata
 
@@ -93,20 +91,48 @@ options(
     -   Not integrated with Quarto
         -   I will provide a list of equivalent Stata commands in labs and lectures, but usually not produce the output
 
-## Generative AI (e.g. ChatGPT)
-
--   Two definitions of generative AI, from ChatGPT 3.5
-    -   Generative AI is a type of artificial intelligence that can create new, original content by learning patterns from existing data and using them to generate new outputs.
-    -   Generative AI refers to the use of machine learning algorithms to generate new and original content, such as images, text, and music.
--   I prefer to use the [tools available to VUMC](https://www.vumc.org/dbmi/GenerativeAI)
+## Generative AI (e.g. ChatGPT, Claude)
+-   See syllabus for complete statement on the permitted uses of generative AI in this course
+-   If any questions, ask the instructor for clarifications
 -   As with any tool, use with caution
     -   Help with generating code, or converting code between languages
-    -   Help with writing interpretations in more easily understood language
+    -   Help with editing interpretations in more easily understood language
     -   The prompt that you use matters. Also, identical prompts at different times can give different answers
 
-## AI collapse
+## My views on generative AI
+-   Rapidly evolving with many potential applications
+-   Best used when you are the expert and AI is the assistant
+    - If prompted correctly, AI can help you think through a problem, but you have to know the right prompts to use and evaluate critically
+    - "Is my regression model good" vs "I am concerned about heteroskedasticity in my linear regression model. What diagnostic tests and remedies should I consider? What are the problems with using a p-value to test for heteroskedasticity like you said to do?"
+   
+-   We work with highly confidential data in Biostatistics
+    -   Never upload data to AI platforms
+    
+## Key limitations of AI
+-   **No true uncertainty quantification.** Generated text is confidently stated as being accurate.
 
-- Shumailov, I., Shumaylov, Z., Zhao, Y. et al. AI models collapse when trained on recursively generated data. Nature 631, 755–759 (2024).
+-   **Training data is a frozen snapshot.** Models do not learn new information after training.
+
+-   **No reasoning from first principles for complex problems.** Pattern recognition provides median responses.
+
+-   **AI lowers barriers to performing analysis, but doing the right analysis remains complex.**
+
+    -   This course is designed to build foundation for right-tail analytical ability - understanding *why* methods work and when standard approaches fail.
+
+## Key skills for effective statistical practice (essential foundations for AI use)
+-   **Specification**: Translating scientific questions into appropriate statistical approaches
+
+-   **Verification**: Recognizing when output is wrong or incomplete, knowing what diagnostics to check
+
+-   **Assumption evaluation**: Judging whether a method is appropriate given study design
+
+-   **Interpretation**: Understanding what results mean in scientific context
+
+-   In this course, assignments will systematically build these fundamental skills, positioning you as the expert in evaluating and improving AI-generated outputs
+
+## AI collapse
+- AI "thinks" differently than people do. Iteration often makes things worse, unlike human refinement.
+- Shumailov, I., Shumaylov, Z., Zhao, Y. et al. AI models collapse when trained on recursively generated data. *Nature* 631, 755–759 (2024).
 
 ![AI Collapse](aicollapse.png)
 
