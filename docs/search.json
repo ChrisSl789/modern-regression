@@ -70,7 +70,7 @@
     "href": "syllabus.html#accommodations",
     "title": "Syllabus BIOS 6312",
     "section": "Accommodations",
-    "text": "Accommodations\n\nI encourage students who encounter accessibility challenges to communicate with me regardless of whether they are registered with Equal Opportunity and Access\nPlease communicate with me at your earliest convenience so we can discuss specific actions to address your needs. I will make every effort to accommodate reasonable requests.\nIf you have established accommodations with Equal Opportunity and Access, I will receive an email notifying me of the request.\nIf you need to contact Equal Opportunity and Access to establish service, the address is https://www.vanderbilt.edu/eeo/disability_services/contact_us.php",
+    "text": "Accommodations\n\nI encourage students who encounter accessibility challenges to communicate with me regardless of whether they are registered with Equal Opportunity and Access\nPlease communicate with me at your earliest convenience so we can discuss specific actions to address your needs. I will make every effort to accommodate reasonable requests.\nIf you have established accommodations with Equal Opportunity and Access, I will receive an email notifying me of the request.\nIf you need to contact Equal Opportunity and Access to establish service, the address is https://www.vanderbilt.edu/eoa/disability_services/",
     "crumbs": [
       "Course Information",
       "Syllabus"
@@ -1001,7 +1001,7 @@
     "href": "computing.html#stata",
     "title": "Computing",
     "section": "Stata",
-    "text": "Stata\nStata also should be able to conduct all of these analyses necessary for this course. The main advantage to Stata is that its syntax is relatively straightforward. It also has a menu system that can be used to create code and make the analysis reproducible through .do files.\nUCLA Statistical Methods and Data Analytics maintain a good website for those interested in learning more about the capabilities of Stata\nThere is a Statamarkdown package under development that allows for Stata code to be used in Quarto. I do not have wide experience with this package, but more information is available at https://github.com/hemken/Statamarkdown. It is of no use if you do not have Stata installed.",
+    "text": "Stata\nStata also should be able to conduct all of these analyses necessary for this course. The main advantage to Stata is that its syntax is relatively straightforward. It also has a menu system that can be used to create code and make the analysis reproducible through .do files.\nUCLA Statistical Methods and Data Analytics maintains a good website for those interested in learning more about the capabilities of Stata\nThere is a Statamarkdown package under development that allows for Stata code to be used in Quarto. I do not have wide experience with this package, but more information is available at https://github.com/hemken/Statamarkdown. It is of no use if you do not have Stata installed.",
     "crumbs": [
       "Course Information",
       "Computing"

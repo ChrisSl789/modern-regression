@@ -58,6 +58,6 @@ Some packages install smoothly, others can generate errors if necessary dependen
 
 Stata also should be able to conduct all of these analyses necessary for this course. The main advantage to Stata is that its syntax is relatively straightforward. It also has a menu system that can be used to create code and make the analysis reproducible through .do files.
 
-[UCLA Statistical Methods and Data Analytics](stats.oarc.ucla.edu/stata) maintain a good website for those interested in learning more about the capabilities of Stata
+[UCLA Statistical Methods and Data Analytics](<https://stats.oarc.ucla.edu/stata>) maintains a good website for those interested in learning more about the capabilities of Stata
 
 There is a Statamarkdown package under development that allows for Stata code to be used in Quarto. I do not have wide experience with this package, but more information is available at <https://github.com/hemken/Statamarkdown>. It is of no use if you do not have Stata installed.
