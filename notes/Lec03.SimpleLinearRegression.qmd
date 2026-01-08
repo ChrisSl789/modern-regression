@@ -13,6 +13,7 @@ library(dplyr)
 library(rms)
 library(ggplot2)
 library(gglm)
+library(tidybayes)
 tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 ```
 
@@ -203,7 +204,7 @@ finalfit(plotdata, dependent, explanatory)
 
         -   Sensitivity analyses can evaluate the the robustness of finding to different prior assumptions
 
--   Output from Bayesian linear regression
+-   Output from (default) Bayesian linear regression
 
 ```{r}
 fit1 <- stan_glm(chol ~ age,
@@ -226,6 +227,107 @@ prior_summary(fit1, digits = 2)
     -   *A priori* we assume that no association between age and cholesterol. Specifically, we assumed a Normal prior with location (mean) of 0 and scale (standard devation) of 6 for $\beta_1$.
 
     -   Conditional on the data, we estimate that for every 1 year increase in age, cholesterol increases by 0.32 mg/dl (95% credible interval 0.04 to 0.60).
+    
+
+    
+    
+#### Bayesian regression with explicit priors for sensitivity analysis
+
+##### Modifying Default Priors
+
+The `stan_glm()` function allows specification of custom priors for all parameters. Here are examples of different prior specifications:
+
+###### Option 1: Custom Informative Priors
+```{r}
+# Specify custom priors based on domain knowledge
+fit1_custom <- stan_glm(chol ~ age,
+                        data = plotdata, 
+                        family = gaussian(),
+                        prior_intercept = normal(200, 50),  # Prior for intercept: mean=200, sd=50
+                        prior = normal(0.3, .1),              # Prior for slope: mean=0.3, sd=.1
+                        prior_aux = exponential(0.05),      # Prior for sigma: rate=0.05
+                        seed = 1234,
+                        refresh = 0)
+```
+
+###### Option 2: Auto-Scaled Priors
+```{r}
+# Using scaled priors (automatically scaled based on data)
+fit1_scaled <- stan_glm(chol ~ age,
+                        data = plotdata, 
+                        family = gaussian(),
+                        prior_intercept = normal(location = 200, scale = 50, autoscale = TRUE),
+                        prior = normal(location = 0, scale = 2.5, autoscale = TRUE),
+                        prior_aux = exponential(rate = 1, autoscale = TRUE),
+                        seed = 1234,
+                        refresh = 0)
+```
+
+###### Option 3: Skeptical Prior
+```{r}
+# Skeptical prior (centered at zero with small variance)
+fit1_skeptical <- stan_glm(chol ~ age,
+                          data = plotdata, 
+                          family = gaussian(),
+                          prior = normal(0, 0.5),  # Skeptical about large effects
+                          seed = 1234,
+                          refresh = 0)
+```
+
+
+###### Comparison table for different priors
+
+```{r}
+# Create simple comparison table manually
+comparison_table <- data.frame(
+  Model = c("Default", "Custom", "Scaled", "Skeptical"),
+  Prior_Intercept = c("N(227, 39^2)", "N(200, 50^2)", "N(200, 773^2)", "N(227, 39^2)"),
+  Prior_Slope = c("N(0, 6^2)", "N(0.3, 0.1^2)", "N(0, 6^2)", "N(0, 0.5^2)")
+)
+
+kable(comparison_table, 
+      col.names = c("Model", "(Adj.) Prior for Intercept", "(Adj.) Prior for Slope"),
+      caption = "Prior Specifications for Different Models")
+```
+```{r}
+# Extract estimates from all models and combine into a single table
+default_est <- summary(fit1, digits = 2, prob = c(.025, .5, .975))[c("(Intercept)", "age"), c("mean","2.5%", "50%", "97.5%")]
+custom_est <- summary(fit1_custom, digits = 2, prob = c(.025, .5, .975))[c("(Intercept)", "age"), c("mean","2.5%", "50%", "97.5%")]
+scaled_est <- summary(fit1_scaled, digits = 2, prob = c(.025, .5, .975))[c("(Intercept)", "age"), c("mean","2.5%", "50%", "97.5%")]
+skeptical_est <- summary(fit1_skeptical, digits = 2, prob = c(.025, .5, .975))[c("(Intercept)", "age"), c("mean","2.5%", "50%", "97.5%")]
+
+# Create a combined table
+posterior_comparison <- data.frame(
+  Parameter = rep(c("Intercept", "Age"), 4),
+  Model = rep(c("Default", "Custom", "Scaled", "Skeptical"), each = 2),
+  Mean = c(default_est["(Intercept)", "mean"], default_est["age", "mean"],
+           custom_est["(Intercept)", "mean"], custom_est["age", "mean"],
+           scaled_est["(Intercept)", "mean"], scaled_est["age", "mean"],
+           skeptical_est["(Intercept)", "mean"], skeptical_est["age", "mean"]),
+  CI_Lower = c(default_est["(Intercept)", "2.5%"], default_est["age", "2.5%"],
+               custom_est["(Intercept)", "2.5%"], custom_est["age", "2.5%"],
+               scaled_est["(Intercept)", "2.5%"], scaled_est["age", "2.5%"],
+               skeptical_est["(Intercept)", "2.5%"], skeptical_est["age", "2.5%"]),
+  Median = c(default_est["(Intercept)", "50%"], default_est["age", "50%"],
+             custom_est["(Intercept)", "50%"], custom_est["age", "50%"],
+             scaled_est["(Intercept)", "50%"], scaled_est["age", "50%"],
+             skeptical_est["(Intercept)", "50%"], skeptical_est["age", "50%"]),
+  CI_Upper = c(default_est["(Intercept)", "97.5%"], default_est["age", "97.5%"],
+               custom_est["(Intercept)", "97.5%"], custom_est["age", "97.5%"],
+               scaled_est["(Intercept)", "97.5%"], scaled_est["age", "97.5%"],
+               skeptical_est["(Intercept)", "97.5%"], skeptical_est["age", "97.5%"])
+)
+
+# Reshape for better display
+library(tidyr)
+posterior_wide <- posterior_comparison %>%
+  mutate(Estimate = paste0(round(Mean, 2), " [", round(CI_Lower, 2), ", ", round(CI_Upper, 2), "]")) %>%
+  select(Model, Parameter, Estimate) %>%
+  pivot_wider(names_from = Model, values_from = Estimate)
+
+kable(posterior_wide, 
+      caption = "Posterior Estimates (Mean [95% Credible Interval]) for Different Prior Specifications")
+```
 
 #### Comparison of Frequentist and Bayesian interpretation of the slope
 
