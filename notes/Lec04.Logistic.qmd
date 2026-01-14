@@ -5,6 +5,10 @@ name: Lec04.Logistic.qmd
 ---
 
 ```{r}
+library(arm)
+library(Hmisc)
+library(rstanarm)
+library(ggplot2)
 tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 ```
 
@@ -14,7 +18,7 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
     -   Binary data: e.g. sex, death
 
-    -   Nominal (unordered categorical) data: e.g. race, martial status
+    -   Nominal (unordered categorical) data: e.g. race, marital status
 
     -   Ordinal (ordered categorical data): e.g. cancer stage, asthma severity
 
@@ -53,7 +57,7 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 |:-----------|:-----------------------------------------------------|
 | $Y_i$      | Response measured on the $i$th subject               |
 | $X_i$      | Value of the predictor measured on the $i$th subject |
-| $\theta_i$ | Parameter summarizing distribution of $Y_i | X_i$    |
+| $\theta_i$ | Parameter summarizing distribution of $Y_i \mid X_i$    |
 :::
 
 -   The parameter ($\theta_i$) might be the mean, geometric mean, odds, rate, instantaneous risk of an event (hazard), etc.
@@ -124,6 +128,13 @@ General notation for regression model with one predictor
 
     -   Increase precision
 
+
+-   The remainder of these notes will focus on logistic regression for binary outcomes
+
+    -   We will apply the general regression framework described above, where $\theta_i$ represents the odds of the outcome and $g()$ is the logit (log odds) link function
+    
+    -   The principles of borrowing information, defining contrasts, and addressing confounding remain the same as in linear regression
+
 ## Simple Logistic Regression
 
 ### Uses of logistic regression
@@ -142,24 +153,50 @@ General notation for regression model with one predictor
 
 -   When using regression with binary response variables, we typically model the (log) odds using logistic regression
 
-    -   Conceptually there should be no problem modeling the proportion (which is the mean of the distribution)
+    -   Conceptually there should be no problem modeling the proportion (which is the mean of the distribution) using linear regression.  In this case, measures of associations would be the risk difference.
 
     -   However, there are several technical reasons why we do not use linear regression very often with binary responses
 
-    -   Why not use linear regression for binary responses?
+-   Technical problems with linear regression for binary responses:
+    
+    -   Predicted probabilities can fall outside [0,1] range
+    
+    -   Heteroskedasticity: Variance of binary outcome depends on the mean, $\text{Var}(Y|X) = p(X)(1-p(X))$
+        
+        -   Variance is not constant across values of X
+        
+        -   Maximum variance occurs when $p=0.5$, minimum when $p$ is near 0 or 1
+        
+        -   If the scientific goal is association, less problematic with large sample size and robust SEs
+    
+    -   Non-normal residuals (also less problematic with large samples and robust SEs)
+    
+    -   Effect of predictor on probability is constrained to be linear (constant across range)
+        
+        -   A 10-year age increase has same effect on probability regardless of starting age
+        
+        -   This may be implausible when probabilities approach 0 or 1
 
--   Many misconceptions about the advantages and disadvantages of analyzing the odds
+-   Why model odds instead of probabilities or risk differences?
 
-    -   Reasons I consider valid: Scientific basis
-
-        -   Uses of odds ratios in case control studies
-
-        -   Plausibility of linear trends and no effect modifiers
-
-    -   Reasons I consider valid: Statistical basis
-
-        -   There is a mean variance relationship (if not using robust SE) that can be incorporate in the logistic regression model
-
+    -   Scientific basis
+    
+        -   Odds ratios are estimable in case-control studies (as shown above)
+        
+        -   Linear trends in log odds may be more plausible than linear trends in probabilities
+            
+            -   Logit transformation naturally constrains predictions to [0,1]
+            
+            -   Effect modification on the odds ratio scale may be less common than on the probability scale
+    
+    -   Statistical basis
+    
+        -   The mean-variance relationship for binary data is naturally incorporated in the logistic regression likelihood
+            
+            -   Classical logistic regression accounts for heteroskedasticity through the binomial variance structure
+            
+            -   Can still use robust SEs if you want to relax distributional assumptions
+            
 ### Reasons to use logistic regression
 
 -   First (scientific) reason: Case-Control Studies
@@ -194,7 +231,22 @@ General notation for regression model with one predictor
 
     -   Mathematically, these two odds ratios are the same
 
-        -   
+$$\text{OR}_{\text{cohort}} = \frac{\text{Odds of disease in exposed}}{\text{Odds of disease in unexposed}} = \frac{P(D=1|E=1)/P(D=0|E=1)}{P(D=1|E=0)/P(D=0|E=0)}$$
+
+$$= \frac{P(D=1|E=1) \times P(D=0|E=0)}{P(D=0|E=1) \times P(D=1|E=0)}$$
+
+$$\text{OR}_{\text{case-control}} = \frac{\text{Odds of exposure in diseased}}{\text{Odds of exposure in non-diseased}} = \frac{P(E=1|D=1)/P(E=0|D=1)}{P(E=1|D=0)/P(E=0|D=0)}$$
+
+$$= \frac{P(E=1|D=1) \times P(E=0|D=0)}{P(E=0|D=1) \times P(E=1|D=0)}$$
+
+By Bayes' theorem, $P(D=1|E=1) = \frac{P(E=1|D=1) \times P(D=1)}{P(E=1)}$, and similarly for the other conditional probabilities. Substituting these into the cohort odds ratio:
+
+$$\text{OR}_{\text{cohort}} = \frac{\frac{P(E=1|D=1) \times P(D=1)}{P(E=1)} \times \frac{P(E=0|D=0) \times P(D=0)}{P(E=0)}}{\frac{P(E=0|D=1) \times P(D=1)}{P(E=0)} \times \frac{P(E=1|D=0) \times P(D=0)}{P(E=1)}}$$
+
+$$= \frac{P(E=1|D=1) \times P(E=0|D=0)}{P(E=0|D=1) \times P(E=1|D=0)} = \text{OR}_{\text{case-control}}$$
+
+- Thus, the disease odds ratio equals the exposure odds ratio, making the odds ratio estimable from either study design.
+
 
     -   Odds ratios are easy to interpret when investigating rare events
 
@@ -242,7 +294,7 @@ plot(function(x) expit(x), -4,4, ylab="Probabilty", xlab="Predictor")
                 | Positive Scan   | 95%   | (up to 100%) |
                 |                 |       |              |
                 | Difference      | 55%   | Up to 25%    |
-                | Ratio           | 1.64  | $\leq 1.33$  |
+                | Ratio           | 2.38  | $\leq 1.33$  |
 
             -   With the odds, the association can hold without effect modification
 
@@ -255,7 +307,7 @@ plot(function(x) expit(x), -4,4, ylab="Probabilty", xlab="Predictor")
                 |               |       |                  |
                 | Ratio         | 28.5  | $< \infty$       |
 
--   If the o dds of positive scan in men was 85.5, then the odds ratio would be exactly 28.5 (no effect modification)
+-   If the odds of positive scan in men was 85.5, then the odds ratio would be exactly 28.5 (no effect modification)
 
 -   Fourth (statistics) reason:
 
@@ -594,15 +646,19 @@ exp(5*posterior_interval(fit2, prob = 0.95))[2,] # 95% credible interval
 
 ```
 
--   The association between age and probability of survival was estimated using a Bayesian logistic regression model. The model did not adjust for other covariates and assumed a logit link function and Binomial likelihood. We assumed a weakly informative prior distribution for the log odds of survival given age (Normal prior with mean 0 and scale 0.17 for $\beta_1$). Conditional on the data, the posterior mean estimate indicates that comparing two subjects who differ in age by 5 years, the younger subject has a 1.04 fold increased odds of survival compared to the older subject. A 95% credible for this posterior odds ratio is from 1.00 to 1.09.
+-   The association between age and probability of survival was estimated using a Bayesian logistic regression model. The model did not adjust for other covariates and assumed a logit link function and Binomial likelihood. We assumed a weakly informative prior distribution for the log odds of survival given age (Normal prior with mean 0 and scale 0.17 for $\beta_1$). Conditional on the data, the posterior mean estimate indicates that comparing two subjects who differ in age by 5 years, the younger subject has a 1.04 fold increased odds of survival compared to the older subject. A 95% credible interval for this posterior odds ratio is from 1.00 to 1.09.
 
--   Note that this model does not consider gender, so it is averaging over the males and females. We will revisits this analysis where the age effect is analyzed separately in males and females.
+-   Note that this model does not consider gender, so it is averaging over the males and females. We will revisit this analysis where the age effect is analyzed separately in males and females.
 
 ## Inference with Logistic Regression
 
--   The ideas of Signal and Noise found in simple linear regression do not translate well to logistic regression
+-   As with linear regression, we organize the assumptions needed for valid inference into categories based on what type of inference we wish to make
 
--   We do not tend to quantify an error distribution with logistic regression
+    -   The structure of these assumptions parallels those discussed for linear regression, though the specifics differ due to the binary nature of the outcome
+
+-   The ideas of Signal and Noise found in simple linear regression do not translate well to logistic regression because of the implicit mean-variance relationship
+
+    -   We do not tend to quantify an error distribution with logistic regression
 
 -   Valid statistical inference (CIs, p-values) about *associations* requires three general assumptions
 
@@ -646,12 +702,15 @@ exp(5*posterior_interval(fit2, prob = 0.95))[2,] # 95% credible interval
 
         -   Note that we can model transformations of the measured predictor if we feel a straight line is not appropriate
 
-    -   Inference about *individual observations* (prediction intervals, P-values) in specific groups requires no further assumptions because we have binary data
+-   For inference about *individual observations* (prediction intervals, P-values) in specific groups requires no further assumptions because we have binary data
 
-        -   For binary data, if we know the mean (proportion), we know everything about the distribution including the variance
-
-        -   This differs from linear regression where we can have a correct model for the mean, but the assumption about the error distribution (Normality, homoskedasticity) can be incorrect
-
+    -   For binary data, if we know the mean (proportion), we know everything about the distribution including the variance
+    
+    -   This differs from linear regression where we needed Assumption 5 about the error distribution.
+    
+    -   With binary outcomes, once we correctly specify the mean (Assumption 4), the variance is automatically determined: $\text{Var}(Y|X) = p(X)(1-p(X))$
+    
+    
 ### Interpreting "Positive" Results
 
 -   Slope is statistically different from 0 using robust standard errors
@@ -671,6 +730,338 @@ exp(5*posterior_interval(fit2, prob = 0.95))[2,] # 95% credible interval
     -   There may be an association in the parameter considered, but the best fitting line has zero slope
 
     -   There may be a first order trend in the log odds, but we lacked the precision to be confident that it truly exists (a type II error)
+    
+    
+## Model Diagnostics for Understanding Results
+
+-   As with linear regression, diagnostics are tools for understanding the model and results, not for data-driven model modification
+
+-   Key differences from linear regression diagnostics
+
+    -   With binary outcomes, traditional residual plots are less informative
+    
+    -   Individual residuals are not very meaningful (outcome is always 0 or 1)
+    
+    -   Binned residuals can help visualize model fit
+
+-   Useful diagnostics for understanding logistic regression models
+
+    -   Binned residual plots: Group observations by predicted probability and examine average residuals within bins
+    
+    -   Influence diagnostics: Identify observations that have large impact on parameter estimates
+    
+    -   Predicted probabilities: Plot predicted probabilities across range of predictor to see if model behavior is sensible
+
+-   The goal remains understanding whether the model assumptions are plausible and whether results are sensitive to specific observations
+
+    -   Not to iteratively modify the model until diagnostics "look good"
+    
+    -   Pre-specification of the scientific model remains paramount
+
+### Diagnostic examples using Titanic data
+
+-   Recall our simple model of survival by age
+```{r}
+fit.age <- glm(survived ~ age, data=titanic, family="binomial")
+summary(fit.age)
+```
+
+#### (Binned) residuals
+
+-   Binned residual plot
+
+    -   Groups observations into bins based on their predicted probabilities
+    
+    -   Within each bin, calculates the average residual (observed - predicted)
+    
+
+    -   If the model fits well, average residuals should be close to zero across all bins
+    
+    -   Gray lines show the expected 95% bounds (±2 SE) under the model
+    
+    -   Points outside these bounds suggest potential model misfit in those regions
+    
+    
+-   Why we need binned residuals for binary outcomes
+
+    -   With binary data, individual residuals are not very informative
+    
+    -   Each observation has $Y_i = 0$ or $Y_i = 1$, so residuals are either $0 - \hat{p}_i$ or $1 - \hat{p}_i$
+    
+    -   A plot of raw residuals shows two bands corresponding to the two possible outcomes
+```{r}
+#| fig-cap: Raw residual plot (Titanic data)
+
+# Create predicted probabilities and residuals for complete cases
+pred_prob <- predict(fit.age, type="response")
+resid <- titanic$survived[!is.na(titanic$age)] - pred_prob
+
+# Create data frame for plotting
+resid_data <- data.frame(pred_prob = pred_prob, resid = resid)
+
+# Plot raw (unbinned) residuals
+ggplot(resid_data, aes(x = pred_prob, y = resid)) +
+  geom_point(alpha = 0.3) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(x = "Predicted Probability",
+       y = "Raw Residual",
+       title = "Raw Residuals (Not Binned)") +
+  theme_bw()
+```
+
+-   The two bands in the plot correspond to survivors ($Y=1$, upper band) and non-survivors ($Y=0$, lower band)
+
+-   This plot provides little information about model fit - we cannot easily assess systematic deviations
+
+-   Binning the residuals by predicted probability allows us to see average deviations from the model
+
+
+```{r}
+#| fig-cap: "Raw residuals from the logistic regression model of survival by age in the Titanic data. Individual residuals (gray points) form two bands corresponding to survivors (upper) and non-survivors (lower). Vertical boundaries divide predictions into 20 bins of equal width. Red points show the average residual within each bin, connected by a red line. This binning process, shown by the alternating shaded regions, transforms the uninformative raw residual plot into a more interpretable binned residual plot by averaging within prediction ranges."
+
+library(ggplot2)
+
+# Create predicted probabilities and residuals for complete cases
+pred_prob <- predict(fit.age, type="response")
+resid <- titanic$survived[!is.na(titanic$age)] - pred_prob
+
+# Create data frame for plotting
+resid_data <- data.frame(pred_prob = pred_prob, resid = resid)
+
+# Create bins for visualization
+n_bins <- 20
+bin_breaks <- seq(min(pred_prob), max(pred_prob), length.out = n_bins + 1)
+resid_data$bin <- cut(resid_data$pred_prob, breaks = bin_breaks)
+
+# Calculate binned statistics
+binned_data <- aggregate(cbind(resid, pred_prob) ~ bin, 
+                         data = resid_data, 
+                         FUN = mean)
+
+# Create rectangles for shading alternating bins
+bin_rects <- data.frame(
+  xmin = bin_breaks[-length(bin_breaks)],
+  xmax = bin_breaks[-1],
+  shade = rep(c(TRUE, FALSE), length.out = n_bins)
+)
+
+# Plot raw residuals with shaded bins
+ggplot(resid_data, aes(x = pred_prob, y = resid)) +
+  # Add shaded rectangles for alternating bins
+  geom_rect(data = bin_rects[bin_rects$shade, ], 
+            aes(xmin = xmin, xmax = xmax, ymin = -Inf, ymax = Inf),
+            fill = "lightblue", alpha = 0.3, inherit.aes = FALSE) +
+  # Raw residuals
+  geom_point(alpha = 0.3) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  # Add vertical lines to show bin boundaries
+  geom_vline(xintercept = bin_breaks,
+             color = "blue", alpha = 0.5, linetype = "dotted") +
+  # Add average residual within each bin
+  geom_point(data = binned_data, aes(x = pred_prob, y = resid),
+             color = "red", size = 3) +
+  geom_line(data = binned_data, aes(x = pred_prob, y = resid),
+            color = "red", linewidth = 1) +
+  labs(x = "Predicted Probability",
+       y = "Raw Residual") +
+  theme_bw()
+```
+
+
+```{r}
+#| fig-cap: Binned residual plot (Titanic data)
+# Create predicted probabilities and residuals for complete cases
+n_bins <- 20
+resid_data$bin <- cut(resid_data$pred_prob, breaks = n_bins)
+
+# Calculate average residual and predicted probability within each bin
+binned_data <- aggregate(cbind(resid, pred_prob) ~ bin, 
+                         data = resid_data, 
+                         FUN = mean)
+binned_data$n <- table(resid_data$bin)
+binned_data$se <- sqrt(binned_data$pred_prob * (1 - binned_data$pred_prob) / binned_data$n)
+
+# Plot binned residuals
+ggplot(binned_data, aes(x = pred_prob, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_ribbon(aes(ymin = -2*se, ymax = 2*se), alpha = 0.2) +
+  labs(x = "Predicted Probability",
+       y = "Average Residual",
+       title = "Binned Residual Plot") +
+  theme_bw()
+```
+
+-   Interpretation of the binned residual plot
+
+    -   Most points fall within the gray bands, suggesting reasonable model fit
+    
+    -   Any systematic patterns (e.g., all positive residuals at low predictions, all negative at high predictions) would indicate the linear logit assumption may not hold
+    
+    -   Individual points outside the bands are not necessarily problematic - we expect about 5% of bins to fall outside
+    
+    -   Look for systematic deviations rather than isolated points
+    
+    -   In this example, the binned residuals show no strong systematic pattern, supporting the linear relationship between age and log odds of survival
+
+
+#### Predicted versus observed probabilities of survival
+
+
+-   Plot of predicted probabilities across age range
+
+```{r}
+#| include: false
+
+# Get plsmo smoothed estimates (and hide plot)
+# Create data frame from plsmo output
+titanic_complete <- titanic[!is.na(titanic$age), ]
+plsmo_fit <- with(titanic_complete, 
+                  invisible(plsmo(age, survived)))
+smooth_data <- data.frame(age = plsmo_fit$`1`$x, prob = plsmo_fit$`1`$y)
+```
+
+
+```{r}
+#| fig-cap: "Predicted probability of survival versus age in the Titanic data. Gray points show individual observations (0 = died, 1 = survived). The black line shows a smoothed estimate of the observed survival probability using a super smoother. The blue line shows predictions from the logistic regression model assuming a linear relationship between age and log odds of survival. Close agreement between the two lines suggests the linear logit assumption is reasonable across the observed age range."
+
+# Create sequence of ages for model prediction
+age_seq <- seq(min(titanic$age, na.rm=TRUE), 
+               max(titanic$age, na.rm=TRUE), 
+               length.out=100)
+
+# Predict probabilities from model
+pred_data <- data.frame(age = age_seq)
+pred_data$prob <- predict(fit.age, newdata=pred_data, type="response")
+
+# Plot
+ggplot() +
+  # Raw data points
+  geom_point(data = titanic_complete, 
+             aes(x = age, y = survived),
+             alpha = 0.2) +
+  # plsmo smoothed line
+  geom_line(data = smooth_data, 
+            aes(x = age, y = prob, color = "Observed (smoothed)"),
+            linewidth = 1) +
+  # Model prediction line
+  geom_line(data = pred_data, 
+            aes(x = age, y = prob, color = "Model prediction"),
+            linewidth = 1) +
+  scale_color_manual(values = c("Observed (smoothed)" = "black", 
+                                 "Model prediction" = "blue")) +
+  labs(x = "Age (years)",
+       y = "Probability of Survival",
+       color = NULL) +
+  ylim(0, 1) +
+  theme_bw() +
+  theme(legend.position = "top")
+```
+
+-   These plots help us understand how well the linear logit assumption fits the data and whether the model predictions are reasonable across the range of ages
+
+
+
+
+####   Influential observations using delta-betas
+
+-   Delta-beta measures the change in a parameter estimate when a single observation is removed from the analysis
+    
+-   For observation $i$ and parameter $\beta_j$:
+
+   - $\Delta\beta_{ij} = \hat{\beta}_j - \hat{\beta}_{j(-i)}$
+    
+      - $\hat{\beta}_j$ is the estimate using all data
+        
+      - $\hat{\beta}_{j(-i)}$ is the estimate with observation $i$ removed
+    
+-   Large delta-betas indicate observations with substantial influence on parameter estimates
+    
+-   Delta-betas are a general concept applicable to any regression model (linear, logistic, Cox, etc.)
+    
+-   Can calculate delta-betas for any parameter of interest (intercept, slopes, interactions)
+
+
+```{r}
+# Calculate delta-betas for the age coefficient
+n <- sum(!is.na(titanic$age))
+delta_beta_age <- numeric(n)
+
+# Get full model coefficient
+beta_full <- coef(fit.age)["age"]
+
+# Calculate delta-beta for each observation
+titanic_complete <- titanic[!is.na(titanic$age), ]
+for(i in 1:n) {
+  fit_minus_i <- glm(survived ~ age, 
+                     data=titanic_complete[-i, ], 
+                     family="binomial")
+  delta_beta_age[i] <- beta_full - coef(fit_minus_i)["age"]
+}
+
+# Plot delta-betas
+plot(1:n, delta_beta_age, 
+     xlab="Observation Number", 
+     ylab="Delta-Beta for Age Coefficient",
+     main="Influence on Age Effect",
+     pch=16, col=rgb(0,0,0,0.5))
+abline(h=0, lty=2)
+
+# Identify potentially influential observations
+threshold <- 3*sd(delta_beta_age)
+abline(h=c(-threshold, threshold), lty=2, col="red")
+influential <- which(abs(delta_beta_age) > threshold)
+text(influential, delta_beta_age[influential], 
+     labels=influential, pos=2, col="red")
+```
+
+-   Interpretation of delta-betas
+
+    -   Observations with large positive delta-betas increase the age coefficient estimate when included
+    
+    -   Observations with large negative delta-betas decrease the age coefficient estimate when included
+    
+    -   Influential observations are not necessarily "bad" or errors - they may represent legitimate extreme cases
+    
+    -   The goal is to understand which observations influence the results, not to automatically exclude influential points
+
+-   For brevity, identify and examine the most influential observation
+
+```{r}
+# Identify observation with largest absolute delta-beta
+max_influence_index <- which.max(abs(delta_beta_age))
+max_delta_beta <- delta_beta_age[max_influence_index]
+
+# Fit model without this observation
+fit_minus_max <- glm(survived ~ age, 
+                     data=titanic_complete[-max_influence_index, ], 
+                     family="binomial")
+
+# Show details and comparison
+cat(sprintf("Most influential observation:
+  Observation number: %d
+  Age: %.1f
+  Survived: %d
+  Delta-beta: %.6f
+
+Age coefficient (full model): %.6f
+Age coefficient (without observation %d): %.6f
+Difference (delta-beta): %.6f
+",
+max_influence_index,
+titanic_complete$age[max_influence_index],
+titanic_complete$survived[max_influence_index],
+max_delta_beta,
+coef(fit.age)["age"],
+max_influence_index,
+coef(fit_minus_max)["age"],
+coef(fit.age)["age"] - coef(fit_minus_max)["age"]
+))
+```
+
+-   This explicitly shows how removing a single influential observation changes the age coefficient estimate
+
+   - Here, this is an old subject (80) who survived; the model predicts low survival probability at that age, so this point has a relatively strong influence on the age effect estimate.
 
 ## Example analysis revisited: Effect Modification
 
@@ -691,7 +1082,7 @@ with(titanic,
 
     -   Gender modifies the age effect
 
-        -   In males, the probability of survival worsened with age while in female the probability of survival improved with age
+        -   In males, the probability of survival decreased with age while in female the probability of survival increased with age
         -   Emphasizes that the female age slope is positive while the male age slope is negative
 
     -   Age modifies the gender effect
@@ -736,7 +1127,7 @@ exp(5*confint.default(fit.titanic.male,"age"))
     -   Let $X_{1i}$ be the age of subject $i$
     -   Let $X_{2i}$ be an indicator variable for female sex. $X_{2i}=1$ if a subject is female and $X_{2i} = 0$ if a subject is male
 
-$$\textrm{logit}(p_i | X_{1i},X_{2i}) = \beta_0 + \beta_1 * X_{1i} + \beta_{2i} * X_{2i} + \beta_3*X_{1i}*X_{2i}$$
+$$\textrm{logit}(p_i | X_{1i},X_{2i}) = \beta_0 + \beta_1 * X_{1i} + \beta_{2} * X_{2i} + \beta_3*X_{1i}*X_{2i}$$
 
 -   In males, $X_{2i} = 0$, this model reduces to
 
@@ -744,11 +1135,11 @@ $$\textrm{logit}(p_i | X_{1i}, X_{2i}=0) = \beta_0 + \beta_1 * X_{1i}$$
 
 -   In females, $X_{2i} = 1$, this model can be expressed as
 
-$$\textrm{logit}(p | X_{1i}, X_{2i}=1) = (\beta_0+\beta_2) + (\beta_1+\beta_3) * X_{1i}$$
+$$\textrm{logit}(p_i | X_{1i}, X_{2i}=1) = (\beta_0+\beta_2) + (\beta_1+\beta_3) * X_{1i}$$
 
 -   $\hat{\beta_1}$ is the estimate age effect in males
 -   $\hat{\beta_1} + \hat{\beta_3}$ is the estimated age effect in females
--   $\hat{\beta_3}$ is the estimated *difference* between the age effect in male and the age effect in females
+-   $\hat{\beta_3}$ is the estimated *difference* between the age effect in females and the age effect in males
 
 ```{r}
 # female has already been defined in the dataset, but if I wanted to create this variable I could do so
