@@ -401,7 +401,7 @@ plot(function(x) expit(x), -4,4, ylab="Probabilty", xlab="Predictor")
 ### Descriptive Plots
 
 ```{r}
-# | fig-cap: Missing data patterns in the Tianic dataset
+#| fig-cap: Missing data patterns in the Tianic dataset
 library(rms)
 library(ggplot2)
 titanic <- read.csv(file="data/titanic3.csv")
@@ -409,12 +409,12 @@ plot(naclus(titanic)) # study patterns of missing values
 ```
 
 ```{r}
-# | fig-cap: Scatterplot of age versus survival in the Titanic data with lowess smooth.  This simple plot is not very useful because survival is either 0 or 1, making it hard to visualize any trends.
+#| fig-cap: Scatterplot of age versus survival in the Titanic data with lowess smooth.  This simple plot is not very useful because survival is either 0 or 1, making it hard to visualize any trends.
 ggplot(titanic, aes(x=age, y=survived)) + geom_jitter(width=0, height=.02, alpha=.5) + geom_smooth()
 ```
 
 ```{r}
-# | fig-cap: Age versus survival by sex in the Titanic data by age using a super smoother.  The trends are clearer with this smoothing approach.
+#| fig-cap: Age versus survival by sex in the Titanic data by age using a super smoother.  The trends are clearer with this smoothing approach.
 with(titanic, 
      plsmo(age, survived, group=sex, datadensity=T, ylab="Survived (1=Yes, 0=No)", xlab="Age (years)")
 )
@@ -1072,7 +1072,7 @@ coef(fit.age)["age"] - coef(fit_minus_max)["age"]
     -   Here is the plot again describing the trends we see in survival by age and sex (using plsmo).
 
 ```{r}
-# | fig-cap: Age versus survival by gender in the Titanic data by age using a super smoother.
+#| fig-cap: Age versus survival by gender in the Titanic data by age using a super smoother.
 with(titanic, 
      plsmo(age, survived, group=sex, datadensity=T, ylab="Survived (1=Yes, 0=No)", xlab="Age (years)")
 )
