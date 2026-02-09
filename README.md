@@ -1,4 +1,4 @@
-# Website for Bios 6312 at Vanderbilt University (Spring 2024)
+# Website for Bios 6312 at Vanderbilt University (Spring 2026)
 
 
 ## Colors
