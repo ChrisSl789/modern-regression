@@ -49,8 +49,7 @@ website:
           - href: notes/Lec05.Precision.qmd
           - href: notes/Lec06.ConfoundingEffectModificationMediation.qmd
           - href: notes/Lec07.MultivariableModels.qmd
-          - href: notes/Set2.pdf
-            text: "Model Estimation"
+          - href: notes/EstimationAndInference.qmd
           - href: notes/Set6.pdf
             text: "Weighted Regression"
           - href: notes/Lec08.Survival.qmd
