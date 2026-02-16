@@ -24,8 +24,11 @@ These notes provide a comparison of **Frequentist Estimation** and **Bayesian In
 **Scope and Purpose:** These following notes present mathematical derivations and theoretical foundations to provide clarity and deeper understanding of both approaches. The derivations demonstrate in linear and logistic regression
 
 - How maximum likelihood estimation works
+
 - How Bayesian posterior distributions are derived
+
 - The relationship between different estimation methods
+
 - The underlying theory behind the functions you use in practice
 
 **Important Note on Exam Coverage:** 
@@ -50,7 +53,7 @@ These derivation skills are the purview of other courses. For this course, you s
 
 # Linear Regression
 
-We consider a simplified linear regression model with only a slope parameter (no intercept). This model takes the form:
+We consider a simplified linear regression model with only a slope parameter (no intercept) with $X_i$ fixed. This model takes the form:
 
 $$Y_i = \beta X_i + \varepsilon_i$$
 
@@ -283,6 +286,7 @@ The estimates match perfectly, confirming our derivations.
 For the Bayesian approach, we use conditionally conjugate priors. Let $\tau = 1/\sigma^2$ denote the precision. We specify:
 
 - Prior for $\beta$: $\beta \sim N(\mu_0, 1/\tau_0)$
+
 - Prior for $\tau$: $\tau \sim \text{Gamma}(\alpha_0, \beta_0)$
 
 These priors are conditionally conjugate, meaning each complete conditional distribution has a recognizable form.
@@ -363,7 +367,9 @@ $$\propto \exp\left(-\frac{1}{2}\left[\frac{n}{\sigma^2}\theta^2 - \frac{2\sum y
 $$\propto \exp\left(-\frac{1}{2}\left[\left(\frac{n}{\sigma^2} + \frac{1}{\tau_0^2}\right)\theta^2 - 2\left(\frac{\sum y_i}{\sigma^2} + \frac{\mu_0}{\tau_0^2}\right)\theta\right]\right)$$
 
 **Step 3:** Recognize the pattern $\exp(-\frac{1}{2}[A\theta^2 - 2B\theta])$ as Normal with:
+
 - Precision: $\tau_n = \frac{n}{\sigma^2} + \frac{1}{\tau_0^2}$
+
 - Mean: $\mu_n = \frac{B}{A} = \frac{\sum y_i/\sigma^2 + \mu_0/\tau_0^2}{n/\sigma^2 + 1/\tau_0^2}$
 
 Therefore: $\theta | \mathbf{y} \sim N(\mu_n, 1/\tau_n)$
@@ -377,7 +383,9 @@ Starting with: $A\theta^2 - 2B\theta + C$
 Rewrite as: $A(\theta - B/A)^2 + \text{constant}$
 
 The constant doesn't depend on $\theta$, so we can ignore it! This reveals:
+
 - Mean: $\mu = B/A$  
+
 - Variance: $\sigma^2 = 1/A$
 
 ### Why This Works
@@ -423,7 +431,9 @@ Gibbs sampling is a Markov Chain Monte Carlo (MCMC) method that generates sample
 
 1. Initialize $\beta^{(0)}$ and $\tau^{(0)}$
 2. For iteration $t = 1, 2, \ldots, T$:
+
    - Sample $\beta^{(t)} \sim p(\beta | \mathbf{y}, \tau^{(t-1)})$
+   
    - Sample $\tau^{(t)} \sim p(\tau | \mathbf{y}, \beta^{(t)})$
 
 Under regularity conditions, the samples $(\beta^{(t)}, \tau^{(t)})$ converge to samples from the joint posterior $p(\beta, \tau | \mathbf{y})$.
@@ -774,19 +784,29 @@ The Metropolis-Hastings (M-H) algorithm is a general MCMC method for sampling fr
 **Basic Idea:** M-H generates candidate values from a proposal distribution, then decides whether to accept or reject each candidate based on how well it fits the target posterior. This creates a Markov chain that eventually converges to samples from the posterior.
 
 **Algorithm Steps:**
+
 1. Start with an initial value $\beta^{(0)}$
+
 2. For iteration $t = 1, 2, \ldots, T$:
+
    - Propose a new value: $\beta^* \sim q(\beta^* | \beta^{(t-1)})$ (proposal distribution)
+   
    - Calculate acceptance ratio: $r = \frac{p(\beta^* | \mathbf{y}) \cdot q(\beta^{(t-1)} | \beta^*)}{p(\beta^{(t-1)} | \mathbf{y}) \cdot q(\beta^* | \beta^{(t-1)})}$
+   
    - Accept $\beta^* $ with probability $\min(r, 1)$:
+   
      - If accepted: $\beta^{(t)} = \beta^*$
+     
      - If rejected: $\beta^{(t)} = \beta^{(t-1)}$ (stay at current value)
 
 The "random walk" proposal we use here is symmetric ($q(\beta^* | \beta) = q(\beta | \beta^*)$), so the proposal terms cancel and we only need the posterior ratio.
 
 **Important Notes:**
+
 - Proposal variance affects efficiency: too small = slow mixing, too large = low acceptance
+
 - Target acceptance rate is typically 20-40% for complex models
+
 - This goes beyond the scope of this course—see references for details
 
 For more pedagogical introductions to M-H, see Chib & Greenberg (1995) and Robert & Casella (2011).
@@ -935,8 +955,11 @@ $$Y_i = \begin{cases} 1 & \text{if } Z_i > 0 \\ 0 & \text{if } Z_i \leq 0 \end{c
 This formulation allows for straightforward Gibbs sampling:
 
 1. Sample $\beta | \mathbf{Z} \sim N(\mu_n, \sigma_n^2)$ (normal-normal conjugacy)
+
 2. Sample $Z_i | \beta, Y_i$ from truncated normal:
+
    - If $Y_i = 1$: $Z_i \sim N(\beta X_i, 1)$ truncated to $(0, \infty)$
+   
    - If $Y_i = 0$: $Z_i \sim N(\beta X_i, 1)$ truncated to $(-\infty, 0)$
 
 This method is particularly elegant because it converts a complex discrete outcome model into a straightforward continuous data model with truncation. The data augmentation strategy has been widely applied to other generalized linear models.
