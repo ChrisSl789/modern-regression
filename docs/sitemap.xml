@@ -17,87 +17,35 @@
     <lastmod>2024-10-07T17:50:48.273Z</lastmod>
   </url>
   <url>
-    <loc>https://modern-regression.chris-slaughter.com/notes/Lec13.Prediction.html</loc>
-    <lastmod>2025-04-10T17:20:39.824Z</lastmod>
+    <loc>https://modern-regression.chris-slaughter.com/notes/Lec04.Logistic.html</loc>
+    <lastmod>2026-02-02T18:23:05.103Z</lastmod>
   </url>
   <url>
-    <loc>https://modern-regression.chris-slaughter.com/notes/Lec03.SimpleLinearRegression.html</loc>
-    <lastmod>2026-02-02T18:13:23.531Z</lastmod>
+    <loc>https://modern-regression.chris-slaughter.com/notes/Lec08.Survival.html</loc>
+    <lastmod>2025-04-10T17:47:00.866Z</lastmod>
   </url>
   <url>
-    <loc>https://modern-regression.chris-slaughter.com/notes/Lec10.Modeling.Effect.Modification.html</loc>
-    <lastmod>2024-10-07T17:50:48.273Z</lastmod>
+    <loc>https://modern-regression.chris-slaughter.com/notes/Lec.template.html</loc>
+    <lastmod>2025-03-02T22:38:04.702Z</lastmod>
   </url>
   <url>
-    <loc>https://modern-regression.chris-slaughter.com/notes/Lec09.Poisson.html</loc>
-    <lastmod>2025-03-16T22:40:25.460Z</lastmod>
+    <loc>https://modern-regression.chris-slaughter.com/notes/Lec02.review.html</loc>
+    <lastmod>2024-10-07T17:50:48.269Z</lastmod>
   </url>
   <url>
-    <loc>https://modern-regression.chris-slaughter.com/slides/Lec01.Introduction.html</loc>
+    <loc>https://modern-regression.chris-slaughter.com/stataquarto.html</loc>
     <lastmod>2026-01-06T18:02:19.897Z</lastmod>
   </url>
   <url>
-    <loc>https://modern-regression.chris-slaughter.com/labs/lab5-multivariable.html</loc>
-    <lastmod>2024-10-07T17:50:48.269Z</lastmod>
+    <loc>https://modern-regression.chris-slaughter.com/index.html</loc>
+    <lastmod>2026-01-06T18:02:19.896Z</lastmod>
   </url>
   <url>
-    <loc>https://modern-regression.chris-slaughter.com/labs/lab4-precision-questions.html</loc>
-    <lastmod>2024-10-07T17:50:48.269Z</lastmod>
+    <loc>https://modern-regression.chris-slaughter.com/labs/lab-weighted.html</loc>
+    <lastmod>2025-02-20T18:46:47.340Z</lastmod>
   </url>
   <url>
-    <loc>https://modern-regression.chris-slaughter.com/labs/lab3-logistic-questions.html</loc>
-    <lastmod>2025-02-04T22:17:31.564Z</lastmod>
-  </url>
-  <url>
-    <loc>https://modern-regression.chris-slaughter.com/labs/lab6-survival.html</loc>
-    <lastmod>2024-10-07T17:50:48.269Z</lastmod>
-  </url>
-  <url>
-    <loc>https://modern-regression.chris-slaughter.com/labs/lab2-linearassumptions.html</loc>
-    <lastmod>2024-10-07T17:50:48.269Z</lastmod>
-  </url>
-  <url>
-    <loc>https://modern-regression.chris-slaughter.com/computing.html</loc>
-    <lastmod>2026-01-06T18:02:19.539Z</lastmod>
-  </url>
-  <url>
-    <loc>https://modern-regression.chris-slaughter.com/syllabus.html</loc>
-    <lastmod>2026-01-06T18:02:19.897Z</lastmod>
-  </url>
-  <url>
-    <loc>https://modern-regression.chris-slaughter.com/supplemental/mlr-matrix.html</loc>
-    <lastmod>2023-12-29T16:52:31.071Z</lastmod>
-  </url>
-  <url>
-    <loc>https://modern-regression.chris-slaughter.com/supplemental/model-selection-criteria.html</loc>
-    <lastmod>2023-12-29T16:52:31.071Z</lastmod>
-  </url>
-  <url>
-    <loc>https://modern-regression.chris-slaughter.com/supplemental/model-diagnostics-matrix.html</loc>
-    <lastmod>2023-12-29T16:52:31.071Z</lastmod>
-  </url>
-  <url>
-    <loc>https://modern-regression.chris-slaughter.com/supplemental/log-transformations.html</loc>
-    <lastmod>2024-01-29T16:17:46.199Z</lastmod>
-  </url>
-  <url>
-    <loc>https://modern-regression.chris-slaughter.com/supplemental/slr-derivations.html</loc>
-    <lastmod>2023-12-29T16:52:31.071Z</lastmod>
-  </url>
-  <url>
-    <loc>https://modern-regression.chris-slaughter.com/officehours.html</loc>
-    <lastmod>2026-02-02T18:13:23.532Z</lastmod>
-  </url>
-  <url>
-    <loc>https://modern-regression.chris-slaughter.com/LICENSE.html</loc>
-    <lastmod>2023-12-29T21:53:24.189Z</lastmod>
-  </url>
-  <url>
-    <loc>https://modern-regression.chris-slaughter.com/labs/lab-template.html</loc>
-    <lastmod>2024-02-16T21:17:06.084Z</lastmod>
-  </url>
-  <url>
-    <loc>https://modern-regression.chris-slaughter.com/labs/lab1-linearregression.html</loc>
+    <loc>https://modern-regression.chris-slaughter.com/labs/quarto-intro.html</loc>
     <lastmod>2024-10-07T17:50:48.269Z</lastmod>
   </url>
   <url>
@@ -105,36 +53,92 @@
     <lastmod>2024-10-07T17:50:48.269Z</lastmod>
   </url>
   <url>
-    <loc>https://modern-regression.chris-slaughter.com/labs/quarto-intro.html</loc>
+    <loc>https://modern-regression.chris-slaughter.com/labs/lab1-linearregression.html</loc>
     <lastmod>2024-10-07T17:50:48.269Z</lastmod>
   </url>
   <url>
-    <loc>https://modern-regression.chris-slaughter.com/labs/lab-weighted.html</loc>
-    <lastmod>2025-02-20T18:46:47.340Z</lastmod>
+    <loc>https://modern-regression.chris-slaughter.com/labs/lab-template.html</loc>
+    <lastmod>2024-02-16T21:17:06.084Z</lastmod>
   </url>
   <url>
-    <loc>https://modern-regression.chris-slaughter.com/index.html</loc>
-    <lastmod>2026-01-06T18:02:19.896Z</lastmod>
+    <loc>https://modern-regression.chris-slaughter.com/LICENSE.html</loc>
+    <lastmod>2023-12-29T21:53:24.189Z</lastmod>
   </url>
   <url>
-    <loc>https://modern-regression.chris-slaughter.com/stataquarto.html</loc>
+    <loc>https://modern-regression.chris-slaughter.com/officehours.html</loc>
+    <lastmod>2026-02-02T18:13:23.532Z</lastmod>
+  </url>
+  <url>
+    <loc>https://modern-regression.chris-slaughter.com/supplemental/slr-derivations.html</loc>
+    <lastmod>2023-12-29T16:52:31.071Z</lastmod>
+  </url>
+  <url>
+    <loc>https://modern-regression.chris-slaughter.com/supplemental/log-transformations.html</loc>
+    <lastmod>2024-01-29T16:17:46.199Z</lastmod>
+  </url>
+  <url>
+    <loc>https://modern-regression.chris-slaughter.com/supplemental/model-diagnostics-matrix.html</loc>
+    <lastmod>2023-12-29T16:52:31.071Z</lastmod>
+  </url>
+  <url>
+    <loc>https://modern-regression.chris-slaughter.com/supplemental/model-selection-criteria.html</loc>
+    <lastmod>2023-12-29T16:52:31.071Z</lastmod>
+  </url>
+  <url>
+    <loc>https://modern-regression.chris-slaughter.com/supplemental/mlr-matrix.html</loc>
+    <lastmod>2023-12-29T16:52:31.071Z</lastmod>
+  </url>
+  <url>
+    <loc>https://modern-regression.chris-slaughter.com/syllabus.html</loc>
     <lastmod>2026-01-06T18:02:19.897Z</lastmod>
   </url>
   <url>
-    <loc>https://modern-regression.chris-slaughter.com/notes/Lec02.review.html</loc>
+    <loc>https://modern-regression.chris-slaughter.com/computing.html</loc>
+    <lastmod>2026-01-06T18:02:19.539Z</lastmod>
+  </url>
+  <url>
+    <loc>https://modern-regression.chris-slaughter.com/labs/lab2-linearassumptions.html</loc>
     <lastmod>2024-10-07T17:50:48.269Z</lastmod>
   </url>
   <url>
-    <loc>https://modern-regression.chris-slaughter.com/notes/Lec.template.html</loc>
-    <lastmod>2025-03-02T22:38:04.702Z</lastmod>
+    <loc>https://modern-regression.chris-slaughter.com/labs/lab6-survival.html</loc>
+    <lastmod>2024-10-07T17:50:48.269Z</lastmod>
   </url>
   <url>
-    <loc>https://modern-regression.chris-slaughter.com/notes/Lec08.Survival.html</loc>
-    <lastmod>2025-04-10T17:47:00.866Z</lastmod>
+    <loc>https://modern-regression.chris-slaughter.com/labs/lab3-logistic-questions.html</loc>
+    <lastmod>2025-02-04T22:17:31.564Z</lastmod>
   </url>
   <url>
-    <loc>https://modern-regression.chris-slaughter.com/notes/Lec04.Logistic.html</loc>
-    <lastmod>2026-02-02T18:23:05.103Z</lastmod>
+    <loc>https://modern-regression.chris-slaughter.com/labs/lab4-precision-questions.html</loc>
+    <lastmod>2024-10-07T17:50:48.269Z</lastmod>
+  </url>
+  <url>
+    <loc>https://modern-regression.chris-slaughter.com/labs/lab5-multivariable.html</loc>
+    <lastmod>2024-10-07T17:50:48.269Z</lastmod>
+  </url>
+  <url>
+    <loc>https://modern-regression.chris-slaughter.com/slides/Lec01.Introduction.html</loc>
+    <lastmod>2026-01-06T18:02:19.897Z</lastmod>
+  </url>
+  <url>
+    <loc>https://modern-regression.chris-slaughter.com/notes/Lec09.Poisson.html</loc>
+    <lastmod>2025-03-16T22:40:25.460Z</lastmod>
+  </url>
+  <url>
+    <loc>https://modern-regression.chris-slaughter.com/notes/Lec10.Modeling.Effect.Modification.html</loc>
+    <lastmod>2024-10-07T17:50:48.273Z</lastmod>
+  </url>
+  <url>
+    <loc>https://modern-regression.chris-slaughter.com/notes/Lec03.SimpleLinearRegression.html</loc>
+    <lastmod>2026-02-02T18:13:23.531Z</lastmod>
+  </url>
+  <url>
+    <loc>https://modern-regression.chris-slaughter.com/notes/Lec13.Prediction.html</loc>
+    <lastmod>2025-04-10T17:20:39.824Z</lastmod>
+  </url>
+  <url>
+    <loc>https://modern-regression.chris-slaughter.com/notes/log-transform-interpretations.html</loc>
+    <lastmod>2026-02-19T15:59:13.663Z</lastmod>
   </url>
   <url>
     <loc>https://modern-regression.chris-slaughter.com/notes/Lec06.ConfoundingEffectModificationMediation.html</loc>

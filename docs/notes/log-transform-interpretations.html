@@ -1,0 +1,2304 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Chris Slaughter">
+<meta name="dcterms.date" content="2026-02-19">
+
+<title>Interpreting Regression Coefficients: Log Transformations and Scale – BIOS 6312 - Spring 2026</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../supplemental/Baseline_Change_MACH.pdf" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="Interpreting Regression Coefficients: Log Transformations and Scale – BIOS 6312 - Spring 2026">
+<meta property="og:description" content="A Review of Additive vs.&nbsp;Multiplicative Interpretations">
+<meta property="og:site_name" content="BIOS 6312 - Spring 2026">
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../supplemental/slr-derivations.html">Supplemental notes</a></li><li class="breadcrumb-item"><a href="../notes/log-transform-interpretations.html">Interpreting Regression Coefficients: Log Transformations and Scale</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-center sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">BIOS 6312 - Spring 2026</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Course Information</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Schedule</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../slides/Lec01.Introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introductory Slides</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../syllabus.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Syllabus</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../computing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Computing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../officehours.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Office Hours</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Course Notes</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/Lec02.review.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Review of Key Concepts</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/Lec03.SimpleLinearRegression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simple Linear Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/Lec04.Logistic.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Logistic Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/Lec05.Precision.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Precision of Statistical Intefence</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/Lec06.ConfoundingEffectModificationMediation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Confouding, Effect Modification, and Mediation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/Lec07.MultivariableModels.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Multivariable Models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/EstimationAndInference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Frequentist Estimation and Bayesian Inference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/Set6.pdf" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Weighted Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/Lec08.Survival.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction to Survival Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/Lec09.Poisson.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Poisson Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/Lec10.Modeling.Effect.Modification.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Modeling Effect Modification</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/Set8.pdf" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Multinomial and Ordinal Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/Lec11.DoseResponse.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Flexible Modeling of Continuous Predictors</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/Lec12.ANOVA.Model.Choice.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ANOVA and Model Choice</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/Lec13.Prediction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Regression Based Prediction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/BayesDiagnostics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bayesian Model Diagnostics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/Set13.pdf" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Missing Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/Set14.pdf" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">The Bootstrap</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Labs</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/quarto-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Quarto Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab1-linearregression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 1: Linear regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab2-linearassumptions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 2: Assumption in Linear Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab3-logistic-questions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 3: Logistic Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab4-precision-questions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 4: Precision and adjustment for baseline</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab-weighted.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">(Mini) Lab: Weighted Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab5-multivariable.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 5: Multivariable Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab6-survival.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 6: Survival Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/lab7-effectmodification-questions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 7: Poisson Regression and Effect Modification</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/Lab-DiscreteOutcomeRegression.pdf" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 8: Discrete Outcomes Lab</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="https://vanderbilt.box.com/s/rpftvmc9vua2w3gz3jy16phlnsojs6on" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Box folder with .qmd files</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Supplemental notes</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../supplemental/slr-derivations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SLR derivations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../supplemental/model-diagnostics-matrix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Model diagnostics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../supplemental/mlr-matrix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MLR matrix notation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../supplemental/log-transformations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Log transformations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../supplemental/model-selection-criteria.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Model selection criteria</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../supplemental/ReviewMatrixAlgebra.pdf" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Matrix algebra review</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../supplemental/Baseline_Change_MACH.pdf" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Change from baseline and precision</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/log-transform-interpretations.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Interpreting Regression Coefficients: Log Transformations and Scale</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">Statcomp2</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="https://statcomp2.app.vumc.org/modern-regression/" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Main directory</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="https://statcomp2.app.vumc.org/modern-regression/lectures/" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lectures</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="https://statcomp2.app.vumc.org/modern-regression/lectures/data" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">1</span> Overview</a></li>
+  <li><a href="#scenario-1-untransformed-y-untransformed-x-linearlinear" id="toc-scenario-1-untransformed-y-untransformed-x-linearlinear" class="nav-link" data-scroll-target="#scenario-1-untransformed-y-untransformed-x-linearlinear"><span class="header-section-number">2</span> Scenario 1: Untransformed <span class="math inline">\(Y\)</span>, Untransformed <span class="math inline">\(X\)</span> (Linear–Linear)</a>
+  <ul>
+  <li><a href="#model" id="toc-model" class="nav-link" data-scroll-target="#model"><span class="header-section-number">2.1</span> Model</a></li>
+  <li><a href="#general-interpretation" id="toc-general-interpretation" class="nav-link" data-scroll-target="#general-interpretation"><span class="header-section-number">2.2</span> General Interpretation</a></li>
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example"><span class="header-section-number">2.3</span> Example</a></li>
+  <li><a href="#key-features-of-the-linearlinear-model" id="toc-key-features-of-the-linearlinear-model" class="nav-link" data-scroll-target="#key-features-of-the-linearlinear-model"><span class="header-section-number">2.4</span> Key Features of the Linear–Linear Model</a></li>
+  <li><a href="#rescaling-the-predictor" id="toc-rescaling-the-predictor" class="nav-link" data-scroll-target="#rescaling-the-predictor"><span class="header-section-number">2.5</span> Rescaling the Predictor</a></li>
+  </ul></li>
+  <li><a href="#scenario-2-log-transformed-y-untransformed-x-loglinear" id="toc-scenario-2-log-transformed-y-untransformed-x-loglinear" class="nav-link" data-scroll-target="#scenario-2-log-transformed-y-untransformed-x-loglinear"><span class="header-section-number">3</span> Scenario 2: Log-Transformed <span class="math inline">\(Y\)</span>, Untransformed <span class="math inline">\(X\)</span> (Log–Linear)</a>
+  <ul>
+  <li><a href="#model-1" id="toc-model-1" class="nav-link" data-scroll-target="#model-1"><span class="header-section-number">3.1</span> Model</a></li>
+  <li><a href="#general-interpretation-1" id="toc-general-interpretation-1" class="nav-link" data-scroll-target="#general-interpretation-1"><span class="header-section-number">3.2</span> General Interpretation</a></li>
+  <li><a href="#example-1" id="toc-example-1" class="nav-link" data-scroll-target="#example-1"><span class="header-section-number">3.3</span> Example</a></li>
+  <li><a href="#key-features-of-the-loglinear-model" id="toc-key-features-of-the-loglinear-model" class="nav-link" data-scroll-target="#key-features-of-the-loglinear-model"><span class="header-section-number">3.4</span> Key Features of the Log–Linear Model</a></li>
+  </ul></li>
+  <li><a href="#scenario-3-untransformed-y-log-transformed-x-linearlog" id="toc-scenario-3-untransformed-y-log-transformed-x-linearlog" class="nav-link" data-scroll-target="#scenario-3-untransformed-y-log-transformed-x-linearlog"><span class="header-section-number">4</span> Scenario 3: Untransformed <span class="math inline">\(Y\)</span>, Log-Transformed <span class="math inline">\(X\)</span> (Linear–Log)</a>
+  <ul>
+  <li><a href="#model-2" id="toc-model-2" class="nav-link" data-scroll-target="#model-2"><span class="header-section-number">4.1</span> Model</a></li>
+  <li><a href="#general-interpretation-2" id="toc-general-interpretation-2" class="nav-link" data-scroll-target="#general-interpretation-2"><span class="header-section-number">4.2</span> General Interpretation</a>
+  <ul class="collapse">
+  <li><a href="#choice-1-use-base-e-and-rescale" id="toc-choice-1-use-base-e-and-rescale" class="nav-link" data-scroll-target="#choice-1-use-base-e-and-rescale"><span class="header-section-number">4.2.1</span> Choice 1: Use base <span class="math inline">\(e\)</span> and rescale</a></li>
+  <li><a href="#choice-2-pick-a-log-base-with-a-meaningful-scale" id="toc-choice-2-pick-a-log-base-with-a-meaningful-scale" class="nav-link" data-scroll-target="#choice-2-pick-a-log-base-with-a-meaningful-scale"><span class="header-section-number">4.2.2</span> Choice 2: Pick a log base with a meaningful scale</a></li>
+  <li><a href="#converting-between-log-bases" id="toc-converting-between-log-bases" class="nav-link" data-scroll-target="#converting-between-log-bases"><span class="header-section-number">4.2.3</span> Converting Between Log Bases</a></li>
+  </ul></li>
+  <li><a href="#key-features-of-the-linearlog-model" id="toc-key-features-of-the-linearlog-model" class="nav-link" data-scroll-target="#key-features-of-the-linearlog-model"><span class="header-section-number">4.3</span> Key Features of the Linear–Log Model</a></li>
+  </ul></li>
+  <li><a href="#scenario-4-log-transformed-y-log-transformed-x-loglog" id="toc-scenario-4-log-transformed-y-log-transformed-x-loglog" class="nav-link" data-scroll-target="#scenario-4-log-transformed-y-log-transformed-x-loglog"><span class="header-section-number">5</span> Scenario 4: Log-Transformed <span class="math inline">\(Y\)</span>, Log-Transformed <span class="math inline">\(X\)</span> (Log–Log)</a>
+  <ul>
+  <li><a href="#model-3" id="toc-model-3" class="nav-link" data-scroll-target="#model-3"><span class="header-section-number">5.1</span> Model</a></li>
+  <li><a href="#derivation-using-base-e-on-both-sides" id="toc-derivation-using-base-e-on-both-sides" class="nav-link" data-scroll-target="#derivation-using-base-e-on-both-sides"><span class="header-section-number">5.2</span> Derivation Using Base <span class="math inline">\(e\)</span> on Both Sides</a></li>
+  <li><a href="#why-base-e-simplifies-the-loglog-model" id="toc-why-base-e-simplifies-the-loglog-model" class="nav-link" data-scroll-target="#why-base-e-simplifies-the-loglog-model"><span class="header-section-number">5.3</span> Why Base <span class="math inline">\(e\)</span> Simplifies the Log–Log Model</a></li>
+  <li><a href="#using-a-chosen-base-on-the-predictor-side" id="toc-using-a-chosen-base-on-the-predictor-side" class="nav-link" data-scroll-target="#using-a-chosen-base-on-the-predictor-side"><span class="header-section-number">5.4</span> Using a Chosen Base on the Predictor Side</a></li>
+  <li><a href="#example-2" id="toc-example-2" class="nav-link" data-scroll-target="#example-2"><span class="header-section-number">5.5</span> Example</a></li>
+  <li><a href="#when-mixed-bases-become-painful" id="toc-when-mixed-bases-become-painful" class="nav-link" data-scroll-target="#when-mixed-bases-become-painful"><span class="header-section-number">5.6</span> When Mixed Bases Become Painful</a></li>
+  <li><a href="#key-features-of-the-loglog-model" id="toc-key-features-of-the-loglog-model" class="nav-link" data-scroll-target="#key-features-of-the-loglog-model"><span class="header-section-number">5.7</span> Key Features of the Log–Log Model</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/chrissl789/modern-regression/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header">
+
+
+<div class="quarto-title-block d-none d-lg-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../supplemental/slr-derivations.html">Supplemental notes</a></li><li class="breadcrumb-item"><a href="../notes/log-transform-interpretations.html">Interpreting Regression Coefficients: Log Transformations and Scale</a></li></ol></nav><div><h1 class="title">Interpreting Regression Coefficients: Log Transformations and Scale</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<p class="subtitle lead">A Review of Additive vs.&nbsp;Multiplicative Interpretations</p>
+<p class="author">Chris Slaughter</p>
+
+<p class="date">February 19, 2026</p>
+
+</header>
+
+
+<section id="overview" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="overview"><span class="header-section-number">1</span> Overview</h2>
+<p>We consider a simple linear regression with one predictor. Depending on whether we apply a log transformation to the outcome (<span class="math inline">\(Y\)</span>), the predictor (<span class="math inline">\(X\)</span>), or both, the interpretation of <span class="math inline">\(\beta_1\)</span> changes fundamentally:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 15%">
+<col style="width: 62%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Scenario</th>
+<th>Model</th>
+<th>Interpretation of <span class="math inline">\(\beta_1\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Linear–Linear</td>
+<td><span class="math inline">\(E[Y \mid X] = \beta_0 + \beta_1 X\)</span></td>
+<td>Additive change in <span class="math inline">\(Y\)</span></td>
+</tr>
+<tr class="even">
+<td>Log–Linear</td>
+<td><span class="math inline">\(E[\log Y \mid X] = \beta_0 + \beta_1 X\)</span></td>
+<td>Multiplicative change in <span class="math inline">\(Y\)</span></td>
+</tr>
+<tr class="odd">
+<td>Linear–Log</td>
+<td><span class="math inline">\(E[Y \mid X] = \beta_0 + \beta_1 \log X\)</span></td>
+<td>Additive change in <span class="math inline">\(Y\)</span> per multiplicative change in <span class="math inline">\(X\)</span></td>
+</tr>
+<tr class="even">
+<td>Log–Log</td>
+<td><span class="math inline">\(E[\log Y \mid X] = \beta_0 + \beta_1 \log X\)</span></td>
+<td>Multiplicative change in <span class="math inline">\(Y\)</span> per multiplicative change in <span class="math inline">\(X\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>The log–linear structure appears throughout biostatistics. In logistic regression, the outcome is <span class="math inline">\(\log(\text{odds})\)</span>, and the same interpretive logic applies: additive changes in the predictor produce multiplicative changes in the odds. The tools developed in this document — particularly the shift from additive to multiplicative thinking — generalize directly.</p>
+<p>Throughout, we use <strong>FEV</strong> (forced expiratory volume, in mL) as the outcome and <strong>height</strong> (in cm) as the predictor.</p>
+<hr>
+</section>
+<section id="scenario-1-untransformed-y-untransformed-x-linearlinear" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="scenario-1-untransformed-y-untransformed-x-linearlinear"><span class="header-section-number">2</span> Scenario 1: Untransformed <span class="math inline">\(Y\)</span>, Untransformed <span class="math inline">\(X\)</span> (Linear–Linear)</h2>
+<section id="model" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="model"><span class="header-section-number">2.1</span> Model</h3>
+<p><span class="math display">\[
+E[\text{FEV} \mid \text{Height}] = \beta_0 + \beta_1 \cdot \text{Height}
+\]</span></p>
+</section>
+<section id="general-interpretation" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="general-interpretation"><span class="header-section-number">2.2</span> General Interpretation</h3>
+<p><span class="math inline">\(\beta_1\)</span> represents the <strong>additive change</strong> in the expected value of <span class="math inline">\(Y\)</span> for a <strong>one-unit increase</strong> in <span class="math inline">\(X\)</span>.</p>
+<p>This is a straightforward, constant effect: every additional unit of <span class="math inline">\(X\)</span> adds the same amount to the expected value of <span class="math inline">\(Y\)</span>, regardless of where you start on the <span class="math inline">\(X\)</span> scale.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Check Your Understanding">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Check Your Understanding
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If <span class="math inline">\(\beta_1 = 30\)</span>, what does this tell us about two individuals who differ by 1 cm in height? What about two individuals who differ by 5 cm?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>A difference of 1 cm in height corresponds to a difference of 30 mL in expected FEV. A difference of 5 cm corresponds to <span class="math inline">\(5 \times 30 = 150\)</span> mL. The effect scales linearly — you simply multiply the coefficient by the difference in <span class="math inline">\(X\)</span>.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="example" class="level3" data-number="2.3">
+<h3 data-number="2.3" class="anchored" data-anchor-id="example"><span class="header-section-number">2.3</span> Example</h3>
+<p>Suppose we estimate <span class="math inline">\(\hat{\beta}_1 = 30\)</span> mL/cm.</p>
+<p><strong>Interpretation:</strong> For each additional centimeter of height, expected FEV increases by 30 mL.</p>
+<p>This interpretation is <strong>linear</strong> and <strong>additive</strong>:</p>
+<ul>
+<li>Going from 150 cm to 151 cm → expected FEV increases by 30 mL</li>
+<li>Going from 170 cm to 171 cm → expected FEV increases by 30 mL</li>
+<li>Going from 150 cm to 155 cm → expected FEV increases by <span class="math inline">\(5 \times 30 = 150\)</span> mL</li>
+</ul>
+<p>The effect is the same everywhere along the height scale.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Check Your Understanding">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Check Your Understanding
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>What assumption about the FEV–height relationship is embedded in this model? When might this assumption be unreasonable?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The model assumes a <strong>constant, linear</strong> relationship: each cm of height adds the same amount of FEV regardless of whether we’re comparing short individuals or tall individuals. This might be unreasonable if the effect of height on FEV accelerates or decelerates at extremes — for example, if the relationship is steeper during adolescent growth and flattens in adulthood. It also assumes the effect is the same at 140 cm as at 190 cm, which may not hold biologically.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="key-features-of-the-linearlinear-model" class="level3" data-number="2.4">
+<h3 data-number="2.4" class="anchored" data-anchor-id="key-features-of-the-linearlinear-model"><span class="header-section-number">2.4</span> Key Features of the Linear–Linear Model</h3>
+<ul>
+<li>The <strong>units of <span class="math inline">\(\beta_1\)</span></strong> are: [units of <span class="math inline">\(Y\)</span>] per [unit of <span class="math inline">\(X\)</span>] — here, mL per cm.</li>
+<li>The effect is <strong>constant</strong> across all values of <span class="math inline">\(X\)</span>.</li>
+<li>Interpretation requires no back-transformation — what you estimate is what you interpret.</li>
+<li>This is the “default” model most people learn first, and the one where the gap between the math and the interpretation is smallest.</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled" title="Check Your Understanding">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Check Your Understanding
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A colleague tells you “height has a big effect on FEV — <span class="math inline">\(\hat{\beta}_1 = 30\)</span>.” Can you evaluate this claim without additional information? What else would you want to know?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>You cannot evaluate the magnitude of the effect from the coefficient alone. You would want to know: (1) the <strong>units</strong> of both variables (30 mL per cm is very different from 30 L per cm), (2) the <strong>variability</strong> in both <span class="math inline">\(Y\)</span> and <span class="math inline">\(X\)</span> in the study population — a 30 mL/cm effect matters more if height varies by 40 cm than if it varies by 5 cm, and (3) the <strong>precision</strong> of the estimate (confidence interval or standard error). Context and scale always matter for judging effect sizes.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="rescaling-the-predictor" class="level3" data-number="2.5">
+<h3 data-number="2.5" class="anchored" data-anchor-id="rescaling-the-predictor"><span class="header-section-number">2.5</span> Rescaling the Predictor</h3>
+<p>Suppose instead of height in cm, we define a new predictor <span class="math inline">\(X^* = \text{Height}/10\)</span>, so that one unit of <span class="math inline">\(X^*\)</span> corresponds to 10 cm. The model becomes:</p>
+<p><span class="math display">\[
+E[\text{FEV} \mid \text{Height}] = \beta_0 + \beta_1^* \cdot (\text{Height}/10)
+\]</span></p>
+<p>If <span class="math inline">\(\hat{\beta}_1 = 30\)</span> mL per cm, then <span class="math inline">\(\hat{\beta}_1^* = 300\)</span> mL per 10 cm. The interpretation changes — a one-unit change in the rescaled predictor now corresponds to a 10 cm change in height — but nothing else about the model changes: the fitted values, residuals, <span class="math inline">\(R^2\)</span>, and all other measures of model fit are identical.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Check Your Understanding">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Check Your Understanding
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You fit the model with height in cm and get <span class="math inline">\(\hat{\beta}_1 = 30\)</span>, <span class="math inline">\(R^2 = 0.72\)</span>. Your colleague fits the same model with height in meters and gets <span class="math inline">\(\hat{\beta}_1^* = 3000\)</span>. Did the model change? Would you expect the <span class="math inline">\(R^2\)</span> to differ?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The model did <strong>not</strong> change. The two are identical — the same fitted values, the same residuals, the same <span class="math inline">\(R^2 = 0.72\)</span>. Rescaling <span class="math inline">\(X\)</span> only changes the coefficient and its interpretation. One unit in meters = 100 cm, so <span class="math inline">\(\hat{\beta}_1^* = 30 \times 100 = 3000\)</span> mL per meter. This is purely a reparameterization. We will see the exact same idea in the log-transformed scenarios, where changing the log base is the multiplicative analog of this additive rescaling.</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="scenario-2-log-transformed-y-untransformed-x-loglinear" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="scenario-2-log-transformed-y-untransformed-x-loglinear"><span class="header-section-number">3</span> Scenario 2: Log-Transformed <span class="math inline">\(Y\)</span>, Untransformed <span class="math inline">\(X\)</span> (Log–Linear)</h2>
+<section id="model-1" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="model-1"><span class="header-section-number">3.1</span> Model</h3>
+<p><span class="math display">\[
+E[\log_e(\text{FEV}) \mid \text{Height}] = \beta_0 + \beta_1 \cdot \text{Height}
+\]</span></p>
+<p>Here, we apply a log transformation to the <strong>outcome only</strong>. The predictor remains on its original scale.</p>
+</section>
+<section id="general-interpretation-1" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="general-interpretation-1"><span class="header-section-number">3.2</span> General Interpretation</h3>
+<p>An important note: <span class="math inline">\(E[\log(Y)]\)</span> is <strong>not</strong> the same as <span class="math inline">\(\log(E[Y])\)</span> — Jensen’s inequality tells us these differ for any nondegenerate random variable. So we cannot simply exponentiate <span class="math inline">\(E[\log(Y) \mid X]\)</span> and call it <span class="math inline">\(E[Y \mid X]\)</span>.</p>
+<p>What we <em>can</em> interpret is this: <span class="math inline">\(e^{E[\log(Y) \mid X]}\)</span> is the <strong>geometric mean</strong> of <span class="math inline">\(Y\)</span> given <span class="math inline">\(X\)</span>. This is always true, regardless of distributional assumptions. Under additional assumptions (e.g., that <span class="math inline">\(\log(Y) \mid X\)</span> is symmetric, as in a normal or <span class="math inline">\(t\)</span>-distribution for the errors), the geometric mean equals the <strong>median</strong> of <span class="math inline">\(Y\)</span> given <span class="math inline">\(X\)</span>.</p>
+<p>With this understanding, consider two individuals differing by one unit of <span class="math inline">\(X\)</span>, at values <span class="math inline">\(x\)</span> and <span class="math inline">\(x + 1\)</span>:</p>
+<p><span class="math display">\[
+E[\log_e(\text{FEV}) \mid \text{Height} = x + 1] - E[\log_e(\text{FEV}) \mid \text{Height} = x] = \beta_1
+\]</span></p>
+<p>Exponentiating both sides:</p>
+<p><span class="math display">\[
+\frac{e^{E[\log_e(\text{FEV}) \mid \text{Height} = x + 1]}}{e^{E[\log_e(\text{FEV}) \mid \text{Height} = x]}} = e^{\beta_1}
+\]</span></p>
+<p>That is, <span class="math inline">\(e^{\beta_1}\)</span> is the <strong>ratio of geometric mean FEV</strong> at height <span class="math inline">\(x + 1\)</span> to geometric mean FEV at height <span class="math inline">\(x\)</span>. A one-unit increase in <span class="math inline">\(X\)</span> <strong>multiplies</strong> the geometric mean of <span class="math inline">\(Y\)</span> by <span class="math inline">\(e^{\beta_1}\)</span>.</p>
+<p>Equivalently, the <strong>percent change</strong> in the geometric mean of <span class="math inline">\(Y\)</span> for a one-unit increase in <span class="math inline">\(X\)</span> is:</p>
+<p><span class="math display">\[
+100 \times (e^{\beta_1} - 1)\%
+\]</span></p>
+<p>Under the symmetry assumption for <span class="math inline">\(\log(Y) \mid X\)</span>, replace “geometric mean” with “median” throughout.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Check Your Understanding">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Check Your Understanding
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Suppose <span class="math inline">\(\hat{\beta}_1 = 0.005\)</span>. What is the estimated percent change in the geometric mean of FEV per cm of height? Does it matter whether we are going from 150 to 151 cm or from 180 to 181 cm?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(e^{0.005} = 1.00501\)</span>, so each additional cm of height is associated with approximately a <strong>0.5% increase</strong> in the geometric mean of FEV. This is a <strong>multiplicative</strong> (relative) effect, so it does not matter where on the height scale we are — the <em>percent</em> change is the same at 150 cm as at 180 cm. However, the <em>absolute</em> change in mL will be larger for taller individuals (who have larger baseline FEV), because 0.5% of a larger number is a larger number.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="example-1" class="level3" data-number="3.3">
+<h3 data-number="3.3" class="anchored" data-anchor-id="example-1"><span class="header-section-number">3.3</span> Example</h3>
+<p>Suppose <span class="math inline">\(\hat{\beta}_1 = 0.005\)</span> per cm.</p>
+<p><strong>Interpretation:</strong> Each additional cm of height is associated with multiplying the geometric mean of FEV by <span class="math inline">\(e^{0.005} \approx 1.005\)</span>, or equivalently, an estimated <span class="math inline">\(100 \times (e^{0.005} - 1) \approx 0.5\%\)</span> increase in the geometric mean of FEV.</p>
+<p>The multiplicative nature means:</p>
+<ul>
+<li>The geometric mean FEV at 151 cm is <span class="math inline">\(e^{0.005} \approx 1.005\)</span> times the geometric mean FEV at 150 cm</li>
+<li>The geometric mean FEV at 181 cm is <span class="math inline">\(e^{0.005} \approx 1.005\)</span> times the geometric mean FEV at 180 cm</li>
+<li>The <em>ratio</em> is constant, but the <em>absolute</em> difference grows with baseline FEV</li>
+</ul>
+<p>For a 10 cm difference: <span class="math inline">\(e^{10 \times 0.005} = e^{0.05} \approx 1.051\)</span>, so a 10 cm height difference corresponds to multiplying the geometric mean of FEV by about 1.051, or roughly a 5.1% increase.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Check Your Understanding">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Check Your Understanding
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Why is the percent change for a 10 cm difference (5.1%) not exactly 10 times the percent change for a 1 cm difference (0.5%)?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Because multiplication compounds. Each cm multiplies by <span class="math inline">\(e^{0.005}\)</span>, so 10 cm multiplies by <span class="math inline">\((e^{0.005})^{10} = e^{0.05}\)</span>. This is like compound interest — the result of compounding 0.5% ten times is slightly more than <span class="math inline">\(10 \times 0.5\% = 5\%\)</span>. The discrepancy is small here because 0.5% is small, but it becomes more noticeable with larger effects. The exact percent change is always <span class="math inline">\(100 \times (e^{k \cdot \beta_1} - 1)\%\)</span> for a <span class="math inline">\(k\)</span>-unit change.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="key-features-of-the-loglinear-model" class="level3" data-number="3.4">
+<h3 data-number="3.4" class="anchored" data-anchor-id="key-features-of-the-loglinear-model"><span class="header-section-number">3.4</span> Key Features of the Log–Linear Model</h3>
+<ul>
+<li>We are applying a log transformation to the <strong>outcome</strong> — moving from modeling <span class="math inline">\(E[Y \mid X]\)</span> to modeling <span class="math inline">\(E[\log(Y) \mid X]\)</span>.</li>
+<li><span class="math inline">\(e^{\beta_1}\)</span> is the ratio of <strong>geometric means</strong> of <span class="math inline">\(Y\)</span> (always), or the ratio of <strong>medians</strong> (under symmetry of <span class="math inline">\(\log Y \mid X\)</span>). It is not, in general, the ratio of arithmetic means.</li>
+<li><span class="math inline">\(\beta_1\)</span> is on the log scale; exponentiate to get the multiplicative effect on the geometric mean.</li>
+<li>Interpretation is in terms of <strong>percent change</strong> (or ratios) in the geometric mean of <span class="math inline">\(Y\)</span> per unit change in <span class="math inline">\(X\)</span>.</li>
+<li>The relative effect is constant across <span class="math inline">\(X\)</span>, but absolute effects are not.</li>
+<li>This same interpretive structure appears in <strong>logistic regression</strong>, where the outcome is <span class="math inline">\(\log(\text{odds})\)</span>: a one-unit increase in <span class="math inline">\(X\)</span> multiplies the odds by <span class="math inline">\(e^{\beta_1}\)</span>, giving an odds ratio. The math is identical — only the outcome scale differs.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="scenario-3-untransformed-y-log-transformed-x-linearlog" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="scenario-3-untransformed-y-log-transformed-x-linearlog"><span class="header-section-number">4</span> Scenario 3: Untransformed <span class="math inline">\(Y\)</span>, Log-Transformed <span class="math inline">\(X\)</span> (Linear–Log)</h2>
+<section id="model-2" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="model-2"><span class="header-section-number">4.1</span> Model</h3>
+<p><span class="math display">\[
+E[\text{FEV} \mid \text{Height}] = \beta_0 + \beta_1 \cdot \log(\text{Height})
+\]</span></p>
+</section>
+<section id="general-interpretation-2" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="general-interpretation-2"><span class="header-section-number">4.2</span> General Interpretation</h3>
+<p>Now the predictor is on the log scale while the outcome remains untransformed. The interpretation of <span class="math inline">\(\beta_1\)</span> depends on the <strong>base</strong> of the logarithm. There are two practical choices for handling this.</p>
+<section id="choice-1-use-base-e-and-rescale" class="level4" data-number="4.2.1">
+<h4 data-number="4.2.1" class="anchored" data-anchor-id="choice-1-use-base-e-and-rescale"><span class="header-section-number">4.2.1</span> Choice 1: Use base <span class="math inline">\(e\)</span> and rescale</h4>
+<p>With <span class="math inline">\(\log_e\)</span>, a one-unit increase in <span class="math inline">\(\log_e(\text{Height})\)</span> corresponds to multiplying height by <span class="math inline">\(e \approx 2.718\)</span> — a 172% increase in height. Nobody cares about an <span class="math inline">\(e\)</span>-fold change in height. So we need to rescale.</p>
+<p>Consider two individuals whose heights differ by a factor of <span class="math inline">\(r\)</span> — that is, one has height <span class="math inline">\(x\)</span> and the other has height <span class="math inline">\(rx\)</span>:</p>
+<p><span class="math display">\[
+E[\text{FEV} \mid \text{Height} = rx] - E[\text{FEV} \mid \text{Height} = x] = \beta_1 \cdot [\log_e(rx) - \log_e(x)] = \beta_1 \cdot \log_e(r)
+\]</span></p>
+<p>So the change in expected FEV for an <span class="math inline">\(r\)</span>-fold change in height is <span class="math inline">\(\beta_1 \cdot \log_e(r)\)</span>.</p>
+<p>For a 10% increase in height (<span class="math inline">\(r = 1.10\)</span>):</p>
+<p><span class="math display">\[
+\Delta E[\text{FEV}] = \beta_1 \cdot \log_e(1.10) = \beta_1 \times 0.0953
+\]</span></p>
+<p>This works, but requires you to multiply by <span class="math inline">\(\log_e(r)\)</span> every time you want to interpret the coefficient for a specific contrast.</p>
+</section>
+<section id="choice-2-pick-a-log-base-with-a-meaningful-scale" class="level4" data-number="4.2.2">
+<h4 data-number="4.2.2" class="anchored" data-anchor-id="choice-2-pick-a-log-base-with-a-meaningful-scale"><span class="header-section-number">4.2.2</span> Choice 2: Pick a log base with a meaningful scale</h4>
+<p>Just as we can rescale an untransformed predictor (e.g., height in cm vs.&nbsp;height in 10-cm units) to change the interpretation of <span class="math inline">\(\beta_1\)</span> without changing the model, we can choose a log base that maps onto a meaningful multiplicative contrast.</p>
+<p>For example, using <span class="math inline">\(\log_{1.1}(\text{Height})\)</span> means that a one-unit increase in the transformed predictor corresponds to multiplying height by 1.1 — a <strong>10% increase</strong> in height.</p>
+<p><span class="math display">\[
+E[\text{FEV} \mid \text{Height}] = \beta_0 + \beta_1 \cdot \log_{1.1}(\text{Height})
+\]</span></p>
+<p>Now <span class="math inline">\(\beta_1\)</span> directly represents: <strong>the change in expected FEV associated with a 10% increase in height</strong>. No rescaling required.</p>
+<p>The base 1.1 may seem unusual, but it is chosen because it corresponds to a natural, interpretable contrast — exactly the way we might choose to measure height in 10-cm units rather than cm in the additive case.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Check Your Understanding">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Check Your Understanding
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>With <span class="math inline">\(\hat{\beta}_1 = 86\)</span> mL using <span class="math inline">\(\log_{1.1}(\text{Height})\)</span>, interpret the coefficient. Does the estimated change in FEV depend on whether we start at 150 cm or 180 cm?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>A 10% increase in height is associated with an estimated 86 mL increase in expected FEV. This does <strong>not</strong> depend on the starting height — a 10% increase from 150 cm (to 165 cm) and a 10% increase from 180 cm (to 198 cm) both yield the same estimated 86 mL increase in FEV. The model encodes the assumption that the same <strong>proportional</strong> change in height produces the same <strong>absolute</strong> change in FEV.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="converting-between-log-bases" class="level4" data-number="4.2.3">
+<h4 data-number="4.2.3" class="anchored" data-anchor-id="converting-between-log-bases"><span class="header-section-number">4.2.3</span> Converting Between Log Bases</h4>
+<p>Changing the log base is the <strong>multiplicative analog</strong> of rescaling an untransformed predictor. When we go from height in cm to height in 10-cm units, we multiply the coefficient by 10. Similarly, when we change from <span class="math inline">\(\log_e\)</span> to <span class="math inline">\(\log_b\)</span>, we multiply the coefficient by <span class="math inline">\(\log_e(b)\)</span>:</p>
+<p><span class="math display">\[
+\hat{\beta}_{1,\, \text{base } b} = \hat{\beta}_{1,\, \text{base } e} \times \log_e(b)
+\]</span></p>
+<p>Here, <span class="math inline">\(\hat{\beta}_{1,\, \text{base } b}\)</span> denotes the estimated coefficient when the predictor is transformed using base <span class="math inline">\(b\)</span>, and <span class="math inline">\(\hat{\beta}_{1, \, \text{base } e}\)</span> denotes the estimate when using base <span class="math inline">\(e\)</span>.</p>
+<p>The model is the same — the fitted values, residuals, and all measures of model fit are identical. Only the parameterization changes, giving us a coefficient that can be read off directly in terms of a <span class="math inline">\(b\)</span>-fold change in <span class="math inline">\(X\)</span>.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Check Your Understanding">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Check Your Understanding
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You fit a linear–log model using <span class="math inline">\(\log_e(\text{Height})\)</span> and get <span class="math inline">\(\hat{\beta}_{1} = 900\)</span> mL. Your colleague refits the same model using <span class="math inline">\(\log_{1.1}(\text{Height})\)</span>. What coefficient do they get? Does the model fit change?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(\hat{\beta}_{1,\, \text{base } 1.1} = 900 \times \log_e(1.1) = 900 \times 0.0953 = 85.8\)</span> mL. The model fit does not change at all — same predictions, same residuals, same <span class="math inline">\(R^2\)</span>. This is identical in spirit to changing from cm to 10-cm units in the untransformed case: a reparameterization, not a new model. The only difference is that in the additive case we are choosing the additive unit (1 cm vs.&nbsp;10 cm), and in the log case we are choosing the multiplicative unit (an <span class="math inline">\(e\)</span>-fold vs.&nbsp;a 1.1-fold change in height).</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="key-features-of-the-linearlog-model" class="level3" data-number="4.3">
+<h3 data-number="4.3" class="anchored" data-anchor-id="key-features-of-the-linearlog-model"><span class="header-section-number">4.3</span> Key Features of the Linear–Log Model</h3>
+<ul>
+<li><span class="math inline">\(\beta_1\)</span> represents an <strong>additive</strong> change in <span class="math inline">\(Y\)</span> per <strong>multiplicative</strong> change in <span class="math inline">\(X\)</span>.</li>
+<li>The base of the log determines what multiplicative change you’re referencing.</li>
+<li><strong>Choice 1:</strong> Use <span class="math inline">\(\log_e\)</span> and rescale via <span class="math inline">\(\beta_1 \cdot \log_e(r)\)</span> for an <span class="math inline">\(r\)</span>-fold change in <span class="math inline">\(X\)</span>.</li>
+<li><strong>Choice 2:</strong> Choose a base <span class="math inline">\(b\)</span> so that <span class="math inline">\(\beta_1\)</span> directly gives the change in <span class="math inline">\(Y\)</span> per <span class="math inline">\(b\)</span>-fold change in <span class="math inline">\(X\)</span> (e.g., <span class="math inline">\(b = 1.1\)</span> for a 10% change).</li>
+<li>Changing the log base is a reparameterization — the multiplicative analog of rescaling an additive predictor. The model fit is unchanged.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="scenario-4-log-transformed-y-log-transformed-x-loglog" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="scenario-4-log-transformed-y-log-transformed-x-loglog"><span class="header-section-number">5</span> Scenario 4: Log-Transformed <span class="math inline">\(Y\)</span>, Log-Transformed <span class="math inline">\(X\)</span> (Log–Log)</h2>
+<section id="model-3" class="level3" data-number="5.1">
+<h3 data-number="5.1" class="anchored" data-anchor-id="model-3"><span class="header-section-number">5.1</span> Model</h3>
+<p><span class="math display">\[
+E[\log_e(\text{FEV}) \mid \text{Height}] = \beta_0 + \beta_1 \cdot \log(\text{Height})
+\]</span></p>
+<p>Both sides are on the log scale, so <span class="math inline">\(\beta_1\)</span> relates a <strong>multiplicative</strong> change in <span class="math inline">\(X\)</span> to a <strong>multiplicative</strong> change in <span class="math inline">\(Y\)</span>. This is a fully relative model, and the interpretation requires the most care.</p>
+<p>As in Scenario 2, because the outcome is log-transformed, <span class="math inline">\(e^{E[\log(Y) \mid X]}\)</span> is the <strong>geometric mean</strong> of <span class="math inline">\(Y\)</span> given <span class="math inline">\(X\)</span> (always), or the <strong>median</strong> (under symmetry of <span class="math inline">\(\log Y \mid X\)</span>). The same caveat applies: we are not modeling <span class="math inline">\(\log(E[Y \mid X])\)</span>.</p>
+</section>
+<section id="derivation-using-base-e-on-both-sides" class="level3" data-number="5.2">
+<h3 data-number="5.2" class="anchored" data-anchor-id="derivation-using-base-e-on-both-sides"><span class="header-section-number">5.2</span> Derivation Using Base <span class="math inline">\(e\)</span> on Both Sides</h3>
+<p>Let’s work through the algebra carefully using <span class="math inline">\(\log_e\)</span> on both sides, comparing two individuals with heights <span class="math inline">\(x\)</span> and <span class="math inline">\(rx\)</span> (where <span class="math inline">\(r\)</span> is the multiplicative factor, e.g., <span class="math inline">\(r = 1.10\)</span> for a 10% increase):</p>
+<p><span class="math display">\[
+E[\log_e(\text{FEV}) \mid \text{Height} = rx] - E[\log_e(\text{FEV}) \mid \text{Height} = x]
+\]</span></p>
+<p><span class="math display">\[
+= \beta_1 \cdot [\log_e(rx) - \log_e(x)]
+\]</span></p>
+<p><span class="math display">\[
+= \beta_1 \cdot \log_e(r)
+\]</span></p>
+<p>This is the difference in expected <span class="math inline">\(\log_e(\text{FEV})\)</span>. To get back to the original scale, we exponentiate to obtain the ratio of geometric means:</p>
+<p><span class="math display">\[
+\frac{\text{Geometric mean of FEV at height } rx}{\text{Geometric mean of FEV at height } x} = e^{\beta_1 \cdot \log_e(r)}
+\]</span></p>
+<p>Now here is where using <span class="math inline">\(\log_e\)</span> on both sides simplifies things. Using the property <span class="math inline">\(e^{a \cdot \log_e(b)} = b^a\)</span>:</p>
+<p><span class="math display">\[
+e^{\beta_1 \cdot \log_e(r)} = r^{\beta_1}
+\]</span></p>
+<p>So:</p>
+<p><span class="math display">\[
+\frac{\text{Geometric mean of FEV at height } rx}{\text{Geometric mean of FEV at height } x} = r^{\beta_1}
+\]</span></p>
+<p>This is an <strong>elasticity</strong> (or power-law) relationship: if height increases by a factor of <span class="math inline">\(r\)</span>, then the geometric mean of FEV changes by a factor of <span class="math inline">\(r^{\beta_1}\)</span>.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Check Your Understanding">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Check Your Understanding
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>With <span class="math inline">\(\hat{\beta}_1 = 2.5\)</span> in a log–log model (base <span class="math inline">\(e\)</span> on both sides), what happens to the geometric mean of FEV if height increases by 10%? What if height doubles?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>For a 10% increase (<span class="math inline">\(r = 1.10\)</span>): geometric mean FEV ratio <span class="math inline">\(= 1.10^{2.5} = 1.267\)</span>. The geometric mean of FEV increases by about 26.7%.</p>
+<p>For a doubling (<span class="math inline">\(r = 2\)</span>): geometric mean FEV ratio <span class="math inline">\(= 2^{2.5} = 5.66\)</span>. The geometric mean of FEV increases by a factor of about 5.66 (a 466% increase).</p>
+<p>Both the input and the output are on relative/multiplicative scales.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="why-base-e-simplifies-the-loglog-model" class="level3" data-number="5.3">
+<h3 data-number="5.3" class="anchored" data-anchor-id="why-base-e-simplifies-the-loglog-model"><span class="header-section-number">5.3</span> Why Base <span class="math inline">\(e\)</span> Simplifies the Log–Log Model</h3>
+<p>The clean result <span class="math inline">\(r^{\beta_1}\)</span> relies on using <span class="math inline">\(\log_e\)</span> on <strong>both</strong> sides, because the <span class="math inline">\(e^{\log_e(\cdot)}\)</span> identity makes the exponentiation collapse neatly. If we use the same base <span class="math inline">\(b\)</span> on both sides, the coefficient <span class="math inline">\(\beta_1\)</span> is invariant — it doesn’t change with the choice of base, because the change-of-base constant cancels from numerator and denominator:</p>
+<p><span class="math display">\[
+\frac{\log_b(\text{FEV at } rx) - \log_b(\text{FEV at } x)}{\log_b(rx) - \log_b(x)} = \beta_1
+\]</span></p>
+<p>for any base <span class="math inline">\(b\)</span>. So <span class="math inline">\(\beta_1 = 2.5\)</span> whether you use <span class="math inline">\(\log_e\)</span>, <span class="math inline">\(\log_{10}\)</span>, or any other base — <strong>as long as you use the same base on both sides</strong>.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Check Your Understanding">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Check Your Understanding
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Your colleague fits a log–log model using <span class="math inline">\(\log_e\)</span> on both sides and gets <span class="math inline">\(\hat{\beta}_1 = 2.5\)</span>. You refit the same data using <span class="math inline">\(\log_{10}\)</span> on both sides. What <span class="math inline">\(\hat{\beta}_1\)</span> do you get? Does the model fit change?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>You get the same <span class="math inline">\(\hat{\beta}_1 = 2.5\)</span>, and the model fit is identical. The base cancels because it appears as a common scaling factor on both sides. This is analogous to how rescaling both <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> by the same factor in a linear–linear model leaves the slope unchanged. The model is the same — only the scale of the transformed variables changes, and the ratio is preserved.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="using-a-chosen-base-on-the-predictor-side" class="level3" data-number="5.4">
+<h3 data-number="5.4" class="anchored" data-anchor-id="using-a-chosen-base-on-the-predictor-side"><span class="header-section-number">5.4</span> Using a Chosen Base on the Predictor Side</h3>
+<p>In Scenario 3, we saw that choosing a meaningful log base for the predictor (e.g., <span class="math inline">\(\log_{1.1}\)</span>) gives a coefficient that reads directly as the effect of a 10% increase in <span class="math inline">\(X\)</span>. We can do the same thing here, but because the outcome is also log-transformed, the result lives on the log scale and requires exponentiation to interpret.</p>
+<p>Suppose we keep <span class="math inline">\(\log_e\)</span> on the outcome (so that exponentiation gives us geometric means directly) but use <span class="math inline">\(\log_b\)</span> on the predictor to define the contrast of interest. For example, with <span class="math inline">\(b = 1.1\)</span>:</p>
+<p><span class="math display">\[
+E[\log_e(\text{FEV}) \mid \text{Height}] = \beta_0 + \beta_1^* \cdot \log_{1.1}(\text{Height})
+\]</span></p>
+<p>A one-unit increase in <span class="math inline">\(\log_{1.1}(\text{Height})\)</span> corresponds to a 10% increase in height. The difference in expected <span class="math inline">\(\log_e(\text{FEV})\)</span> is:</p>
+<p><span class="math display">\[
+E[\log_e(\text{FEV}) \mid \text{Height} = 1.1x] - E[\log_e(\text{FEV}) \mid \text{Height} = x] = \beta_1^*
+\]</span></p>
+<p>Exponentiating to get the ratio of geometric means:</p>
+<p><span class="math display">\[
+\frac{\text{Geometric mean FEV at height } 1.1x}{\text{Geometric mean FEV at height } x} = e^{\beta_1^*}
+\]</span></p>
+<p>So <span class="math inline">\(e^{\beta_1^*}\)</span> is the <strong>fold-change in the geometric mean of FEV per 10% increase in height</strong>.</p>
+<p>More generally, with <span class="math inline">\(\log_e\)</span> on the outcome and <span class="math inline">\(\log_b\)</span> on the predictor:</p>
+<ul>
+<li><span class="math inline">\(\beta_1^*\)</span> is the change in expected <span class="math inline">\(\log_e(Y)\)</span> per <span class="math inline">\(b\)</span>-fold change in <span class="math inline">\(X\)</span></li>
+<li><span class="math inline">\(e^{\beta_1^*}\)</span> is the <strong>fold-change in the geometric mean of <span class="math inline">\(Y\)</span></strong> per <span class="math inline">\(b\)</span>-fold change in <span class="math inline">\(X\)</span></li>
+</ul>
+</section>
+<section id="example-2" class="level3" data-number="5.5">
+<h3 data-number="5.5" class="anchored" data-anchor-id="example-2"><span class="header-section-number">5.5</span> Example</h3>
+<p>Suppose we use <span class="math inline">\(\log_e\)</span> on FEV and <span class="math inline">\(\log_{1.1}\)</span> on height, and estimate <span class="math inline">\(\hat{\beta}_1^* = 0.237\)</span>.</p>
+<p><strong>Interpretation:</strong> <span class="math inline">\(e^{0.237} = 1.267\)</span>, so a 10% increase in height is associated with multiplying the geometric mean of FEV by 1.267 — a 26.7% increase.</p>
+<p>Compare with the base-<span class="math inline">\(e\)</span>-on-both-sides parameterization: <span class="math inline">\(\hat{\beta}_1 = 2.5\)</span>, and we compute <span class="math inline">\(1.10^{2.5} = 1.267\)</span>. The same answer, obtained differently.</p>
+<p>The relationship between the two parameterizations:</p>
+<p><span class="math display">\[
+\hat{\beta}_1^* = \hat{\beta}_1 \times \log_e(1.1) = 2.5 \times 0.0953 = 0.237
+\]</span></p>
+<div class="callout callout-style-default callout-note callout-titled" title="Check Your Understanding">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Check Your Understanding
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>With <span class="math inline">\(e^{\hat{\beta}_1^*} = 1.267\)</span> (using <span class="math inline">\(\log_{1.1}\)</span> on height), interpret this for a clinician. Then explain: why might you prefer this parameterization over reporting <span class="math inline">\(\hat{\beta}_1 = 2.5\)</span> from the base-<span class="math inline">\(e\)</span> model?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-22" class="callout-22-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>For the clinician: “A 10% increase in height is associated with an estimated 26.7% increase in the geometric mean of FEV.”</p>
+<p>The advantage of this parameterization is <strong>directness</strong>: <span class="math inline">\(e^{\beta_1^*}\)</span> gives the fold-change in the geometric mean of FEV for a specific, interpretable contrast (10% more height) without any additional calculation. With the base-<span class="math inline">\(e\)</span> parameterization, you have the elegant <span class="math inline">\(r^{\beta_1}\)</span> formula, but you need to choose <span class="math inline">\(r\)</span> and compute <span class="math inline">\(r^{2.5}\)</span> to get a concrete answer. With the chosen-base approach, the contrast is baked into the parameterization.</p>
+<p>The tradeoff: if someone asks about a <em>different</em> contrast (e.g., a 5% increase), the base-<span class="math inline">\(e\)</span> version handles it easily (<span class="math inline">\(1.05^{2.5}\)</span>), while the chosen-base version requires converting back.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="when-mixed-bases-become-painful" class="level3" data-number="5.6">
+<h3 data-number="5.6" class="anchored" data-anchor-id="when-mixed-bases-become-painful"><span class="header-section-number">5.6</span> When Mixed Bases Become Painful</h3>
+<p>The approach above — <span class="math inline">\(\log_e\)</span> on the outcome, <span class="math inline">\(\log_b\)</span> on the predictor — works cleanly because we exponentiate with base <span class="math inline">\(e\)</span> to get geometric means, and the chosen base <span class="math inline">\(b\)</span> simply defines the contrast.</p>
+<p>The pain arises if you use a base other than <span class="math inline">\(e\)</span> on the predictor and then want to interpret a <em>different</em> contrast than the one defined by your base. For example, suppose you transformed height using <span class="math inline">\(\log_2\)</span> (a doubling). Your coefficient <span class="math inline">\(\hat{\beta}_1^*\)</span> gives you <span class="math inline">\(e^{\hat{\beta}_1^*}\)</span> as the fold-change in geometric mean FEV per <strong>doubling</strong> of height. But now a collaborator asks: “what about a 10% increase in height?”</p>
+<p>To answer this, you would need to figure out what fraction of a <span class="math inline">\(\log_2\)</span> unit corresponds to a 10% increase — that is, you need <span class="math inline">\(\log_2(1.10) = \log_e(1.10)/\log_e(2) = 0.0953/0.693 = 0.1375\)</span> of a unit — and then compute <span class="math inline">\(e^{0.1375 \cdot \hat{\beta}_1^*}\)</span>. It can be done, but the algebra is cumbersome compared to the base-<span class="math inline">\(e\)</span> version where you simply compute <span class="math inline">\(1.10^{\hat{\beta}_1}\)</span>.</p>
+<p>In practice, the cleanest approach is:</p>
+<ul>
+<li>Use <strong><span class="math inline">\(\log_e\)</span> on the outcome</strong> (because exponentiation with <span class="math inline">\(e\)</span> gives geometric means directly).</li>
+<li>Choose <strong>whatever base is most interpretable on the predictor</strong> (because it defines your primary contrast of interest).</li>
+<li>If you need a different contrast later, consider either converting back to the base-<span class="math inline">\(e\)</span> parameterization or refitting with the new base.</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled" title="Check Your Understanding">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Check Your Understanding
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You fit the log–log model two ways: (1) <span class="math inline">\(\log_e\)</span> on both sides, getting <span class="math inline">\(\hat{\beta}_1 = 2.5\)</span>, and (2) <span class="math inline">\(\log_e\)</span> on FEV with <span class="math inline">\(\log_{1.1}\)</span> on height, getting <span class="math inline">\(\hat{\beta}_1^* = 0.237\)</span>. Did the model change? Did the model fit change?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-24-contents" aria-controls="callout-24" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-24" class="callout-24-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The model did <strong>not</strong> change. The fitted values, residuals, and <span class="math inline">\(R^2\)</span> are all identical. This is a reparameterization — the multiplicative analog of changing from height in cm to height in 10-cm units in the linear–linear case. Just as that additive rescaling changes the coefficient but not the model, changing the log base on the predictor changes the coefficient but not the model. The only difference is what contrast <span class="math inline">\(\beta_1\)</span> describes: a <span class="math inline">\(b\)</span>-fold change in <span class="math inline">\(X\)</span> (here, a 10% increase in height) rather than an <span class="math inline">\(e\)</span>-fold change.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="key-features-of-the-loglog-model" class="level3" data-number="5.7">
+<h3 data-number="5.7" class="anchored" data-anchor-id="key-features-of-the-loglog-model"><span class="header-section-number">5.7</span> Key Features of the Log–Log Model</h3>
+<ul>
+<li>Using base <span class="math inline">\(e\)</span> on both sides: <span class="math inline">\(\beta_1\)</span> is an <strong>elasticity</strong> — if <span class="math inline">\(X\)</span> increases by a factor of <span class="math inline">\(r\)</span>, the geometric mean of <span class="math inline">\(Y\)</span> changes by a factor of <span class="math inline">\(r^{\beta_1}\)</span>.</li>
+<li>The interpretation is fully <strong>multiplicative</strong> on both sides.</li>
+<li><span class="math inline">\(\beta_1\)</span> is <strong>invariant to the log base</strong> as long as the same base is used on both sides.</li>
+<li>Using <span class="math inline">\(\log_e\)</span> on <span class="math inline">\(Y\)</span> and a chosen base <span class="math inline">\(b\)</span> on <span class="math inline">\(X\)</span>: <span class="math inline">\(e^{\beta_1^*}\)</span> is the <strong>fold-change in the geometric mean of <span class="math inline">\(Y\)</span> per <span class="math inline">\(b\)</span>-fold change in <span class="math inline">\(X\)</span></strong>.</li>
+<li>Using a base other than <span class="math inline">\(e\)</span> on the predictor and then wanting a different contrast is painful — stick with <span class="math inline">\(\log_e\)</span> on the outcome and choose the predictor base to match your primary contrast of interest.</li>
+<li>The choice of log base on the predictor is a reparameterization — the multiplicative analog of additive rescaling. The model fit is unchanged.</li>
+</ul>
+
+
+<!-- -->
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/modern-regression\.chris-slaughter\.com");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../supplemental/Baseline_Change_MACH.pdf" class="pagination-link" aria-label="Change from baseline and precision">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Change from baseline and precision</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Interpreting Regression Coefficients: Log Transformations and Scale"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "A Review of Additive vs. Multiplicative Interpretations"</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> html</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## Overview</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>We consider a simple linear regression with one predictor. Depending on whether we apply a log transformation to the outcome ($Y$), the predictor ($X$), or both, the interpretation of $\beta_1$ changes fundamentally:</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>| Scenario | Model | Interpretation of $\beta_1$ |</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>|----------|-------|----------------------------|</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>| Linear–Linear | $E<span class="co">[</span><span class="ot">Y \mid X</span><span class="co">]</span> = \beta_0 + \beta_1 X$ | Additive change in $Y$ |</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>| Log–Linear | $E<span class="co">[</span><span class="ot">\log Y \mid X</span><span class="co">]</span> = \beta_0 + \beta_1 X$ | Multiplicative change in $Y$ |</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>| Linear–Log | $E<span class="co">[</span><span class="ot">Y \mid X</span><span class="co">]</span> = \beta_0 + \beta_1 \log X$ | Additive change in $Y$ per multiplicative change in $X$ |</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>| Log–Log | $E<span class="co">[</span><span class="ot">\log Y \mid X</span><span class="co">]</span> = \beta_0 + \beta_1 \log X$ | Multiplicative change in $Y$ per multiplicative change in $X$ |</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>The log–linear structure appears throughout biostatistics. In logistic regression, the outcome is $\log(\text{odds})$, and the same interpretive logic applies: additive changes in the predictor produce multiplicative changes in the odds. The tools developed in this document — particularly the shift from additive to multiplicative thinking — generalize directly.</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>Throughout, we use **FEV** (forced expiratory volume, in mL) as the outcome and **height** (in cm) as the predictor.</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="fu">## Scenario 1: Untransformed $Y$, Untransformed $X$ (Linear–Linear)</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">### Model</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>E<span class="co">[</span><span class="ot">\text{FEV} \mid \text{Height}</span><span class="co">]</span> = \beta_0 + \beta_1 \cdot \text{Height}</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">### General Interpretation</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>$\beta_1$ represents the **additive change** in the expected value of $Y$ for a **one-unit increase** in $X$.</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>This is a straightforward, constant effect: every additional unit of $X$ adds the same amount to the expected value of $Y$, regardless of where you start on the $X$ scale.</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="Check Your Understanding"}</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>If $\beta_1 = 30$, what does this tell us about two individuals who differ by 1 cm in height? What about two individuals who differ by 5 cm?</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" title="Answer"}</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>A difference of 1 cm in height corresponds to a difference of 30 mL in expected FEV. A difference of 5 cm corresponds to $5 \times 30 = 150$ mL. The effect scales linearly — you simply multiply the coefficient by the difference in $X$.</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="fu">### Example</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>Suppose we estimate $\hat{\beta}_1 = 30$ mL/cm.</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>**Interpretation:** For each additional centimeter of height, expected FEV increases by 30 mL.</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>This interpretation is **linear** and **additive**:</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Going from 150 cm to 151 cm → expected FEV increases by 30 mL</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Going from 170 cm to 171 cm → expected FEV increases by 30 mL</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Going from 150 cm to 155 cm → expected FEV increases by $5 \times 30 = 150$ mL</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>The effect is the same everywhere along the height scale.</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="Check Your Understanding"}</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>What assumption about the FEV–height relationship is embedded in this model? When might this assumption be unreasonable?</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" title="Answer"}</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>The model assumes a **constant, linear** relationship: each cm of height adds the same amount of FEV regardless of whether we're comparing short individuals or tall individuals. This might be unreasonable if the effect of height on FEV accelerates or decelerates at extremes — for example, if the relationship is steeper during adolescent growth and flattens in adulthood. It also assumes the effect is the same at 140 cm as at 190 cm, which may not hold biologically.</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a><span class="fu">### Key Features of the Linear–Linear Model</span></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The **units of $\beta_1$** are: <span class="co">[</span><span class="ot">units of $Y$</span><span class="co">]</span> per <span class="co">[</span><span class="ot">unit of $X$</span><span class="co">]</span> — here, mL per cm.</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The effect is **constant** across all values of $X$.</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Interpretation requires no back-transformation — what you estimate is what you interpret.</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>This is the "default" model most people learn first, and the one where the gap between the math and the interpretation is smallest.</span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="Check Your Understanding"}</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>A colleague tells you "height has a big effect on FEV — $\hat{\beta}_1 = 30$." Can you evaluate this claim without additional information? What else would you want to know?</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" title="Answer"}</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>You cannot evaluate the magnitude of the effect from the coefficient alone. You would want to know: (1) the **units** of both variables (30 mL per cm is very different from 30 L per cm), (2) the **variability** in both $Y$ and $X$ in the study population — a 30 mL/cm effect matters more if height varies by 40 cm than if it varies by 5 cm, and (3) the **precision** of the estimate (confidence interval or standard error). Context and scale always matter for judging effect sizes.</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a><span class="fu">### Rescaling the Predictor</span></span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>Suppose instead of height in cm, we define a new predictor $X^* = \text{Height}/10$, so that one unit of $X^*$ corresponds to 10 cm. The model becomes:</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>E<span class="co">[</span><span class="ot">\text{FEV} \mid \text{Height}</span><span class="co">]</span> = \beta_0 + \beta_1^* \cdot (\text{Height}/10)</span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>If $\hat{\beta}_1 = 30$ mL per cm, then $\hat{\beta}_1^* = 300$ mL per 10 cm. The interpretation changes — a one-unit change in the rescaled predictor now corresponds to a 10 cm change in height — but nothing else about the model changes: the fitted values, residuals, $R^2$, and all other measures of model fit are identical.</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="Check Your Understanding"}</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>You fit the model with height in cm and get $\hat{\beta}_1 = 30$, $R^2 = 0.72$. Your colleague fits the same model with height in meters and gets $\hat{\beta}_1^* = 3000$. Did the model change? Would you expect the $R^2$ to differ?</span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" title="Answer"}</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>The model did **not** change. The two are identical — the same fitted values, the same residuals, the same $R^2 = 0.72$. Rescaling $X$ only changes the coefficient and its interpretation. One unit in meters = 100 cm, so $\hat{\beta}_1^* = 30 \times 100 = 3000$ mL per meter. This is purely a reparameterization. We will see the exact same idea in the log-transformed scenarios, where changing the log base is the multiplicative analog of this additive rescaling.</span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a><span class="fu">## Scenario 2: Log-Transformed $Y$, Untransformed $X$ (Log–Linear)</span></span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a><span class="fu">### Model</span></span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>E<span class="co">[</span><span class="ot">\log_e(\text{FEV}) \mid \text{Height}</span><span class="co">]</span> = \beta_0 + \beta_1 \cdot \text{Height}</span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>Here, we apply a log transformation to the **outcome only**. The predictor remains on its original scale.</span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a><span class="fu">### General Interpretation</span></span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>An important note: $E<span class="co">[</span><span class="ot">\log(Y)</span><span class="co">]</span>$ is **not** the same as $\log(E<span class="co">[</span><span class="ot">Y</span><span class="co">]</span>)$ — Jensen's inequality tells us these differ for any nondegenerate random variable. So we cannot simply exponentiate $E<span class="co">[</span><span class="ot">\log(Y) \mid X</span><span class="co">]</span>$ and call it $E<span class="co">[</span><span class="ot">Y \mid X</span><span class="co">]</span>$.</span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>What we *can* interpret is this: $e^{E[\log(Y) \mid X]}$ is the **geometric mean** of $Y$ given $X$. This is always true, regardless of distributional assumptions. Under additional assumptions (e.g., that $\log(Y) \mid X$ is symmetric, as in a normal or $t$-distribution for the errors), the geometric mean equals the **median** of $Y$ given $X$.</span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>With this understanding, consider two individuals differing by one unit of $X$, at values $x$ and $x + 1$:</span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>E<span class="co">[</span><span class="ot">\log_e(\text{FEV}) \mid \text{Height} = x + 1</span><span class="co">]</span> - E<span class="co">[</span><span class="ot">\log_e(\text{FEV}) \mid \text{Height} = x</span><span class="co">]</span> = \beta_1</span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>Exponentiating both sides:</span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>\frac{e^{E<span class="co">[</span><span class="ot">\log_e(\text{FEV}) \mid \text{Height} = x + 1</span><span class="co">]</span>}}{e^{E<span class="co">[</span><span class="ot">\log_e(\text{FEV}) \mid \text{Height} = x</span><span class="co">]</span>}} = e^{\beta_1}</span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>That is, $e^{\beta_1}$ is the **ratio of geometric mean FEV** at height $x + 1$ to geometric mean FEV at height $x$. A one-unit increase in $X$ **multiplies** the geometric mean of $Y$ by $e^{\beta_1}$.</span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>Equivalently, the **percent change** in the geometric mean of $Y$ for a one-unit increase in $X$ is:</span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>100 \times (e^{\beta_1} - 1)\%</span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a>Under the symmetry assumption for $\log(Y) \mid X$, replace "geometric mean" with "median" throughout.</span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="Check Your Understanding"}</span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a>Suppose $\hat{\beta}_1 = 0.005$. What is the estimated percent change in the geometric mean of FEV per cm of height? Does it matter whether we are going from 150 to 151 cm or from 180 to 181 cm?</span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" title="Answer"}</span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a>$e^{0.005} = 1.00501$, so each additional cm of height is associated with approximately a **0.5% increase** in the geometric mean of FEV. This is a **multiplicative** (relative) effect, so it does not matter where on the height scale we are — the *percent* change is the same at 150 cm as at 180 cm. However, the *absolute* change in mL will be larger for taller individuals (who have larger baseline FEV), because 0.5% of a larger number is a larger number.</span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a><span class="fu">### Example</span></span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>Suppose $\hat{\beta}_1 = 0.005$ per cm.</span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a>**Interpretation:** Each additional cm of height is associated with multiplying the geometric mean of FEV by $e^{0.005} \approx 1.005$, or equivalently, an estimated $100 \times (e^{0.005} - 1) \approx 0.5\%$ increase in the geometric mean of FEV.</span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a>The multiplicative nature means:</span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The geometric mean FEV at 151 cm is $e^{0.005} \approx 1.005$ times the geometric mean FEV at 150 cm</span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The geometric mean FEV at 181 cm is $e^{0.005} \approx 1.005$ times the geometric mean FEV at 180 cm</span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The *ratio* is constant, but the *absolute* difference grows with baseline FEV</span>
+<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a>For a 10 cm difference: $e^{10 \times 0.005} = e^{0.05} \approx 1.051$, so a 10 cm height difference corresponds to multiplying the geometric mean of FEV by about 1.051, or roughly a 5.1% increase.</span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="Check Your Understanding"}</span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a>Why is the percent change for a 10 cm difference (5.1%) not exactly 10 times the percent change for a 1 cm difference (0.5%)?</span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" title="Answer"}</span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a>Because multiplication compounds. Each cm multiplies by $e^{0.005}$, so 10 cm multiplies by $(e^{0.005})^{10} = e^{0.05}$. This is like compound interest — the result of compounding 0.5% ten times is slightly more than $10 \times 0.5\% = 5\%$. The discrepancy is small here because 0.5% is small, but it becomes more noticeable with larger effects. The exact percent change is always $100 \times (e^{k \cdot \beta_1} - 1)\%$ for a $k$-unit change.</span>
+<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a><span class="fu">### Key Features of the Log–Linear Model</span></span>
+<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>We are applying a log transformation to the **outcome** — moving from modeling $E<span class="co">[</span><span class="ot">Y \mid X</span><span class="co">]</span>$ to modeling $E<span class="co">[</span><span class="ot">\log(Y) \mid X</span><span class="co">]</span>$.</span>
+<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$e^{\beta_1}$ is the ratio of **geometric means** of $Y$ (always), or the ratio of **medians** (under symmetry of $\log Y \mid X$). It is not, in general, the ratio of arithmetic means.</span>
+<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\beta_1$ is on the log scale; exponentiate to get the multiplicative effect on the geometric mean.</span>
+<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Interpretation is in terms of **percent change** (or ratios) in the geometric mean of $Y$ per unit change in $X$.</span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The relative effect is constant across $X$, but absolute effects are not.</span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>This same interpretive structure appears in **logistic regression**, where the outcome is $\log(\text{odds})$: a one-unit increase in $X$ multiplies the odds by $e^{\beta_1}$, giving an odds ratio. The math is identical — only the outcome scale differs.</span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a><span class="fu">## Scenario 3: Untransformed $Y$, Log-Transformed $X$ (Linear–Log)</span></span>
+<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a><span class="fu">### Model</span></span>
+<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a>E<span class="co">[</span><span class="ot">\text{FEV} \mid \text{Height}</span><span class="co">]</span> = \beta_0 + \beta_1 \cdot \log(\text{Height})</span>
+<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a><span class="fu">### General Interpretation</span></span>
+<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a>Now the predictor is on the log scale while the outcome remains untransformed. The interpretation of $\beta_1$ depends on the **base** of the logarithm. There are two practical choices for handling this.</span>
+<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Choice 1: Use base $e$ and rescale</span></span>
+<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a>With $\log_e$, a one-unit increase in $\log_e(\text{Height})$ corresponds to multiplying height by $e \approx 2.718$ — a 172% increase in height. Nobody cares about an $e$-fold change in height. So we need to rescale.</span>
+<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a>Consider two individuals whose heights differ by a factor of $r$ — that is, one has height $x$ and the other has height $rx$:</span>
+<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a>E<span class="co">[</span><span class="ot">\text{FEV} \mid \text{Height} = rx</span><span class="co">]</span> - E<span class="co">[</span><span class="ot">\text{FEV} \mid \text{Height} = x</span><span class="co">]</span> = \beta_1 \cdot <span class="co">[</span><span class="ot">\log_e(rx) - \log_e(x)</span><span class="co">]</span> = \beta_1 \cdot \log_e(r)</span>
+<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a>So the change in expected FEV for an $r$-fold change in height is $\beta_1 \cdot \log_e(r)$.</span>
+<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a>For a 10% increase in height ($r = 1.10$):</span>
+<span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a>\Delta E<span class="co">[</span><span class="ot">\text{FEV}</span><span class="co">]</span> = \beta_1 \cdot \log_e(1.10) = \beta_1 \times 0.0953</span>
+<span id="cb1-210"><a href="#cb1-210" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-211"><a href="#cb1-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-212"><a href="#cb1-212" aria-hidden="true" tabindex="-1"></a>This works, but requires you to multiply by $\log_e(r)$ every time you want to interpret the coefficient for a specific contrast.</span>
+<span id="cb1-213"><a href="#cb1-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-214"><a href="#cb1-214" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Choice 2: Pick a log base with a meaningful scale</span></span>
+<span id="cb1-215"><a href="#cb1-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-216"><a href="#cb1-216" aria-hidden="true" tabindex="-1"></a>Just as we can rescale an untransformed predictor (e.g., height in cm vs. height in 10-cm units) to change the interpretation of $\beta_1$ without changing the model, we can choose a log base that maps onto a meaningful multiplicative contrast.</span>
+<span id="cb1-217"><a href="#cb1-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-218"><a href="#cb1-218" aria-hidden="true" tabindex="-1"></a>For example, using $\log_{1.1}(\text{Height})$ means that a one-unit increase in the transformed predictor corresponds to multiplying height by 1.1 — a **10% increase** in height.</span>
+<span id="cb1-219"><a href="#cb1-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-220"><a href="#cb1-220" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-221"><a href="#cb1-221" aria-hidden="true" tabindex="-1"></a>E<span class="co">[</span><span class="ot">\text{FEV} \mid \text{Height}</span><span class="co">]</span> = \beta_0 + \beta_1 \cdot \log_{1.1}(\text{Height})</span>
+<span id="cb1-222"><a href="#cb1-222" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-223"><a href="#cb1-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-224"><a href="#cb1-224" aria-hidden="true" tabindex="-1"></a>Now $\beta_1$ directly represents: **the change in expected FEV associated with a 10% increase in height**. No rescaling required.</span>
+<span id="cb1-225"><a href="#cb1-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-226"><a href="#cb1-226" aria-hidden="true" tabindex="-1"></a>The base 1.1 may seem unusual, but it is chosen because it corresponds to a natural, interpretable contrast — exactly the way we might choose to measure height in 10-cm units rather than cm in the additive case.</span>
+<span id="cb1-227"><a href="#cb1-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-228"><a href="#cb1-228" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="Check Your Understanding"}</span>
+<span id="cb1-229"><a href="#cb1-229" aria-hidden="true" tabindex="-1"></a>With $\hat{\beta}_1 = 86$ mL using $\log_{1.1}(\text{Height})$, interpret the coefficient. Does the estimated change in FEV depend on whether we start at 150 cm or 180 cm?</span>
+<span id="cb1-230"><a href="#cb1-230" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-231"><a href="#cb1-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-232"><a href="#cb1-232" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" title="Answer"}</span>
+<span id="cb1-233"><a href="#cb1-233" aria-hidden="true" tabindex="-1"></a>A 10% increase in height is associated with an estimated 86 mL increase in expected FEV. This does **not** depend on the starting height — a 10% increase from 150 cm (to 165 cm) and a 10% increase from 180 cm (to 198 cm) both yield the same estimated 86 mL increase in FEV. The model encodes the assumption that the same **proportional** change in height produces the same **absolute** change in FEV.</span>
+<span id="cb1-234"><a href="#cb1-234" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-235"><a href="#cb1-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-236"><a href="#cb1-236" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Converting Between Log Bases</span></span>
+<span id="cb1-237"><a href="#cb1-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-238"><a href="#cb1-238" aria-hidden="true" tabindex="-1"></a>Changing the log base is the **multiplicative analog** of rescaling an untransformed predictor. When we go from height in cm to height in 10-cm units, we multiply the coefficient by 10. Similarly, when we change from $\log_e$ to $\log_b$, we multiply the coefficient by $\log_e(b)$:</span>
+<span id="cb1-239"><a href="#cb1-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-240"><a href="#cb1-240" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-241"><a href="#cb1-241" aria-hidden="true" tabindex="-1"></a>\hat{\beta}_{1,\, \text{base } b} = \hat{\beta}_{1,\, \text{base } e} \times \log_e(b)</span>
+<span id="cb1-242"><a href="#cb1-242" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-243"><a href="#cb1-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-244"><a href="#cb1-244" aria-hidden="true" tabindex="-1"></a>Here, $\hat{\beta}_{1,\, \text{base } b}$ denotes the estimated coefficient when the predictor is transformed using base $b$, and $\hat{\beta}_{1, \, \text{base } e}$ denotes the estimate when using base $e$.</span>
+<span id="cb1-245"><a href="#cb1-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-246"><a href="#cb1-246" aria-hidden="true" tabindex="-1"></a>The model is the same — the fitted values, residuals, and all measures of model fit are identical. Only the parameterization changes, giving us a coefficient that can be read off directly in terms of a $b$-fold change in $X$.</span>
+<span id="cb1-247"><a href="#cb1-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-248"><a href="#cb1-248" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="Check Your Understanding"}</span>
+<span id="cb1-249"><a href="#cb1-249" aria-hidden="true" tabindex="-1"></a>You fit a linear–log model using $\log_e(\text{Height})$ and get $\hat{\beta}_{1} = 900$ mL. Your colleague refits the same model using $\log_{1.1}(\text{Height})$. What coefficient do they get? Does the model fit change?</span>
+<span id="cb1-250"><a href="#cb1-250" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-251"><a href="#cb1-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-252"><a href="#cb1-252" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" title="Answer"}</span>
+<span id="cb1-253"><a href="#cb1-253" aria-hidden="true" tabindex="-1"></a>$\hat{\beta}_{1,\, \text{base } 1.1} = 900 \times \log_e(1.1) = 900 \times 0.0953 = 85.8$ mL. The model fit does not change at all — same predictions, same residuals, same $R^2$. This is identical in spirit to changing from cm to 10-cm units in the untransformed case: a reparameterization, not a new model. The only difference is that in the additive case we are choosing the additive unit (1 cm vs. 10 cm), and in the log case we are choosing the multiplicative unit (an $e$-fold vs. a 1.1-fold change in height).</span>
+<span id="cb1-254"><a href="#cb1-254" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-255"><a href="#cb1-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-256"><a href="#cb1-256" aria-hidden="true" tabindex="-1"></a><span class="fu">### Key Features of the Linear–Log Model</span></span>
+<span id="cb1-257"><a href="#cb1-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-258"><a href="#cb1-258" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\beta_1$ represents an **additive** change in $Y$ per **multiplicative** change in $X$.</span>
+<span id="cb1-259"><a href="#cb1-259" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The base of the log determines what multiplicative change you're referencing.</span>
+<span id="cb1-260"><a href="#cb1-260" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Choice 1:** Use $\log_e$ and rescale via $\beta_1 \cdot \log_e(r)$ for an $r$-fold change in $X$.</span>
+<span id="cb1-261"><a href="#cb1-261" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Choice 2:** Choose a base $b$ so that $\beta_1$ directly gives the change in $Y$ per $b$-fold change in $X$ (e.g., $b = 1.1$ for a 10% change).</span>
+<span id="cb1-262"><a href="#cb1-262" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Changing the log base is a reparameterization — the multiplicative analog of rescaling an additive predictor. The model fit is unchanged.</span>
+<span id="cb1-263"><a href="#cb1-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-264"><a href="#cb1-264" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb1-265"><a href="#cb1-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-266"><a href="#cb1-266" aria-hidden="true" tabindex="-1"></a><span class="fu">## Scenario 4: Log-Transformed $Y$, Log-Transformed $X$ (Log–Log)</span></span>
+<span id="cb1-267"><a href="#cb1-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-268"><a href="#cb1-268" aria-hidden="true" tabindex="-1"></a><span class="fu">### Model</span></span>
+<span id="cb1-269"><a href="#cb1-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-270"><a href="#cb1-270" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-271"><a href="#cb1-271" aria-hidden="true" tabindex="-1"></a>E<span class="co">[</span><span class="ot">\log_e(\text{FEV}) \mid \text{Height}</span><span class="co">]</span> = \beta_0 + \beta_1 \cdot \log(\text{Height})</span>
+<span id="cb1-272"><a href="#cb1-272" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-273"><a href="#cb1-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-274"><a href="#cb1-274" aria-hidden="true" tabindex="-1"></a>Both sides are on the log scale, so $\beta_1$ relates a **multiplicative** change in $X$ to a **multiplicative** change in $Y$. This is a fully relative model, and the interpretation requires the most care.</span>
+<span id="cb1-275"><a href="#cb1-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-276"><a href="#cb1-276" aria-hidden="true" tabindex="-1"></a>As in Scenario 2, because the outcome is log-transformed, $e^{E<span class="co">[</span><span class="ot">\log(Y) \mid X</span><span class="co">]</span>}$ is the **geometric mean** of $Y$ given $X$ (always), or the **median** (under symmetry of $\log Y \mid X$). The same caveat applies: we are not modeling $\log(E<span class="co">[</span><span class="ot">Y \mid X</span><span class="co">]</span>)$.</span>
+<span id="cb1-277"><a href="#cb1-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-278"><a href="#cb1-278" aria-hidden="true" tabindex="-1"></a><span class="fu">### Derivation Using Base $e$ on Both Sides</span></span>
+<span id="cb1-279"><a href="#cb1-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-280"><a href="#cb1-280" aria-hidden="true" tabindex="-1"></a>Let's work through the algebra carefully using $\log_e$ on both sides, comparing two individuals with heights $x$ and $rx$ (where $r$ is the multiplicative factor, e.g., $r = 1.10$ for a 10% increase):</span>
+<span id="cb1-281"><a href="#cb1-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-282"><a href="#cb1-282" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-283"><a href="#cb1-283" aria-hidden="true" tabindex="-1"></a>E<span class="co">[</span><span class="ot">\log_e(\text{FEV}) \mid \text{Height} = rx</span><span class="co">]</span> - E<span class="co">[</span><span class="ot">\log_e(\text{FEV}) \mid \text{Height} = x</span><span class="co">]</span></span>
+<span id="cb1-284"><a href="#cb1-284" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-285"><a href="#cb1-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-286"><a href="#cb1-286" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-287"><a href="#cb1-287" aria-hidden="true" tabindex="-1"></a>= \beta_1 \cdot <span class="co">[</span><span class="ot">\log_e(rx) - \log_e(x)</span><span class="co">]</span></span>
+<span id="cb1-288"><a href="#cb1-288" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-289"><a href="#cb1-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-290"><a href="#cb1-290" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-291"><a href="#cb1-291" aria-hidden="true" tabindex="-1"></a>= \beta_1 \cdot \log_e(r)</span>
+<span id="cb1-292"><a href="#cb1-292" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-293"><a href="#cb1-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-294"><a href="#cb1-294" aria-hidden="true" tabindex="-1"></a>This is the difference in expected $\log_e(\text{FEV})$. To get back to the original scale, we exponentiate to obtain the ratio of geometric means:</span>
+<span id="cb1-295"><a href="#cb1-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-296"><a href="#cb1-296" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-297"><a href="#cb1-297" aria-hidden="true" tabindex="-1"></a>\frac{\text{Geometric mean of FEV at height } rx}{\text{Geometric mean of FEV at height } x} = e^{\beta_1 \cdot \log_e(r)}</span>
+<span id="cb1-298"><a href="#cb1-298" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-299"><a href="#cb1-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-300"><a href="#cb1-300" aria-hidden="true" tabindex="-1"></a>Now here is where using $\log_e$ on both sides simplifies things. Using the property $e^{a \cdot \log_e(b)} = b^a$:</span>
+<span id="cb1-301"><a href="#cb1-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-302"><a href="#cb1-302" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-303"><a href="#cb1-303" aria-hidden="true" tabindex="-1"></a>e^{\beta_1 \cdot \log_e(r)} = r^{\beta_1}</span>
+<span id="cb1-304"><a href="#cb1-304" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-305"><a href="#cb1-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-306"><a href="#cb1-306" aria-hidden="true" tabindex="-1"></a>So:</span>
+<span id="cb1-307"><a href="#cb1-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-308"><a href="#cb1-308" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-309"><a href="#cb1-309" aria-hidden="true" tabindex="-1"></a>\frac{\text{Geometric mean of FEV at height } rx}{\text{Geometric mean of FEV at height } x} = r^{\beta_1}</span>
+<span id="cb1-310"><a href="#cb1-310" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-311"><a href="#cb1-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-312"><a href="#cb1-312" aria-hidden="true" tabindex="-1"></a>This is an **elasticity** (or power-law) relationship: if height increases by a factor of $r$, then the geometric mean of FEV changes by a factor of $r^{\beta_1}$.</span>
+<span id="cb1-313"><a href="#cb1-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-314"><a href="#cb1-314" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="Check Your Understanding"}</span>
+<span id="cb1-315"><a href="#cb1-315" aria-hidden="true" tabindex="-1"></a>With $\hat{\beta}_1 = 2.5$ in a log–log model (base $e$ on both sides), what happens to the geometric mean of FEV if height increases by 10%? What if height doubles?</span>
+<span id="cb1-316"><a href="#cb1-316" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-317"><a href="#cb1-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-318"><a href="#cb1-318" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" title="Answer"}</span>
+<span id="cb1-319"><a href="#cb1-319" aria-hidden="true" tabindex="-1"></a>For a 10% increase ($r = 1.10$): geometric mean FEV ratio $= 1.10^{2.5} = 1.267$. The geometric mean of FEV increases by about 26.7%.</span>
+<span id="cb1-320"><a href="#cb1-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-321"><a href="#cb1-321" aria-hidden="true" tabindex="-1"></a>For a doubling ($r = 2$): geometric mean FEV ratio $= 2^{2.5} = 5.66$. The geometric mean of FEV increases by a factor of about 5.66 (a 466% increase).</span>
+<span id="cb1-322"><a href="#cb1-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-323"><a href="#cb1-323" aria-hidden="true" tabindex="-1"></a>Both the input and the output are on relative/multiplicative scales.</span>
+<span id="cb1-324"><a href="#cb1-324" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-325"><a href="#cb1-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-326"><a href="#cb1-326" aria-hidden="true" tabindex="-1"></a><span class="fu">### Why Base $e$ Simplifies the Log–Log Model</span></span>
+<span id="cb1-327"><a href="#cb1-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-328"><a href="#cb1-328" aria-hidden="true" tabindex="-1"></a>The clean result $r^{\beta_1}$ relies on using $\log_e$ on **both** sides, because the $e^{\log_e(\cdot)}$ identity makes the exponentiation collapse neatly. If we use the same base $b$ on both sides, the coefficient $\beta_1$ is invariant — it doesn't change with the choice of base, because the change-of-base constant cancels from numerator and denominator:</span>
+<span id="cb1-329"><a href="#cb1-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-330"><a href="#cb1-330" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-331"><a href="#cb1-331" aria-hidden="true" tabindex="-1"></a>\frac{\log_b(\text{FEV at } rx) - \log_b(\text{FEV at } x)}{\log_b(rx) - \log_b(x)} = \beta_1</span>
+<span id="cb1-332"><a href="#cb1-332" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-333"><a href="#cb1-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-334"><a href="#cb1-334" aria-hidden="true" tabindex="-1"></a>for any base $b$. So $\beta_1 = 2.5$ whether you use $\log_e$, $\log_{10}$, or any other base — **as long as you use the same base on both sides**.</span>
+<span id="cb1-335"><a href="#cb1-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-336"><a href="#cb1-336" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="Check Your Understanding"}</span>
+<span id="cb1-337"><a href="#cb1-337" aria-hidden="true" tabindex="-1"></a>Your colleague fits a log–log model using $\log_e$ on both sides and gets $\hat{\beta}_1 = 2.5$. You refit the same data using $\log_{10}$ on both sides. What $\hat{\beta}_1$ do you get? Does the model fit change?</span>
+<span id="cb1-338"><a href="#cb1-338" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-339"><a href="#cb1-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-340"><a href="#cb1-340" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" title="Answer"}</span>
+<span id="cb1-341"><a href="#cb1-341" aria-hidden="true" tabindex="-1"></a>You get the same $\hat{\beta}_1 = 2.5$, and the model fit is identical. The base cancels because it appears as a common scaling factor on both sides. This is analogous to how rescaling both $X$ and $Y$ by the same factor in a linear–linear model leaves the slope unchanged. The model is the same — only the scale of the transformed variables changes, and the ratio is preserved.</span>
+<span id="cb1-342"><a href="#cb1-342" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-343"><a href="#cb1-343" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-344"><a href="#cb1-344" aria-hidden="true" tabindex="-1"></a><span class="fu">### Using a Chosen Base on the Predictor Side</span></span>
+<span id="cb1-345"><a href="#cb1-345" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-346"><a href="#cb1-346" aria-hidden="true" tabindex="-1"></a>In Scenario 3, we saw that choosing a meaningful log base for the predictor (e.g., $\log_{1.1}$) gives a coefficient that reads directly as the effect of a 10% increase in $X$. We can do the same thing here, but because the outcome is also log-transformed, the result lives on the log scale and requires exponentiation to interpret.</span>
+<span id="cb1-347"><a href="#cb1-347" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-348"><a href="#cb1-348" aria-hidden="true" tabindex="-1"></a>Suppose we keep $\log_e$ on the outcome (so that exponentiation gives us geometric means directly) but use $\log_b$ on the predictor to define the contrast of interest. For example, with $b = 1.1$:</span>
+<span id="cb1-349"><a href="#cb1-349" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-350"><a href="#cb1-350" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-351"><a href="#cb1-351" aria-hidden="true" tabindex="-1"></a>E<span class="co">[</span><span class="ot">\log_e(\text{FEV}) \mid \text{Height}</span><span class="co">]</span> = \beta_0 + \beta_1^* \cdot \log_{1.1}(\text{Height})</span>
+<span id="cb1-352"><a href="#cb1-352" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-353"><a href="#cb1-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-354"><a href="#cb1-354" aria-hidden="true" tabindex="-1"></a>A one-unit increase in $\log_{1.1}(\text{Height})$ corresponds to a 10% increase in height. The difference in expected $\log_e(\text{FEV})$ is:</span>
+<span id="cb1-355"><a href="#cb1-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-356"><a href="#cb1-356" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-357"><a href="#cb1-357" aria-hidden="true" tabindex="-1"></a>E<span class="co">[</span><span class="ot">\log_e(\text{FEV}) \mid \text{Height} = 1.1x</span><span class="co">]</span> - E<span class="co">[</span><span class="ot">\log_e(\text{FEV}) \mid \text{Height} = x</span><span class="co">]</span> = \beta_1^*</span>
+<span id="cb1-358"><a href="#cb1-358" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-359"><a href="#cb1-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-360"><a href="#cb1-360" aria-hidden="true" tabindex="-1"></a>Exponentiating to get the ratio of geometric means:</span>
+<span id="cb1-361"><a href="#cb1-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-362"><a href="#cb1-362" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-363"><a href="#cb1-363" aria-hidden="true" tabindex="-1"></a>\frac{\text{Geometric mean FEV at height } 1.1x}{\text{Geometric mean FEV at height } x} = e^{\beta_1^*}</span>
+<span id="cb1-364"><a href="#cb1-364" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-365"><a href="#cb1-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-366"><a href="#cb1-366" aria-hidden="true" tabindex="-1"></a>So $e^{\beta_1^*}$ is the **fold-change in the geometric mean of FEV per 10% increase in height**.</span>
+<span id="cb1-367"><a href="#cb1-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-368"><a href="#cb1-368" aria-hidden="true" tabindex="-1"></a>More generally, with $\log_e$ on the outcome and $\log_b$ on the predictor:</span>
+<span id="cb1-369"><a href="#cb1-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-370"><a href="#cb1-370" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\beta_1^*$ is the change in expected $\log_e(Y)$ per $b$-fold change in $X$</span>
+<span id="cb1-371"><a href="#cb1-371" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$e^{\beta_1^*}$ is the **fold-change in the geometric mean of $Y$** per $b$-fold change in $X$</span>
+<span id="cb1-372"><a href="#cb1-372" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-373"><a href="#cb1-373" aria-hidden="true" tabindex="-1"></a><span class="fu">### Example</span></span>
+<span id="cb1-374"><a href="#cb1-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-375"><a href="#cb1-375" aria-hidden="true" tabindex="-1"></a>Suppose we use $\log_e$ on FEV and $\log_{1.1}$ on height, and estimate $\hat{\beta}_1^* = 0.237$.</span>
+<span id="cb1-376"><a href="#cb1-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-377"><a href="#cb1-377" aria-hidden="true" tabindex="-1"></a>**Interpretation:** $e^{0.237} = 1.267$, so a 10% increase in height is associated with multiplying the geometric mean of FEV by 1.267 — a 26.7% increase.</span>
+<span id="cb1-378"><a href="#cb1-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-379"><a href="#cb1-379" aria-hidden="true" tabindex="-1"></a>Compare with the base-$e$-on-both-sides parameterization: $\hat{\beta}_1 = 2.5$, and we compute $1.10^{2.5} = 1.267$. The same answer, obtained differently.</span>
+<span id="cb1-380"><a href="#cb1-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-381"><a href="#cb1-381" aria-hidden="true" tabindex="-1"></a>The relationship between the two parameterizations:</span>
+<span id="cb1-382"><a href="#cb1-382" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-383"><a href="#cb1-383" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-384"><a href="#cb1-384" aria-hidden="true" tabindex="-1"></a>\hat{\beta}_1^* = \hat{\beta}_1 \times \log_e(1.1) = 2.5 \times 0.0953 = 0.237</span>
+<span id="cb1-385"><a href="#cb1-385" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-386"><a href="#cb1-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-387"><a href="#cb1-387" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="Check Your Understanding"}</span>
+<span id="cb1-388"><a href="#cb1-388" aria-hidden="true" tabindex="-1"></a>With $e^{\hat{\beta}_1^*} = 1.267$ (using $\log_{1.1}$ on height), interpret this for a clinician. Then explain: why might you prefer this parameterization over reporting $\hat{\beta}_1 = 2.5$ from the base-$e$ model?</span>
+<span id="cb1-389"><a href="#cb1-389" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-390"><a href="#cb1-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-391"><a href="#cb1-391" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" title="Answer"}</span>
+<span id="cb1-392"><a href="#cb1-392" aria-hidden="true" tabindex="-1"></a>For the clinician: "A 10% increase in height is associated with an estimated 26.7% increase in the geometric mean of FEV."</span>
+<span id="cb1-393"><a href="#cb1-393" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-394"><a href="#cb1-394" aria-hidden="true" tabindex="-1"></a>The advantage of this parameterization is **directness**: $e^{\beta_1^*}$ gives the fold-change in the geometric mean of FEV for a specific, interpretable contrast (10% more height) without any additional calculation. With the base-$e$ parameterization, you have the elegant $r^{\beta_1}$ formula, but you need to choose $r$ and compute $r^{2.5}$ to get a concrete answer. With the chosen-base approach, the contrast is baked into the parameterization.</span>
+<span id="cb1-395"><a href="#cb1-395" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-396"><a href="#cb1-396" aria-hidden="true" tabindex="-1"></a>The tradeoff: if someone asks about a *different* contrast (e.g., a 5% increase), the base-$e$ version handles it easily ($1.05^{2.5}$), while the chosen-base version requires converting back.</span>
+<span id="cb1-397"><a href="#cb1-397" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-398"><a href="#cb1-398" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-399"><a href="#cb1-399" aria-hidden="true" tabindex="-1"></a><span class="fu">### When Mixed Bases Become Painful</span></span>
+<span id="cb1-400"><a href="#cb1-400" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-401"><a href="#cb1-401" aria-hidden="true" tabindex="-1"></a>The approach above — $\log_e$ on the outcome, $\log_b$ on the predictor — works cleanly because we exponentiate with base $e$ to get geometric means, and the chosen base $b$ simply defines the contrast.</span>
+<span id="cb1-402"><a href="#cb1-402" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-403"><a href="#cb1-403" aria-hidden="true" tabindex="-1"></a>The pain arises if you use a base other than $e$ on the predictor and then want to interpret a *different* contrast than the one defined by your base. For example, suppose you transformed height using $\log_2$ (a doubling). Your coefficient $\hat{\beta}_1^*$ gives you $e^{\hat{\beta}_1^*}$ as the fold-change in geometric mean FEV per **doubling** of height. But now a collaborator asks: "what about a 10% increase in height?"</span>
+<span id="cb1-404"><a href="#cb1-404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-405"><a href="#cb1-405" aria-hidden="true" tabindex="-1"></a>To answer this, you would need to figure out what fraction of a $\log_2$ unit corresponds to a 10% increase — that is, you need $\log_2(1.10) = \log_e(1.10)/\log_e(2) = 0.0953/0.693 = 0.1375$ of a unit — and then compute $e^{0.1375 \cdot \hat{\beta}_1^*}$. It can be done, but the algebra is cumbersome compared to the base-$e$ version where you simply compute $1.10^{\hat{\beta}_1}$.</span>
+<span id="cb1-406"><a href="#cb1-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-407"><a href="#cb1-407" aria-hidden="true" tabindex="-1"></a>In practice, the cleanest approach is:</span>
+<span id="cb1-408"><a href="#cb1-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-409"><a href="#cb1-409" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Use **$\log_e$ on the outcome** (because exponentiation with $e$ gives geometric means directly).</span>
+<span id="cb1-410"><a href="#cb1-410" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Choose **whatever base is most interpretable on the predictor** (because it defines your primary contrast of interest).</span>
+<span id="cb1-411"><a href="#cb1-411" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>If you need a different contrast later, consider either converting back to the base-$e$ parameterization or refitting with the new base.</span>
+<span id="cb1-412"><a href="#cb1-412" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-413"><a href="#cb1-413" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="Check Your Understanding"}</span>
+<span id="cb1-414"><a href="#cb1-414" aria-hidden="true" tabindex="-1"></a>You fit the log–log model two ways: (1) $\log_e$ on both sides, getting $\hat{\beta}_1 = 2.5$, and (2) $\log_e$ on FEV with $\log_{1.1}$ on height, getting $\hat{\beta}_1^* = 0.237$. Did the model change? Did the model fit change?</span>
+<span id="cb1-415"><a href="#cb1-415" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-416"><a href="#cb1-416" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-417"><a href="#cb1-417" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" title="Answer"}</span>
+<span id="cb1-418"><a href="#cb1-418" aria-hidden="true" tabindex="-1"></a>The model did **not** change. The fitted values, residuals, and $R^2$ are all identical. This is a reparameterization — the multiplicative analog of changing from height in cm to height in 10-cm units in the linear–linear case. Just as that additive rescaling changes the coefficient but not the model, changing the log base on the predictor changes the coefficient but not the model. The only difference is what contrast $\beta_1$ describes: a $b$-fold change in $X$ (here, a 10% increase in height) rather than an $e$-fold change.</span>
+<span id="cb1-419"><a href="#cb1-419" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-420"><a href="#cb1-420" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-421"><a href="#cb1-421" aria-hidden="true" tabindex="-1"></a><span class="fu">### Key Features of the Log–Log Model</span></span>
+<span id="cb1-422"><a href="#cb1-422" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-423"><a href="#cb1-423" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Using base $e$ on both sides: $\beta_1$ is an **elasticity** — if $X$ increases by a factor of $r$, the geometric mean of $Y$ changes by a factor of $r^{\beta_1}$.</span>
+<span id="cb1-424"><a href="#cb1-424" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The interpretation is fully **multiplicative** on both sides.</span>
+<span id="cb1-425"><a href="#cb1-425" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\beta_1$ is **invariant to the log base** as long as the same base is used on both sides.</span>
+<span id="cb1-426"><a href="#cb1-426" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Using $\log_e$ on $Y$ and a chosen base $b$ on $X$: $e^{\beta_1^*}$ is the **fold-change in the geometric mean of $Y$ per $b$-fold change in $X$**.</span>
+<span id="cb1-427"><a href="#cb1-427" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Using a base other than $e$ on the predictor and then wanting a different contrast is painful — stick with $\log_e$ on the outcome and choose the predictor base to match your primary contrast of interest.</span>
+<span id="cb1-428"><a href="#cb1-428" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The choice of log base on the predictor is a reparameterization — the multiplicative analog of additive rescaling. The model fit is unchanged.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© Copyright 2024-2026, James C Slaughter</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/chrissl789/modern-regression/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This page is built with <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

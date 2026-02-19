@@ -96,6 +96,7 @@ website:
             text: Matrix algebra review
           - href: supplemental/Baseline_Change_MACH.pdf
             text: Change from baseline and precision
+          - href: notes/log-transform-interpretations.qmd
       - section: "Statcomp2"
         contents:
           - href: https://statcomp2.app.vumc.org/modern-regression/

@@ -1,0 +1,428 @@
+---
+title: "Interpreting Regression Coefficients: Log Transformations and Scale"
+subtitle: "A Review of Additive vs. Multiplicative Interpretations"
+format: html
+---
+
+## Overview
+
+We consider a simple linear regression with one predictor. Depending on whether we apply a log transformation to the outcome ($Y$), the predictor ($X$), or both, the interpretation of $\beta_1$ changes fundamentally:
+
+| Scenario | Model | Interpretation of $\beta_1$ |
+|----------|-------|----------------------------|
+| Linear–Linear | $E[Y \mid X] = \beta_0 + \beta_1 X$ | Additive change in $Y$ |
+| Log–Linear | $E[\log Y \mid X] = \beta_0 + \beta_1 X$ | Multiplicative change in $Y$ |
+| Linear–Log | $E[Y \mid X] = \beta_0 + \beta_1 \log X$ | Additive change in $Y$ per multiplicative change in $X$ |
+| Log–Log | $E[\log Y \mid X] = \beta_0 + \beta_1 \log X$ | Multiplicative change in $Y$ per multiplicative change in $X$ |
+
+The log–linear structure appears throughout biostatistics. In logistic regression, the outcome is $\log(\text{odds})$, and the same interpretive logic applies: additive changes in the predictor produce multiplicative changes in the odds. The tools developed in this document — particularly the shift from additive to multiplicative thinking — generalize directly.
+
+Throughout, we use **FEV** (forced expiratory volume, in mL) as the outcome and **height** (in cm) as the predictor.
+
+---
+
+## Scenario 1: Untransformed $Y$, Untransformed $X$ (Linear–Linear)
+
+### Model
+
+$$
+E[\text{FEV} \mid \text{Height}] = \beta_0 + \beta_1 \cdot \text{Height}
+$$
+
+### General Interpretation
+
+$\beta_1$ represents the **additive change** in the expected value of $Y$ for a **one-unit increase** in $X$.
+
+This is a straightforward, constant effect: every additional unit of $X$ adds the same amount to the expected value of $Y$, regardless of where you start on the $X$ scale.
+
+::: {.callout-note title="Check Your Understanding"}
+If $\beta_1 = 30$, what does this tell us about two individuals who differ by 1 cm in height? What about two individuals who differ by 5 cm?
+:::
+
+::: {.callout-tip collapse="true" title="Answer"}
+A difference of 1 cm in height corresponds to a difference of 30 mL in expected FEV. A difference of 5 cm corresponds to $5 \times 30 = 150$ mL. The effect scales linearly — you simply multiply the coefficient by the difference in $X$.
+:::
+
+### Example
+
+Suppose we estimate $\hat{\beta}_1 = 30$ mL/cm.
+
+**Interpretation:** For each additional centimeter of height, expected FEV increases by 30 mL.
+
+This interpretation is **linear** and **additive**:
+
+- Going from 150 cm to 151 cm → expected FEV increases by 30 mL
+- Going from 170 cm to 171 cm → expected FEV increases by 30 mL
+- Going from 150 cm to 155 cm → expected FEV increases by $5 \times 30 = 150$ mL
+
+The effect is the same everywhere along the height scale.
+
+::: {.callout-note title="Check Your Understanding"}
+What assumption about the FEV–height relationship is embedded in this model? When might this assumption be unreasonable?
+:::
+
+::: {.callout-tip collapse="true" title="Answer"}
+The model assumes a **constant, linear** relationship: each cm of height adds the same amount of FEV regardless of whether we're comparing short individuals or tall individuals. This might be unreasonable if the effect of height on FEV accelerates or decelerates at extremes — for example, if the relationship is steeper during adolescent growth and flattens in adulthood. It also assumes the effect is the same at 140 cm as at 190 cm, which may not hold biologically.
+:::
+
+### Key Features of the Linear–Linear Model
+
+- The **units of $\beta_1$** are: [units of $Y$] per [unit of $X$] — here, mL per cm.
+- The effect is **constant** across all values of $X$.
+- Interpretation requires no back-transformation — what you estimate is what you interpret.
+- This is the "default" model most people learn first, and the one where the gap between the math and the interpretation is smallest.
+
+::: {.callout-note title="Check Your Understanding"}
+A colleague tells you "height has a big effect on FEV — $\hat{\beta}_1 = 30$." Can you evaluate this claim without additional information? What else would you want to know?
+:::
+
+::: {.callout-tip collapse="true" title="Answer"}
+You cannot evaluate the magnitude of the effect from the coefficient alone. You would want to know: (1) the **units** of both variables (30 mL per cm is very different from 30 L per cm), (2) the **variability** in both $Y$ and $X$ in the study population — a 30 mL/cm effect matters more if height varies by 40 cm than if it varies by 5 cm, and (3) the **precision** of the estimate (confidence interval or standard error). Context and scale always matter for judging effect sizes.
+:::
+
+### Rescaling the Predictor
+
+Suppose instead of height in cm, we define a new predictor $X^* = \text{Height}/10$, so that one unit of $X^*$ corresponds to 10 cm. The model becomes:
+
+$$
+E[\text{FEV} \mid \text{Height}] = \beta_0 + \beta_1^* \cdot (\text{Height}/10)
+$$
+
+If $\hat{\beta}_1 = 30$ mL per cm, then $\hat{\beta}_1^* = 300$ mL per 10 cm. The interpretation changes — a one-unit change in the rescaled predictor now corresponds to a 10 cm change in height — but nothing else about the model changes: the fitted values, residuals, $R^2$, and all other measures of model fit are identical.
+
+::: {.callout-note title="Check Your Understanding"}
+You fit the model with height in cm and get $\hat{\beta}_1 = 30$, $R^2 = 0.72$. Your colleague fits the same model with height in meters and gets $\hat{\beta}_1^* = 3000$. Did the model change? Would you expect the $R^2$ to differ?
+:::
+
+::: {.callout-tip collapse="true" title="Answer"}
+The model did **not** change. The two are identical — the same fitted values, the same residuals, the same $R^2 = 0.72$. Rescaling $X$ only changes the coefficient and its interpretation. One unit in meters = 100 cm, so $\hat{\beta}_1^* = 30 \times 100 = 3000$ mL per meter. This is purely a reparameterization. We will see the exact same idea in the log-transformed scenarios, where changing the log base is the multiplicative analog of this additive rescaling.
+:::
+
+---
+
+## Scenario 2: Log-Transformed $Y$, Untransformed $X$ (Log–Linear)
+
+### Model
+
+$$
+E[\log_e(\text{FEV}) \mid \text{Height}] = \beta_0 + \beta_1 \cdot \text{Height}
+$$
+
+Here, we apply a log transformation to the **outcome only**. The predictor remains on its original scale.
+
+### General Interpretation
+
+An important note: $E[\log(Y)]$ is **not** the same as $\log(E[Y])$ — Jensen's inequality tells us these differ for any nondegenerate random variable. So we cannot simply exponentiate $E[\log(Y) \mid X]$ and call it $E[Y \mid X]$.
+
+What we *can* interpret is this: $e^{E[\log(Y) \mid X]}$ is the **geometric mean** of $Y$ given $X$. This is always true, regardless of distributional assumptions. Under additional assumptions (e.g., that $\log(Y) \mid X$ is symmetric, as in a normal or $t$-distribution for the errors), the geometric mean equals the **median** of $Y$ given $X$.
+
+With this understanding, consider two individuals differing by one unit of $X$, at values $x$ and $x + 1$:
+
+$$
+E[\log_e(\text{FEV}) \mid \text{Height} = x + 1] - E[\log_e(\text{FEV}) \mid \text{Height} = x] = \beta_1
+$$
+
+Exponentiating both sides:
+
+$$
+\frac{e^{E[\log_e(\text{FEV}) \mid \text{Height} = x + 1]}}{e^{E[\log_e(\text{FEV}) \mid \text{Height} = x]}} = e^{\beta_1}
+$$
+
+That is, $e^{\beta_1}$ is the **ratio of geometric mean FEV** at height $x + 1$ to geometric mean FEV at height $x$. A one-unit increase in $X$ **multiplies** the geometric mean of $Y$ by $e^{\beta_1}$.
+
+Equivalently, the **percent change** in the geometric mean of $Y$ for a one-unit increase in $X$ is:
+
+$$
+100 \times (e^{\beta_1} - 1)\%
+$$
+
+Under the symmetry assumption for $\log(Y) \mid X$, replace "geometric mean" with "median" throughout.
+
+::: {.callout-note title="Check Your Understanding"}
+Suppose $\hat{\beta}_1 = 0.005$. What is the estimated percent change in the geometric mean of FEV per cm of height? Does it matter whether we are going from 150 to 151 cm or from 180 to 181 cm?
+:::
+
+::: {.callout-tip collapse="true" title="Answer"}
+$e^{0.005} = 1.00501$, so each additional cm of height is associated with approximately a **0.5% increase** in the geometric mean of FEV. This is a **multiplicative** (relative) effect, so it does not matter where on the height scale we are — the *percent* change is the same at 150 cm as at 180 cm. However, the *absolute* change in mL will be larger for taller individuals (who have larger baseline FEV), because 0.5% of a larger number is a larger number.
+:::
+
+### Example
+
+Suppose $\hat{\beta}_1 = 0.005$ per cm.
+
+**Interpretation:** Each additional cm of height is associated with multiplying the geometric mean of FEV by $e^{0.005} \approx 1.005$, or equivalently, an estimated $100 \times (e^{0.005} - 1) \approx 0.5\%$ increase in the geometric mean of FEV.
+
+The multiplicative nature means:
+
+- The geometric mean FEV at 151 cm is $e^{0.005} \approx 1.005$ times the geometric mean FEV at 150 cm
+- The geometric mean FEV at 181 cm is $e^{0.005} \approx 1.005$ times the geometric mean FEV at 180 cm
+- The *ratio* is constant, but the *absolute* difference grows with baseline FEV
+
+For a 10 cm difference: $e^{10 \times 0.005} = e^{0.05} \approx 1.051$, so a 10 cm height difference corresponds to multiplying the geometric mean of FEV by about 1.051, or roughly a 5.1% increase.
+
+::: {.callout-note title="Check Your Understanding"}
+Why is the percent change for a 10 cm difference (5.1%) not exactly 10 times the percent change for a 1 cm difference (0.5%)?
+:::
+
+::: {.callout-tip collapse="true" title="Answer"}
+Because multiplication compounds. Each cm multiplies by $e^{0.005}$, so 10 cm multiplies by $(e^{0.005})^{10} = e^{0.05}$. This is like compound interest — the result of compounding 0.5% ten times is slightly more than $10 \times 0.5\% = 5\%$. The discrepancy is small here because 0.5% is small, but it becomes more noticeable with larger effects. The exact percent change is always $100 \times (e^{k \cdot \beta_1} - 1)\%$ for a $k$-unit change.
+:::
+
+### Key Features of the Log–Linear Model
+
+- We are applying a log transformation to the **outcome** — moving from modeling $E[Y \mid X]$ to modeling $E[\log(Y) \mid X]$.
+- $e^{\beta_1}$ is the ratio of **geometric means** of $Y$ (always), or the ratio of **medians** (under symmetry of $\log Y \mid X$). It is not, in general, the ratio of arithmetic means.
+- $\beta_1$ is on the log scale; exponentiate to get the multiplicative effect on the geometric mean.
+- Interpretation is in terms of **percent change** (or ratios) in the geometric mean of $Y$ per unit change in $X$.
+- The relative effect is constant across $X$, but absolute effects are not.
+- This same interpretive structure appears in **logistic regression**, where the outcome is $\log(\text{odds})$: a one-unit increase in $X$ multiplies the odds by $e^{\beta_1}$, giving an odds ratio. The math is identical — only the outcome scale differs.
+
+---
+
+## Scenario 3: Untransformed $Y$, Log-Transformed $X$ (Linear–Log)
+
+### Model
+
+$$
+E[\text{FEV} \mid \text{Height}] = \beta_0 + \beta_1 \cdot \log(\text{Height})
+$$
+
+### General Interpretation
+
+Now the predictor is on the log scale while the outcome remains untransformed. The interpretation of $\beta_1$ depends on the **base** of the logarithm. There are two practical choices for handling this.
+
+#### Choice 1: Use base $e$ and rescale
+
+With $\log_e$, a one-unit increase in $\log_e(\text{Height})$ corresponds to multiplying height by $e \approx 2.718$ — a 172% increase in height. Nobody cares about an $e$-fold change in height. So we need to rescale.
+
+Consider two individuals whose heights differ by a factor of $r$ — that is, one has height $x$ and the other has height $rx$:
+
+$$
+E[\text{FEV} \mid \text{Height} = rx] - E[\text{FEV} \mid \text{Height} = x] = \beta_1 \cdot [\log_e(rx) - \log_e(x)] = \beta_1 \cdot \log_e(r)
+$$
+
+So the change in expected FEV for an $r$-fold change in height is $\beta_1 \cdot \log_e(r)$.
+
+For a 10% increase in height ($r = 1.10$):
+
+$$
+\Delta E[\text{FEV}] = \beta_1 \cdot \log_e(1.10) = \beta_1 \times 0.0953
+$$
+
+This works, but requires you to multiply by $\log_e(r)$ every time you want to interpret the coefficient for a specific contrast.
+
+#### Choice 2: Pick a log base with a meaningful scale
+
+Just as we can rescale an untransformed predictor (e.g., height in cm vs. height in 10-cm units) to change the interpretation of $\beta_1$ without changing the model, we can choose a log base that maps onto a meaningful multiplicative contrast.
+
+For example, using $\log_{1.1}(\text{Height})$ means that a one-unit increase in the transformed predictor corresponds to multiplying height by 1.1 — a **10% increase** in height.
+
+$$
+E[\text{FEV} \mid \text{Height}] = \beta_0 + \beta_1 \cdot \log_{1.1}(\text{Height})
+$$
+
+Now $\beta_1$ directly represents: **the change in expected FEV associated with a 10% increase in height**. No rescaling required.
+
+The base 1.1 may seem unusual, but it is chosen because it corresponds to a natural, interpretable contrast — exactly the way we might choose to measure height in 10-cm units rather than cm in the additive case.
+
+::: {.callout-note title="Check Your Understanding"}
+With $\hat{\beta}_1 = 86$ mL using $\log_{1.1}(\text{Height})$, interpret the coefficient. Does the estimated change in FEV depend on whether we start at 150 cm or 180 cm?
+:::
+
+::: {.callout-tip collapse="true" title="Answer"}
+A 10% increase in height is associated with an estimated 86 mL increase in expected FEV. This does **not** depend on the starting height — a 10% increase from 150 cm (to 165 cm) and a 10% increase from 180 cm (to 198 cm) both yield the same estimated 86 mL increase in FEV. The model encodes the assumption that the same **proportional** change in height produces the same **absolute** change in FEV.
+:::
+
+#### Converting Between Log Bases
+
+Changing the log base is the **multiplicative analog** of rescaling an untransformed predictor. When we go from height in cm to height in 10-cm units, we multiply the coefficient by 10. Similarly, when we change from $\log_e$ to $\log_b$, we multiply the coefficient by $\log_e(b)$:
+
+$$
+\hat{\beta}_{1,\, \text{base } b} = \hat{\beta}_{1,\, \text{base } e} \times \log_e(b)
+$$
+
+Here, $\hat{\beta}_{1,\, \text{base } b}$ denotes the estimated coefficient when the predictor is transformed using base $b$, and $\hat{\beta}_{1, \, \text{base } e}$ denotes the estimate when using base $e$.
+
+The model is the same — the fitted values, residuals, and all measures of model fit are identical. Only the parameterization changes, giving us a coefficient that can be read off directly in terms of a $b$-fold change in $X$.
+
+::: {.callout-note title="Check Your Understanding"}
+You fit a linear–log model using $\log_e(\text{Height})$ and get $\hat{\beta}_{1} = 900$ mL. Your colleague refits the same model using $\log_{1.1}(\text{Height})$. What coefficient do they get? Does the model fit change?
+:::
+
+::: {.callout-tip collapse="true" title="Answer"}
+$\hat{\beta}_{1,\, \text{base } 1.1} = 900 \times \log_e(1.1) = 900 \times 0.0953 = 85.8$ mL. The model fit does not change at all — same predictions, same residuals, same $R^2$. This is identical in spirit to changing from cm to 10-cm units in the untransformed case: a reparameterization, not a new model. The only difference is that in the additive case we are choosing the additive unit (1 cm vs. 10 cm), and in the log case we are choosing the multiplicative unit (an $e$-fold vs. a 1.1-fold change in height).
+:::
+
+### Key Features of the Linear–Log Model
+
+- $\beta_1$ represents an **additive** change in $Y$ per **multiplicative** change in $X$.
+- The base of the log determines what multiplicative change you're referencing.
+- **Choice 1:** Use $\log_e$ and rescale via $\beta_1 \cdot \log_e(r)$ for an $r$-fold change in $X$.
+- **Choice 2:** Choose a base $b$ so that $\beta_1$ directly gives the change in $Y$ per $b$-fold change in $X$ (e.g., $b = 1.1$ for a 10% change).
+- Changing the log base is a reparameterization — the multiplicative analog of rescaling an additive predictor. The model fit is unchanged.
+
+---
+
+## Scenario 4: Log-Transformed $Y$, Log-Transformed $X$ (Log–Log)
+
+### Model
+
+$$
+E[\log_e(\text{FEV}) \mid \text{Height}] = \beta_0 + \beta_1 \cdot \log(\text{Height})
+$$
+
+Both sides are on the log scale, so $\beta_1$ relates a **multiplicative** change in $X$ to a **multiplicative** change in $Y$. This is a fully relative model, and the interpretation requires the most care.
+
+As in Scenario 2, because the outcome is log-transformed, $e^{E[\log(Y) \mid X]}$ is the **geometric mean** of $Y$ given $X$ (always), or the **median** (under symmetry of $\log Y \mid X$). The same caveat applies: we are not modeling $\log(E[Y \mid X])$.
+
+### Derivation Using Base $e$ on Both Sides
+
+Let's work through the algebra carefully using $\log_e$ on both sides, comparing two individuals with heights $x$ and $rx$ (where $r$ is the multiplicative factor, e.g., $r = 1.10$ for a 10% increase):
+
+$$
+E[\log_e(\text{FEV}) \mid \text{Height} = rx] - E[\log_e(\text{FEV}) \mid \text{Height} = x]
+$$
+
+$$
+= \beta_1 \cdot [\log_e(rx) - \log_e(x)]
+$$
+
+$$
+= \beta_1 \cdot \log_e(r)
+$$
+
+This is the difference in expected $\log_e(\text{FEV})$. To get back to the original scale, we exponentiate to obtain the ratio of geometric means:
+
+$$
+\frac{\text{Geometric mean of FEV at height } rx}{\text{Geometric mean of FEV at height } x} = e^{\beta_1 \cdot \log_e(r)}
+$$
+
+Now here is where using $\log_e$ on both sides simplifies things. Using the property $e^{a \cdot \log_e(b)} = b^a$:
+
+$$
+e^{\beta_1 \cdot \log_e(r)} = r^{\beta_1}
+$$
+
+So:
+
+$$
+\frac{\text{Geometric mean of FEV at height } rx}{\text{Geometric mean of FEV at height } x} = r^{\beta_1}
+$$
+
+This is an **elasticity** (or power-law) relationship: if height increases by a factor of $r$, then the geometric mean of FEV changes by a factor of $r^{\beta_1}$.
+
+::: {.callout-note title="Check Your Understanding"}
+With $\hat{\beta}_1 = 2.5$ in a log–log model (base $e$ on both sides), what happens to the geometric mean of FEV if height increases by 10%? What if height doubles?
+:::
+
+::: {.callout-tip collapse="true" title="Answer"}
+For a 10% increase ($r = 1.10$): geometric mean FEV ratio $= 1.10^{2.5} = 1.267$. The geometric mean of FEV increases by about 26.7%.
+
+For a doubling ($r = 2$): geometric mean FEV ratio $= 2^{2.5} = 5.66$. The geometric mean of FEV increases by a factor of about 5.66 (a 466% increase).
+
+Both the input and the output are on relative/multiplicative scales.
+:::
+
+### Why Base $e$ Simplifies the Log–Log Model
+
+The clean result $r^{\beta_1}$ relies on using $\log_e$ on **both** sides, because the $e^{\log_e(\cdot)}$ identity makes the exponentiation collapse neatly. If we use the same base $b$ on both sides, the coefficient $\beta_1$ is invariant — it doesn't change with the choice of base, because the change-of-base constant cancels from numerator and denominator:
+
+$$
+\frac{\log_b(\text{FEV at } rx) - \log_b(\text{FEV at } x)}{\log_b(rx) - \log_b(x)} = \beta_1
+$$
+
+for any base $b$. So $\beta_1 = 2.5$ whether you use $\log_e$, $\log_{10}$, or any other base — **as long as you use the same base on both sides**.
+
+::: {.callout-note title="Check Your Understanding"}
+Your colleague fits a log–log model using $\log_e$ on both sides and gets $\hat{\beta}_1 = 2.5$. You refit the same data using $\log_{10}$ on both sides. What $\hat{\beta}_1$ do you get? Does the model fit change?
+:::
+
+::: {.callout-tip collapse="true" title="Answer"}
+You get the same $\hat{\beta}_1 = 2.5$, and the model fit is identical. The base cancels because it appears as a common scaling factor on both sides. This is analogous to how rescaling both $X$ and $Y$ by the same factor in a linear–linear model leaves the slope unchanged. The model is the same — only the scale of the transformed variables changes, and the ratio is preserved.
+:::
+
+### Using a Chosen Base on the Predictor Side
+
+In Scenario 3, we saw that choosing a meaningful log base for the predictor (e.g., $\log_{1.1}$) gives a coefficient that reads directly as the effect of a 10% increase in $X$. We can do the same thing here, but because the outcome is also log-transformed, the result lives on the log scale and requires exponentiation to interpret.
+
+Suppose we keep $\log_e$ on the outcome (so that exponentiation gives us geometric means directly) but use $\log_b$ on the predictor to define the contrast of interest. For example, with $b = 1.1$:
+
+$$
+E[\log_e(\text{FEV}) \mid \text{Height}] = \beta_0 + \beta_1^* \cdot \log_{1.1}(\text{Height})
+$$
+
+A one-unit increase in $\log_{1.1}(\text{Height})$ corresponds to a 10% increase in height. The difference in expected $\log_e(\text{FEV})$ is:
+
+$$
+E[\log_e(\text{FEV}) \mid \text{Height} = 1.1x] - E[\log_e(\text{FEV}) \mid \text{Height} = x] = \beta_1^*
+$$
+
+Exponentiating to get the ratio of geometric means:
+
+$$
+\frac{\text{Geometric mean FEV at height } 1.1x}{\text{Geometric mean FEV at height } x} = e^{\beta_1^*}
+$$
+
+So $e^{\beta_1^*}$ is the **fold-change in the geometric mean of FEV per 10% increase in height**.
+
+More generally, with $\log_e$ on the outcome and $\log_b$ on the predictor:
+
+- $\beta_1^*$ is the change in expected $\log_e(Y)$ per $b$-fold change in $X$
+- $e^{\beta_1^*}$ is the **fold-change in the geometric mean of $Y$** per $b$-fold change in $X$
+
+### Example
+
+Suppose we use $\log_e$ on FEV and $\log_{1.1}$ on height, and estimate $\hat{\beta}_1^* = 0.237$.
+
+**Interpretation:** $e^{0.237} = 1.267$, so a 10% increase in height is associated with multiplying the geometric mean of FEV by 1.267 — a 26.7% increase.
+
+Compare with the base-$e$-on-both-sides parameterization: $\hat{\beta}_1 = 2.5$, and we compute $1.10^{2.5} = 1.267$. The same answer, obtained differently.
+
+The relationship between the two parameterizations:
+
+$$
+\hat{\beta}_1^* = \hat{\beta}_1 \times \log_e(1.1) = 2.5 \times 0.0953 = 0.237
+$$
+
+::: {.callout-note title="Check Your Understanding"}
+With $e^{\hat{\beta}_1^*} = 1.267$ (using $\log_{1.1}$ on height), interpret this for a clinician. Then explain: why might you prefer this parameterization over reporting $\hat{\beta}_1 = 2.5$ from the base-$e$ model?
+:::
+
+::: {.callout-tip collapse="true" title="Answer"}
+For the clinician: "A 10% increase in height is associated with an estimated 26.7% increase in the geometric mean of FEV."
+
+The advantage of this parameterization is **directness**: $e^{\beta_1^*}$ gives the fold-change in the geometric mean of FEV for a specific, interpretable contrast (10% more height) without any additional calculation. With the base-$e$ parameterization, you have the elegant $r^{\beta_1}$ formula, but you need to choose $r$ and compute $r^{2.5}$ to get a concrete answer. With the chosen-base approach, the contrast is baked into the parameterization.
+
+The tradeoff: if someone asks about a *different* contrast (e.g., a 5% increase), the base-$e$ version handles it easily ($1.05^{2.5}$), while the chosen-base version requires converting back.
+:::
+
+### When Mixed Bases Become Painful
+
+The approach above — $\log_e$ on the outcome, $\log_b$ on the predictor — works cleanly because we exponentiate with base $e$ to get geometric means, and the chosen base $b$ simply defines the contrast.
+
+The pain arises if you use a base other than $e$ on the predictor and then want to interpret a *different* contrast than the one defined by your base. For example, suppose you transformed height using $\log_2$ (a doubling). Your coefficient $\hat{\beta}_1^*$ gives you $e^{\hat{\beta}_1^*}$ as the fold-change in geometric mean FEV per **doubling** of height. But now a collaborator asks: "what about a 10% increase in height?"
+
+To answer this, you would need to figure out what fraction of a $\log_2$ unit corresponds to a 10% increase — that is, you need $\log_2(1.10) = \log_e(1.10)/\log_e(2) = 0.0953/0.693 = 0.1375$ of a unit — and then compute $e^{0.1375 \cdot \hat{\beta}_1^*}$. It can be done, but the algebra is cumbersome compared to the base-$e$ version where you simply compute $1.10^{\hat{\beta}_1}$.
+
+In practice, the cleanest approach is:
+
+- Use **$\log_e$ on the outcome** (because exponentiation with $e$ gives geometric means directly).
+- Choose **whatever base is most interpretable on the predictor** (because it defines your primary contrast of interest).
+- If you need a different contrast later, consider either converting back to the base-$e$ parameterization or refitting with the new base.
+
+::: {.callout-note title="Check Your Understanding"}
+You fit the log–log model two ways: (1) $\log_e$ on both sides, getting $\hat{\beta}_1 = 2.5$, and (2) $\log_e$ on FEV with $\log_{1.1}$ on height, getting $\hat{\beta}_1^* = 0.237$. Did the model change? Did the model fit change?
+:::
+
+::: {.callout-tip collapse="true" title="Answer"}
+The model did **not** change. The fitted values, residuals, and $R^2$ are all identical. This is a reparameterization — the multiplicative analog of changing from height in cm to height in 10-cm units in the linear–linear case. Just as that additive rescaling changes the coefficient but not the model, changing the log base on the predictor changes the coefficient but not the model. The only difference is what contrast $\beta_1$ describes: a $b$-fold change in $X$ (here, a 10% increase in height) rather than an $e$-fold change.
+:::
+
+### Key Features of the Log–Log Model
+
+- Using base $e$ on both sides: $\beta_1$ is an **elasticity** — if $X$ increases by a factor of $r$, the geometric mean of $Y$ changes by a factor of $r^{\beta_1}$.
+- The interpretation is fully **multiplicative** on both sides.
+- $\beta_1$ is **invariant to the log base** as long as the same base is used on both sides.
+- Using $\log_e$ on $Y$ and a chosen base $b$ on $X$: $e^{\beta_1^*}$ is the **fold-change in the geometric mean of $Y$ per $b$-fold change in $X$**.
+- Using a base other than $e$ on the predictor and then wanting a different contrast is painful — stick with $\log_e$ on the outcome and choose the predictor base to match your primary contrast of interest.
+- The choice of log base on the predictor is a reparameterization — the multiplicative analog of additive rescaling. The model fit is unchanged.
