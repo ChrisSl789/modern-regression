@@ -298,8 +298,8 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../notes/Set8.pdf" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Multinomial and Ordinal Regression</span></a>
+  <a href="../notes/MultinomialAndOrdinal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Multinomial and Ordinal Regression: R Supplement</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -899,7 +899,7 @@ S(t) = \exp(-H(t))
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(s1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>List of 16
+<pre><code>List of 17
  $ n        : int 228
  $ time     : num [1:186] 5 11 12 13 15 26 30 31 53 54 ...
  $ n.risk   : num [1:186] 228 227 224 223 221 220 219 218 217 215 ...
@@ -915,6 +915,7 @@ S(t) = \exp(-H(t))
  $ conf.type: chr "log"
  $ lower    : num [1:186] 0.987 0.966 0.959 0.947 0.941 ...
  $ upper    : num [1:186] 1 1 0.997 0.992 0.989 ...
+ $ t0       : num 0
  $ call     : language survfit(formula = Surv(time, status) ~ 1, data = lung)
  - attr(*, "class")= chr "survfit"</code></pre>
 </div>

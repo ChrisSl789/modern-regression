@@ -1,5 +1,6 @@
 ---
 title: "Frequentist Estimation and Bayesian Inference"
+name: EstimationAndInference.qmd
 ---
 
 ```{r setup}

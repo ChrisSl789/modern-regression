@@ -1,0 +1,474 @@
+---
+title: "Multinomial and Ordinal Regression"
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+library(rms)
+library(nnet)
+library(ggplot2)
+library(rstanarm)
+library(knitr)
+library(kableExtra)
+```
+
+# Introduction
+
+These notes supplement [Set8.pdf](Set8.pdf), which is the primary reference for multinomial and ordinal regression models including model formulation, interpretation, and examples which are implemented in Stata. The purpose of these supplementary notes is to:
+
+- Demonstrate the same concepts in R
+- Illustrate the equivalence between multinomial logistic regression and binary logistic regression for specific outcome comparisons
+- Illustrate the equivalence of the proportional odds ordinal logistic regression model with the Wilcoxon rank sum test
+- Discuss the proportional odds assumption as a *feature* rather than merely a constraint
+- Introduce robust standard error estimation and Bayesian approaches for these models
+
+Students should read Set8.pdf first and treat these notes as a companion.
+
+# Multinomial Logistic Regression
+
+## Motivating Data
+
+We reproduce the data from a study cross-classifying diabetes status with coronary heart disease (CHD) outcome category. The three CHD categories are myocardial infarction (MI), angina, and no CHD.
+
+```{r}
+# Enter the data as a matrix
+chd_table <- matrix(c(16, 7, 56,
+                       75, 57, 524),
+                    nrow = 2, byrow = TRUE,
+                    dimnames = list(Diabetes = c("Yes", "No"),
+                                   CHD = c("MI", "Angina", "No CHD")))
+
+kable(chd_table, caption = "CHD Outcome by Diabetes Status") |>
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+
+## Test for Overall Association
+
+Before examining specific comparisons, we first test whether there is an overall association between diabetes status and CHD category. There are several approaches to this test, and we demonstrate three here.
+
+**Pearson chi-squared test:**
+
+```{r}
+chisq_test <- chisq.test(chd_table)
+```
+
+**Likelihood ratio and Wald tests from the multinomial model:**
+
+We can also obtain overall tests directly from the multinomial logistic regression model. The likelihood ratio test compares the fitted model to the intercept-only (null) model. The Wald test jointly tests whether all coefficients for diabetes are simultaneously zero.
+
+```{r}
+# Create individual-level data from the table
+dat <- data.frame(
+  diabetes = factor(rep(c("Yes", "No"), times = c(79, 656)),
+                    levels = c("No", "Yes")),
+  chd = factor(c(rep("MI", 16), rep("Angina", 7), rep("No CHD", 56),
+                 rep("MI", 75), rep("Angina", 57), rep("No CHD", 524)),
+               levels = c("No CHD", "MI", "Angina"))
+)
+
+# Fit multinomial logistic regression
+fit_multinom <- multinom(chd ~ diabetes, data = dat)
+
+# Fit null (intercept-only) model
+fit_null <- multinom(chd ~ 1, data = dat)
+
+# Likelihood ratio test
+lr_stat <- deviance(fit_null) - deviance(fit_multinom)
+lr_df <- abs(fit_null$edf - fit_multinom$edf)
+lr_p <- pchisq(lr_stat, df = lr_df, lower.tail = FALSE)
+
+# Wald test
+# Coefficient estimates and standard errors for diabetes
+beta <- coef(fit_multinom)[, "diabetesYes"]
+se <- summary(fit_multinom)$standard.errors[, "diabetesYes"]
+vcov_full <- vcov(fit_multinom)
+
+# Extract the variance-covariance submatrix for the diabetes coefficients
+# Indices correspond to the diabetesYes coefficients across equations
+diabetes_idx <- grep("diabetesYes", names(coef(fit_multinom)[1,]))
+idx <- seq(diabetes_idx, by = ncol(coef(fit_multinom)), length.out = nrow(coef(fit_multinom)))
+V <- vcov_full[idx, idx]
+
+wald_stat <- as.numeric(t(beta) %*% solve(V) %*% beta)
+wald_df <- length(beta)
+wald_p <- pchisq(wald_stat, df = wald_df, lower.tail = FALSE)
+```
+
+```{r}
+# Summary table of all three tests
+test_summary <- data.frame(
+  Test = c("Pearson Chi-Squared", "Likelihood Ratio", "Wald"),
+  Statistic = round(c(chisq_test$statistic, lr_stat, wald_stat), 3),
+  df = c(chisq_test$parameter, lr_df, wald_df),
+  `p-value` = format.pval(c(chisq_test$p.value, lr_p, wald_p), digits = 4),
+  check.names = FALSE
+)
+row.names(test_summary) <- NULL
+
+kable(test_summary, caption = "Tests of Overall Association: Diabetes and CHD Category") |>
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+
+All three tests assess the same null hypothesis --- that the distribution of CHD outcomes is independent of diabetes status --- and are asymptotically equivalent, yielding similar (though not identical) results. The Pearson chi-squared is the familiar contingency table test. The likelihood ratio and Wald tests arise naturally from the multinomial model and generalize to models with additional covariates. Note that the Wald test matches the output provided in the Stata examples in Set8.pdf.
+
+A significant result tells us that the distribution of CHD outcomes differs between those with and without diabetes, but it does not tell us *how* the distributions differ. To understand the nature of the association, we examine specific pairwise comparisons from the multinomial model.
+
+## Multinomial Logistic Regression: Pairwise Comparisons
+
+The baseline-category logit model simultaneously models the log-odds of each outcome category relative to a reference category. We use the model already fit above to address two specific questions:
+
+1. Compare the prevalence of MI to that of No CHD in those with and without diabetes
+2. Compare the prevalence of MI to that of angina in those with and without diabetes
+
+```{r}
+summary(fit_multinom)
+```
+
+### MI vs. No CHD
+
+The multinomial model directly provides the log-odds ratio for MI vs. No CHD comparing those with diabetes to those without:
+
+```{r}
+cat("Log-odds ratio (MI vs No CHD, Diabetes Yes vs No):",
+    coef(fit_multinom)["MI", "diabetesYes"], "\n")
+cat("Odds ratio:", exp(coef(fit_multinom)["MI", "diabetesYes"]), "\n")
+```
+
+This coefficient tells us how much higher (or lower) the odds of MI relative to No CHD are for diabetics compared to non-diabetics.
+
+### MI vs. Angina
+
+The multinomial model with No CHD as the reference does not directly output the MI vs. Angina comparison, but it is implicit in the model. The log-odds ratio for MI vs. Angina can be obtained as the difference between the two sets of coefficients:
+
+$$
+\log\left(\frac{\text{odds of MI vs. Angina in diabetics}}{\text{odds of MI vs. Angina in non-diabetics}}\right) = \beta_{\text{MI, diabetes}} - \beta_{\text{Angina, diabetes}}
+$$
+
+```{r}
+log_or_mi_angina <- coef(fit_multinom)["MI", "diabetesYes"] -
+                    coef(fit_multinom)["Angina", "diabetesYes"]
+
+cat("Log-odds ratio (MI vs Angina, Diabetes Yes vs No):",
+    log_or_mi_angina, "\n")
+cat("Odds ratio:", exp(log_or_mi_angina), "\n")
+```
+
+This illustrates an important feature of the multinomial model: all pairwise comparisons are contained within a single model fit, regardless of which category is chosen as the reference.
+
+## Equivalence to Binary Logistic Regression
+
+The multinomial model is fitting simultaneous binary logistic regressions with a shared reference category. We can demonstrate this by fitting separate binary logistic regressions on the appropriate subsets and verifying that the coefficients match.
+
+```{r}
+# Binary logistic regression: MI vs No CHD (exclude angina)
+dat_mi_nochd <- subset(dat, chd != "Angina")
+dat_mi_nochd$outcome <- ifelse(dat_mi_nochd$chd == "MI", 1, 0)
+
+fit_mi_nochd <- glm(outcome ~ diabetes, data = dat_mi_nochd,
+                     family = binomial)
+
+# Binary logistic regression: MI vs Angina (exclude No CHD)
+dat_mi_angina <- subset(dat, chd != "No CHD")
+dat_mi_angina$outcome <- ifelse(dat_mi_angina$chd == "MI", 1, 0)
+
+fit_mi_angina <- glm(outcome ~ diabetes, data = dat_mi_angina,
+                      family = binomial)
+```
+
+```{r}
+# Compare MI vs No CHD coefficients
+cat("Multinomial model  (MI vs No CHD):", coef(fit_multinom)["MI", "diabetesYes"], "\n")
+cat("Binary logistic    (MI vs No CHD):", coef(fit_mi_nochd)["diabetesYes"], "\n\n")
+
+# Compare MI vs Angina coefficients
+cat("Multinomial model  (MI vs Angina):", log_or_mi_angina, "\n")
+cat("Binary logistic    (MI vs Angina):", coef(fit_mi_angina)["diabetesYes"], "\n")
+```
+
+The coefficients are very close, with minor numerical differences due to the different optimization algorithms used by `multinom()` and `glm()`. This near-equivalence demonstrates that fitting a multinomial logistic regression is essentially the same as fitting separate binary logistic regressions for each pair of outcome categories --- the multinomial model simply does this simultaneously within a unified framework.
+
+### A Note on the Independence of Irrelevant Alternatives (IIA)
+
+The equivalence demonstrated above is a direct consequence of the **independence of irrelevant alternatives** assumption built into the baseline-category logit model. IIA states that the odds of one outcome versus another do not depend on whether additional outcome categories are available. In our example, the odds of MI vs. No CHD are the same whether or not angina is included as a category.
+
+This assumption is generally reasonable for medical outcomes where categories are clinically distinct, and it is rarely a practical concern in applied health research. However, one setting where IIA can be violated is **competing risks in mortality studies**. Consider modeling cause of death (cardiovascular, cancer, other) as a function of a treatment that substantially reduces cardiovascular mortality. Patients who would have died of cardiovascular causes now survive long enough to die of cancer instead, so the relative odds of cardiovascular vs. cancer death may depend on whether "other causes" is included as a category --- the outcomes are not independent alternatives but competing events that redistribute when one is altered. In such settings, cause-specific hazard models or Fine-Gray subdistribution models are typically preferred over the multinomial logit.
+
+### Additional Notes for Multinomial Models
+
+**Robust standard errors:** The `nnet::multinom` function does not directly provide robust (sandwich) standard errors. If needed, these can be obtained via the `sandwich` and `lmtest` packages, though the implementation requires some care.
+
+**Bayesian multinomial regression:** The `rstanarm` package does not currently support multinomial logistic regression. For a Bayesian approach, the [`brms`](https://cran.r-project.org/package=brms) package provides multinomial models via `family = categorical()` using Stan as the backend.
+
+# Ordinal Regression
+
+## The Proportional Odds Assumption as a Feature
+
+Set8.pdf covers the proportional odds (cumulative logit) model in detail. Here we make an additional point: the proportional odds assumption is not just a simplifying constraint --- it is a *feature* that ensures coherent predictions.
+
+When the outcome is ordinal and we have a continuous predictor, relaxing the proportional odds assumption means allowing separate slopes for each cumulative logit. While this provides more flexibility, it can lead to **crossing log-odds lines**. When the cumulative log-odds cross, the implied probabilities for individual outcome categories can become negative --- a nonsensical result.
+
+We demonstrate this with simulated data.
+
+### Simulated Data
+
+```{r}
+set.seed(42)
+n <- 400
+
+# Simulate a continuous predictor
+x <- rnorm(n, mean = 50, sd = 10)
+
+# Generate ordinal outcome with 4 levels
+# True model has proportional odds structure
+eta <- 0.06 * x
+p1 <- plogis(-4 + eta)
+p2 <- plogis(-2 + eta)
+p3 <- plogis(0 + eta)
+
+u <- runif(n)
+y <- ifelse(u < p1, 1,
+       ifelse(u < p2, 2,
+         ifelse(u < p3, 3, 4)))
+
+sim_dat <- data.frame(x = x, y = ordered(y))
+table(sim_dat$y)
+```
+
+### Proportional Odds Model with `rms::orm`
+
+```{r}
+dd <- datadist(sim_dat)
+options(datadist = 'dd')
+
+fit_orm <- orm(y ~ x, data = sim_dat, x = TRUE, y = TRUE)
+fit_orm
+```
+
+Under the proportional odds assumption, the effect of `x` on the cumulative log-odds is the same regardless of the cutpoint. This guarantees that the cumulative probability curves never cross, which in turn guarantees that category probabilities remain non-negative.
+
+## Interpreting the Proportional Odds Model
+
+The proportional odds model is often summarized as modeling the odds of a "more severe" outcome relative to a "less severe" outcome. This is correct but can feel abstract. Here we unpack what this means concretely.
+
+### The Cumulative Probability Framing
+
+The proportional odds model with outcome levels 1, 2, 3, 4 simultaneously models:
+
+- $\text{logit}[P(Y \geq 2 \mid x)] = \alpha_1 + \beta x$ --- odds of being in category 2, 3, or 4 vs. category 1
+- $\text{logit}[P(Y \geq 3 \mid x)] = \alpha_2 + \beta x$ --- odds of being in category 3 or 4 vs. category 1 or 2
+- $\text{logit}[P(Y \geq 4 \mid x)] = \alpha_3 + \beta x$ --- odds of being in category 4 vs. category 1, 2, or 3
+
+Each of these equations represents a different definition of "more severe vs. less severe." The first defines severity as category 2 or higher vs. category 1. The second raises the bar: severity is now category 3 or higher vs. categories 1--2. The third is the most stringent: only category 4 counts as severe.
+
+The key feature is that $\beta$ is the **same** in all three equations. This is the "proportional odds" property: regardless of where you draw the line between "more severe" and "less severe," the odds ratio for a one-unit increase in `x` is $e^\beta$. The intercepts $\alpha_j$ differ across cutpoints (they reflect how common it is to exceed each threshold at baseline), but the effect of the predictor does not.
+
+### Worked Numerical Example
+
+We can make this concrete using the model fit above. For a fixed change in `x`, we compute the odds of exceeding each threshold and verify that the odds ratio is the same --- no matter which definition of "more severe" we use.
+
+```{r}
+# Extract intercepts and slope from the orm fit
+# orm uses the convention P(Y >= j), with intercepts stored as negative values
+coefs <- coef(fit_orm)
+intercepts <- coefs[1:3]   # alpha_1, alpha_2, alpha_3
+beta_x <- coefs["x"]
+
+# Two values of x to compare
+x_low  <- 40
+x_high <- 50
+
+# Cumulative probabilities P(Y >= j) at each value of x
+# orm models P(Y >= j) = plogis(alpha_j + beta * x)
+cum_prob <- data.frame(
+  Cutpoint = c("P(Y >= 2)", "P(Y >= 3)", "P(Y >= 4)"),
+  Interpretation = c("Cat 2-4 vs. Cat 1",
+                      "Cat 3-4 vs. Cat 1-2",
+                      "Cat 4 vs. Cat 1-3"),
+  x_low  = plogis(intercepts + beta_x * x_low),
+  x_high = plogis(intercepts + beta_x * x_high)
+)
+
+# Compute odds at each cutpoint: odds = p / (1 - p)
+cum_prob$odds_low  <- cum_prob$x_low / (1 - cum_prob$x_low)
+cum_prob$odds_high <- cum_prob$x_high / (1 - cum_prob$x_high)
+
+# Odds ratio at each cutpoint
+cum_prob$OR <- cum_prob$odds_high / cum_prob$odds_low
+
+kable(cum_prob,
+      col.names = c("Cutpoint", "More Severe vs. Less Severe",
+                     paste0("P (x=", x_low, ")"),
+                     paste0("P (x=", x_high, ")"),
+                     paste0("Odds (x=", x_low, ")"),
+                     paste0("Odds (x=", x_high, ")"),
+                     "Odds Ratio"),
+      digits = 4,
+      caption = paste0("Odds of more severe outcome at x=",
+                        x_high, " vs. x=", x_low,
+                        " across all possible cutpoints")) |>
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+
+The odds ratio is **identical at every cutpoint**. Whether we define "more severe" as category 2+ vs. 1, category 3+ vs. 1--2, or category 4 vs. 1--3, the odds ratio for a 10-unit increase in `x` is the same. This is the proportional odds assumption at work: there is a single summary of the effect of `x` on severity that applies universally across all possible dichotomizations of the ordinal scale.
+
+We can also derive the category-specific probabilities from the cumulative probabilities:
+
+```{r}
+# Category-specific probabilities: P(Y = j) = P(Y >= j) - P(Y >= j+1)
+cat_prob <- data.frame(
+  Category = c("Y = 1", "Y = 2", "Y = 3", "Y = 4"),
+  x_low = c(1 - cum_prob$x_low[1],
+            cum_prob$x_low[1] - cum_prob$x_low[2],
+            cum_prob$x_low[2] - cum_prob$x_low[3],
+            cum_prob$x_low[3]),
+  x_high = c(1 - cum_prob$x_high[1],
+             cum_prob$x_high[1] - cum_prob$x_high[2],
+             cum_prob$x_high[2] - cum_prob$x_high[3],
+             cum_prob$x_high[3])
+)
+
+kable(cat_prob,
+      col.names = c("Category",
+                     paste0("P (x=", x_low, ")"),
+                     paste0("P (x=", x_high, ")") ),
+      digits = 4,
+      caption = paste0("Category-specific probabilities at x=",
+                        x_low, " and x=", x_high)) |>
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+
+Note that all probabilities are non-negative and sum to 1 within each column. This is guaranteed by the proportional odds structure. As we will see next, relaxing the assumption can break this guarantee.
+
+### What Happens Without Proportional Odds
+
+Now consider what can happen when we allow the slope of `x` to differ across cutpoints. We fit separate logistic regressions for each cumulative split to illustrate.
+
+```{r}
+# Fit separate logistic regressions for each cumulative comparison
+sim_dat$y_num <- as.numeric(sim_dat$y)
+
+fit_cum1 <- glm(I(y_num >= 2) ~ x, data = sim_dat, family = binomial)
+fit_cum2 <- glm(I(y_num >= 3) ~ x, data = sim_dat, family = binomial)
+fit_cum3 <- glm(I(y_num >= 4) ~ x, data = sim_dat, family = binomial)
+
+cat("Slope for P(Y >= 2):", coef(fit_cum1)["x"], "\n")
+cat("Slope for P(Y >= 3):", coef(fit_cum2)["x"], "\n")
+cat("Slope for P(Y >= 4):", coef(fit_cum3)["x"], "\n")
+```
+
+When these slopes differ substantially --- or worse, have different signs --- the cumulative log-odds lines can cross. Let's visualize this with an exaggerated example.
+
+```{r, fig.width=8, fig.height=5}
+# Exaggerated non-proportional odds for illustration
+x_seq <- seq(20, 80, length = 200)
+
+# Proportional odds: same slope across cutpoints
+po_logodds <- data.frame(
+  x = rep(x_seq, 3),
+  logodds = c(-4 + 0.06 * x_seq,
+              -2 + 0.06 * x_seq,
+               0 + 0.06 * x_seq),
+  Cutpoint = rep(c("P(Y >= 2)", "P(Y >= 3)", "P(Y >= 4)"), each = 200)
+)
+
+# Non-proportional odds: different slopes
+npo_logodds <- data.frame(
+  x = rep(x_seq, 3),
+  logodds = c(-4 + 0.10 * x_seq,
+              -2 + 0.06 * x_seq,
+               0 + 0.01 * x_seq),
+  Cutpoint = rep(c("P(Y >= 2)", "P(Y >= 3)", "P(Y >= 4)"), each = 200)
+)
+
+p1 <- ggplot(po_logodds, aes(x = x, y = logodds, color = Cutpoint)) +
+  geom_line(linewidth = 1) +
+  labs(title = "Proportional Odds (Parallel Lines)",
+       x = "Continuous Predictor (x)",
+       y = "Cumulative Log-Odds") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+p2 <- ggplot(npo_logodds, aes(x = x, y = logodds, color = Cutpoint)) +
+  geom_line(linewidth = 1) +
+  labs(title = "Non-Proportional Odds (Crossing Lines)",
+       x = "Continuous Predictor (x)",
+       y = "Cumulative Log-Odds") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+gridExtra::grid.arrange(p1, p2, ncol = 2)
+```
+
+In the left panel, the proportional odds model produces parallel cumulative log-odds lines --- the lines can never cross. In the right panel, allowing different slopes causes the lines to cross. At the crossing points, the implied probability for one or more categories becomes negative, which is incoherent. The proportional odds assumption prevents this by construction.
+
+## Robust Standard Errors
+
+Even when we adopt the proportional odds structure for the coherent predictions it provides, we may still want to relax assumptions about the variance structure. The `rms::orm` function integrates seamlessly with `robcov()` to provide Huber-White sandwich standard error estimates.
+
+```{r}
+fit_orm_robust <- robcov(fit_orm)
+fit_orm_robust
+```
+
+Robust standard errors allow valid inference even if the model is not perfectly specified, while preserving the structural benefits of the proportional odds assumption for prediction.
+
+## Connection to the Wilcoxon Rank-Sum Test
+
+The proportional odds model has an elegant connection to nonparametric inference: with a single binary predictor, the score test from a proportional odds model is equivalent to the Wilcoxon rank-sum test. Both ask the same question --- does one group tend to have systematically higher (or lower) values of the outcome than the other?
+
+We illustrate this using birth weight and maternal smoking status from the `MASS::birthwt` dataset.
+
+```{r}
+data(birthwt, package = "MASS")
+birthwt$smoke <- factor(birthwt$smoke, levels = c(0, 1),
+                        labels = c("Non-smoker", "Smoker"))
+
+# Wilcoxon rank-sum test
+wilcox.test(bwt ~ smoke, data = birthwt)
+```
+
+```{r}
+dd_bwt <- datadist(birthwt)
+options(datadist = 'dd_bwt')
+
+# Proportional odds model
+fit_bwt <- orm(bwt ~ smoke, data = birthwt)
+fit_bwt
+```
+
+The score $\chi^2$ statistic from `orm` corresponds to the Wilcoxon test. Both are rank-based tests that make no assumption about the shape of the outcome distribution --- they only require the proportional odds (i.e., constant odds ratio across all cutpoints of the outcome). This connection underscores a practical advantage: when the proportional odds model is used with a nearly continuous outcome, it is essentially a regression generalization of the Wilcoxon test, allowing adjustment for additional covariates while retaining the robustness of rank-based inference.
+
+<!--
+::: {.callout-note}
+## The Low Birthweight Paradox
+
+The `birthwt` dataset invites discussion of a well-known epidemiological paradox. Smoking during pregnancy is unambiguously associated with lower birthweight and increased neonatal mortality. However, among *low birthweight infants specifically*, the mortality rate for babies of smokers appears to be *lower* than for babies of non-smokers --- seemingly suggesting that smoking is protective in this subgroup.
+
+This counterintuitive finding is a textbook example of **collider bias** (also called selection bias or the "birthweight paradox"). Birthweight is influenced by both smoking and by other risk factors (e.g., congenital anomalies, genetic conditions). Among low birthweight infants, non-smokers are more likely to be low birthweight *because* of these severe underlying conditions, whereas smokers may be low birthweight simply because of the effect of smoking itself. Conditioning on birthweight (a collider on the causal path) opens a spurious association between smoking and the other causes of low birthweight, distorting the apparent effect of smoking on mortality.
+
+The lesson: stratifying or adjusting for a variable that is a consequence of the exposure (a collider) can create, rather than remove, confounding. This is a caution against reflexively "controlling for" variables without considering the underlying causal structure --- a point that becomes increasingly important as students move toward causal inference methods.
+:::
+-->
+
+## Bayesian Ordinal Regression
+
+The `rstanarm` package provides `stan_polr()` for fitting Bayesian proportional odds models. This is analogous to `MASS::polr()` but with a Bayesian framework, allowing for prior specification and full posterior inference.
+
+```{r, results='hide', message=FALSE}
+# stan_polr function requires outcome to be a factor variable
+birthwt$bwt.factor <- factor(birthwt$bwt)
+
+fit_bayes <- stan_polr(bwt.factor ~ smoke, data = birthwt,
+                       prior = R2(0.25, what = "mean"),
+                       method = "logistic")
+```
+
+```{r}
+print(fit_bayes, digits=2)
+```
+
+```{r}
+# Posterior summary for the coefficient of x
+posterior_interval(fit_bayes, prob = 0.95)
+```
+
+The Bayesian approach provides a full posterior distribution for the regression coefficient, allowing for probabilistic statements about the effect of `x` on the ordinal outcome. The `R2()` prior is a weakly informative prior on the $R^2$ of the model, which provides modest regularization.

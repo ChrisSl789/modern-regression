@@ -55,8 +55,7 @@ website:
           - href: notes/Lec08.Survival.qmd
           - href: notes/Lec09.Poisson.qmd
           - href: notes/Lec10.Modeling.Effect.Modification.qmd
-          - href: notes/Set8.pdf
-            text: "Multinomial and Ordinal Regression"
+          - href: notes/MultinomialAndOrdinal.qmd
           - href: notes/Lec11.DoseResponse.qmd
           - href: notes/Lec12.ANOVA.Model.Choice.qmd
           - href: notes/Lec13.Prediction.qmd

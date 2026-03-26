@@ -1091,7 +1091,7 @@ $E[p60 | Ht, Age, Male] = \beta_0 + \beta_H Ht + \beta_A Age + \beta_M Male + \b
 
 ```{r, fig.height=12}
 library(rms)
-d2 <- stata.get("http://biostat.app.vumc.org/wiki/pub/Main/CourseBios312/sep.dta")
+d2 <- stata.get("data/sep.dta")
 d2$p60 <- (d2$p60R + d2$p60L) /2
 m.female <- lm(p60 ~ height + age + height:age, data=d2, subset=sex==0)
 m.male <- lm(p60 ~ height + age + height:age, data=d2, subset=sex==1)

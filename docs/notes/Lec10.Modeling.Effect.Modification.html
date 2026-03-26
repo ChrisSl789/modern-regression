@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Chris Slaughter">
-<meta name="dcterms.date" content="2024-10-07">
+<meta name="dcterms.date" content="2026-03-26">
 
 <title>Modeling Effect Modification – BIOS 6312 - Spring 2026</title>
 <style>
@@ -65,7 +65,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../notes/Set8.pdf" rel="next">
+<link href="../notes/MultinomialAndOrdinal.html" rel="next">
 <link href="../notes/Lec09.Poisson.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -298,8 +298,8 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../notes/Set8.pdf" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Multinomial and Ordinal Regression</span></a>
+  <a href="../notes/MultinomialAndOrdinal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Multinomial and Ordinal Regression: R Supplement</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -571,7 +571,7 @@ window.Quarto = {
 <p class="subtitle lead">Lecture 10</p>
 <p class="author">Chris Slaughter</p>
 
-<p class="date">October 7, 2024</p>
+<p class="date">March 26, 2026</p>
 
 </header>
 
@@ -2423,7 +2423,7 @@ g(\theta | X_i , W_i) &amp; = &amp; \beta_0 + \beta_1 \times X_i + \beta_2 \time
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rms)</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>d2 <span class="ot">&lt;-</span> <span class="fu">stata.get</span>(<span class="st">"http://biostat.app.vumc.org/wiki/pub/Main/CourseBios312/sep.dta"</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>d2 <span class="ot">&lt;-</span> <span class="fu">stata.get</span>(<span class="st">"data/sep.dta"</span>)</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>d2<span class="sc">$</span>p60 <span class="ot">&lt;-</span> (d2<span class="sc">$</span>p60R <span class="sc">+</span> d2<span class="sc">$</span>p60L) <span class="sc">/</span><span class="dv">2</span></span>
 <span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>m.female <span class="ot">&lt;-</span> <span class="fu">lm</span>(p60 <span class="sc">~</span> height <span class="sc">+</span> age <span class="sc">+</span> height<span class="sc">:</span>age, <span class="at">data=</span>d2, <span class="at">subset=</span>sex<span class="sc">==</span><span class="dv">0</span>)</span>
 <span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>m.male <span class="ot">&lt;-</span> <span class="fu">lm</span>(p60 <span class="sc">~</span> height <span class="sc">+</span> age <span class="sc">+</span> height<span class="sc">:</span>age, <span class="at">data=</span>d2, <span class="at">subset=</span>sex<span class="sc">==</span><span class="dv">1</span>)</span>
@@ -3206,8 +3206,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../notes/Set8.pdf" class="pagination-link" aria-label="Multinomial and Ordinal Regression">
-        <span class="nav-page-text">Multinomial and Ordinal Regression</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../notes/MultinomialAndOrdinal.html" class="pagination-link" aria-label="Multinomial and Ordinal Regression: R Supplement">
+        <span class="nav-page-text">Multinomial and Ordinal Regression: R Supplement</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
@@ -4304,7 +4304,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb33-1125"><a href="#cb33-1125" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb33-1126"><a href="#cb33-1126" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, fig.height=12}</span></span>
 <span id="cb33-1127"><a href="#cb33-1127" aria-hidden="true" tabindex="-1"></a><span class="in">library(rms)</span></span>
-<span id="cb33-1128"><a href="#cb33-1128" aria-hidden="true" tabindex="-1"></a><span class="in">d2 &lt;- stata.get("http://biostat.app.vumc.org/wiki/pub/Main/CourseBios312/sep.dta")</span></span>
+<span id="cb33-1128"><a href="#cb33-1128" aria-hidden="true" tabindex="-1"></a><span class="in">d2 &lt;- stata.get("data/sep.dta")</span></span>
 <span id="cb33-1129"><a href="#cb33-1129" aria-hidden="true" tabindex="-1"></a><span class="in">d2$p60 &lt;- (d2$p60R + d2$p60L) /2</span></span>
 <span id="cb33-1130"><a href="#cb33-1130" aria-hidden="true" tabindex="-1"></a><span class="in">m.female &lt;- lm(p60 ~ height + age + height:age, data=d2, subset=sex==0)</span></span>
 <span id="cb33-1131"><a href="#cb33-1131" aria-hidden="true" tabindex="-1"></a><span class="in">m.male &lt;- lm(p60 ~ height + age + height:age, data=d2, subset=sex==1)</span></span>
