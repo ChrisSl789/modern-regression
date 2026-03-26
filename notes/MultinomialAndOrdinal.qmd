@@ -424,7 +424,7 @@ p2 <- ggplot(npo_logodds, aes(x = x, y = probs, color = Cutpoint)) +
   geom_line(linewidth = 1) +
   labs(title = "Non-Proportional Odds (Crossing Lines)",
        x = "Continuous Predictor (x)",
-       y = "Cumulative Log-Odds") +
+       y = "Cumulative Probability") +
   theme_minimal() +
   theme(legend.position = "bottom")
 
