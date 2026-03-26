@@ -366,8 +366,8 @@ po_logodds <- data.frame(
   x = rep(x_seq, 3),
   logodds = c(-4 + 0.06 * x_seq,
               -2 + 0.06 * x_seq,
-               0 + 0.06 * x_seq),
-  Cutpoint = rep(c("P(Y >= 2)", "P(Y >= 3)", "P(Y >= 4)"), each = 200)
+              0 + 0.06 * x_seq),
+  Cutpoint = rep(c("P(Y >= 4)", "P(Y >= 3)", "P(Y >= 2)"), each = 200)
 )
 
 # Non-proportional odds: different slopes
@@ -375,8 +375,8 @@ npo_logodds <- data.frame(
   x = rep(x_seq, 3),
   logodds = c(-4 + 0.10 * x_seq,
               -2 + 0.06 * x_seq,
-               0 + 0.01 * x_seq),
-  Cutpoint = rep(c("P(Y >= 2)", "P(Y >= 3)", "P(Y >= 4)"), each = 200)
+              0 + 0.01 * x_seq),
+  Cutpoint = rep(c("P(Y >= 4)", "P(Y >= 3)", "P(Y >= 2)"), each = 200)
 )
 
 p1 <- ggplot(po_logodds, aes(x = x, y = logodds, color = Cutpoint)) +
@@ -398,7 +398,40 @@ p2 <- ggplot(npo_logodds, aes(x = x, y = logodds, color = Cutpoint)) +
 gridExtra::grid.arrange(p1, p2, ncol = 2)
 ```
 
-In the left panel, the proportional odds model produces parallel cumulative log-odds lines --- the lines can never cross. In the right panel, allowing different slopes causes the lines to cross. At the crossing points, the implied probability for one or more categories becomes negative, which is incoherent. The proportional odds assumption prevents this by construction.
+In the left panel, the proportional odds model produces parallel cumulative log-odds lines (the lines never cross). In the right panel, allowing different slopes causes the lines to cross. At the crossing points, the implied probability for one or more categories becomes negative, which is incoherent. The proportional odds assumption prevents this by construction.
+
+- Consider the $P(Y=2|X=x)$.  For any given $X=x$, $P(Y=2|X=x) = P(Y\ge 2|X=x) - P(Y\ge 3|X=x)$
+
+- If we consider the plots on the probability scale, the problem becomes apparent.  If we assume proportional odds, then for all values of $x$, $P(Y=2|X=x) > 0$, which is appropriate.  If we relax the assumption of proportional odds, then for some values of $x$ ($x>40$ in the example), $P(Y=2|X=x) < 0$, which is non-sensical if $X$ is truly ordinal.
+
+
+```{r, fig.width=8, fig.height=5}
+# Exaggerated non-proportional odds for illustration
+
+po_logodds$probs <- 1/(1+exp(-po_logodds$logodds))
+
+p1 <- ggplot(po_logodds, aes(x = x, y = probs, color = Cutpoint)) +
+  geom_line(linewidth = 1) +
+  labs(title = "Proportional Odds (Parallel Lines)",
+       x = "Continuous Predictor (x)",
+       y = "Cumulative Probability") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+npo_logodds$probs <- 1/(1+exp(-npo_logodds$logodds))
+
+p2 <- ggplot(npo_logodds, aes(x = x, y = probs, color = Cutpoint)) +
+  geom_line(linewidth = 1) +
+  labs(title = "Non-Proportional Odds (Crossing Lines)",
+       x = "Continuous Predictor (x)",
+       y = "Cumulative Log-Odds") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+gridExtra::grid.arrange(p1, p2, ncol = 2)
+```
+
+
 
 ## Robust Standard Errors
 
