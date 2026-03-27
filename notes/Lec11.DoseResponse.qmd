@@ -250,9 +250,7 @@ Which models are nested within which?
 
 :::
 
-## Modeling Complex Dose-Response
-
-### Be careful when making data-driven model building decisions
+## Be careful when making data-driven model building decisions
 
 -   We are often tempted to remove parameters that are not statistically significant before proceeding to other tests
 
@@ -301,6 +299,8 @@ Which models are nested within which?
 -   Rather than relying on data-driven model building, we should instead pre-specify how we intend to model our data based on scientific considerations. All models are approximations — the goal is to choose a useful approximation that addresses our scientific question, not to let the data tell us which model to use.
 
 ![All models are wrong, but some are useful.](figures/quote-all-models-are-approximations-essentially-all-models-are-wrong-but-some-are-useful-however-george-e-p-box-98-93-58.jpg)
+
+## Modeling Complex Dose-Response
 
 ### S-Shaped dose-response curves
 
