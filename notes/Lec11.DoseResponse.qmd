@@ -690,6 +690,42 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
 newdata[12:17,]
 ```
 
+#### Categorizing a continuous variable
+
+-   Rather than using a dummy variable for each level of age, we could categorize age into broader groups
+
+-   This is a common approach in practice, but it has several drawbacks
+
+```{r, fig.cap="Categorizing age into four groups produces a step function that poorly approximates the true relationship.  Red points are mean height at each year of age."}
+fev$age_cat <- cut(fev$age, breaks=c(2, 6, 10, 14, 19),
+                   labels=c("3-6", "7-10", "11-14", "15-19"))
+
+m.cat <- lm(height ~ age_cat, data=fev)
+newdata$ht.cat <- predict(m.cat, newdata=data.frame(age_cat=cut(3:19, breaks=c(2, 6, 10, 14, 19),
+                                                                 labels=c("3-6", "7-10", "11-14", "15-19"))))
+ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
+  geom_line(data=newdata, aes(x=age, y=ht.cat), col="blue", linewidth=1) +
+  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3)
+```
+
+-   Categorizing age into four groups produces a step function
+
+    -   Within each group, the predicted height is the group mean (borrowing strength within groups)
+
+    -   But at the boundaries between groups, there are abrupt jumps in predicted height
+
+    -   The choice of cutpoints (6, 10, 14) is arbitrary — different cutpoints would give different results
+
+    -   Information about the ordering of age within each group is lost (e.g., a 3 year old and a 6 year old are treated the same)
+
+-   We have now seen two extremes
+
+    -   Dummy variable for each year of age: overfit, too many parameters, does not borrow strength across ages
+
+    -   Categorized age: too few parameters, abrupt jumps, arbitrary cutpoints, loses information within groups
+
+-   We need methods that can borrow strength across the range of age while still capturing the non-linear trend — this motivates flexible methods like polynomials and splines
+
 ## Flexible Methods
 
 -   We have methods that can fit a wide variety of curve shapes
