@@ -42,7 +42,7 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 -   Dose. Typically, dose of some treatment. Higher doses presumed to lead to greater (or lesser) response.
 -   Exposure. Typically, greater precision (more power) to consider amount of exposure rather than just Exposed versus Unexposed
 -   Many others. Age, serum cholesterol, blood pressure, height, etc.
--   "Dose-response" in the following notes that follow more generally refers to "doses" of any type of continuous covariate ("doses of age", "doses of cholesterol", etc.)
+-   "Dose-response" in the notes that follow more generally refers to "doses" of any type of continuous covariate ("doses of age", "doses of cholesterol", etc.)
 
 ### Scientific questions when modeling dose-response
 
@@ -106,7 +106,7 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
 -   Our scientific interpretation of our statistical tests depends on the meaning of the restricted model compared to the full model
 
-    -   Consider the the additional associations that are possible with the full model that are not possible with the restricted model
+    -   Consider the additional associations that are possible with the full model that are not possible with the restricted model
 
 -   Appears very straightforward when we are only considering one full model compared to one restricted model
 
@@ -134,7 +134,7 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
     -   Linear and quadratic terms for cholesterol
 
-    -   Model allows for a parabolic shape for chelesterol
+    -   Model allows for a parabolic shape for cholesterol
 
 -   Restricted model: Survival vs cholesterol
 
@@ -232,19 +232,19 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
         -   e.g. fit the interaction, if it is not significant, exclude it from the model
 
-        -   Such texts are invariable written by mathematicians with no understanding of the underlying science
+        -   Such texts are invariably written by mathematicians with no understanding of the underlying science
 
-        -   When you work in the same scientific area, you will eventually "discover" false-positive assocations if you use this model building technique
+        -   When you work in the same scientific area, you will eventually "discover" false-positive associations if you use this model building technique
 
     -   Such data-driven analyses tend to suggest that failure to reject the null means equivalence
 
         -   But, if you make this conclusion, you are wrong (large p-values do not indicate equivalence)
 
-        -   Abscence of evidence is not evidence of abscence
+        -   Absence of evidence is not evidence of absence
 
     -   A procedure where we fit one model, and then use the results to determine the next model we will fit tends to underestimate the true standard error
 
-        -   A consequence of the genearl multiple testing problem
+        -   A consequence of the general multiple testing problem
 
         -   Will lead to declaring statistical significance more often than you should (inflates type-I error rate)
 
@@ -370,7 +370,7 @@ legend("bottomright", c("Esophagitis Pos","Esophagitis Neg"), inset=0.05, col="B
 
 -   1:1 Transformations
 
-    -   Sometimes we can transform 1 scientific measurement into 1 modeled predictor and acheve approximate linearity
+    -   Sometimes we can transform 1 scientific measurement into 1 modeled predictor and achieve approximate linearity
 
     -   Ex: log transformations will sometimes address apparent threshold effects
 
@@ -532,7 +532,7 @@ coeftest(m3, vcov=sandwich)
 
 -   Indicator variables for all but one group
 
--   This is the only appropriate method for modeling modeling nominal (unordered) categorical variables
+-   This is the only appropriate method for modeling nominal (unordered) categorical variables
 
     -   Example: Marital status using indicator for
 
@@ -672,7 +672,7 @@ newdata[12:17,]
 
     -   Splines: Piecewise linear or piecewise polynomial
 
-### Polyhomial functions
+### Polynomial functions
 
 -   We can fit high order polynomials to flexibly model a continuous covariate
 
@@ -721,7 +721,7 @@ newdata[12:17,]
 
         -   Best to specify know locations in advance for desired scientific interpretation
 
-        -   Nested within a restriced model with a single slope term (hierarchcical structure allow comparisons of complex to simpler models)
+        -   Nested within a restricted model with a single slope term (hierarchical structure allows comparisons of complex to simpler models)
 
     -   Disadvantages
 
@@ -756,7 +756,7 @@ coeftest(m.linspline.nonmar, varcov=sandwich)
 coefci(m.linspline.nonmar, varcov=sandwich)
 ```
 
--   (Intercept) is the expect height when age is 0. Since this is outside the range of our data, it has no scientific interpretation.
+-   (Intercept) is the expected height when age is 0. Since this is outside the range of our data, it has no scientific interpretation.
 
 -   The first slope term ('lspline(age, knots = c(9.5, 15.5))1') is the expected change in height comparing two individuals who differ in age by one year when both subjects are 9 years old or less. Comparing two children who are both 3 to 9 years old and differ in age by one year, the older child on average will be 2.49 inches taller than the younger child. We are 95% confident the true difference in height is between 2.29 and 2.68 inches taller.
 
@@ -796,7 +796,7 @@ cbind(3:19, lspline(3:19,  knots = c(9.5, 15.5)))
 
 -   We have transformed one measured predictor, age, into three predictors
 
-#### Piecewise linear spline interpretation (marginal is TRUE, the default)
+#### Piecewise linear spline interpretation (marginal is TRUE)
 
 -   Focusing on the model with 3 knots for interpretation with age groups of \[3 to 9\], \[10 to 15\], and \[16 to 19\]
     -   Knots at 9.5 and 15.5 define these age groups
@@ -807,7 +807,7 @@ coeftest(m.linspline.mar, varcov=sandwich)
 coefci(m.linspline.mar, varcov=sandwich)
 ```
 
--   (Intercept) is the expect height when age is 0. Since this is outside the range of our data, it has no scientific interpretation.
+-   (Intercept) is the expected height when age is 0. Since this is outside the range of our data, it has no scientific interpretation.
 
 -   The first slope term ('lspline(age, knots = c(9.5, 15.5))1') is the expected change in height comparing two individuals who differ in age by one year when both subjects are 9 years old or less.
 
@@ -871,7 +871,7 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
   geom_smooth(method=lm, formula=y ~ lspline(x,knots=c(9.5, 15.5)), se=FALSE, aes(color="Blue")) + 
   geom_smooth(method=lm, formula=y ~ bs(x,knots=c(9.5, 15.5), degree=3), se=FALSE, aes(color="Green")) +
   geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3) + 
-  scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("lspline(x,knots=c(9.5, 15.5))","bs(x,knots=c(9.5, 15.5)")) + theme(legend.position = c(0.8, 0.2))
+  scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("lspline(x,knots=c(9.5, 15.5))","bs(x,knots=c(9.5, 15.5))")) + theme(legend.position = c(0.8, 0.2))
 ```
 
 ##### B-spline versus natural spline
@@ -881,24 +881,24 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
   geom_smooth(method=lm, formula=y ~ ns(x, df=3), se=FALSE, aes(color="Blue")) + 
   geom_smooth(method=lm, formula=y ~ bs(x,3, knots=c(9.5, 15.5)), se=FALSE, aes(color="Green")) +
   geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3)+  
-  scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("ns(x, df=3)","bs(x,3, knots=c(9.5, 15.5)")) + theme(legend.position = c(0.8, 0.2))
+  scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("ns(x, df=3)","bs(x,3, knots=c(9.5, 15.5))")) + theme(legend.position = c(0.8, 0.2))
 ```
 
-##### Nautral spline versus restricted cubic spline
+##### Natural spline versus restricted cubic spline
 
 -   Natural splines and restricted cubic spline are both cubic splines with restrictions of linearity beyond the boundary knot locations
 
 -   They have different inputs which can result in different model fits
 
-```{r, fig.cap="Natrual spline (with knots at 3.5 and 9.5) compared with restricted cubic spline with parms set to give the same fit.  Both spline approaches impose a linearity constraint at the tails.  Fits are same using these inputs."}
+```{r, fig.cap="Natural spline (with knots at 9.5 and 15.5) compared with restricted cubic spline with parms set to give the same fit.  Both spline approaches impose a linearity constraint at the tails.  Fits are same using these inputs."}
 ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + 
   geom_smooth(method=lm, formula=y ~ ns(x, knots=c(9.5, 15.5)), se=FALSE, aes(color="Blue")) + 
   geom_smooth(method=lm, formula=y ~ rcs(x, parms=c(0, 9.5, 15.5, 19)), se=FALSE, aes(color="Green")) +
   geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3) +  
-  scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("ns(x, knots=c(9.5, 15.5)","rcs(x, parms=c(0, 9.5, 15.5, 19)")) + theme(legend.position = c(0.8, 0.2))
+  scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("ns(x, knots=c(9.5, 15.5))","rcs(x, parms=c(0, 9.5, 15.5, 19))")) + theme(legend.position = c(0.8, 0.2))
 ```
 
-```{r, fig.cap="Natrual cubic spline (3 d.f) compared with restricted cubic spline using default inputs.  Both spline approaches impose a linearity constraint at the tails, but with different default knot locations the fits are different."}
+```{r, fig.cap="Natural cubic spline (3 d.f.) compared with restricted cubic spline using default inputs.  Both spline approaches impose a linearity constraint at the tails, but with different default knot locations the fits are different."}
 ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + 
   geom_smooth(method=lm, formula=y ~ ns(x, df=3), se=FALSE, aes(color="Blue")) + 
   geom_smooth(method=lm, formula=y ~ rcs(x, nk=5), se=FALSE, aes(color="Green")) +
@@ -906,14 +906,14 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
   scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("ns(x, df=3)","rcs(x, nk=5)")) + theme(legend.position = c(0.8, 0.2))
 ```
 
-##### Nautral spline versus piecewise linear spline
+##### Natural spline versus piecewise linear spline
 
-```{r, fig.cap="Natrual spline (3 d.f) compared with restricted cubic spline with knots at 9.5 and 15.5.  Both spline approaches impose a linearity constraint at the tails."}
+```{r, fig.cap="Natural spline (3 d.f.) compared with piecewise linear spline with knots at 9.5 and 15.5."}
 ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + 
   geom_smooth(method=lm, formula=y ~ ns(x, df=3), se=FALSE, aes(color="Blue")) + 
   geom_smooth(method=lm, formula=y ~ lspline(x, knots=c(9.5,15.5)), se=FALSE, aes(color="Green")) +
   geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3) +  
-  scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("ns(x, df=3)","lspline(x, knots=c(9.5,15.5)")) + theme(legend.position = c(0.8, 0.2))
+  scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("ns(x, df=3)","lspline(x, knots=c(9.5,15.5))")) + theme(legend.position = c(0.8, 0.2))
 ```
 
 ## Summary comments
@@ -944,7 +944,7 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
 
     -   Be careful of behavior of your splines at the extremes of your continuous covariates
 
-        -   (Also, don't extrapolate beyond the range of the date)
+        -   (Also, don't extrapolate beyond the range of the data)
 
     -   Degrees of freedom, or allowed model complexity needs to be considered in terms of the effective sample size for the type of outcome you are studying
 
@@ -963,7 +963,7 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
 
     -   Degrees of freedom can be saved by constraints, such as the linearity constraint at the tails for natural splines and restricted cubic spline. These are popular splines because the constraint often saves degrees of freedom while improving the generalizability of the fit at the tails of the continuous distribution
 
-    -   These are approximatione, and the allowed model complexity can depend on other characteristics of the data too
+    -   These are approximations, and the allowed model complexity can depend on other characteristics of the data too
 
 -   Splines for effect modification (continuous effect modifier and/or continuous predictor of interest)
 
@@ -993,11 +993,11 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
 
     -   There is not much to be lost and potentially much to be gained by pre-specifying a flexible model for a continuous confounder
 
-        -   If it is a straight line, a flexibly spline or a linear tearm can capture the association (either would adjust for confounding)
+        -   If it is a straight line, a flexible spline or a linear term can capture the association (either would adjust for confounding)
 
-        -   If it is not a straight line, a flexible spline can capture the assocation while a linear term cannot (spline would more completly adjust for confouding)
+        -   If it is not a straight line, a flexible spline can capture the association while a linear term cannot (spline would more completely adjust for confounding)
 
-```{r, fig.cap="Linear (sraight line) and natural spline (3 d.f.) fits to log of FEV and height.  The relationship is approximately a straight line, which can be capture by either assuming a straight line association or allowing for a flexible fit."}
+```{r, fig.cap="Linear (straight line) and natural spline (3 d.f.) fits to log of FEV and height.  The relationship is approximately a straight line, which can be captured by either assuming a straight line association or allowing for a flexible fit."}
 ggplot(fev, aes(x=height, y=logfev)) + geom_point() + geom_smooth(method=lm, se=FALSE) +
   geom_smooth(method=lm, formula=y ~ ns(x, df=3), se=FALSE, color="Green")
 ```
