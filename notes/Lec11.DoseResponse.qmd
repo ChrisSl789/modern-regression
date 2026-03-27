@@ -224,7 +224,35 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
             -   Test that parameters for smoking and sex-smoking interaction are zero
 
-#### Be careful when making data-driven model building decisions
+#### Check your understanding
+
+Consider the following regression models for outcome $Y$ with continuous predictor $X$ and binary predictor $Z$:
+
+| Model | Formula |
+|-------|---------|
+| A | $g(\theta) = \beta_0 + \beta_1 X + \beta_2 X^2 + \beta_3 Z + \beta_4 X \cdot Z$ |
+| B | $g(\theta) = \beta_0 + \beta_1 X + \beta_2 X^2 + \beta_3 Z$ |
+| C | $g(\theta) = \beta_0 + \beta_1 X + \beta_2 X^2$ |
+| D | $g(\theta) = \beta_0 + \beta_1 X + \beta_3 Z$ |
+| E | $g(\theta) = \beta_0$ |
+
+Which models are nested within which?
+
+::: {.callout-tip collapse="true" title="Click to see answer"}
+
+-   **B is nested in A** (set $\beta_4 = 0$)
+-   **C is nested in A** (set $\beta_3 = 0, \beta_4 = 0$)
+-   **C is nested in B** (set $\beta_3 = 0$)
+-   **D is nested in A** (set $\beta_2 = 0, \beta_4 = 0$)
+-   **D is nested in B** (set $\beta_2 = 0$)
+-   **E is nested in A, B, C, and D** (set all non-intercept parameters to zero)
+-   **C and D are NOT nested** within each other. C contains $\beta_2 X^2$ but not $\beta_3 Z$; D contains $\beta_3 Z$ but not $\beta_2 X^2$. Neither model can be obtained from the other by setting parameters to zero.
+
+:::
+
+## Modeling Complex Dose-Response
+
+### Be careful when making data-driven model building decisions
 
 -   We are often tempted to remove parameters that are not statistically significant before proceeding to other tests
 
@@ -270,7 +298,7 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
     -   Statistically, there is no way of discriminating between these four possibilities unless you have an infinite sample size
 
-## Modeling Complex Dose-Response
+-   Rather than relying on data-driven model building, we should instead pre-specify how we intend to model our data based on scientific considerations. All models are approximations — the goal is to choose a useful approximation that addresses our scientific question, not to let the data tell us which model to use.
 
 ![All models are wrong, but some are useful.](figures/quote-all-models-are-approximations-essentially-all-models-are-wrong-but-some-are-useful-however-george-e-p-box-98-93-58.jpg)
 
