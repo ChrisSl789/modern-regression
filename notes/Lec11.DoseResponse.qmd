@@ -1084,6 +1084,15 @@ kable(comparison, digits=1)
 
 -   There are a variety of methods for flexibly modeling continuous covariates
 
+| Approach | R function | Boundary behavior | Interpretable coefficients? | Nested within linear? |
+|----------|-----------|-------------------|----------------------------|----------------------|
+| Categorized | `factor(cut(...))` | Step function | Yes (group means) | No |
+| Polynomial | `poly(x, k)` | Unstable at extremes | No (for degree > 1) | Yes |
+| Piecewise linear spline | `lspline(x, knots)` | Linear at tails | Yes (slopes per segment) | Yes |
+| B-spline | `bs(x, df)` | Unconstrained | No | No |
+| Natural cubic spline | `ns(x, df)` | Linear at tails | No | No |
+| Restricted cubic spline | `rcs(x, nk)` | Linear at tails | No | No |
+
 -   Approach you use should be pre-specified and based on scientific considerations
 
 -   Splines for predictor of interest in an association study
