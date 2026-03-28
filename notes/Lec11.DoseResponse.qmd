@@ -644,9 +644,9 @@ linearHypothesis(m4, c("fieldArts","fieldProf"),
                  vcov=sandwich(m4))
 ```
 
--   We can conclude there is a there is a significant difference in salary comparing faculty with different fields ($P<0.001$)
+-   We can conclude there is a significant difference in salary comparing faculty with different fields ($P<0.001$)
 
-#### Continuous variables
+## Modeling Continuous Predictors with Dummy Variables
 
 -   We can also use dummy variables to represent continuous variables
 
@@ -690,7 +690,7 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
 newdata[12:17,]
 ```
 
-#### Categorizing a continuous variable
+### Categorizing a continuous variable
 
 -   Rather than using a dummy variable for each level of age, we could categorize age into broader groups
 
