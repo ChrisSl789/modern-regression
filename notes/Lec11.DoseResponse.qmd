@@ -921,64 +921,83 @@ linearHypothesis(m.linspline.mar,
 ##### B-spline versus polynomial function
 
 ```{r, fig.cap="B-Spline with 3 degrees of freedom is the same as a 3 degree of polynomial. Two lines are not visible because the blue and green line are on top of each other."}
-ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + 
-  geom_smooth(method=lm, formula=y ~ poly(x, 3), se=FALSE, aes(color="Blue")) + 
+ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
+  geom_smooth(method=lm, formula=y ~ poly(x, 3), se=FALSE, aes(color="Blue")) +
   geom_smooth(method=lm, formula=y ~ bs(x,3), se=FALSE, aes(col="Green")) +
-  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="Red", size=3) + 
+  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="Red", size=3) +
   scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("poly(x,3)","bs(x,3)")) + theme(legend.position = c(0.8, 0.2))
 ```
 
-##### B-spline versus piecewise linear spline, function
+-   A B-spline with no interior knots and degree 3 is mathematically equivalent to a cubic polynomial — the two fits are identical. This shows that B-splines generalize polynomials by adding interior knots.
+
+##### B-spline versus piecewise linear spline
 
 ```{r, fig.cap="B-Spline with 3 degrees of freedom and knots at 9.5 and 15.5 compared to piecewise linear spline with knots at 9.5 and 15.5"}
-ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + 
-  geom_smooth(method=lm, formula=y ~ lspline(x,knots=c(9.5, 15.5)), se=FALSE, aes(color="Blue")) + 
+ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
+  geom_smooth(method=lm, formula=y ~ lspline(x,knots=c(9.5, 15.5)), se=FALSE, aes(color="Blue")) +
   geom_smooth(method=lm, formula=y ~ bs(x,knots=c(9.5, 15.5), degree=3), se=FALSE, aes(color="Green")) +
-  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3) + 
+  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3) +
   scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("lspline(x,knots=c(9.5, 15.5))","bs(x,knots=c(9.5, 15.5))")) + theme(legend.position = c(0.8, 0.2))
 ```
 
+-   With the same knot locations, the cubic B-spline produces a smooth curve while the piecewise linear spline has abrupt slope changes at each knot. The B-spline uses more degrees of freedom (5 vs 3) to achieve this smoothness.
+
 ##### B-spline versus natural spline
 
-```{r, fig.cap="B-Spline with 3 degrees of freedom and knots at 9.5 and 15 compared to ns (3 df).  The enforcement of the linearity constraint beyond the boundary knots is particular apparent for the natural spline at the low end of age."}
-ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + 
-  geom_smooth(method=lm, formula=y ~ ns(x, df=3), se=FALSE, aes(color="Blue")) + 
+```{r, fig.cap="B-Spline with 3 degrees of freedom and knots at 9.5 and 15.5 compared to ns (3 df).  The enforcement of the linearity constraint beyond the boundary knots is particularly apparent for the natural spline at the low end of age."}
+ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
+  geom_smooth(method=lm, formula=y ~ ns(x, df=3), se=FALSE, aes(color="Blue")) +
   geom_smooth(method=lm, formula=y ~ bs(x,3, knots=c(9.5, 15.5)), se=FALSE, aes(color="Green")) +
-  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3)+  
+  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3)+
   scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("ns(x, df=3)","bs(x,3, knots=c(9.5, 15.5))")) + theme(legend.position = c(0.8, 0.2))
 ```
 
+-   The key difference is at the tails: the natural spline enforces linearity beyond the boundary knots, while the B-spline is unconstrained. This is particularly visible at the low end of age, where the B-spline curves while the natural spline is straight. The linearity constraint makes the natural spline more stable at the extremes and uses fewer degrees of freedom for the same number of interior knots.
+
 ##### Natural spline versus restricted cubic spline
 
--   Natural splines and restricted cubic spline are both cubic splines with restrictions of linearity beyond the boundary knot locations
+-   Natural splines and restricted cubic splines are both cubic splines with restrictions of linearity beyond the boundary knot locations
 
 -   They have different inputs which can result in different model fits
 
 ```{r, fig.cap="Natural spline (with knots at 9.5 and 15.5) compared with restricted cubic spline with parms set to give the same fit.  Both spline approaches impose a linearity constraint at the tails.  Fits are same using these inputs."}
-ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + 
-  geom_smooth(method=lm, formula=y ~ ns(x, knots=c(9.5, 15.5)), se=FALSE, aes(color="Blue")) + 
+ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
+  geom_smooth(method=lm, formula=y ~ ns(x, knots=c(9.5, 15.5)), se=FALSE, aes(color="Blue")) +
   geom_smooth(method=lm, formula=y ~ rcs(x, parms=c(0, 9.5, 15.5, 19)), se=FALSE, aes(color="Green")) +
-  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3) +  
+  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3) +
   scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("ns(x, knots=c(9.5, 15.5))","rcs(x, parms=c(0, 9.5, 15.5, 19))")) + theme(legend.position = c(0.8, 0.2))
 ```
 
+-   When given equivalent knot specifications, `ns()` and `rcs()` produce the same fit. Both enforce linearity at the tails.
+
 ```{r, fig.cap="Natural cubic spline (3 d.f.) compared with restricted cubic spline using default inputs.  Both spline approaches impose a linearity constraint at the tails, but with different default knot locations the fits are different."}
-ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + 
-  geom_smooth(method=lm, formula=y ~ ns(x, df=3), se=FALSE, aes(color="Blue")) + 
+ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
+  geom_smooth(method=lm, formula=y ~ ns(x, df=3), se=FALSE, aes(color="Blue")) +
   geom_smooth(method=lm, formula=y ~ rcs(x, nk=5), se=FALSE, aes(color="Green")) +
-  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3) +  
+  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3) +
   scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("ns(x, df=3)","rcs(x, nk=5)")) + theme(legend.position = c(0.8, 0.2))
 ```
+
+-   However, when using default settings, `ns()` and `rcs()` place knots at different locations, leading to different fits. The choice between `ns()` and `rcs()` matters less than the choice of knot locations.
 
 ##### Natural spline versus piecewise linear spline
 
 ```{r, fig.cap="Natural spline (3 d.f.) compared with piecewise linear spline with knots at 9.5 and 15.5."}
-ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() + 
-  geom_smooth(method=lm, formula=y ~ ns(x, df=3), se=FALSE, aes(color="Blue")) + 
+ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
+  geom_smooth(method=lm, formula=y ~ ns(x, df=3), se=FALSE, aes(color="Blue")) +
   geom_smooth(method=lm, formula=y ~ lspline(x, knots=c(9.5,15.5)), se=FALSE, aes(color="Green")) +
-  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3) +  
+  geom_point(data=newdata, aes(x=age, y=ht.dummy), col="red", size=3) +
   scale_colour_manual(name="Model", values=c("Blue", "Green"), labels=c("ns(x, df=3)","lspline(x, knots=c(9.5,15.5))")) + theme(legend.position = c(0.8, 0.2))
 ```
+
+-   The natural spline provides a smooth curve while the piecewise linear spline has sharp corners at the knots. The piecewise linear spline has the advantage of interpretable slope coefficients within each segment. The natural spline trades interpretability for smoothness.
+
+##### Key takeaways from the comparisons
+
+-   With equivalent inputs, `ns()` and `rcs()` give the same fit — the choice between them is largely a matter of software preference
+-   The linearity constraint at the tails (used by `ns()` and `rcs()` but not `bs()`) improves stability at the extremes and saves degrees of freedom
+-   Knot locations matter more than the choice of spline type
+-   Piecewise linear splines offer interpretability at the cost of smoothness; polynomial splines offer smoothness at the cost of interpretability
 
 ### Comparing models using AIC and BIC
 
