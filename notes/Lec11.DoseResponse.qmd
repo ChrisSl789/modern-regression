@@ -315,7 +315,7 @@ plotdata$y <- plotdata$y + rnorm(n,0,4)
 ggplot(plotdata, aes(x=x, y=y)) + geom_point() + theme_bw() + geom_smooth()
 ```
 
--   If we happen to sample over the entire range of $X$ (in this example, from 0 to 100), we will would observe all parts of the S-curve
+-   If we happen to sample over the entire range of $X$ (in this example, from 0 to 100), we would observe all parts of the S-curve
 
 -   However, if we were only to sample from a limited range of $X$, we might observe only parts of the curve where it was approximately linear
 
@@ -684,10 +684,10 @@ ggplot(fev, aes(x=age, y=height)) + geom_point() + theme_bw() +
     -   By ignoring the ordering of age, we are not borrowing strength across adjacent age groups
     -   When building model, we can decide how much information we want to borrow from nearby groups
 
--   Predicted heights for observed ages from the dummy variable and two polynomial models
+-   Predicted heights for ages 14 to 19 from the dummy variable model
 
 ```{r}
-newdata[12:17,]
+newdata[12:17, c("age", "ht.dummy")]
 ```
 
 ### Categorizing a continuous variable
@@ -783,7 +783,7 @@ newdata[12:17,]
 
         -   Interpretability. Has the interpretation as the slope (or slope change) from the regression model, but within a range of $X$
 
-        -   Best to specify know locations in advance for desired scientific interpretation
+        -   Best to specify knot locations in advance for desired scientific interpretation
 
         -   Nested within a restricted model with a single slope term (hierarchical structure allows comparisons of complex to simpler models)
 
@@ -891,11 +891,11 @@ linearHypothesis(m.linspline.mar,
                  vcov=sandwich(m.linspline.mar))
 ```
 
--   This is the same scientific test as for the non-marginal model, just a different parameteriziation. So, we obtain the same inference (F-stat and p-values are identical).
+-   This is the same scientific test as for the non-marginal model, just a different parameterization. So, we obtain the same inference (F-stat and p-values are identical).
 
 ### Polynomial splines
 
--   Polynomial splines introduces squared or cubic terms to increase the smoothness of the estimate. In particular, compare to linear splines, they are no abrupt changes in the slope at each knot point.
+-   Polynomial splines introduces squared or cubic terms to increase the smoothness of the estimate. In particular, compared to linear splines, there are no abrupt changes in the slope at each knot point.
 
 -   There are various types of polynomial splines, each with different formulas applied to generate the basis matrix for the regression model
 
