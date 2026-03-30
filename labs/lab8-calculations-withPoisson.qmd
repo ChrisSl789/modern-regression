@@ -1,0 +1,697 @@
+---
+title: "Lab 8 Supplement: Regression Models for Contingency Tables"
+subtitle: "Binary, Ordinal, Multinomial, and Poisson Approaches"
+format: 
+   html:
+     toc: true
+     toc-depth: 3
+---
+
+## Overview
+
+This lab examines a single $3 \times 3$ contingency table through the lens of four
+different regression models: binary logistic, proportional odds ordinal logistic,
+multinomial logistic, and Poisson log-linear. Each model makes different assumptions
+about the outcome, yet all draw inference from the same underlying table of counts.
+The goals are to:
+
+1. Determine which models are **saturated** (i.e., have enough parameters to
+   reproduce every cell probability exactly).
+2. **Calculate intercepts and slopes by hand** from the cell counts and verify
+   they match the fitted model output.
+3. **Discuss the advantages and disadvantages** of each modeling approach.
+
+We will also consider the role of covariate adjustment (age and CHD) and close
+with a Poisson log-linear formulation that unifies contingency table analysis
+with rate modeling and survival analysis.
+
+## Data Setup
+
+The data form a $3 \times 3$ table with a 3-level outcome `y` (0, 1, 2) and a
+3-level predictor `x` (0, 1, 2).
+
+```{r}
+#| label: data-setup
+
+# Recreate the dataset from the cell counts
+d1 <- expand.grid(y = 0:2, x = 0:2, wt = NA)
+d1$wt <- c(30, 15, 45, 18, 12, 60, 10, 8, 72)
+
+# Expanded (one-row-per-subject) dataset
+d2 <- data.frame(
+  x = rep(d1$x, d1$wt),
+  y = rep(d1$y, d1$wt)
+)
+
+# Verify the table (reversed so highest levels appear top-left)
+table(factor(d2$x, levels = 2:0), factor(d2$y, levels = 2:0))
+```
+
+We also create dichotomized and factor versions of the variables that will be
+needed across models.
+
+```{r}
+#| label: derived-vars
+
+d2$y.bin   <- (d2$y >= 1) + 0
+d2$x.bin   <- (d2$x >= 1) + 0
+d2$x.factor <- factor(d2$x)
+d2$y.factor <- factor(d2$y)
+```
+
+A utility function for computing logits by hand:
+
+```{r}
+#| label: mylogit
+
+mylogit <- function(p) log(p / (1 - p))
+```
+
+
+## Model 1: Binary Logistic Regression
+
+Here we collapse the 3-level outcome to binary ($Y \ge 1$ vs.\ $Y = 0$) and
+the predictor to binary ($X \ge 1$ vs.\ $X = 0$). This yields a $2 \times 2$
+table.
+
+```{r}
+#| label: binary-model
+
+library(rms)
+
+# Fit via lrm
+lrm(y.bin ~ x.bin, data = d2)
+
+# Fit via glm (for comparison)
+glm(y.bin ~ x.bin, family = "binomial", data = d2)
+```
+
+### Hand Calculations
+
+```{r}
+#| label: binary-hand
+
+# Marginal counts for the collapsed 2x2 table
+table(factor(d2$y.bin, levels = 1:0), factor(d2$x.bin, levels = 1:0))
+
+# Intercept = logit(Pr(Y>=1 | X=0))
+# Among X=0: 60 events out of 90
+mylogit(60 / 90)
+
+# Slope = log odds ratio
+# OR = (a*d) / (b*c) from the 2x2 table
+# X=0: Y>=1 has 60, Y=0 has 30
+# X=1: Y>=1 has 152, Y=0 has 28  (pooling x=1 and x=2)
+log(30 * 152 / (28 * 60))
+```
+
+### Saturation
+
+The binary logistic model with a single binary predictor has **2 parameters**
+(intercept + slope) for a $2 \times 2$ table that has **2 free probabilities**
+(one per row, since probabilities sum to 1 within rows). So it is saturated
+for the collapsed $2 \times 2$ table — it reproduces those cell proportions
+exactly.
+
+But the question of interest is whether the model is saturated **for the
+original $3 \times 3$ table**, and the answer is **no**. The $3 \times 3$
+table has $3 \times 2 = 6$ free conditional probabilities (2 per row). The
+binary logistic model estimates only 2 parameters. By collapsing both the
+outcome and predictor from 3 levels to 2, we have discarded information about
+the internal structure of the table. The model cannot recover the individual
+cell probabilities of the $3 \times 3$ table — it only describes a coarsened
+summary. Whether that loss matters depends on whether the collapsed categories
+are scientifically meaningful.
+
+
+## Model 2: Multinomial Logistic Regression
+
+The multinomial model treats all 3 outcome levels as nominal categories, using
+$Y = 0$ as the reference. With `x.factor` (3 levels), the model has a separate
+set of log-odds for each non-reference outcome level at each predictor level.
+
+**Note:** The multinomial model uses a **log link** on the ratio of category
+probabilities (i.e., log relative risk or log-odds relative to the reference
+category), not a logit link. Each equation models
+$\log[\Pr(Y = j \mid X) / \Pr(Y = 0 \mid X)]$ as a linear function of $X$.
+
+* For $k=1$,
+
+$$
+\log[\Pr(Y = 1 \mid X=x) / \Pr(Y = 0 \mid X=x)] = \beta_{01} + \beta_{11}I(X=1) + \beta_{21}I(X=2)
+$$
+* Isolate $\beta_{21}$
+
+* $x=2$
+
+$$
+\log[\Pr(Y = 1 \mid X=2) / \Pr(Y = 0 \mid X=2)] = \beta_{01} + \beta_{21}
+$$
+* $x=0$
+
+$$
+\log[\Pr(Y = 1 \mid X=0) / \Pr(Y = 0 \mid X=0)] = \beta_{01}
+$$
+$$
+\beta_{21} = \log[\Pr(Y = 1 \mid X=2) / \Pr(Y = 0 \mid X=2)] - \log[\Pr(Y = 1 \mid X=0) / \Pr(Y = 0 \mid X=0)] = \beta_{01}
+
+$$
+
+
+```{r}
+#| label: multinomial-model
+
+library(nnet)
+
+m_multi <- multinom(y ~ x.factor, data = d2)
+summary(m_multi)
+```
+
+### Hand Calculations
+
+The multinomial intercepts and slopes can be computed directly from the cell
+counts. For outcome level $j$ relative to $Y = 0$:
+
+$$
+\beta_{j0} = \log\left(\frac{n_{0j}}{n_{00}}\right), \qquad
+\beta_{jk} = \log\left(\frac{n_{kj}}{n_{k0}}\right) - \log\left(\frac{n_{0j}}{n_{00}}\right)
+$$
+
+where $n_{kj}$ is the count in predictor level $k$, outcome level $j$.
+
+```{r}
+#| label: multinomial-hand
+
+# Slopes for Y=2 (relative to Y=0)
+# beta_21 (x=1 effect): log(n_12/n_10) - log(n_02/n_00)
+log(72/90 / (30/90)) - log(45/90 / (30/90))
+
+# Slopes for Y=1 (relative to Y=0)
+log(8/90 / (10/90)) - log(15/90 / (30/90))
+
+# Equivalently, beta_21 is a log odds ratio from the 2x2 sub-table
+# comparing (x=2, y=1) vs (x=0, y=0):
+with(d2[d2$x %in% c("0", "2") & d2$y %in% c("0", "1"), ],
+     table(factor(x, levels = c("2","0")), factor(y, levels = c("1","0"))))
+log(8 * 30 / (15 * 10))  # log OR
+
+
+# This would be the easier way to obtain the other betas, e.g. beta_22
+with(d2[d2$x %in% c("0", "2") & d2$y %in% c("0", "2"), ],
+     table(factor(x, levels = c("2","0")), factor(y, levels = c("2","0"))))
+log(72 * 30 / (45 * 10))  # log OR
+```
+
+### Saturation
+
+With 3 predictor levels and 3 outcome levels, the table has $3 \times 2 = 6$
+free probabilities (2 per row, since the 3 outcome probabilities sum to 1
+within each row). The multinomial model with `x.factor` estimates
+$2 \times 3 = 6$ parameters (an intercept and two slopes for each of the 2
+non-reference outcome levels). The model is **saturated** — it will always
+reproduce the observed cell proportions exactly, regardless of the data.
+
+
+## Model 3: Proportional Odds Ordinal Logistic Regression
+
+The proportional odds model treats the outcome as ordinal and assumes a
+**common odds ratio** across all binary cutpoints of $Y$.
+
+```{r}
+#| label: ordinal-model
+
+m_ord <- lrm(y ~ x.factor, data = d2, x = TRUE)
+m_ord
+```
+
+### Hand Calculations
+
+The proportional odds model has two intercepts (one for each cutpoint of $Y$)
+and, with `x.factor`, two slopes ($X = 1$ and $X = 2$ effects). But the key
+constraint is that each slope is the **same** across cutpoints.
+
+We can verify the proportional odds assumption by checking whether the log-odds
+ratios are the same at each cutpoint:
+
+```{r}
+#| label: ordinal-hand
+
+# At cutpoint Y >= 1 vs Y = 0:
+mylogit(30/90) - mylogit(10/90)
+
+# At cutpoint Y >= 2 vs Y <= 1:
+mylogit(45/90) - mylogit(18/90)
+
+# These should be equal if proportional odds holds
+# (and in this dataset, they are — by construction)
+```
+
+### Saturation
+
+The proportional odds model with `x.factor` (3 levels) has $2 + 2 = 4$
+parameters (2 intercepts + 2 slopes). But the $3 \times 3$ table has 6 free
+probabilities. So this model is **not saturated** in general — it has 2
+residual degrees of freedom.
+
+However, in this particular dataset, proportional odds holds exactly (the
+log-odds ratios are identical across cutpoints), so the model happens to
+reproduce the cell probabilities perfectly. This is a property of **this
+dataset**, not of the model itself.
+
+```{r}
+#| label: ordinal-vs-multinomial-predictions
+
+# Predicted probabilities from both models — they agree here
+newdata <- data.frame(x.factor = levels(d2$x.factor))
+
+cat("Multinomial predicted probabilities:\n")
+predict(m_multi, newdata = newdata, "probs")
+
+cat("\nOrdinal predicted probabilities:\n")
+predict(m_ord, newdata, type = "fitted")
+```
+
+The fact that these predictions agree is because $2\hat\beta_1 = \hat\beta_2$
+happens to hold in the ordinal model.  This is a coincidence of this dataset, not a
+general result.
+
+
+## Adjusting for Covariates
+
+### Age
+
+*Should we adjust for age?*
+
+Key considerations: Is age a confounder? Is it
+associated with both $X$ and $Y$? If so, adjustment may be warranted to
+obtain a less biased estimate of the $X$–$Y$ association. However, if the
+study is designed so that $X$ is randomized or balanced on age, adjustment
+may not be necessary (age could be a precision variable, which in the case of logistic regression tends to drive associations away from the null)
+
+### CHD (Coronary Heart Disease)
+
+*Should we adjust for CHD?*
+
+Key considerations: Is CHD a mediator on the
+causal pathway from $X$ to $Y$? If so, adjusting for it would block part
+of the causal effect and bias the total effect estimate. Is CHD a collider?
+Adjusting for a collider can introduce spurious associations. The decision
+depends on the causal structure.  A DAG is helpful here.
+
+
+## Model 4: Poisson Log-Linear Regression
+
+### Motivation
+
+So far, we have modeled the **conditional distribution** of $Y$ given $X$
+using logistic, ordinal, and multinomial models. Each conditions on the row
+margins (the number of subjects at each level of $X$) and models the
+probability of falling into each outcome category.
+
+There is an alternative: instead of conditioning on the margins, we can model
+the **cell counts directly** using Poisson regression. This is the log-linear
+model approach to contingency tables.
+
+Why would we do this? Several reasons:
+
+1. It provides a **unified framework** that encompasses all the previous models
+   as special cases or constrained versions.
+2. It connects contingency table analysis to **rate modeling** and
+   **survival analysis** through the concept of offsets.
+3. It makes the saturated model explicit — the interaction terms in the
+   Poisson model are exactly the association parameters.
+
+
+### The Log-Linear Model
+
+We reshape the $3 \times 3$ table into a "long" dataset with one row per cell
+(9 rows), a count variable, and factor variables for $X$ and $Y$.
+
+The saturated Poisson log-linear model is:
+
+$$
+\log(\mu_{ij}) = \lambda + \alpha_i + \beta_j + \gamma_{ij}
+$$
+
+where:
+
+- $\lambda$ is an overall intercept (related to total sample size)
+- $\alpha_i$ captures the **row main effects** (predictor distribution)
+- $\beta_j$ captures the **column main effects** (outcome distribution)
+- $\gamma_{ij}$ captures the **interaction** (the association between $X$ and $Y$)
+
+The interaction terms $\gamma_{ij}$ are the parameters of scientific interest.
+They encode the same information as the log-odds ratios from the multinomial
+model.
+
+```{r}
+#| label: poisson-setup
+
+# Cell-level data for the Poisson model
+d_cells <- d1
+d_cells$x.factor <- factor(d_cells$x)
+d_cells$y.factor <- factor(d_cells$y)
+d_cells$count    <- d_cells$wt
+
+d_cells
+```
+
+```{r}
+#| label: poisson-saturated
+
+# Saturated Poisson log-linear model
+m_pois <- glm(count ~ x.factor * y.factor, family = poisson, data = d_cells)
+summary(m_pois)
+```
+
+### Interpreting the Parameters
+
+The main effects for `x.factor` capture how the row totals differ — they
+absorb the marginal distribution of the predictor. The main effects for
+`y.factor` capture how the column totals differ — they absorb the marginal
+distribution of the outcome. Neither set of main effects tells us about the
+**association** between $X$ and $Y$.
+
+The interaction terms are where the action is. Each interaction parameter
+is a **log odds ratio** comparing a specific ($X$, $Y$) cell to the
+reference cell, relative to what would be expected under independence.
+
+```{r}
+#| label: poisson-vs-multinomial
+
+# Compare interaction parameters to multinomial slopes
+cat("Poisson interaction coefficients:\n")
+coef(m_pois)[grep(":", names(coef(m_pois)))]
+
+cat("\nMultinomial coefficients:\n")
+coef(m_multi)
+```
+
+The Poisson interaction terms and the multinomial regression coefficients
+encode the **same log-odds ratios** — they are just organized differently.
+The multinomial model parameterizes them as slopes within each outcome
+equation; the Poisson model parameterizes them as interaction terms in a
+single equation.
+
+
+### Why Does This Work? The Poisson–Multinomial Equivalence
+
+This equivalence is sometimes called the **Birch result** or the
+**Poisson trick**. The key insight:
+
+If you model cell counts as independent Poisson random variables with a
+log-linear model, and then condition on the observed row totals (the marginal
+counts of $X$), the conditional distribution of the cell counts within each
+row is **multinomial**. Since the row main effects $\alpha_i$ perfectly absorb
+the row margins, the Poisson likelihood factors into a part that depends only
+on the main effects and a part that depends only on the interaction — and the
+interaction part is exactly the multinomial likelihood.
+
+In practice, this means:
+
+- The interaction parameter estimates are **identical** whether you fit a
+  Poisson log-linear model or a multinomial logistic model.
+- The standard errors and test statistics for the interaction terms are also
+  identical.
+- The row and column main effects are "bonus" parameters that the multinomial
+  model doesn't estimate (because it conditions on the margins).
+
+
+### Saturation of the Poisson Model
+
+The saturated Poisson log-linear model for a $3 \times 3$ table has
+$3 \times 3 = 9$ parameters (intercept + 2 row effects + 2 column effects +
+4 interactions) for 9 cell counts. It is **saturated** — it reproduces every
+cell count exactly.
+
+```{r}
+#| label: poisson-fitted
+
+# Fitted values should exactly match observed counts
+cbind(observed = d_cells$count, fitted = fitted(m_pois))
+```
+
+If we drop the interaction terms (the independence model), we have
+$1 + 2 + 2 = 5$ parameters for 9 cells, leaving 4 residual degrees of
+freedom. This reduced model tests the hypothesis of **independence** between
+$X$ and $Y$ — it is the log-linear analogue of the chi-squared test.
+
+```{r}
+#| label: poisson-independence
+
+# Independence model (no interaction)
+m_pois_indep <- glm(count ~ x.factor + y.factor, family = poisson, data = d_cells)
+summary(m_pois_indep)
+
+# Likelihood ratio test for independence
+anova(m_pois_indep, m_pois, test = "LRT")
+```
+
+
+### The Role of Offsets (and Why We Don't Need One Here)
+
+In many applications of Poisson regression, an **offset** term appears:
+
+$$
+\log(\mu_i) = \log(t_i) + \mathbf{x}_i'\boldsymbol{\beta}
+$$
+
+where $t_i$ is the exposure (person-time, population size, etc.). The offset
+standardizes the counts so that we model a **rate** ($\mu_i / t_i$) rather
+than a raw count. Without the offset, we would confound "more events" with
+"more opportunity to observe events."
+
+**In our contingency table, no offset is needed.** Why?
+
+Every subject contributes exactly one observation — they enter the study, get
+classified into one cell, and that is it. There is no variation in the
+opportunity to be counted. Every person had the same "exposure": one unit of
+observation, one chance to land in a cell.
+
+The implicit offset is $\log(1) = 0$ for every cell, and so it vanishes from
+the model. The row and column main effects handle the marginal totals, which
+is the contingency table analogue of what an offset does in the rate context.
+
+To make this concrete, consider what happens if we *do* use an offset equal
+to the log of the row totals:
+
+```{r}
+#| label: poisson-with-offset
+
+# With offset = log(row total), we model conditional probabilities
+d_cells$row_total <- ave(d_cells$count, d_cells$x.factor, FUN = sum)
+
+m_pois_offset <- glm(count ~ x.factor * y.factor + offset(log(row_total)),
+                      family = poisson, data = d_cells)
+
+# The interaction terms are unchanged
+cat("Without offset (interaction terms):\n")
+coef(m_pois)[grep(":", names(coef(m_pois)))]
+
+cat("\nWith offset (interaction terms):\n")
+coef(m_pois_offset)[grep(":", names(coef(m_pois_offset)))]
+```
+
+The interaction terms — the **association parameters** — are identical with or
+without the offset. The offset only changes the main effect estimates, which
+are nuisance parameters for the association question. When the offset equals
+the log row total, the model explicitly conditions on the row margins and the
+main effects now represent the conditional log-probabilities rather than the
+marginal log-counts. But the association is the same either way.
+
+This is the Birch result in action: inference about association is invariant
+to whether you treat the margins as fixed (offset / multinomial) or random
+(Poisson with main effects).
+
+
+<!-- ### Connection to Survival Analysis -->
+
+<!-- The Poisson log-linear model for contingency tables is not just an academic -->
+<!-- curiosity — it is the **same model** that underlies rate-based survival -->
+<!-- analysis. The only thing that changes is what goes in the offset. -->
+
+<!-- Consider the unified model: -->
+
+<!-- $$ -->
+<!-- \log(\mu_i) = \log(t_i) + \mathbf{x}_i'\boldsymbol{\beta} -->
+<!-- $$ -->
+
+<!-- The question is: what is $t_i$? -->
+
+<!-- | Setting                          | What is $t_i$?                                                    | Offset                     | -->
+<!-- |----------------------------------|-------------------------------------------------------------------|----------------------------| -->
+<!-- | **Contingency table**            | 1 for everyone (one classification per subject)                   | $\log(1) = 0$ (vanishes)  | -->
+<!-- | **Rate table with person-time**  | Person-time in cell $i$, varies across cells                      | $\log(t_i)$, explicit     | -->
+<!-- | **Piecewise exponential model**  | Person-time contributed by subject $i$ within a time interval     | $\log(t_i)$, explicit     | -->
+
+<!-- In the piecewise exponential survival model, each subject's follow-up is -->
+<!-- split into discrete time intervals, and within each interval the hazard is -->
+<!-- assumed constant. The data are restructured into a table where each row -->
+<!-- represents a subject–interval combination, the outcome is the event indicator -->
+<!-- (0 or 1), and the offset is the log of the person-time contributed to that -->
+<!-- interval. This is a Poisson regression — the same log-linear model we are -->
+<!-- using here. -->
+
+<!-- **The contingency table is the simplest special case.** Every subject has the -->
+<!-- same exposure ($t_i = 1$), so the offset vanishes. The moment exposure varies -->
+<!-- — because people are censored at different times, or because you are -->
+<!-- aggregating person-time into intervals — you need the offset, and you are -->
+<!-- in the piecewise exponential framework. -->
+
+<!-- The progression is: -->
+
+<!-- 1. **Contingency table** (equal exposure, no offset) — what we have here -->
+<!-- 2. **Rate table** (unequal exposure, offset needed) — e.g., incidence rate -->
+<!--    data where person-time varies across cells -->
+<!-- 3. **Piecewise exponential model** (individual-level varying exposure) — -->
+<!--    each subject contributes different person-time to different intervals -->
+<!-- 4. **Cox model** (limiting case) — as the time intervals become -->
+<!--    infinitesimally fine, the piecewise exponential model converges to the -->
+<!--    Cox proportional hazards model; the partial likelihood is the limit of -->
+<!--    the Poisson full likelihood -->
+
+<!-- This means the Cox model — which can seem like a fundamentally different kind -->
+<!-- of object — is actually the end of a continuum that starts with the simple -->
+<!-- Poisson log-linear model for a contingency table. The partial likelihood is -->
+<!-- what you get when you let the baseline hazard (the analogue of the column -->
+<!-- main effects $\beta_j$) become nonparametric. -->
+
+<!-- For this lab, the key takeaway is: **the equal-exposure assumption is what -->
+<!-- makes the contingency table simple.** Every subject gets one classification -->
+<!-- event with the same amount of "time" to accumulate it. That assumption is -->
+<!-- trivially true here, which is why we don't need an offset. But naming this -->
+<!-- invisible assumption prepares you to recognize when it fails — which is -->
+<!-- exactly when you need offsets, rate models, and survival analysis. -->
+
+
+### Robust Standard Errors and the Mean–Variance Assumption
+
+The Poisson distribution assumes that the variance equals the mean:
+$\text{Var}(Y_i) = \mu_i$. In many applications of Poisson regression —
+particularly with individual-level count data — this assumption is suspect.
+Counts often exhibit **overdispersion** (variance exceeding the mean) due to
+unobserved heterogeneity, clustering, or other sources of extra-Poisson
+variation. In those settings, the model-based standard errors from `glm()`
+are too small, and it is common practice to use **robust (sandwich) standard
+errors** to obtain valid inference without relying on the variance assumption.
+
+**In the contingency table setting, this concern does not arise.** Here is why:
+the saturated Poisson log-linear model has one parameter per cell count —
+9 parameters for 9 observations. The fitted values reproduce the observed
+counts exactly. There are zero residual degrees of freedom and no residual
+deviance. The mean–variance relationship is not testable because there is no
+residual variation left to assess. The model fits the data perfectly by
+construction.
+
+```{r}
+#| label: poisson-dispersion
+
+# Residual deviance and df for the saturated model
+cat("Residual deviance:", deviance(m_pois), "\n")
+cat("Residual df:", df.residual(m_pois), "\n")
+
+# For comparison, the independence model does have residual df
+# and we can check for overdispersion there
+cat("\nIndependence model:\n")
+cat("Residual deviance:", deviance(m_pois_indep), "\n")
+cat("Residual df:", df.residual(m_pois_indep), "\n")
+cat("Dispersion estimate:", deviance(m_pois_indep) / df.residual(m_pois_indep), "\n")
+```
+
+For the **independence model** (which is not saturated), overdispersion could
+in principle be relevant — if the residual deviance substantially exceeds the
+residual degrees of freedom, the Poisson variance assumption may be violated.
+In that case, one could either use `family = quasipoisson` (which estimates a
+dispersion parameter) or compute robust standard errors using the sandwich
+estimator.
+
+```{r}
+#| label: poisson-robust
+
+# Robust SEs via sandwich estimator (for the independence model)
+library(sandwich)
+library(lmtest)
+
+cat("Model-based SEs (independence model):\n")
+coeftest(m_pois_indep)
+
+cat("\nRobust (sandwich) SEs:\n")
+coeftest(m_pois_indep, vcov = vcovHC(m_pois_indep, type = "HC0"))
+```
+
+The robust standard errors protect against misspecification of the variance
+function. When the mean model is correct but the variance assumption is wrong,
+the point estimates from Poisson regression remain consistent (they solve the
+correct estimating equation), but the standard errors need correction. This is
+the same logic as using robust SEs in ordinary least squares when
+heteroscedasticity is present.
+
+For the **saturated model**, robust standard errors are not needed — the model
+is exact. But the concept becomes important when you move to non-saturated
+Poisson models (e.g., with continuous predictors, or the independence model)
+or to the rate and survival settings discussed above, where the Poisson
+variance assumption is a real constraint. The sandwich estimator is the
+standard tool for relaxing that constraint while keeping the convenient
+Poisson regression framework.
+
+
+## Summary: Comparing the Four Models
+
+```{r}
+#| label: summary-table
+#| echo: false
+
+summ <- data.frame(
+  Model = c("Binary Logistic", "Proportional Odds", "Multinomial", "Poisson Log-Linear"),
+  `Outcome Treatment` = c(
+    "Dichotomized (Y >= 1 vs Y = 0)",
+    "Ordinal (cumulative logits)",
+    "Nominal (3 categories, Y=0 ref)",
+    "Cell counts (9 cells)"
+  ),
+  `Predictor Treatment` = c(
+    "Binary (X >= 1 vs X = 0)",
+    "Factor (3 levels)",
+    "Factor (3 levels)",
+    "Factor (3 levels)"
+  ),
+  Parameters = c(2, 4, 6, 9),
+  `Free Cells` = c(2, 6, 6, 9),
+  Saturated = c("Yes (for 2x2 only; No for 3x3)", "No (in general)", "Yes", "Yes"),
+  check.names = FALSE
+)
+
+knitr::kable(summ, caption = "Comparison of the four regression approaches")
+```
+
+### Advantages and Disadvantages
+
+**Binary Logistic:**
+Simple, familiar, and well-understood. But collapsing the outcome loses
+information — we can no longer distinguish between outcome levels 1 and 2.
+The choice of where to dichotomize is often arbitrary and can affect
+conclusions.
+
+**Proportional Odds:**
+Preserves the ordinal structure and is parsimonious (fewer parameters). The
+proportional odds assumption constrains the model, which is a strength when
+the assumption holds (more power, simpler interpretation) and a weakness when
+it does not (biased estimates, poor fit). Not saturated for $> 2$ predictor
+levels, so model fit should be checked.
+
+**Multinomial:**
+Makes no assumptions about the outcome structure — fully flexible. Always
+saturated when the predictor is categorical. But this flexibility comes at a
+cost: more parameters to estimate, and no borrowing of strength across outcome
+levels. With continuous predictors or sparse data, the multinomial model can
+be unstable.
+
+**Poisson Log-Linear:**
+Provides a unified framework that connects to rate modeling and survival
+analysis. The saturated model is equivalent to the multinomial. The
+independence model provides a global test of association. The offset mechanism
+generalizes naturally to settings with unequal exposure. The main
+disadvantage for contingency table analysis per se is that the parameterization
+(main effects + interactions) is less directly interpretable than the
+conditional probabilities of the multinomial model — though the interaction
+terms are the same log-odds ratios.

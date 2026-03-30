@@ -77,6 +77,7 @@ website:
           - href: labs/lab7-effectmodification-questions.qmd
           - href: labs/Lab-DiscreteOutcomeRegression.pdf
             text: "Lab 8: Discrete Outcomes Lab"
+          - href: labs/lab8-calculations-withPoisson.qmd
           - href: https://vanderbilt.box.com/s/rpftvmc9vua2w3gz3jy16phlnsojs6on
             text: "Box folder with .qmd files"
       - section: "Supplemental notes"
