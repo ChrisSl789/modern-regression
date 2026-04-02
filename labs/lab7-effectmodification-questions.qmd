@@ -33,7 +33,7 @@ library(dplyr)
 ```{r}
 # Initial dataset manipulations
 
-data <- stata.get("http://biostat.app.vumc.org/wiki/pub/Main/CourseBios312/salary.dta")
+data <- stata.get("data/salary.dta")
 data95 <- subset(data, year=="95")
 data95$male <- as.numeric(data95$sex=="M")
 ```

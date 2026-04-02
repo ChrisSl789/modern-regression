@@ -5201,6 +5201,11 @@ text-align: right;
 Attaching package: &#39;Hmisc&#39;</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked _by_ &#39;.GlobalEnv&#39;:
+
+    knitrSet</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
 <pre><code>The following objects are masked from &#39;package:base&#39;:
 
     format.pval, units</code></pre>
@@ -5222,13 +5227,13 @@ Attaching package: &#39;survminer&#39;</code></pre>
 <section id="load-data" class="level3">
 <h3 class="anchored" data-anchor-id="load-data">Load data</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>cancer <span class="ot">&lt;-</span> <span class="fu">stata.get</span>(<span class="st">&quot;https://biostat.app.vumc.org/wiki/pub/Main/CourseBios312/prostaticcancer.dta&quot;</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cancer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>cancer <span class="ot">&lt;-</span> <span class="fu">stata.get</span>(<span class="st">&quot;data/prostaticcancer.dta&quot;</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cancer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] &quot;patient&quot;   &quot;treatment&quot; &quot;time&quot;      &quot;status&quot;    &quot;age&quot;       &quot;shb&quot;      
 [7] &quot;size&quot;      &quot;index&quot;    </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(cancer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(cancer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    patient        treatment          time           status      
  Min.   : 1.00   Min.   :1.000   Min.   : 2.00   Min.   :0.0000  
@@ -5239,7 +5244,7 @@ Attaching package: &#39;survminer&#39;</code></pre>
  Max.   :38.00   Max.   :2.000   Max.   :70.00   Max.   :1.0000  
       age             shb             size           index       
  Min.   :51.00   Min.   :10.70   Min.   : 2.00   Min.   : 6.000  
- 1st Qu.:65.00   1st Qu.:13.43   1st Qu.: 4.00   1st Qu.: 8.000  
+ 1st Qu.:65.00   1st Qu.:13.42   1st Qu.: 4.00   1st Qu.: 8.000  
  Median :71.00   Median :13.85   Median : 7.50   Median : 9.000  
  Mean   :68.63   Mean   :13.94   Mean   :10.47   Mean   : 9.132  
  3rd Qu.:73.00   3rd Qu.:14.68   3rd Qu.:13.75   3rd Qu.:10.000  

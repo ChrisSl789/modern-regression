@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Chris Slaughter">
-<meta name="dcterms.date" content="2026-03-30">
+<meta name="dcterms.date" content="2026-04-02">
 
 <title>Flexible Modeling of Continuous Predictors – BIOS 6312 - Spring 2026</title>
 <style>
@@ -603,7 +603,7 @@ window.Quarto = {
 <p class="subtitle lead">Lecture 11</p>
 <p class="author">Chris Slaughter</p>
 
-<p class="date">March 30, 2026</p>
+<p class="date">April 2, 2026</p>
 
 </header>
 
@@ -2402,7 +2402,7 @@ Click to see answer
 <li><p>(Intercept) is the expected height when age is 0. Since this is outside the range of our data, it has no scientific interpretation.</p></li>
 <li><p>The first slope term (‘lspline(age, knots = c(9.5, 15.5))1’) is the expected change in height comparing two individuals who differ in age by one year when both subjects are 9 years old or less.</p></li>
 <li><p>The second slope term (‘lspline(age, knots = c(9.5, 15.5))2’) is the change in the age-height slope for 10 to 15 year olds versus 3 to 9 year olds. This output is useful for estimating and testing the slope changes over age.</p></li>
-<li><p>The third slope term (‘lspline(age, knots = c(9.5, 15.5))3’) is the change in the age-height slope for 16 to 19 year olds versus 3 to 9 year olds. This output is useful for estimating and testing the slope changes over age.</p></li>
+<li><p>The third slope term (‘lspline(age, knots = c(9.5, 15.5))3’) is the change in the age-height slope for 16 to 19 year olds versus 10 to 15 year olds. This output is useful for estimating and testing the slope changes over age.</p></li>
 <li><p>Using this model, we can test if the age-height slope significantly changes with age category</p>
 <ul>
 <li><span class="math inline">\(H_0: \beta_2 = 0, \beta_3 = 0\)</span></li>
@@ -4667,7 +4667,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb41-907"><a href="#cb41-907" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb41-908"><a href="#cb41-908" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The second slope term ('lspline(age, knots = c(9.5, 15.5))2') is the change in the age-height slope for 10 to 15 year olds versus 3 to 9 year olds. This output is useful for estimating and testing the slope changes over age.</span>
 <span id="cb41-909"><a href="#cb41-909" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-910"><a href="#cb41-910" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The third slope term ('lspline(age, knots = c(9.5, 15.5))3') is the change in the age-height slope for 16 to 19 year olds versus 3 to 9 year olds. This output is useful for estimating and testing the slope changes over age.</span>
+<span id="cb41-910"><a href="#cb41-910" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>The third slope term ('lspline(age, knots = c(9.5, 15.5))3') is the change in the age-height slope for 16 to 19 year olds versus 10 to 15 year olds. This output is useful for estimating and testing the slope changes over age.</span>
 <span id="cb41-911"><a href="#cb41-911" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb41-912"><a href="#cb41-912" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Using this model, we can test if the age-height slope significantly changes with age category</span>
 <span id="cb41-913"><a href="#cb41-913" aria-hidden="true" tabindex="-1"></a></span>

@@ -43,7 +43,7 @@ library(foreign)
 ### Load data
 
 ```{r}
-cancer <- stata.get("https://biostat.app.vumc.org/wiki/pub/Main/CourseBios312/prostaticcancer.dta")
+cancer <- stata.get("data/prostaticcancer.dta")
 names(cancer)
 summary(cancer)
 ```

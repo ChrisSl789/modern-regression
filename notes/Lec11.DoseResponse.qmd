@@ -877,7 +877,7 @@ coefci(m.linspline.mar, varcov=sandwich)
 
 -   The second slope term ('lspline(age, knots = c(9.5, 15.5))2') is the change in the age-height slope for 10 to 15 year olds versus 3 to 9 year olds. This output is useful for estimating and testing the slope changes over age.
 
--   The third slope term ('lspline(age, knots = c(9.5, 15.5))3') is the change in the age-height slope for 16 to 19 year olds versus 3 to 9 year olds. This output is useful for estimating and testing the slope changes over age.
+-   The third slope term ('lspline(age, knots = c(9.5, 15.5))3') is the change in the age-height slope for 16 to 19 year olds versus 10 to 15 year olds. This output is useful for estimating and testing the slope changes over age.
 
 -   Using this model, we can test if the age-height slope significantly changes with age category
 
