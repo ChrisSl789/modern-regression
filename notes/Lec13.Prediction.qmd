@@ -689,6 +689,71 @@ data.frame(
 
     -   Better to treat your covariate or linear prediction as a continuous variable
 
+### Visualizing discrimination and the ROC curve
+
+-   To build intuition about the ROC curve, consider the relationship between a cutpoint on the risk score and the corresponding point on the ROC curve
+
+    -   **Left panel**: Box plots of predicted risk scores, stratified by the actual binary outcome. A horizontal line shows the current cutpoint $c$
+
+    -   **Right panel**: The ROC curve, with the point corresponding to that cutpoint highlighted
+
+    -   As we lower the cutpoint, we classify more subjects as positive — sensitivity increases, but so does the false positive rate
+
+```{r}
+# Use the age-based smoking model for this demonstration
+m.demo <- glm(smoker ~ age, data=fev, family=binomial)
+fev$risk.score <- predict(m.demo, type="response")
+
+# Compute the full ROC curve
+roc.demo <- roc(fev$smoker, fev$risk.score, quiet=TRUE)
+```
+
+```{r, fig.height=6, fig.width=12, fig.cap="Stepping through cutpoints: each row shows how a threshold on the risk score (left) maps to a point on the ROC curve (right)"}
+cutpoints <- c(0.70, 0.50, 0.30, 0.15, 0.05)
+
+par(mfrow=c(length(cutpoints), 2), mar=c(4, 4, 3, 1))
+
+for(cp in cutpoints) {
+  # Compute sensitivity and specificity at this cutpoint
+  pred.pos <- fev$risk.score >= cp
+  sens <- sum(pred.pos & fev$smoker == 1) / sum(fev$smoker == 1)
+  spec <- sum(!pred.pos & fev$smoker == 0) / sum(fev$smoker == 0)
+  fpr <- 1 - spec
+
+  # Left panel: Box plots with cutpoint line
+  boxplot(risk.score ~ smoker, data=fev, horizontal=FALSE,
+          names=c("Non-smoker (D-)", "Smoker (D+)"),
+          ylab="Predicted Risk Score", col=c("lightblue","lightsalmon"),
+          main=sprintf("Cutpoint c = %.2f", cp), ylim=c(0,1))
+  abline(h=cp, col="red", lwd=2, lty=2)
+
+  # Shade the regions above the cutpoint
+  text(0.6, cp + 0.04, sprintf("c = %.2f", cp), col="red", cex=0.9, font=2)
+
+  # Right panel: ROC curve with highlighted point
+  plot(1 - roc.demo$specificities, roc.demo$sensitivities,
+       type="l", lwd=2, col="gray40",
+       xlab="False Positive Rate (1 - Specificity)",
+       ylab="Sensitivity",
+       main=sprintf("Sens = %.0f%%  Spec = %.0f%%", 100*sens, 100*spec),
+       xlim=c(0,1), ylim=c(0,1))
+  abline(0, 1, col="gray70", lty=3)
+  points(fpr, sens, col="red", pch=19, cex=2.5)
+  text(fpr + 0.08, sens - 0.06,
+       sprintf("(%.2f, %.2f)", fpr, sens), col="red", cex=0.9, font=2)
+}
+```
+
+-   Key observations:
+
+    -   A high cutpoint (e.g., $c = 0.70$) classifies very few subjects as positive — high specificity but low sensitivity
+
+    -   A low cutpoint (e.g., $c = 0.05$) classifies almost everyone as positive — high sensitivity but low specificity
+
+    -   The ROC curve traces out **all possible trade-offs** between sensitivity and specificity as $c$ varies
+
+    -   A perfect classifier would have the box plots completely separated with no overlap
+
 ### Example 1: Age or height to predict smoking
 
 -   Question: Is age or height a better predictor of smoking status?
