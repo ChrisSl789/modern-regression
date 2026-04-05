@@ -852,3 +852,5 @@ kable(ewer_table, digits=4,
     1.  Address the scientific question
     2.  Protect the validity of inference
     3.  Maximize precision (power)
+
+-   In Lecture 13, we will see how model choice decisions directly impact predictive accuracy — both for continuous outcomes (prediction intervals) and binary outcomes (classification, ROC curves)

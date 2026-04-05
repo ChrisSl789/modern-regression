@@ -7,8 +7,30 @@ name: Lec13.Prediction.qmd
 ```{r}
 library(rms)
 library(ggplot2)
+library(lmtest)
+library(sandwich)
+library(kableExtra)
+library(pROC)
 tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 ```
+
+## Connection to Model Choice
+
+-   In Lecture 12, we compared different approaches to modeling dose-response relationships (ANOVA, linear, polynomial, threshold models)
+
+-   The choice of model directly affects the quality of predictions
+
+    -   A model that is too simple (e.g., linear when the truth is nonlinear) will produce biased predictions for some groups
+
+    -   A model that is too complex (e.g., ANOVA with many groups) will produce imprecise predictions
+
+-   In this lecture, we shift focus from *which model to choose* to *how to use a chosen model for prediction*
+
+    -   Prediction of summary measures (means, probabilities) with confidence intervals
+
+    -   Prediction of individual observations with prediction intervals
+
+    -   Classification and discrimination for binary outcomes
 
 ## Overview
 
@@ -296,37 +318,17 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
         -   In linear regression, the $t$ distribution is usually used to obtain the confidence interval
 
-            -   Stata: $\textrm{(crit value)} = \texttt{invttail}(df, \alpha/2)$
-
-            -   R: $\textrm{(crit value)} = \texttt{qt}(1-\alpha/2, df)$
+            -   $\textrm{(crit value)} = \texttt{qt}(1-\alpha/2, df)$
 
             -   Degrees of freedom $df = n - \textrm{number of predictors in model}$
 
         -   In other regressions, we use the standard Normal distribution
 
-            -   Stata: $\textrm{(crit value)} = \texttt{invnorm}(1 - \alpha/2) = 1.96$
-
-            -   R: $\textrm{(crit value)} = \texttt{qnorm}(1-\alpha/2) = 1.96$
-
--   Interval estimates in Stata
-
-    -   After any regression command, the Stata command `predict` will give compute estimates and standard errors
-
-    -   `predict varname, [what]`
-
-        -   `varname` is that name of the new variable to be created
-
-        -   `what` is one of
-
-            -   xb: The linear predictor (works for all regression)
-
-            -   stdp: Standard error of the linear prediction
-
-            -   p: For logistic regression, to predicted probability
+            -   $\textrm{(crit value)} = \texttt{qnorm}(1-\alpha/2) = 1.96$
 
 -   Interval estimates in R
 
-    -   After storing a model, the R function `predict` will give compute estimates and standard errors
+    -   After storing a model, the R function `predict` will compute estimates and standard errors
 
     -   `predict(object, se.fit=FALSE, ...)`
 
@@ -336,78 +338,66 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
         -   See `help(predict)` for more details and options
 
-<!-- -->
+### Example: Predicting geometric mean FEV and odds of smoking
 
-``` stata
-. gen logfev = log(fev)
+```{r}
+fev <- read.csv(file="data/FEV.csv")
+fev$logfev <- log(fev$fev)
+fev$smoker <- (fev$smoke == "current smoker") + 0
+```
 
-. regress logfev height age
+-   Linear regression of log(FEV) on height and age
 
-      Source |       SS       df       MS              Number of obs =     654
--------------+------------------------------           F(  2,   651) = 1361.98
-       Model |  58.5363336     2  29.2681668           Prob > F      =  0.0000
-    Residual |  13.9895809   651  .021489372           R-squared     =  0.8071
--------------+------------------------------           Adj R-squared =  0.8065
-       Total |  72.5259145   653  .111065719           Root MSE      =  .14659
+```{r}
+m.fev <- lm(logfev ~ height + age, data=fev)
+summary(m.fev)
+```
 
-------------------------------------------------------------------------------
-      logfev |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-      height |   .0439913   .0016473    26.71   0.000     .0407567    .0472259
-         age |   .0198162   .0031805     6.23   0.000     .0135709    .0260616
-       _cons |  -1.971147   .0783322   -25.16   0.000    -2.124961   -1.817332
-------------------------------------------------------------------------------
-. 
-. predict fitlogfev
-(option xb assumed; fitted values)
+-   Predict geometric mean FEV for a subject with age=10 and height=66
 
-. predict sefit, stdp
-. 
-. gen gmfev= exp(fitlogfev)
-. gen gmlofev = exp(fitlogfev - invttail(651, .025) * sefit)
-. gen gmhifev = exp(fitlogfev + invttail(651, .025) * sefit)
-. 
-. list gmfev gmlofev gmhifev if age==10 & height==66
+```{r}
+newdata <- data.frame(age=10, height=66)
+pred.fit <- predict(m.fev, newdata=newdata, se.fit=TRUE)
+crit <- qt(0.975, df=m.fev$df.residual)
 
-     +--------------------------------+
-     |    gmfev    gmlofev    gmhifev |
-     |--------------------------------|
-330. | 3.097021   3.038578   3.156588 |
-...
-547. | 3.097021   3.038578   3.156588 |
-     +--------------------------------+
+# Geometric mean and CI (back-transform from log scale)
+gmfev <- exp(pred.fit$fit)
+gm.ci <- exp(pred.fit$fit + c(-1, 1) * crit * pred.fit$se.fit)
 
-. logit smoker height age
+data.frame(gmfev = gmfev, gm.lo = gm.ci[1], gm.hi = gm.ci[2]) |>
+  kable(digits=4, col.names=c("Geometric Mean FEV", "95% CI Lower", "95% CI Upper"),
+        caption="Predicted geometric mean FEV (age=10, height=66)") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width=FALSE)
+```
 
-Logistic regression                               Number of obs   =        654
-                                                  LR chi2(2)      =     106.39
-                                                  Prob > chi2     =     0.0000
-Log likelihood = -158.52851                       Pseudo R2       =     0.2512
+-   Logistic regression of smoking on height and age
 
-------------------------------------------------------------------------------
-      smoker |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-      height |   .0505297   .0410562     1.23   0.218     -.029939    .1309984
-         age |   .4377213   .0661923     6.61   0.000     .3079868    .5674557
-       _cons |  -10.45429   2.351283    -4.45   0.000    -15.06272   -5.845856
-------------------------------------------------------------------------------
+```{r}
+m.smoke <- glm(smoker ~ height + age, data=fev, family=binomial)
+summary(m.smoke)
+```
 
-. predict logodds, xb
-. predict selogodds, stdp
-. 
-. gen odds= exp(logodds)
-. gen oddslo= exp(logodds - 1.96 * selogodds)
-. gen oddshi= exp(logodds + 1.96 * selogodds)
- 
-. list odds oddslo oddshi if age==10 & height==66
+-   Predict odds and probability of smoking for a subject with age=10 and height=66
 
-     +--------------------------------+
-     |     odds     oddslo     oddshi |
-     |--------------------------------|
-330. | .0644342   .0400909   .1035588 |
-...
-547. | .0644342   .0400909   .1035588 |
-     +--------------------------------+
+```{r}
+pred.logodds <- predict(m.smoke, newdata=newdata, se.fit=TRUE)
+
+# Odds and CI
+odds <- exp(pred.logodds$fit)
+odds.ci <- exp(pred.logodds$fit + c(-1, 1) * 1.96 * pred.logodds$se.fit)
+
+# Probability and CI (back-transform from log-odds)
+prob <- plogis(pred.logodds$fit)
+prob.ci <- plogis(pred.logodds$fit + c(-1, 1) * 1.96 * pred.logodds$se.fit)
+
+data.frame(
+  Odds = odds, Odds.Lo = odds.ci[1], Odds.Hi = odds.ci[2],
+  Prob = prob, Prob.Lo = prob.ci[1], Prob.Hi = prob.ci[2]) |>
+  kable(digits=4,
+        col.names=c("Odds", "95% CI Lower", "95% CI Upper",
+                     "Probability", "95% CI Lower", "95% CI Upper"),
+        caption="Predicted odds and probability of smoking (age=10, height=66)") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width=FALSE)
 ```
 
 ## Prediction (forecasting) of individual observations
@@ -486,141 +476,86 @@ Log likelihood = -158.52851                       Pseudo R2       =     0.2512
 
         -   In linear regression, the $t$ distribution is usually used to obtain the prediction interval
 
-            -   Stata: $\textrm{(crit value)} = \texttt{invttail}(df, \alpha/2)$
-
-            -   R: $\textrm{(crit value)} = \texttt{qt}(1-\alpha/2, df)$
+            -   $\textrm{(crit value)} = \texttt{qt}(1-\alpha/2, df)$
 
             -   Degrees of freedom $df = n - \textrm{number of predictors in model}$
 
--   Interval estimates in Stata
-
-    -   After any regression command, the Stata command `predict` will give compute estimates and standard errors
-
-    -   `predict varname, [what]`
-
-        -   `varname` is that name of the new variable to be created
-
-        -   `what` is one of
-
-            -   xb: The linear predictor (works for all regression)
-
-            -   stdf: Standard error of the forecast prediction
-
 -   Interval estimates in R
 
-    -   After storing a model, the R function `predict` will give compute estimates and standard errors
+    -   After storing a model, `predict` provides estimates and standard errors of the fit
 
-    -   `predict(object, se.fit=FALSE, ...)`
+    -   For the standard error of the forecast (individual prediction), we need to include the root mean squared error
 
-        -   `object` is the stored fitted model
+        -   $\textrm{se}_\textrm{pred}^2 = \textrm{se}_\textrm{fit}^2 + \textrm{RMSE}^2$
 
-        -   `se.fit` will provide the standard error of the fit (defaults to `FALSE`)
-
-        -   For the standard error of the forecast, need to include the root mean squared error
-
-            -   $\textrm{se}_\textrm{pred}^2 = \textrm{se}_\textrm{fit}^2 + \textrm{RMSE}^2$
+    -   Alternatively, use `predict(object, newdata, interval="prediction")` which computes prediction intervals directly
 
 -   General comment about software
 
-    -   Commercial software only implements prediction intervals by assuming Normal data
+    -   Software typically implements prediction intervals by assuming Normal data
 
-    -   If using R libraries (or Stata ado files) for prediction, carefully investigate and understand how they are making predictions
+    -   Carefully investigate and understand how any software or package is making predictions
 
         -   Don't trust the "black box" to be giving you results that are widely applicable to all situations
 
     -   Be careful that you understand exactly what is going on if you are interested in making predictions
 
-### Example: FEV by age and height
+### Example: Prediction interval for FEV
 
-``` stata
-. regress logfev height age
+-   Using the same FEV model, compare the confidence interval for the mean with the prediction interval for an individual
 
-      Source |       SS       df       MS              Number of obs =     654
--------------+------------------------------           F(  2,   651) = 1361.98
-       Model |  58.5363336     2  29.2681668           Prob > F      =  0.0000
-    Residual |  13.9895809   651  .021489372           R-squared     =  0.8071
--------------+------------------------------           Adj R-squared =  0.8065
-       Total |  72.5259145   653  .111065719           Root MSE      =  .14659
+```{r}
+# Confidence interval for the mean (summary measure)
+ci.mean <- predict(m.fev, newdata=newdata, interval="confidence")
 
-------------------------------------------------------------------------------
-      logfev |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-      height |   .0439913   .0016473    26.71   0.000     .0407567    .0472259
-         age |   .0198162   .0031805     6.23   0.000     .0135709    .0260616
-       _cons |  -1.971147   .0783322   -25.16   0.000    -2.124961   -1.817332
-------------------------------------------------------------------------------
+# Prediction interval for an individual observation
+pi.indiv <- predict(m.fev, newdata=newdata, interval="prediction")
 
-. predict fitlogfev
-(option xb assumed; fitted values)
-. predict sepredict, stdf
+# Back-transform to FEV scale (geometric mean)
+comparison <- data.frame(
+  Type = c("Summary Measure (CI)", "Individual Prediction (PI)"),
+  Estimate = exp(c(ci.mean[,"fit"], pi.indiv[,"fit"])),
+  Lower = exp(c(ci.mean[,"lwr"], pi.indiv[,"lwr"])),
+  Upper = exp(c(ci.mean[,"upr"], pi.indiv[,"upr"]))
+)
 
-. gen predfev= exp(fitlogfev)
-. gen predlofev = exp(fitlogfev - invttail(651, .025) * sepredict)
-. gen predhifev = exp(fitlogfev + invttail(651, .025) * sepredict)
-
-. list predfev predlofev predhifev if age==10 & height==66
-
-     +--------------------------------+
-     |  predfev   predlo~v   predhi~v |
-     |--------------------------------|
-330. | 3.097021   2.320911   4.132662 |
-...
-547. | 3.097021   2.320911   4.132662 |
-     +--------------------------------+
+kable(comparison, digits=4,
+      col.names = c("Type", "Geometric Mean FEV", "Lower", "Upper"),
+      caption="Comparing CI for mean vs prediction interval (age=10, height=66)") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width=FALSE)
 ```
 
--   The preceding output gave prediction for individual observations
+-   Point estimates are identical
 
--   We can compare these results to the prediction for summary measures done previously (see below)
+-   The prediction interval for individual observations is much wider
 
-    ```         
-         +-----------------------------------------------------------------+
-         |    gmfev    gmlofev    gmhifev    predfev   pre~ofev   predhi~v |
-         |-----------------------------------------------------------------|
-    330. | 3.097021   3.038578   3.156588   3.097021   2.320911   4.132662 |
-         +-----------------------------------------------------------------+
-    ```
+-   As $n$ increases, the width of the prediction interval (on the log scale) approaches $\pm 1.96 \times \textrm{RMSE}$
 
-    -   Point estimates identical
+-   As $n$ increases, the width of the interval around the summary measure approaches $0$
 
-    -   Confidence interval for individual predictions is wider
+-   We can verify the relationship between the standard errors
 
-    -   As $n$ increases, the width of the prediction interval (on the log scale) approaches $\pm 1.96 \times \textrm{RMSE}$
+```{r}
+# Demonstrate: se_pred^2 = se_fit^2 + RMSE^2
+pred.fit <- predict(m.fev, newdata=newdata, se.fit=TRUE)
+rmse <- summary(m.fev)$sigma
 
-    -   As $n$ increases, the width of the interval around the summary measure approaches $0$
+se.fit <- pred.fit$se.fit
+se.pred <- sqrt(se.fit^2 + rmse^2)
 
-<!-- -->
+data.frame(
+  se.fit = se.fit, se.fit.sq = se.fit^2,
+  RMSE = rmse, RMSE.sq = rmse^2,
+  se.pred = se.pred, se.pred.sq = se.pred^2
+) |>
+  kable(digits=7, col.names=c("SE(fit)", "SE(fit)^2", "RMSE", "RMSE^2", "SE(pred)", "SE(pred)^2"),
+        caption = "Decomposition of prediction standard error") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width=FALSE)
+```
 
--   We can also calculate the standard error of the prediction
+-   $\textrm{se}_\textrm{pred}^2 = \textrm{se}_\textrm{fit}^2 + \textrm{RMSE}^2$
 
--   Example: Age is 10 and Height is 66
-
-    ``` stata
-    . gen sepredict2 = sepredict^2
-    . gen sefit2 = sefit^2
-    . list sepredict sefit sepredict2 sefit2 if age==10 & heigh==66
-
-         +------------------------------------------+
-         | sepred~t     sefit   sepred~2     sefit2 |
-         |------------------------------------------|
-    330. | .1469132   .009702   .0215835   .0000941 |
-         +------------------------------------------+
-
-    . di .14659^2 +.0000941
-    .02158273
-    ```
-
-    -   $\textrm{se}_\textrm{pred}^2 = \textrm{se}_\textrm{fit}^2 + \textrm{RMSE}^2$
-
-        -   $\textrm{se}_\textrm{pred} = 0.1469132$
-
-        -   $\textrm{se}_\textrm{fit} = 0.0215835$
-
-        -   $\textrm{RMSE} = 0.14659$
-
-    -   Note that discrepancy in hand calculation versus Stata output (0.215835 vs 0.2158273) is due to rounding error
-
--   This is an academic exercise in Stata, but necessary in R (unless you can find a function to do it for you)
+-   In R, `predict(..., interval="prediction")` handles this calculation automatically
 
 ### Mathematics of Prediction Intervals
 
@@ -716,7 +651,7 @@ Log likelihood = -158.52851                       Pseudo R2       =     0.2512
 
         -   Pairwise significance would also be highly dependent on reference group chosen by analyst
 
--   Two flavors of stepwide model building
+-   Two flavors of stepwise model building
 
     -   Start with no covariates: "Forward" stepwise regression
 
@@ -754,6 +689,71 @@ Log likelihood = -158.52851                       Pseudo R2       =     0.2512
 
     -   Better to treat your covariate or linear prediction as a continuous variable
 
+### Visualizing discrimination and the ROC curve
+
+-   To build intuition about the ROC curve, consider the relationship between a cutpoint on the risk score and the corresponding point on the ROC curve
+
+    -   **Left panel**: Box plots of predicted risk scores, stratified by the actual binary outcome. A horizontal line shows the current cutpoint $c$
+
+    -   **Right panel**: The ROC curve, with the point corresponding to that cutpoint highlighted
+
+    -   As we lower the cutpoint, we classify more subjects as positive — sensitivity increases, but so does the false positive rate
+
+```{r}
+# Use the age-based smoking model for this demonstration
+m.demo <- glm(smoker ~ age, data=fev, family=binomial)
+fev$risk.score <- predict(m.demo, type="response")
+
+# Compute the full ROC curve
+roc.demo <- roc(fev$smoker, fev$risk.score, quiet=TRUE)
+```
+
+```{r, fig.height=6, fig.width=12, fig.cap="Stepping through cutpoints: each row shows how a threshold on the risk score (left) maps to a point on the ROC curve (right)"}
+cutpoints <- c(0.70, 0.50, 0.30, 0.15, 0.05)
+
+par(mfrow=c(length(cutpoints), 2), mar=c(4, 4, 3, 1))
+
+for(cp in cutpoints) {
+  # Compute sensitivity and specificity at this cutpoint
+  pred.pos <- fev$risk.score >= cp
+  sens <- sum(pred.pos & fev$smoker == 1) / sum(fev$smoker == 1)
+  spec <- sum(!pred.pos & fev$smoker == 0) / sum(fev$smoker == 0)
+  fpr <- 1 - spec
+
+  # Left panel: Box plots with cutpoint line
+  boxplot(risk.score ~ smoker, data=fev, horizontal=FALSE,
+          names=c("Non-smoker (D-)", "Smoker (D+)"),
+          ylab="Predicted Risk Score", col=c("lightblue","lightsalmon"),
+          main=sprintf("Cutpoint c = %.2f", cp), ylim=c(0,1))
+  abline(h=cp, col="red", lwd=2, lty=2)
+
+  # Shade the regions above the cutpoint
+  text(0.6, cp + 0.04, sprintf("c = %.2f", cp), col="red", cex=0.9, font=2)
+
+  # Right panel: ROC curve with highlighted point
+  plot(1 - roc.demo$specificities, roc.demo$sensitivities,
+       type="l", lwd=2, col="gray40",
+       xlab="False Positive Rate (1 - Specificity)",
+       ylab="Sensitivity",
+       main=sprintf("Sens = %.0f%%  Spec = %.0f%%", 100*sens, 100*spec),
+       xlim=c(0,1), ylim=c(0,1))
+  abline(0, 1, col="gray70", lty=3)
+  points(fpr, sens, col="red", pch=19, cex=2.5)
+  text(fpr + 0.08, sens - 0.06,
+       sprintf("(%.2f, %.2f)", fpr, sens), col="red", cex=0.9, font=2)
+}
+```
+
+-   Key observations:
+
+    -   A high cutpoint (e.g., $c = 0.70$) classifies very few subjects as positive — high specificity but low sensitivity
+
+    -   A low cutpoint (e.g., $c = 0.05$) classifies almost everyone as positive — high sensitivity but low specificity
+
+    -   The ROC curve traces out **all possible trade-offs** between sensitivity and specificity as $c$ varies
+
+    -   A perfect classifier would have the box plots completely separated with no overlap
+
 ### Example 1: Age or height to predict smoking
 
 -   Question: Is age or height a better predictor of smoking status?
@@ -768,79 +768,38 @@ Log likelihood = -158.52851                       Pseudo R2       =     0.2512
 
     -   Maximum AUC is 1.0
 
--   Stata
+-   Approach in R
 
-    -   Fit the logistic regression model
+    -   Fit the logistic regression model using `glm()`
 
-    -   `lroc` creates the ROC curve
+    -   Use the `pROC` package for ROC curves and AUC comparison
 
-    -   `predict` to save the fitted curves
-
-    -   `roccomp` to compare the curves
-
-<!-- -->
-
-``` stata
-. logit smoker height
-
-Logistic regression                               Number of obs   =        654
-                                                  LR chi2(1)      =      58.27
-                                                  Prob > chi2     =     0.0000
-Log likelihood = -182.58748                       Pseudo R2       =     0.1376
-
-------------------------------------------------------------------------------
-      smoker |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-      height |   .2067181   .0307986     6.71   0.000     .1463539    .2670824
-       _cons |  -15.32622   2.017127    -7.60   0.000    -19.27972   -11.37273
-------------------------------------------------------------------------------
-
-. lroc, nograph
-
-Logistic model for smoker
-
-number of observations =      654
-area under ROC curve   =   0.7882
-
-. predict xb1, xb
-
-. 
-. logit smoker age
-
-Logistic regression                               Number of obs   =        654
-                                                  LR chi2(1)      =     104.88
-                                                  Prob > chi2     =     0.0000
-Log likelihood = -159.28248                       Pseudo R2       =     0.2477
-
-------------------------------------------------------------------------------
-      smoker |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-         age |   .4836394   .0551278     8.77   0.000      .375591    .5916878
-       _cons |  -7.743905   .7089008   -10.92   0.000    -9.133325   -6.354485
-------------------------------------------------------------------------------
-
-. lroc, nograph
-
-Logistic model for smoker
-
-number of observations =      654
-area under ROC curve   =   0.8677
-
-. predict xb2, xb
-
-. roccomp smoker xb1 xb2, graph summary
-
-                              ROC                    -Asymptotic Normal--
-                   Obs       Area     Std. Err.      [95% Conf. Interval]
--------------------------------------------------------------------------
-xb1                654     0.7882       0.0225        0.74414     0.83227
-xb2                654     0.8677       0.0185        0.83152     0.90393
--------------------------------------------------------------------------
-Ho: area(xb1) = area(xb2)
-    chi2(1) =    11.20       Prob>chi2 =   0.0008
+```{r}
+# Fit two models: height alone vs age alone
+m.height <- glm(smoker ~ height, data=fev, family=binomial)
+m.age <- glm(smoker ~ age, data=fev, family=binomial)
 ```
 
-![image](./figures/roc1.png){height="4in"}
+```{r}
+# Compute ROC curves
+roc.height <- roc(fev$smoker, predict(m.height, type="response"), quiet=TRUE)
+roc.age <- roc(fev$smoker, predict(m.age, type="response"), quiet=TRUE)
+```
+
+```{r, fig.cap="ROC curves: Age vs Height as predictors of smoking"}
+# Plot both ROC curves
+plot(roc.height, col="blue", lwd=2, main="ROC Comparison: Age vs Height")
+plot(roc.age, col="red", lwd=2, add=TRUE)
+legend("bottomright",
+       legend=c(sprintf("Height (AUC = %.3f)", auc(roc.height)),
+                sprintf("Age (AUC = %.3f)", auc(roc.age))),
+       col=c("blue", "red"), lwd=2, bty="n")
+```
+
+```{r}
+# Formal test comparing AUC
+roc.test(roc.height, roc.age)
+```
 
 -   Age has a significantly larger AUC than Height ($p < 0.001$)
 
@@ -866,75 +825,58 @@ Ho: area(xb1) = area(xb2)
 
     -   Sensitivity, specificity will vary by the cutoff chosen
 
-<!-- -->
+```{r}
+# Create training/validation split (60/40)
+set.seed(42)
+fev$sex.factor <- factor(fev$sex)
+n <- nrow(fev)
+train.idx <- sample(1:n, size=floor(0.6 * n))
+fev$training <- FALSE
+fev$training[train.idx] <- TRUE
 
-``` stata
-. 
-. xi: logit smoker age height i.sex fev if training < .6
-i.sex             _Isex_1-2           (_Isex_1 for sex==female omitted)
-
-Logistic regression                               Number of obs   =        385
-                                                  LR chi2(4)      =      80.02
-                                                  Prob > chi2     =     0.0000
-Log likelihood = -70.223945                       Pseudo R2       =     0.3629
-
-------------------------------------------------------------------------------
-      smoker |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-         age |   .6611145   .1276124     5.18   0.000     .4109988    .9112302
-      height |   .1834778   .0960597     1.91   0.056    -.0047957    .3717514
-     _Isex_2 |  -.7128769   .5392144    -1.32   0.186    -1.769718    .3439639
-         fev |  -1.123659   .4514655    -2.49   0.013    -2.008515   -.2388024
-       _cons |  -18.18847   5.100367    -3.57   0.000    -28.18501   -8.191936
-------------------------------------------------------------------------------
-. predict pfit
-(option pr assumed; Pr(smoker))
-. 
-. gen pfit50=pfit
-
-. recode pfit50 0/0.5=0 0.5/1=1
-(pfit50: 654 changes made)
-. 
-. tabulate smoker pfit50 if training > .6, row col 
-
-
-           |        pfit50
-    smoker |         0          1 |     Total
------------+----------------------+----------
-         0 |       226         10 |       236 
-           |     95.76       4.24 |    100.00 
-           |     90.04      55.56 |     87.73 
------------+----------------------+----------
-         1 |        25          8 |        33 
-           |     75.76      24.24 |    100.00 
-           |      9.96      44.44 |     12.27 
------------+----------------------+----------
-     Total |       251         18 |       269 
-           |     93.31       6.69 |    100.00 
-           |    100.00     100.00 |    100.00 
+# Fit multivariable model on training data
+m.multi <- glm(smoker ~ age + height + sex.factor + fev, data=fev,
+               subset=training, family=binomial)
+summary(m.multi)
 ```
 
--   Using a cutoff of 0.50
+```{r}
+# Predict on validation data
+fev$pfit <- predict(m.multi, newdata=fev, type="response")
+val <- fev[!fev$training, ]
 
-    -   Sensitivity: $8/33 = 24.24$
+# Classification table using cutoff of 0.50
+val$predicted <- ifelse(val$pfit >= 0.5, 1, 0)
+tab <- table(Observed=val$smoker, Predicted=val$predicted)
+tab
+```
 
-    -   Specificity: $226/236 = 95.76$
+```{r}
+# Compute sensitivity, specificity, PVP, PVN
+sens <- tab["1","1"] / sum(tab["1",])
+spec <- tab["0","0"] / sum(tab["0",])
+pvp <- tab["1","1"] / sum(tab[,"1"])
+pvn <- tab["0","0"] / sum(tab[,"0"])
 
-    -   PVP: $8/18 = 44.44$
-
-    -   PVN: $226/251 = 90.04$
+metrics <- data.frame(
+  Metric = c("Sensitivity", "Specificity", "PVP", "PVN"),
+  Value = c(sens, spec, pvp, pvn),
+  Percent = sprintf("%.1f%%", 100 * c(sens, spec, pvp, pvn))
+)
+kable(metrics, digits=3,
+      caption="Classification performance at cutoff = 0.50 (validation sample)") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width=FALSE)
+```
 
 -   Thresholds other than 0.50 give different values for sensitivity, specificity, PVP, PVN
 
     -   ROC curve displayed gives all possible thresholds
 
-![image](./figures/roc2.png){height="4in"}
-
-### Analysis of ROC curves in R
-
--   There are a number of add on packages that will conduct ROC analysis in R
-
--   `ROCR` is one popular package
+```{r, fig.cap="ROC curve for multivariable smoking prediction model (validation sample)"}
+roc.multi <- roc(val$smoker, val$pfit, quiet=TRUE)
+plot(roc.multi, col="blue", lwd=2,
+     main=sprintf("Multivariable Model ROC (AUC = %.3f)", auc(roc.multi)))
+```
 
 ### Multivariable prognostic models
 
@@ -1004,7 +946,7 @@ Log likelihood = -70.223945                       Pseudo R2       =     0.3629
 
 #### Case Study using lrm() in R
 
--   Logistic regression model
+-   Logistic regression model using simulated data
 
     -   Main effects: sex, cholesterol (splines), age (polynomial), and blood pressure (linear)
 
@@ -1012,108 +954,59 @@ Log likelihood = -70.223945                       Pseudo R2       =     0.3629
 
     -   (5 predictors maximum)
 
-<!-- -->
+```{r}
+# Simulate a dataset for the case study
+set.seed(123)
+n.sim <- 1000
+sim.data <- data.frame(
+  sex = factor(sample(c("female","male"), n.sim, replace=TRUE)),
+  cholesterol = rnorm(n.sim, 200, 40),
+  age = round(rnorm(n.sim, 50, 12)),
+  blood.pressure = rnorm(n.sim, 130, 20)
+)
 
-``` r
-> f <- lrm(y ~ sex*rcs(cholesterol)+pol(age,2)+blood.pressure, x=TRUE, y=TRUE)
-> f
+# Generate binary outcome with known relationships
+lp <- with(sim.data, -2 + 0.1*(age-50) - 0.0008*(age-50)^2 +
+             0.005*(cholesterol-200)*(sex=="male") + 0.002*rnorm(n.sim))
+sim.data$y <- rbinom(n.sim, 1, plogis(lp))
 
-Logistic Regression Model
+# Fit the model using lrm from rms package
+dd <- datadist(sim.data)
+options(datadist="dd")
 
-lrm(formula = y ~ sex * rcs(cholesterol) + pol(age, 2) + blood.pressure, 
-    x = TRUE, y = TRUE)
-
-                      Model Likelihood     Discrimination    Rank Discrim.    
-                         Ratio Test            Indexes          Indexes       
-
-Obs          1000    LR chi2      84.78    R2       0.109    C       0.660    
- 0            440    d.f.            12    g        0.704    Dxy     0.321    
- 1            560    Pr(> chi2) <0.0001    gr       2.023    gamma   0.322    
-max |deriv| 2e-04                          gp       0.160    tau-a   0.158    
-                                           Brier    0.226                     
-
-
-                          Coef    S.E.   Wald Z Pr(>|Z|)
-Intercept                 -2.8990 2.7445 -1.06  0.2908  
-sex=male                  -5.7526 3.6005 -1.60  0.1101  
-cholesterol               -0.0027 0.0148 -0.18  0.8552  
-cholesterol'              -0.0438 0.0793 -0.55  0.5804  
-cholesterol''              0.1808 0.4591  0.39  0.6937  
-cholesterol'''            -0.1266 0.7850 -0.16  0.8719  
-age                        0.1253 0.0475  2.64  0.0083  
-age^2                     -0.0009 0.0005 -1.88  0.0605  
-blood.pressure            -0.0018 0.0045 -0.40  0.6901  
-sex=male * cholesterol     0.0313 0.0218  1.43  0.1515  
-sex=male * cholesterol'    0.0190 0.1146  0.17  0.8683  
-sex=male * cholesterol''  -0.1227 0.6718 -0.18  0.8551  
-sex=male * cholesterol'''  0.1315 1.1752  0.11  0.9109  
+f <- lrm(y ~ sex*rcs(cholesterol) + pol(age,2) + blood.pressure,
+         data=sim.data, x=TRUE, y=TRUE)
+f
 ```
 
--   Validation...
+-   Validation using bootstrap with backwards stepwise regression
 
-    -   Backwards stepwise regression
+    -   Different bootstrap samples will remove different covariates
 
-        -   Different bootstrap sample will remove different covariates
-
-        -   Indicates which covariates were included for each sample
+    -   Indicates which covariates were included for each sample
 
     -   Estimates of discrimination indexes
 
-<!-- -->
-
-``` r
-> validate(f, B=150, bw=TRUE, rule="p", sls=.1, type="individual")
-
-                Backwards Step-down - Original Model
-
- Deleted        Chi-Sq d.f. P      Residual d.f. P      AIC  
- blood.pressure 0.16   1    0.6901 0.16     1    0.6901 -1.84
- cholesterol    7.35   4    0.1184 7.51     5    0.1853 -2.49
-
-Approximate Estimates after Deleting Factors
-
-                                Coef      S.E.    Wald Z        P
-Intercept                 -3.9763208 1.1849888 -3.355577 0.000792
-sex=male                  -4.9024437 2.6546474 -1.846740 0.064785
-age                        0.1246156 0.0473845  2.629884 0.008541
-age^2                     -0.0008688 0.0004677 -1.857457 0.063246
-sex=male * cholesterol     0.0286721 0.0160278  1.788897 0.073631
-sex=male * cholesterol'   -0.0252835 0.0827977 -0.305365 0.760088
-sex=male * cholesterol''   0.0634986 0.4907718  0.129385 0.897053
-sex=male * cholesterol''' -0.0071007 0.8750440 -0.008115 0.993526
-
-Factors in Final Model
-
-[1] sex               age               sex * cholesterol
-
-          index.orig training   test optimism index.corrected   n
-Dxy           0.3082   0.3301 0.2986   0.0316          0.2766 150
-R2            0.0995   0.1184 0.0946   0.0238          0.0757 150
-Intercept     0.0000   0.0000 0.0263  -0.0263          0.0263 150
-Slope         1.0000   1.0000 0.8879   0.1121          0.8879 150
-Emax          0.0000   0.0000 0.0308   0.0308          0.0308 150
-D             0.0762   0.0917 0.0722   0.0195          0.0567 150
-U            -0.0020  -0.0020 0.0016  -0.0036          0.0016 150
-Q             0.0782   0.0937 0.0706   0.0231          0.0551 150
-B             0.2279   0.2244 0.2295  -0.0051          0.2330 150
-g             0.6650   0.7374 0.6452   0.0922          0.5729 150
-gp            0.1512   0.1651 0.1477   0.0173          0.1339 150
-
-Factors Retained in Backwards Elimination
-
- sex cholesterol age blood.pressure sex * cholesterol
- *               *                  *                
- *   *           *                  *                
- *               *                  *                
-     *           *                  *                
- *   *           *                  *                
- *   *           *                  *                
-     *           *                  *                
-     *           *                  *                
-(output omitted; continues for each bootstrap sample)
-
-Frequencies of Numbers of Factors Retained
-
- 2  3  4  5 
-18 74 55  3 
+```{r, cache=TRUE}
+v <- validate(f, B=150, bw=TRUE, rule="p", sls=.1, type="individual")
+v
 ```
+
+-   Key output to focus on:
+
+    -   `index.orig`: Discrimination index in the original sample
+
+    -   `index.corrected`: Optimism-corrected index (more honest estimate of performance)
+
+    -   `optimism`: Difference between training and test performance (measure of overfitting)
+
+```{r, fig.cap="Calibration plot for the logistic regression model"}
+cal <- calibrate(f, B=150)
+plot(cal, main="Bootstrap Calibration")
+```
+
+-   The calibration plot shows how well predicted probabilities match observed event rates
+
+    -   A well-calibrated model follows the 45-degree line
+
+    -   Departures from the line indicate systematic over- or under-prediction
