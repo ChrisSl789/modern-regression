@@ -36,37 +36,33 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
 ### Uses of Regression
 
--   Cluster Analysis
+-   Other uses of regression beyond association and prediction
 
-    -   Focuses on identifying observations (covariates) with similar characteristics
+    -   Most of this course focuses on quantifying associations and making inferences
 
-        -   Interest lies in finding clusters that are more (or less) likely to have some outcome of interest
+    -   Prediction is the focus of this lecture
 
-    -   Divide a population into subgroups based on patterns of similar measurement
+    -   But regression-based thinking extends to many other areas, including:
 
-        -   Clustering can be done by considering one variable (univariable) or multiple variables (multivariable)
+        -   **Joint modeling**: Simultaneously modeling a longitudinal outcome and a time-to-event outcome
 
-        -   Number of clusters can be known or unknown
+            -   e.g. Modeling repeated PSA measurements and time to cancer recurrence together
 
-    -   Examples
+            -   Accounts for the dependence between the longitudinal trajectory and the event process
 
-        -   Microarrays
+        -   **Latent variable and mixture models**: Identifying unobserved subgroups or constructs
 
-        -   fMRI
+            -   e.g. Latent class growth models to find distinct trajectories of disease progression
 
-        -   "Small $n$, large $p$" (few subjects, many predictors)
+            -   Structural equation models relating observed measurements to latent constructs
 
-    -   Statistical techniques
+        -   **Clustering and classification**: Dividing populations into subgroups based on patterns of covariates
 
-        -   Stepwise regression
+            -   Regression trees, random forests, and other machine learning approaches
 
-        -   Regression trees
+            -   "Small $n$, large $p$" problems (few subjects, many predictors)
 
-        -   Other data-driven model building approaches
-
-        -   Getting valid inference (i.e. reliable p-values, unbiased parameter estimates) particularly challenging
-
-            -   Area of active research in Biostatistics
+        -   Getting valid inference in these settings is particularly challenging and is an area of active research in Biostatistics
 
 -   Quantifying and comparing distributions
 
