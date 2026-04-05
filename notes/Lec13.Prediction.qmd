@@ -678,6 +678,269 @@ kable(comparison, digits=6,
 
 -   Back-transforming to the FEV scale (exponentiating), these correspond to the geometric mean CI and prediction interval we computed earlier
 
+## Prediction in the Beta Carotene Trial
+
+-   In Lecture 12, we compared several models for the dose-response relationship in the beta carotene trial
+
+-   Now we examine how model choice affects the predictions themselves, and how adjusting for baseline affects precision
+
+### How model choice affects predictions
+
+-   We refit the models from Lecture 12 and compare their predicted means and confidence intervals at each dose level
+
+```{r}
+carot <- stata.get("data/carot.dta")
+carot$trt <- (carot$dose > 0) + 0
+dose.levels <- c(0, 15, 30, 45, 60)
+newdose <- data.frame(dose = dose.levels, carot0 = mean(carot$carot0),
+                       trt = (dose.levels > 0) + 0)
+
+# Fit the models (all adjusted for baseline)
+m.anova  <- lm(carot3 ~ factor(dose) + carot0, data = carot)
+m.linear <- lm(carot3 ~ dose + carot0, data = carot)
+m.quad   <- lm(carot3 ~ poly(dose, 2) + carot0, data = carot)
+m.dichot <- lm(carot3 ~ trt + carot0, data = carot)
+m.thres  <- lm(carot3 ~ trt + dose + carot0, data = carot)
+```
+
+```{r}
+# Predicted means and CIs from each model
+get_preds <- function(model, nd) {
+  p <- predict(model, newdata = nd, interval = "confidence")
+  data.frame(dose = nd$dose, fit = p[,"fit"], lwr = p[,"lwr"], upr = p[,"upr"])
+}
+
+pred.anova  <- get_preds(m.anova,  newdose)
+pred.linear <- get_preds(m.linear, newdose)
+pred.quad   <- get_preds(m.quad,   newdose)
+pred.dichot <- get_preds(m.dichot, newdose)
+pred.thres  <- get_preds(m.thres,  newdose)
+```
+
+```{r, fig.width=10, fig.height=6, fig.cap="Predicted mean plasma beta-carotene (with 95% CI) by dose, for five different models. All models adjust for baseline and predictions are at the mean baseline value."}
+# Colors and labels for each model
+cols <- c("black", "blue", "red", "darkgreen", "purple")
+names <- c("ANOVA", "Linear", "Quadratic", "Dichotomized", "Threshold + Linear")
+preds <- list(pred.anova, pred.linear, pred.quad, pred.dichot, pred.thres)
+offsets <- c(-1.2, -0.6, 0, 0.6, 1.2)
+
+plot(NULL, xlim = c(-3, 63), ylim = c(-200, 2800),
+     xlab = "Dose (mg/day)", ylab = "Predicted Plasma Beta-Carotene",
+     main = "Model Choice Affects Predictions")
+
+for(i in 1:5) {
+  d <- preds[[i]]
+  x <- d$dose + offsets[i]
+  arrows(x, d$lwr, x, d$upr, angle = 90, code = 3, length = 0.04,
+         col = cols[i], lwd = 1.5)
+  points(x, d$fit, pch = 19, col = cols[i], cex = 1.2)
+  lines(d$dose + offsets[i], d$fit, col = cols[i], lwd = 1.5, lty = i)
+}
+
+legend("topleft", names, col = cols, pch = 19, lwd = 1.5, lty = 1:5,
+       bty = "n", cex = 0.9)
+```
+
+-   Key observations:
+
+    -   The ANOVA model fits each dose group independently — widest CIs, but no risk of misspecifying the dose-response shape
+
+    -   The linear model borrows strength across dose groups — narrower CIs, but the predictions are biased if the true relationship is not linear
+
+    -   The more parsimonious models (dichotomized, linear) have narrower CIs at each dose level, but may miss important features of the dose-response
+
+    -   The threshold + linear model captures both the jump from placebo to active and the linear trend among active doses — a good compromise
+
+```{r}
+# Compare CI widths across models at each dose level
+ci_widths <- data.frame(
+  Dose = dose.levels,
+  ANOVA = pred.anova$upr - pred.anova$lwr,
+  Linear = pred.linear$upr - pred.linear$lwr,
+  Quadratic = pred.quad$upr - pred.quad$lwr,
+  Dichotomized = pred.dichot$upr - pred.dichot$lwr,
+  `Threshold + Linear` = pred.thres$upr - pred.thres$lwr,
+  check.names = FALSE
+)
+kable(ci_widths, digits = 0,
+      caption = "95% CI width by model and dose level (at mean baseline)") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+### Adjusting for baseline: conditional and marginal predictions
+
+-   In the beta carotene trial, we can form predictions three ways:
+
+    1.  **Unadjusted group means**: The sample mean at each dose level, ignoring baseline entirely (marginal over baseline)
+
+    2.  **ANCOVA conditional predictions**: Predicted 9-month level for a patient at a *specific* baseline value
+
+    3.  **ANCOVA marginal means**: Predicted 9-month level at each dose, averaged over the observed distribution of baseline values (marginal over baseline, but leveraging the baseline-outcome correlation for precision)
+
+-   Because this is a randomized trial, baseline should be balanced across dose groups
+
+```{r}
+# Descriptive: baseline beta-carotene by dose group
+baseline_by_dose <- aggregate(carot0 ~ dose, data = carot,
+  FUN = function(x) c(n = length(x), mean = mean(x), sd = sd(x)))
+baseline_df <- data.frame(Dose = baseline_by_dose$dose, baseline_by_dose$carot0,
+                           check.names = FALSE)
+kable(baseline_df, digits = 1,
+      col.names = c("Dose", "N", "Mean Baseline", "SD Baseline"),
+      caption = "Baseline plasma beta-carotene by dose group") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+-   Baseline means are similar across groups, as expected from randomization
+
+-   We will use the threshold + linear model from Lecture 12 as our preferred model
+
+```{r}
+# 1. Unadjusted group means
+m.unadj <- lm(carot3 ~ factor(dose), data = carot)
+pred.unadj <- predict(m.unadj, newdata = data.frame(dose = dose.levels),
+                       se.fit = TRUE)
+crit.unadj <- qt(0.975, m.unadj$df.residual)
+
+unadj <- data.frame(
+  dose = dose.levels,
+  fit = pred.unadj$fit,
+  lwr = pred.unadj$fit - crit.unadj * pred.unadj$se.fit,
+  upr = pred.unadj$fit + crit.unadj * pred.unadj$se.fit,
+  type = "Unadjusted"
+)
+```
+
+```{r}
+# 2. ANCOVA conditional predictions at specific baseline values
+crit.thres <- qt(0.975, m.thres$df.residual)
+
+# Low baseline (25th percentile) and high baseline (75th percentile)
+q25 <- quantile(carot$carot0, 0.25)
+q75 <- quantile(carot$carot0, 0.75)
+
+nd.low  <- data.frame(dose = dose.levels, carot0 = q25,
+                       trt = (dose.levels > 0) + 0)
+nd.high <- data.frame(dose = dose.levels, carot0 = q75,
+                       trt = (dose.levels > 0) + 0)
+
+pred.low  <- predict(m.thres, newdata = nd.low,  interval = "confidence")
+pred.high <- predict(m.thres, newdata = nd.high, interval = "confidence")
+
+cond.low <- data.frame(dose = dose.levels, pred.low,
+                        type = sprintf("Conditional (baseline = %.0f)", q25),
+                        check.names = FALSE)
+cond.high <- data.frame(dose = dose.levels, pred.high,
+                         type = sprintf("Conditional (baseline = %.0f)", q75),
+                         check.names = FALSE)
+```
+
+```{r}
+# 3. ANCOVA marginal means: average predictions over observed baseline distribution
+# For each dose level, predict for every subject using their actual baseline,
+# then average across subjects
+marginal <- do.call(rbind, lapply(dose.levels, function(d) {
+  nd <- data.frame(dose = d, carot0 = carot$carot0,
+                   trt = (d > 0) + 0)
+  preds <- predict(m.thres, newdata = nd)
+  data.frame(dose = d, fit = mean(preds))
+}))
+
+# Bootstrap SE for the marginal means
+set.seed(99)
+B <- 1000
+n.carot <- nrow(carot)
+boot.means <- matrix(NA, nrow = B, ncol = length(dose.levels))
+
+for(b in 1:B) {
+  idx <- sample(1:n.carot, replace = TRUE)
+  m.b <- lm(carot3 ~ trt + dose + carot0, data = carot[idx, ])
+  for(j in seq_along(dose.levels)) {
+    nd <- data.frame(dose = dose.levels[j], carot0 = carot$carot0[idx],
+                     trt = (dose.levels[j] > 0) + 0)
+    boot.means[b, j] <- mean(predict(m.b, newdata = nd))
+  }
+}
+
+marginal$se <- apply(boot.means, 2, sd)
+marginal$lwr <- marginal$fit - 1.96 * marginal$se
+marginal$upr <- marginal$fit + 1.96 * marginal$se
+marginal$type <- "ANCOVA Marginal"
+```
+
+```{r, fig.width=10, fig.height=6, fig.cap="Three approaches to estimating the dose-response: unadjusted means, ANCOVA conditional predictions at low and high baseline, and ANCOVA marginal means"}
+plot(NULL, xlim = c(-3, 63), ylim = c(-200, 2800),
+     xlab = "Dose (mg/day)", ylab = "Plasma Beta-Carotene at 9 Months",
+     main = "Unadjusted, Conditional, and Marginal Predictions")
+
+# Unadjusted
+arrows(unadj$dose - 1, unadj$lwr, unadj$dose - 1, unadj$upr,
+       angle = 90, code = 3, length = 0.04, col = "gray50", lwd = 2)
+points(unadj$dose - 1, unadj$fit, pch = 19, col = "gray50", cex = 1.5)
+
+# Conditional: low baseline
+arrows(cond.low$dose - 0.3, cond.low$lwr, cond.low$dose - 0.3, cond.low$upr,
+       angle = 90, code = 3, length = 0.04, col = "steelblue", lwd = 2)
+points(cond.low$dose - 0.3, cond.low$fit, pch = 17, col = "steelblue", cex = 1.3)
+
+# Conditional: high baseline
+arrows(cond.high$dose + 0.3, cond.high$lwr, cond.high$dose + 0.3, cond.high$upr,
+       angle = 90, code = 3, length = 0.04, col = "coral", lwd = 2)
+points(cond.high$dose + 0.3, cond.high$fit, pch = 17, col = "coral", cex = 1.3)
+
+# Marginal
+arrows(marginal$dose + 1, marginal$lwr, marginal$dose + 1, marginal$upr,
+       angle = 90, code = 3, length = 0.04, col = "darkgreen", lwd = 2)
+points(marginal$dose + 1, marginal$fit, pch = 15, col = "darkgreen", cex = 1.5)
+
+legend("topleft",
+  c("Unadjusted group means",
+    sprintf("Conditional (baseline = %.0f, Q1)", q25),
+    sprintf("Conditional (baseline = %.0f, Q3)", q75),
+    "ANCOVA marginal means"),
+  col = c("gray50", "steelblue", "coral", "darkgreen"),
+  pch = c(19, 17, 17, 15), lwd = 2, bty = "n", cex = 0.9)
+```
+
+-   Key observations:
+
+    -   The **unadjusted means** and **ANCOVA marginal means** estimate the same quantity — the population-average plasma level at each dose — and are very similar because randomization balanced baseline across groups
+
+    -   The **ANCOVA marginal means** have narrower CIs — this is the precision gain from adjusting for a predictor (baseline) that is correlated with the outcome
+
+    -   The **conditional predictions** shift vertically depending on the baseline value: patients with higher baseline beta-carotene have higher predicted 9-month levels
+
+    -   The conditional predictions at any specific baseline value also have narrower CIs than the unadjusted means
+
+### Precision gain from ANCOVA
+
+```{r}
+precision <- data.frame(
+  Dose = dose.levels,
+  `Unadjusted CI Width` = unadj$upr - unadj$lwr,
+  `ANCOVA Marginal CI Width` = marginal$upr - marginal$lwr,
+  `Reduction (%)` = sprintf("%.0f%%",
+    100 * (1 - (marginal$upr - marginal$lwr) / (unadj$upr - unadj$lwr))),
+  check.names = FALSE
+)
+kable(precision, digits = 0,
+      caption = "Precision gain from ANCOVA adjustment for baseline") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+-   The precision gain from ANCOVA depends on the correlation between baseline and 9-month plasma levels ($\rho$)
+
+    -   Recall from Lecture 12: the variance of the ANCOVA estimator is proportional to $\sigma^2(1 - \rho^2)/n$, compared to $\sigma^2/n$ for the unadjusted estimator
+
+    -   Stronger baseline-outcome correlation means greater precision gain from adjustment
+
+```{r}
+rho <- cor(carot$carot0, carot$carot3)
+sprintf("Correlation between baseline and 9-month plasma levels: %.3f", rho)
+sprintf("Theoretical variance reduction: %.0f%% (1 - rho^2 = %.3f)",
+        100 * (1 - (1 - rho^2)), 1 - rho^2)
+```
+
 ## Prediction of Binary Measurements
 
 ### Classification (discrimination)
