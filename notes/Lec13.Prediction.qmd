@@ -939,7 +939,7 @@ plot(roc.multi, col="blue", lwd=2,
 
     -   Harrell FE Jr, Lee KL, Mark DB. Multivariable prognostic models: issues in developing models, evaluating assumptions and adequacy, and measuring and reducing errors. Statistics in Medicine. 15(4): 361-87, Feb 1996
 
-    -   A "Tutorial is Biostatistics" (frequently appears in Statistics in Medicine)
+    -   A "Tutorial in Biostatistics" (frequently appears in Statistics in Medicine)
 
 -   From abstract of paper
 
@@ -969,7 +969,7 @@ plot(roc.multi, col="blue", lwd=2,
 
         -   If you do not use the outcome at this stage, your statistical inference is preserved
 
-        -   Correlations among predictors: Variable clustering, principle components analysis
+        -   Correlations among predictors: Variable clustering, principal components analysis
 
         -   Scientifically meaningful summary measures
 
@@ -999,69 +999,124 @@ plot(roc.multi, col="blue", lwd=2,
 
         -   Brier score: Average squared deviation between predicted probability of event and observed outcome. A lower score represents higher accuracy.
 
-#### Case Study using lrm() in R
+#### Case Study: Predicting smoking using lrm()
 
--   Logistic regression model using simulated data
+-   We will apply the Harrell framework to the FEV/smoking data we have been using throughout this lecture
 
-    -   Main effects: sex, cholesterol (splines), age (polynomial), and blood pressure (linear)
+-   **Step 1: Consider the dataset**
 
-    -   Interactions: sex with cholesterol
+    -   Outcome: smoking status (binary)
 
-    -   (5 predictors maximum)
+    -   Available predictors: age, height, sex, FEV
+
+    -   How many predictors can we afford?
 
 ```{r}
-# Simulate a dataset for the case study
-set.seed(123)
-n.sim <- 1000
-sim.data <- data.frame(
-  sex = factor(sample(c("female","male"), n.sim, replace=TRUE)),
-  cholesterol = rnorm(n.sim, 200, 40),
-  age = round(rnorm(n.sim, 50, 12)),
-  blood.pressure = rnorm(n.sim, 130, 20)
-)
+# Number of events (smokers) determines model complexity budget
+n.events <- sum(fev$smoker)
+n.total <- nrow(fev)
 
-# Generate binary outcome with known relationships
-lp <- with(sim.data, -2 + 0.1*(age-50) - 0.0008*(age-50)^2 +
-             0.005*(cholesterol-200)*(sex=="male") + 0.002*rnorm(n.sim))
-sim.data$y <- rbinom(n.sim, 1, plogis(lp))
+data.frame(
+  `Total N` = n.total,
+  `N smokers (events)` = n.events,
+  `Event rate` = sprintf("%.1f%%", 100 * n.events / n.total),
+  `Max predictors (m/10)` = floor(n.events / 10),
+  check.names = FALSE
+) |>
+  kable(caption = "Sample size considerations for model complexity") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
 
-# Fit the model using lrm from rms package
-dd <- datadist(sim.data)
-options(datadist="dd")
+-   **Step 2: Data reduction** — With only 4 candidate predictors and a reasonable number of events, we can include all predictors without formal data reduction
 
-f <- lrm(y ~ sex*rcs(cholesterol) + pol(age,2) + blood.pressure,
-         data=sim.data, x=TRUE, y=TRUE)
+    -   We will allow age and height to have nonlinear effects using restricted cubic splines
+
+    -   We will consider a sex interaction with age (biological plausibility: smoking uptake patterns may differ by sex)
+
+-   **Step 3: Fit the model** using `lrm()` from the `rms` package
+
+    -   `lrm()` provides richer output than `glm()`: discrimination indexes (C-statistic), likelihood ratio tests, and integration with `validate()` and `calibrate()`
+
+```{r}
+dd <- datadist(fev)
+options(datadist = "dd")
+
+f <- lrm(smoker ~ sex * rcs(age, 4) + rcs(height, 4) + fev,
+         data = fev, x = TRUE, y = TRUE)
 f
 ```
 
--   Validation using bootstrap with backwards stepwise regression
+-   The model summary from `lrm()` provides several useful quantities
 
-    -   Different bootstrap samples will remove different covariates
+    -   **C-statistic**: A measure of discrimination (0.5 = coin flip, 1.0 = perfect)
 
-    -   Indicates which covariates were included for each sample
+    -   **Brier score**: Average squared deviation between predicted probability and observed outcome (lower is better)
 
-    -   Estimates of discrimination indexes
+    -   **$R^2$**: Nagelkerke $R^2$, a pseudo-$R^2$ measure
+
+-   We can visualize the ANOVA-like decomposition of the model
+
+```{r}
+anova(f)
+```
+
+-   **Step 4: Evaluate the model** using bootstrap validation
+
+    -   We fit the model using *all* the data (no train/test split)
+
+    -   Bootstrap cross-validation provides a nearly unbiased estimate of how well the model will perform on new data
+
+    -   The `optimism` column reveals how much we are overfitting
 
 ```{r, cache=TRUE}
-v <- validate(f, B=150, bw=TRUE, rule="p", sls=.1, type="individual")
+v <- validate(f, B=300)
 v
 ```
 
--   Key output to focus on:
+-   Key rows in the `validate()` output:
 
-    -   `index.orig`: Discrimination index in the original sample
-
-    -   `index.corrected`: Optimism-corrected index (more honest estimate of performance)
-
-    -   `optimism`: Difference between training and test performance (measure of overfitting)
-
-```{r, fig.cap="Calibration plot for the logistic regression model"}
-cal <- calibrate(f, B=150)
-plot(cal, main="Bootstrap Calibration")
+```{r}
+val.guide <- data.frame(
+  Index = c("Dxy", "R2", "Slope", "B"),
+  Description = c(
+    "Somers' Dxy rank correlation (C = 0.5 + Dxy/2)",
+    "Nagelkerke R-squared",
+    "Calibration slope (1.0 = perfectly calibrated)",
+    "Brier score (lower is better)"
+  ),
+  `Original` = c("Apparent performance on full data",
+                  "Apparent performance on full data",
+                  "Always 1.0 on training data",
+                  "Apparent Brier score"),
+  `Corrected` = c("Honest estimate after removing optimism",
+                   "Honest estimate after removing optimism",
+                   "Degree of overfitting (< 1 means overfit)",
+                   "Honest Brier score"),
+  check.names = FALSE
+)
+kable(val.guide, caption="Guide to key validate() output") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width=FALSE)
 ```
 
--   The calibration plot shows how well predicted probabilities match observed event rates
+-   The `optimism` column is the difference between `training` and `test` performance across bootstrap samples
+
+    -   Large optimism indicates the model is overfitting the data
+
+    -   The `index.corrected` = `index.orig` $-$ `optimism` gives the honest estimate
+
+-   Calibration: Does the model get the probabilities right?
+
+```{r, fig.cap="Bootstrap calibration plot for the smoking prediction model", cache=TRUE}
+cal <- calibrate(f, B=300)
+plot(cal, main="Bootstrap Calibration: Smoking Prediction Model")
+```
+
+-   The calibration plot shows predicted probability (x-axis) versus observed event rate (y-axis)
 
     -   A well-calibrated model follows the 45-degree line
 
-    -   Departures from the line indicate systematic over- or under-prediction
+    -   The gray region shows the confidence band from bootstrap resampling
+
+    -   Departures from the line indicate systematic over- or under-prediction at certain risk levels
+
+-   Summary: Discrimination tells you whether the model can *rank* patients correctly; calibration tells you whether the predicted *probabilities* are accurate. A model can have good discrimination but poor calibration (or vice versa). Both matter for clinical use.
