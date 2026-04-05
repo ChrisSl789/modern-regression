@@ -706,43 +706,82 @@ fev$risk.score <- predict(m.demo, type="response")
 
 # Compute the full ROC curve
 roc.demo <- roc(fev$smoker, fev$risk.score, quiet=TRUE)
-```
 
-```{r, fig.height=6, fig.width=12, fig.cap="Stepping through cutpoints: each row shows how a threshold on the risk score (left) maps to a point on the ROC curve (right)"}
-cutpoints <- c(0.70, 0.50, 0.30, 0.15, 0.05)
-
-par(mfrow=c(length(cutpoints), 2), mar=c(4, 4, 3, 1))
-
-for(cp in cutpoints) {
-  # Compute sensitivity and specificity at this cutpoint
-  pred.pos <- fev$risk.score >= cp
-  sens <- sum(pred.pos & fev$smoker == 1) / sum(fev$smoker == 1)
-  spec <- sum(!pred.pos & fev$smoker == 0) / sum(fev$smoker == 0)
+# Helper function for paired cutpoint display
+plot_cutpoint <- function(cp, risk.score, outcome, roc.obj) {
+  pred.pos <- risk.score >= cp
+  sens <- sum(pred.pos & outcome == 1) / sum(outcome == 1)
+  spec <- sum(!pred.pos & outcome == 0) / sum(outcome == 0)
   fpr <- 1 - spec
 
+  par(mfrow=c(1, 2), mar=c(4, 4, 3, 1))
+
   # Left panel: Box plots with cutpoint line
-  boxplot(risk.score ~ smoker, data=fev, horizontal=FALSE,
+  boxplot(risk.score ~ outcome, horizontal=FALSE,
           names=c("Non-smoker (D-)", "Smoker (D+)"),
           ylab="Predicted Risk Score", col=c("lightblue","lightsalmon"),
           main=sprintf("Cutpoint c = %.2f", cp), ylim=c(0,1))
-  abline(h=cp, col="red", lwd=2, lty=2)
-
-  # Shade the regions above the cutpoint
-  text(0.6, cp + 0.04, sprintf("c = %.2f", cp), col="red", cex=0.9, font=2)
+  abline(h=cp, col="red", lwd=2.5, lty=2)
+  text(0.6, cp + 0.04, sprintf("c = %.2f", cp), col="red", cex=1.1, font=2)
 
   # Right panel: ROC curve with highlighted point
-  plot(1 - roc.demo$specificities, roc.demo$sensitivities,
+  plot(1 - roc.obj$specificities, roc.obj$sensitivities,
        type="l", lwd=2, col="gray40",
        xlab="False Positive Rate (1 - Specificity)",
        ylab="Sensitivity",
-       main=sprintf("Sens = %.0f%%  Spec = %.0f%%", 100*sens, 100*spec),
+       main=sprintf("Sens = %.0f%%    Spec = %.0f%%", 100*sens, 100*spec),
        xlim=c(0,1), ylim=c(0,1))
   abline(0, 1, col="gray70", lty=3)
-  points(fpr, sens, col="red", pch=19, cex=2.5)
-  text(fpr + 0.08, sens - 0.06,
-       sprintf("(%.2f, %.2f)", fpr, sens), col="red", cex=0.9, font=2)
+  points(fpr, sens, col="red", pch=19, cex=3)
+  text(fpr + 0.10, sens - 0.07,
+       sprintf("(%.2f, %.2f)", fpr, sens), col="red", cex=1.1, font=2)
 }
 ```
+
+::: {.panel-tabset}
+
+#### c = 0.70
+
+```{r, fig.height=5, fig.width=10}
+plot_cutpoint(0.70, fev$risk.score, fev$smoker, roc.demo)
+```
+
+Very high cutpoint: almost no one is classified positive. High specificity, very low sensitivity.
+
+#### c = 0.50
+
+```{r, fig.height=5, fig.width=10}
+plot_cutpoint(0.50, fev$risk.score, fev$smoker, roc.demo)
+```
+
+Still a high cutpoint for this dataset. Starting to capture some true positives.
+
+#### c = 0.30
+
+```{r, fig.height=5, fig.width=10}
+plot_cutpoint(0.30, fev$risk.score, fev$smoker, roc.demo)
+```
+
+A moderate cutpoint. Sensitivity is improving but false positives are increasing.
+
+#### c = 0.15
+
+```{r, fig.height=5, fig.width=10}
+plot_cutpoint(0.15, fev$risk.score, fev$smoker, roc.demo)
+```
+
+A lower cutpoint. Capturing most true positives, but at the cost of more false positives.
+
+#### c = 0.05
+
+```{r, fig.height=5, fig.width=10}
+plot_cutpoint(0.05, fev$risk.score, fev$smoker, roc.demo)
+```
+
+Very low cutpoint: nearly everyone is classified positive. High sensitivity, very low specificity.
+
+:::
+
 
 -   Key observations:
 
@@ -760,34 +799,23 @@ for(cp in cutpoints) {
 
 -   Will compare the ROC curves
 
-    -   Often done use the area under the curve (AUC)
+    -   Often summarized using the area under the curve (AUC), also called the C-statistic
 
-    -   Model with higher AUC is better
-
-    -   A null model (not predictive of outcome) will have area of 0.50
+    -   A null model (not predictive of outcome) will have AUC of 0.50
 
     -   Maximum AUC is 1.0
-
--   Approach in R
-
-    -   Fit the logistic regression model using `glm()`
-
-    -   Use the `pROC` package for ROC curves and AUC comparison
 
 ```{r}
 # Fit two models: height alone vs age alone
 m.height <- glm(smoker ~ height, data=fev, family=binomial)
 m.age <- glm(smoker ~ age, data=fev, family=binomial)
-```
 
-```{r}
 # Compute ROC curves
 roc.height <- roc(fev$smoker, predict(m.height, type="response"), quiet=TRUE)
 roc.age <- roc(fev$smoker, predict(m.age, type="response"), quiet=TRUE)
 ```
 
 ```{r, fig.cap="ROC curves: Age vs Height as predictors of smoking"}
-# Plot both ROC curves
 plot(roc.height, col="blue", lwd=2, main="ROC Comparison: Age vs Height")
 plot(roc.age, col="red", lwd=2, add=TRUE)
 legend("bottomright",
@@ -796,16 +824,43 @@ legend("bottomright",
        col=c("blue", "red"), lwd=2, bty="n")
 ```
 
-```{r}
-# Formal test comparing AUC
-roc.test(roc.height, roc.age)
-```
-
--   Age has a significantly larger AUC than Height ($p < 0.001$)
+-   Age has a visibly higher AUC than height
 
 -   For any given false positive rate, the sensitivity is higher for age
 
     -   Predicted value positive would also always be higher
+
+#### A note on formal tests comparing C-statistics
+
+-   You may encounter formal hypothesis tests comparing two AUC values (e.g., DeLong test via `roc.test()` in `pROC`)
+
+    -   These are commonly recommended by AI assistants and found in online tutorials
+
+-   However, these tests have serious problems and should generally be avoided
+
+    -   The C-statistic is an **insensitive** measure of predictive accuracy — large improvements in a model can produce tiny changes in C
+
+    -   Comparing two C-statistics is even less informative — differences are often clinically meaningless even when statistically significant
+
+    -   With large sample sizes, trivially small differences become "significant"
+
+    -   The test tells you nothing about *where* the model improves or for *whom*
+
+-   Frank Harrell has written extensively about this (see *Regression Modeling Strategies*):
+
+    -   "It is a bad idea to use a test comparing two C-statistics to decide if one model is better than another."
+
+    -   The C-statistic is useful as a **descriptive measure** of a single model's discriminative ability, not as a basis for model comparison
+
+-   Better approaches for comparing models:
+
+    -   Likelihood ratio tests (for nested models)
+
+    -   AIC/BIC for comparing model fit
+
+    -   Calibration assessment (does the model get the probabilities right?)
+
+    -   Net reclassification improvement (NRI) if you must compare at specific thresholds — though this has its own issues
 
 ### Example 2: Multiple predictors of smoking
 
