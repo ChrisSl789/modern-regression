@@ -555,23 +555,128 @@ data.frame(
 
 ### Mathematics of Prediction Intervals
 
--   Basic ideas behind prediction intervals
+#### Recap: Simple linear regression (single predictor)
 
 -   Model: $Y_i | X_i \sim N(\beta_0 + \beta_1 X_i, \sigma^2)$
 
--   Alternative specification: $Y_i | X_i = \beta_0 + \beta_1 X_i + \epsilon_i$
+-   Alternative specification: $Y_i | X_i = \beta_0 + \beta_1 X_i + \epsilon_i$, where $\epsilon_i \sim N(0, \sigma^2)$
 
-    -   $\epsilon_i \sim N(0, \sigma^2)$
+-   Estimated mean: $\hat{\beta}_0 + \hat{\beta}_1 X_h \sim N\left(\beta_0 + \beta_1 X_h, \sigma^2 V\right)$
 
--   Estimated mean: $\hat{\beta}_0 + \hat{\beta}_1 X_i \sim N\left(\beta_0 + \beta_1 X_i, \sigma^2 V\right)$
-
--   Predicted value of individual observation: $\hat{\beta}_0 + \hat{\beta}_1 X_i + \epsilon_i \sim N\left(\beta_0 + \beta_1 X_i, \sigma^2 (1 + V)\right)$
+-   Predicted value of individual observation: $\hat{\beta}_0 + \hat{\beta}_1 X_h + \epsilon_h \sim N\left(\beta_0 + \beta_1 X_h, \sigma^2 (1 + V)\right)$
 
     -   $V = \frac{1}{n} + \frac{(X_h - \overline{X})^2}{\sum_{i=1}^n (X_i - \overline{X})^2}$
 
     -   $X_h$ is the chosen value of the covariate (e.g. age==10)
 
     -   Note: As $n \rightarrow \infty, V \rightarrow 0$
+
+#### Multivariable model (matrix notation)
+
+-   For $p$ predictors, the linear regression model in matrix form is
+
+$$\mathbf{Y} = \mathbf{X} \boldsymbol{\beta} + \boldsymbol{\epsilon}, \quad \boldsymbol{\epsilon} \sim N(\mathbf{0}, \sigma^2 \mathbf{I})$$
+
+where $\mathbf{Y}$ is the $n \times 1$ response vector, $\mathbf{X}$ is the $n \times (p+1)$ design matrix (including intercept column), and $\boldsymbol{\beta}$ is the $(p+1) \times 1$ parameter vector
+
+-   The OLS estimator is $\hat{\boldsymbol{\beta}} = (\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\mathbf{Y}$
+
+-   For a new observation with covariate vector $\mathbf{x}_h$ (a $1 \times (p+1)$ row vector including a 1 for the intercept):
+
+-   **Confidence interval for the mean response** (prediction of summary measure)
+
+    -   $\hat{y}_h = \mathbf{x}_h \hat{\boldsymbol{\beta}}$
+
+    -   $\textrm{Var}(\hat{y}_h) = \sigma^2 \mathbf{x}_h (\mathbf{X}'\mathbf{X})^{-1} \mathbf{x}_h'$
+
+    -   $\textrm{se}_\textrm{fit} = \hat{\sigma} \sqrt{\mathbf{x}_h (\mathbf{X}'\mathbf{X})^{-1} \mathbf{x}_h'}$
+
+    -   CI: $\hat{y}_h \pm t_{n-p-1, \alpha/2} \times \textrm{se}_\textrm{fit}$
+
+-   **Prediction interval for a new individual observation**
+
+    -   The new observation is $Y_h = \mathbf{x}_h \boldsymbol{\beta} + \epsilon_h$
+
+    -   $\textrm{Var}(\hat{y}_h - Y_h) = \sigma^2 \left(1 + \mathbf{x}_h (\mathbf{X}'\mathbf{X})^{-1} \mathbf{x}_h'\right)$
+
+    -   $\textrm{se}_\textrm{pred} = \hat{\sigma} \sqrt{1 + \mathbf{x}_h (\mathbf{X}'\mathbf{X})^{-1} \mathbf{x}_h'}$
+
+    -   PI: $\hat{y}_h \pm t_{n-p-1, \alpha/2} \times \textrm{se}_\textrm{pred}$
+
+-   Note: $\textrm{se}_\textrm{pred}^2 = \textrm{se}_\textrm{fit}^2 + \hat{\sigma}^2$, exactly the decomposition we demonstrated earlier
+
+-   Note: As $n \rightarrow \infty$, $\mathbf{x}_h (\mathbf{X}'\mathbf{X})^{-1} \mathbf{x}_h' \rightarrow 0$ and the prediction interval width approaches $\pm t \times \hat{\sigma}$ (the irreducible within-group variability)
+
+#### Verification using matrix algebra in R
+
+-   We can carry out these calculations by hand using the FEV model and verify they match `predict()`
+
+```{r}
+# Design matrix and estimated coefficients from the log(FEV) model
+X <- model.matrix(m.fev)
+beta.hat <- coef(m.fev)
+sigma.hat <- summary(m.fev)$sigma
+n <- nrow(X)
+p <- ncol(X) - 1  # number of predictors (excluding intercept)
+
+# New observation: age=10, height=66
+xh <- matrix(c(1, 66, 10), nrow=1)  # [intercept, height, age]
+colnames(xh) <- names(beta.hat)
+```
+
+```{r}
+# Compute (X'X)^{-1}
+XtX.inv <- solve(t(X) %*% X)
+
+# Fitted value
+yhat <- as.numeric(xh %*% beta.hat)
+
+# Variance of the fitted value: sigma^2 * xh (X'X)^{-1} xh'
+V <- as.numeric(xh %*% XtX.inv %*% t(xh))
+se.fit.manual <- sigma.hat * sqrt(V)
+
+# Variance of prediction: sigma^2 * (1 + xh (X'X)^{-1} xh')
+se.pred.manual <- sigma.hat * sqrt(1 + V)
+
+# Critical value
+crit <- qt(0.975, df = n - p - 1)
+
+# Confidence interval for mean (on log scale)
+ci.manual <- yhat + c(-1, 1) * crit * se.fit.manual
+
+# Prediction interval for individual (on log scale)
+pi.manual <- yhat + c(-1, 1) * crit * se.pred.manual
+```
+
+```{r}
+# Compare to predict() output
+pred.ci <- predict(m.fev, newdata=newdata, interval="confidence")
+pred.pi <- predict(m.fev, newdata=newdata, interval="prediction")
+pred.se <- predict(m.fev, newdata=newdata, se.fit=TRUE)
+
+comparison <- data.frame(
+  Quantity = c("Fitted value", "SE(fit)", "SE(pred)",
+               "CI lower", "CI upper", "PI lower", "PI upper"),
+  `Matrix Algebra` = c(yhat, se.fit.manual, se.pred.manual,
+                        ci.manual[1], ci.manual[2],
+                        pi.manual[1], pi.manual[2]),
+  `predict()` = c(pred.ci[,"fit"], pred.se$se.fit,
+                   sqrt(pred.se$se.fit^2 + sigma.hat^2),
+                   pred.ci[,"lwr"], pred.ci[,"upr"],
+                   pred.pi[,"lwr"], pred.pi[,"upr"]),
+  check.names = FALSE
+)
+
+kable(comparison, digits=6,
+      caption = "Verification: matrix algebra vs predict() (log FEV scale, age=10, height=66)") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width=FALSE)
+```
+
+-   The matrix algebra calculations match `predict()` exactly
+
+-   This confirms that `predict()` is computing $\mathbf{x}_h (\mathbf{X}'\mathbf{X})^{-1} \mathbf{x}_h'$ internally
+
+-   Back-transforming to the FEV scale (exponentiating), these correspond to the geometric mean CI and prediction interval we computed earlier
 
 ## Prediction of Binary Measurements
 
