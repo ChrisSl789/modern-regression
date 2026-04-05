@@ -300,11 +300,9 @@ kable(res1_df, digits=1,
 
 -   Predicted values
 
-    -   After computing a regression command, Stata will provide predicted values for each case
+    -   After fitting a regression model, the `predict` function will provide predicted values for each case
 
         -   Mathematically, this is just the intercept plus the regression parameters multiplied by the covariates for each case
-
-        -   Stata command: `predict varname`
 
 ### ANOVA analysis
 
@@ -341,9 +339,7 @@ legend("topleft", c("Fitted", "Group Means"), pch=c("X","O"), bty="n")
 
 -   Testing for the dose effect
 
-    -   We must use the `testparm` command (or `test`) because the model includes the baseline measurement
-
-    -   `testparm` is similar to `test`, but allows testing multiple parameters using wildcards
+    -   We must use `linearHypothesis` to jointly test the dose coefficients because the model includes the baseline measurement
 
 ```{r}
 linearHypothesis(m.factor, c("dose.factor15",
@@ -664,14 +660,14 @@ kable(comp_table, digits=c(0, 0, 0, 3, 1, 1),
 
 -   Next, fit each of the five models (linear, quadratic, ANOVA, dichotomized, and dichotomized plus linear)
 
--   Repeat the process 1000 times (representing 1000 studies)
+-   Repeat the process 5000 times (representing 5000 studies)
 
     -   Calculate how often each model rejects the null hypothesis of a dose effect
 
 ```{r, cache=TRUE}
 set.seed(80)
 
-reps <- 1000
+reps <- 5000
 n <- length(carot$carot3)
 p.vals <- matrix(NA, nrow=reps, ncol=5)
 colnames(p.vals) <- c("ANOVA", "Linear", "Quadratic", "Dichotomized", "Dichot + Linear")
@@ -724,7 +720,7 @@ kable(sim_results, digits=3,
 
         -   In fact, the tests will be correlated
 
-    -   How many of the 1000 simulated trials had at least one model with a $p$-value $< 0.05$?
+    -   How many of the 5000 simulated trials had at least one model with a $p$-value $< 0.05$?
 
 ```{r}
 p.hat <- mean(apply(p.vals < 0.05, 1, any))
