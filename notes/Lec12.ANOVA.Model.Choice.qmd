@@ -201,7 +201,7 @@ plotCI(x=dose.levels[c(1,5,4,2,3)], y=p1$fit, 3*p1$se.fit, ylab="Response", xlab
 -   Other measured variables available in this data set include subject age, sex, weight, body mass index, percent body fat, and serum cholesterol level at baseline
 
 ```{r}
-carot <- stata.get("data/carot.dta")
+carot <- read.csv("data/carot-nomissing.csv")
 res1 <- aggregate(carot3 ~ dose, data = carot,
   FUN = function(x) c(n = length(x), mean = mean(x), sd = sd(x),
     min = min(x), q25 = quantile(x, 0.25),
@@ -567,7 +567,7 @@ legend("topleft", c("Fitted", "Group Means"), pch=c("X","O"), lty=c(NA,1), bty="
 
 -   The partial t-test for the `dose` term tests whether there is an additional linear trend among the active dose groups
 
-    -   It is significantly different from 0 ($p = 0.011$)
+    -   It is significantly different from 0 ($p = 0.01$)
 
     -   There is a multiple comparison issue here, but many people are comfortable doing this 'step down' test after they have already tested from any treatment effect
 
@@ -658,7 +658,7 @@ kable(comp_table, digits=c(0, 0, 0, 3, 1, 1),
 
     -   Calculate how often each model rejects the null hypothesis of a dose effect
 
-```{r, cache=TRUE}
+```{r, cache=FALSE}
 set.seed(80)
 
 reps <- 5000
@@ -843,4 +843,4 @@ kable(ewer_table, digits=4,
     2.  Protect the validity of inference
     3.  Maximize precision (power)
 
--   In Lecture 13, we will see how model choice decisions directly impact predictive accuracy — both for continuous outcomes (prediction intervals) and binary outcomes (classification, ROC curves)
+-   In Lecture 13, we will see how model choice decisions directly impact predictive accuracy; both for continuous outcomes (prediction intervals) and binary outcomes (classification, ROC curves)

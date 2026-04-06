@@ -19,7 +19,7 @@ These notes accompany [Set14.pdf](Set14.pdf), which covers bootstrap methodology
 - Compare the precision of unadjusted group means vs. ANCOVA marginal means using bootstrap CIs
 - Discuss the choice of bootstrap scheme when predictors are **fixed by design** (as in a clinical trial with pre-specified dose levels)
 
-Students should read [Set14.pdf](Set14.pdf) first for the theoretical background.
+Read [Set14.pdf](Set14.pdf) first for the theoretical background.
 
 # Fixed vs. Random Predictors and the Bootstrap
 
@@ -29,9 +29,9 @@ In the beta carotene trial, subjects were randomly assigned to one of five dose 
 
 This has two important consequences:
 
-1.  **Standard errors**: Classical (model-based) standard errors are appropriate when $X$ is fixed and the variance model is correctly specified. Robust (sandwich) standard errors protect against heteroscedasticity, but when $X$ is fixed by design and the model is correctly specified, they offer no improvement over classical SEs — they simply lose efficiency. In Lectures 12 and 13, we used classical SEs for this reason.
+1.  **Standard errors**: Classical (model-based) standard errors are appropriate when $X$ is fixed and the variance model is correctly specified. Robust (sandwich) standard errors protect against heteroscedasticity, but when $X$ is fixed by design and the model is correctly specified, they offer no improvement over classical SEs. In Lectures 12 and 13, we used classical SEs for this reason.
 
-2.  **Bootstrap scheme**: The standard "pairs" bootstrap (resampling entire rows of data) implicitly treats $X$ as random — each bootstrap sample may have different numbers of subjects per dose group. For a designed experiment with fixed $X$, we should instead use a bootstrap that conditions on the design.
+2.  **Bootstrap scheme**: The standard "pairs" bootstrap (resampling entire rows of data) implicitly treats $X$ as random.  Each bootstrap sample may have different numbers of subjects per dose group. For a designed experiment with fixed $X$, we should instead use a bootstrap that conditions on the design.
 
 ## Two bootstrap approaches for fixed X
 
@@ -54,7 +54,7 @@ $$
 where $x_{0i}$ is subject $i$'s observed baseline value. Because this is an average of predictions over the empirical distribution of baseline values, classical standard error formulas (which apply to linear functions of $\hat{\beta}$) do not directly apply. The bootstrap provides a straightforward solution.
 
 ```{r}
-carot <- Hmisc::stata.get("data/carot.dta")
+carot <- read.csv("data/carot-nomissing.csv")
 dose.levels <- sort(unique(carot$dose))
 
 # Threshold + linear model from Lecture 12/13

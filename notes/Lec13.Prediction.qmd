@@ -668,7 +668,7 @@ kable(comparison, digits=6,
 -   We refit the models from Lecture 12 and compare their predicted means and confidence intervals at each dose level
 
 ```{r}
-carot <- stata.get("data/carot.dta")
+carot <- read.csv("data/carot-nomissing.csv")
 carot$trt <- (carot$dose > 0) + 0
 dose.levels <- c(0, 15, 30, 45, 60)
 newdose <- data.frame(dose = dose.levels, carot0 = mean(carot$carot0),
@@ -798,9 +798,9 @@ crit.thres <- qt(0.975, m.thres$df.residual)
 q25 <- quantile(carot$carot0, 0.25)
 q75 <- quantile(carot$carot0, 0.75)
 
-nd.low  <- data.frame(dose = dose.levels, carot0 = q25,
+nd.low  <- data.frame(dose = dose.levels, carot0 = rep(q25,5),
                        trt = (dose.levels > 0) + 0)
-nd.high <- data.frame(dose = dose.levels, carot0 = q75,
+nd.high <- data.frame(dose = dose.levels, carot0 = rep(q75,5),
                        trt = (dose.levels > 0) + 0)
 
 pred.low  <- predict(m.thres, newdata = nd.low,  interval = "confidence")
@@ -867,7 +867,7 @@ legend("topleft",
 
     -   The **conditional predictions** shift vertically depending on the baseline value: patients with higher baseline beta-carotene have higher predicted 9-month levels
 
-    -   The conditional predictions at any specific baseline value have narrower CIs than the unadjusted means — this is the precision gain from ANCOVA
+    -   The conditional predictions at any specific baseline value have narrower CIs than the unadjusted means. This is the precision gain from ANCOVA
 
 ### Precision gain from ANCOVA
 
@@ -1126,7 +1126,7 @@ legend("bottomright",
 
 ### Example 2: Multiple predictors of smoking
 
--   Will consider age, height, sex, and fev as predictors of smoking
+-   Will consider age, height, sex, and FEV as predictors of smoking using an *inefficient* split-sample approach using training and validation datasets
 
 -   Fit a multivariable logistic regression model using these covariates in a training sample
 
@@ -1136,7 +1136,7 @@ legend("bottomright",
 
 -   Consider a rule that predicts a subject will smoke if their predicted probability is greater than 0.5
 
-    -   Could choose other cutoffs than 0.5
+    -   Could choose other cutoffs than 0.5 (I am using 0.5 for brevity)
 
     -   Other cutoffs will be represented on the ROC curves
 
