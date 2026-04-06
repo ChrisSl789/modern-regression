@@ -1373,15 +1373,60 @@ anova(f)
 
     -   Bootstrap cross-validation provides a nearly unbiased estimate of how well the model will perform on new data
 
-    -   Two key questions:
+    -   The `optimism` column reveals how much we are overfitting
 
-        -   **Discrimination**: Can the model rank patients correctly? (measured by the C-statistic / Dxy)
+```{r, cache=TRUE}
+v <- validate(f, B=300)
+v
+```
 
-        -   **Calibration**: Are the predicted probabilities accurate? (measured by calibration slope and calibration plots)
+-   Key rows in the `validate()` output:
 
-    -   A model can have good discrimination but poor calibration (or vice versa). Both matter for clinical use.
+```{r}
+val.guide <- data.frame(
+  Index = c("Dxy", "R2", "Slope", "B"),
+  Description = c(
+    "Somers' Dxy rank correlation (C = 0.5 + Dxy/2)",
+    "Nagelkerke R-squared",
+    "Calibration slope (1.0 = perfectly calibrated)",
+    "Brier score (lower is better)"
+  ),
+  `Original` = c("Apparent performance on full data",
+                  "Apparent performance on full data",
+                  "Always 1.0 on training data",
+                  "Apparent Brier score"),
+  `Corrected` = c("Honest estimate after removing optimism",
+                   "Honest estimate after removing optimism",
+                   "Degree of overfitting (< 1 means overfit)",
+                   "Honest Brier score"),
+  check.names = FALSE
+)
+kable(val.guide, caption="Guide to key validate() output") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width=FALSE)
+```
 
-    -   We will carry out the bootstrap validation of this model — including `validate()` and `calibrate()` — in the bootstrap lecture notes, after the methodology has been formally introduced.
+-   The `optimism` column is the difference between `training` and `test` performance across bootstrap samples
+
+    -   Large optimism indicates the model is overfitting the data
+
+    -   The `index.corrected` = `index.orig` $-$ `optimism` gives the honest estimate
+
+-   Calibration: Does the model get the probabilities right?
+
+```{r, fig.cap="Bootstrap calibration plot for the smoking prediction model", cache=TRUE}
+cal <- calibrate(f, B=300)
+plot(cal, main="Bootstrap Calibration: Smoking Prediction Model")
+```
+
+-   The calibration plot shows predicted probability (x-axis) versus observed event rate (y-axis)
+
+    -   A well-calibrated model follows the 45-degree line
+
+    -   The gray region shows the confidence band from bootstrap resampling
+
+    -   Departures from the line indicate systematic over- or under-prediction at certain risk levels
+
+-   Summary: Discrimination tells you whether the model can *rank* patients correctly; calibration tells you whether the predicted *probabilities* are accurate. A model can have good discrimination but poor calibration (or vice versa). Both matter for clinical use.
 
 ## Summary
 
@@ -1409,4 +1454,4 @@ anova(f)
 
     -   Marginal means answer the population-level question; conditional means answer the individual-level question
 
--   **Model validation** (discrimination + calibration via bootstrapping) is essential before deploying predictions clinically — this will be the focus of the bootstrap lecture notes
+-   **Model validation** (discrimination + calibration via bootstrapping) is essential before deploying predictions clinically

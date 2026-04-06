@@ -4,7 +4,6 @@ name: Bootstrap.qmd
 ---
 
 ```{r setup, message=FALSE, warning=FALSE}
-library(rms)
 library(Hmisc)
 library(ggplot2)
 library(knitr)
@@ -16,12 +15,31 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
 These notes accompany the bootstrap lecture, which covers bootstrap methodology including the theoretical foundations, bias correction, and confidence interval construction. Here, we apply bootstrap methods to prediction problems from Lecture 13:
 
-- Revisit the beta carotene example from Lecture 13 and compute **bootstrap confidence intervals for marginal means**
+- Compute **bootstrap confidence intervals for marginal means** in the beta carotene trial
 - Compare the precision of unadjusted group means vs. ANCOVA marginal means using bootstrap CIs
-- Carry out **bootstrap validation** of the logistic regression model for predicting smoking status (the `lrm()` case study from Lecture 13)
-- Demonstrate the `validate()` and `calibrate()` functions from the `rms` package
+- Discuss the choice of bootstrap scheme when predictors are **fixed by design** (as in a clinical trial with pre-specified dose levels)
 
 Students should read the bootstrap lecture notes first for the theoretical background.
+
+# Fixed vs. Random Predictors and the Bootstrap
+
+## Why the distinction matters
+
+In the beta carotene trial, subjects were randomly assigned to one of five dose levels (0, 15, 30, 45, or 60 mg/day). The dose levels and the number of subjects per dose were determined by the study design — they are **fixed**, not randomly sampled from a population.
+
+This has two important consequences:
+
+1.  **Standard errors**: Classical (model-based) standard errors are appropriate when $X$ is fixed. Robust (sandwich) standard errors are designed to protect against misspecification of the variance function when $X$ is random and observed, but they do not improve on classical SEs when $X$ is fixed by design. In Lectures 12 and 13, we used classical SEs for this reason.
+
+2.  **Bootstrap scheme**: The standard "pairs" bootstrap (resampling entire rows of data) implicitly treats $X$ as random — each bootstrap sample may have different numbers of subjects per dose group. For a designed experiment with fixed $X$, we should instead use a bootstrap that conditions on the design.
+
+## Two bootstrap approaches for fixed X
+
+**Stratified bootstrap**: Resample subjects *within* each dose group, preserving the group sample sizes exactly. This respects the fixed-$X$ design directly.
+
+**Residual bootstrap**: Fit the model, extract residuals, resample the residuals, and construct new responses $y^* = \hat{y} + e^*$. This conditions on $X$ by keeping the predictor values fixed and only resampling the noise.
+
+We demonstrate both below and compare the results.
 
 # Bootstrap CIs for Marginal Means
 
@@ -42,25 +60,28 @@ dose.levels <- sort(unique(carot$dose))
 # Threshold + linear model from Lecture 12/13
 carot$trt <- (carot$dose > 0) + 0
 m.thres <- lm(carot3 ~ trt + dose + carot0, data = carot)
+
+# Unadjusted model for comparison
+m.unadj <- lm(carot3 ~ factor(dose), data = carot)
 ```
 
-## Bootstrap Procedure
+## Approach 1: Stratified Bootstrap
 
-For each bootstrap replicate:
-
-1.  Resample $n$ observations with replacement from the original data
-2.  Refit the threshold + linear ANCOVA model
-3.  For each dose level, compute the marginal mean by averaging predictions over the **original** baseline distribution (not the bootstrap baseline distribution, which would add unnecessary noise)
+We resample subjects with replacement *within each dose group*, so that every bootstrap sample has the same number of subjects per dose as the original study.
 
 ```{r, cache=TRUE}
 set.seed(42)
 B <- 2000
 
-boot.marginal <- matrix(NA, nrow = B, ncol = length(dose.levels))
-boot.unadj    <- matrix(NA, nrow = B, ncol = length(dose.levels))
+# Indices for each dose group
+dose.idx <- split(seq_len(nrow(carot)), carot$dose)
+
+boot.marginal.strat <- matrix(NA, nrow = B, ncol = length(dose.levels))
+boot.unadj.strat    <- matrix(NA, nrow = B, ncol = length(dose.levels))
 
 for(b in 1:B) {
-  idx <- sample(nrow(carot), replace = TRUE)
+  # Resample within each dose group
+  idx <- unlist(lapply(dose.idx, function(ii) sample(ii, replace = TRUE)))
   boot.dat <- carot[idx, ]
 
   # Marginal means from ANCOVA
@@ -69,70 +90,132 @@ for(b in 1:B) {
     nd <- data.frame(dose = dose.levels[j],
                      carot0 = carot$carot0,
                      trt = (dose.levels[j] > 0) + 0)
-    boot.marginal[b, j] <- mean(predict(m.b, newdata = nd))
+    boot.marginal.strat[b, j] <- mean(predict(m.b, newdata = nd))
   }
 
   # Unadjusted group means
   m.u <- lm(carot3 ~ factor(dose), data = boot.dat)
   for(j in seq_along(dose.levels)) {
     nd.u <- data.frame(dose = dose.levels[j])
-    boot.unadj[b, j] <- predict(m.u, newdata = nd.u)
+    boot.unadj.strat[b, j] <- predict(m.u, newdata = nd.u)
   }
 }
 ```
 
-## Bootstrap CIs for Marginal Means
+## Approach 2: Residual Bootstrap
+
+We keep the original predictor values fixed and resample only the residuals.
+
+```{r, cache=TRUE}
+set.seed(42)
+
+# Residuals from the fitted models
+resid.thres <- residuals(m.thres)
+resid.unadj <- residuals(m.unadj)
+fitted.thres <- fitted(m.thres)
+fitted.unadj <- fitted(m.unadj)
+
+boot.marginal.resid <- matrix(NA, nrow = B, ncol = length(dose.levels))
+boot.unadj.resid    <- matrix(NA, nrow = B, ncol = length(dose.levels))
+
+for(b in 1:B) {
+  # Resample residuals and construct new responses
+  e.star.thres <- sample(resid.thres, replace = TRUE)
+  e.star.unadj <- sample(resid.unadj, replace = TRUE)
+
+  boot.dat <- carot
+  boot.dat$carot3.thres <- fitted.thres + e.star.thres
+  boot.dat$carot3.unadj <- fitted.unadj + e.star.unadj
+
+  # ANCOVA marginal means
+  m.b <- lm(carot3.thres ~ trt + dose + carot0, data = boot.dat)
+  for(j in seq_along(dose.levels)) {
+    nd <- data.frame(dose = dose.levels[j],
+                     carot0 = carot$carot0,
+                     trt = (dose.levels[j] > 0) + 0)
+    boot.marginal.resid[b, j] <- mean(predict(m.b, newdata = nd))
+  }
+
+  # Unadjusted group means
+  m.u <- lm(carot3.unadj ~ factor(dose), data = boot.dat)
+  for(j in seq_along(dose.levels)) {
+    nd.u <- data.frame(dose = dose.levels[j])
+    boot.unadj.resid[b, j] <- predict(m.u, newdata = nd.u)
+  }
+}
+```
+
+## Comparing the Two Approaches
 
 ```{r}
-# Point estimates
+# Point estimates (same for both approaches)
 marginal.pts <- sapply(dose.levels, function(d) {
   nd <- data.frame(dose = d, carot0 = carot$carot0, trt = (d > 0) + 0)
   mean(predict(m.thres, newdata = nd))
 })
+unadj.pts <- predict(m.unadj, newdata = data.frame(dose = dose.levels))
 
-# Percentile bootstrap CIs
-marginal.ci <- data.frame(
+# CIs from both approaches
+ci.marg.strat <- data.frame(
+  Lower = apply(boot.marginal.strat, 2, quantile, 0.025),
+  Upper = apply(boot.marginal.strat, 2, quantile, 0.975))
+ci.marg.resid <- data.frame(
+  Lower = apply(boot.marginal.resid, 2, quantile, 0.025),
+  Upper = apply(boot.marginal.resid, 2, quantile, 0.975))
+
+comparison <- data.frame(
   Dose = dose.levels,
-  Estimate = marginal.pts,
-  Lower = apply(boot.marginal, 2, quantile, 0.025),
-  Upper = apply(boot.marginal, 2, quantile, 0.975)
+  Estimate = round(marginal.pts, 1),
+  `Stratified CI` = sprintf("(%.1f, %.1f)", ci.marg.strat$Lower, ci.marg.strat$Upper),
+  `Residual CI` = sprintf("(%.1f, %.1f)", ci.marg.resid$Lower, ci.marg.resid$Upper),
+  `Strat Width` = round(ci.marg.strat$Upper - ci.marg.strat$Lower, 1),
+  `Resid Width` = round(ci.marg.resid$Upper - ci.marg.resid$Lower, 1),
+  check.names = FALSE
 )
 
-kable(marginal.ci, digits = 1,
-      col.names = c("Dose (mg/day)", "Marginal Mean", "2.5%", "97.5%"),
-      caption = "ANCOVA marginal means with bootstrap 95% CIs") |>
+kable(comparison,
+      caption = "ANCOVA marginal means: stratified vs. residual bootstrap 95% CIs") |>
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
 ```
 
--   These are the confidence intervals that were deferred from Lecture 13, where only point estimates were shown
+-   Both approaches condition on $X$ (the dose design) and should give similar results
+
+-   The residual bootstrap assumes the residuals are exchangeable (approximately equal variance across groups). If there is substantial heteroscedasticity, the stratified bootstrap is more robust
+
+-   For the remainder of this analysis, we use the stratified bootstrap results
 
 ## Precision Comparison: Unadjusted vs. ANCOVA Marginal
 
 In Lecture 13, we noted that the theoretical variance reduction from ANCOVA is proportional to $(1 - \rho^2)$. We can now verify this empirically by comparing bootstrap CI widths.
 
 ```{r}
-# Unadjusted point estimates and CIs
-m.unadj <- lm(carot3 ~ factor(dose), data = carot)
-unadj.pts <- predict(m.unadj, newdata = data.frame(dose = dose.levels))
-
+# Unadjusted CIs (from stratified bootstrap)
 unadj.ci <- data.frame(
   Dose = dose.levels,
-  Estimate = unadj.pts,
-  Lower = apply(boot.unadj, 2, quantile, 0.025),
-  Upper = apply(boot.unadj, 2, quantile, 0.975)
+  Estimate = as.numeric(unadj.pts),
+  Lower = apply(boot.unadj.strat, 2, quantile, 0.025),
+  Upper = apply(boot.unadj.strat, 2, quantile, 0.975)
+)
+
+# Marginal CIs (from stratified bootstrap)
+marginal.ci <- data.frame(
+  Dose = dose.levels,
+  Estimate = marginal.pts,
+  Lower = ci.marg.strat$Lower,
+  Upper = ci.marg.strat$Upper
 )
 
 # Side-by-side comparison
-comparison <- data.frame(
+precision <- data.frame(
   Dose = dose.levels,
   `Unadjusted Width` = unadj.ci$Upper - unadj.ci$Lower,
   `Marginal Width` = marginal.ci$Upper - marginal.ci$Lower,
   check.names = FALSE
 )
-comparison$`Ratio (Marginal / Unadj)` <- comparison$`Marginal Width` /
-  comparison$`Unadjusted Width`
+precision$`Ratio (Marginal / Unadj)` <- precision$`Marginal Width` /
+  precision$`Unadjusted Width`
 
-kable(comparison, digits = c(0, 1, 1, 3),
+kable(precision, digits = c(0, 1, 1, 3),
       caption = "Bootstrap 95% CI widths: unadjusted vs. ANCOVA marginal means") |>
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
 ```
@@ -166,94 +249,3 @@ legend("topleft",
   c("Unadjusted group means", "ANCOVA marginal means"),
   col = c("gray50", "darkgreen"), pch = c(19, 15), lwd = 2, bty = "n")
 ```
-
-# Bootstrap Validation of a Logistic Regression Model
-
-## Setup: Smoking Prediction Model
-
-In Lecture 13, we built a logistic regression model to predict smoking status from the FEV dataset using Harrell's 4-step framework. Steps 1--3 (data assessment, data reduction, model fitting) were carried out in Lecture 13. Here we complete **Step 4: Model evaluation** using bootstrap validation.
-
-```{r}
-fev <- read.csv(file = "data/FEV.csv")
-fev$smoker <- as.integer(fev$smoke == "current smoker")
-
-dd <- datadist(fev)
-options(datadist = "dd")
-
-# Refit the model from Lecture 13
-f <- lrm(smoker ~ sex * rcs(age, 4) + rcs(height, 4) + fev,
-         data = fev, x = TRUE, y = TRUE)
-```
-
-## Bootstrap Validation with `validate()`
-
-The `validate()` function from `rms` performs bootstrap cross-validation:
-
-1.  Draw a bootstrap sample (sample with replacement)
-2.  Fit the model to the bootstrap sample
-3.  Evaluate performance on the bootstrap sample ("training") and the original sample ("test")
-4.  The difference is the **optimism** — the amount by which apparent performance overstates true performance
-5.  Repeat $B$ times and average
-
-```{r, cache=TRUE}
-v <- validate(f, B = 300)
-v
-```
-
--   Key rows in the `validate()` output:
-
-```{r}
-val.guide <- data.frame(
-  Index = c("Dxy", "R2", "Slope", "B"),
-  Description = c(
-    "Somers' Dxy rank correlation (C = 0.5 + Dxy/2)",
-    "Nagelkerke R-squared",
-    "Calibration slope (1.0 = perfectly calibrated)",
-    "Brier score (lower is better)"
-  ),
-  `Original` = c("Apparent performance on full data",
-                  "Apparent performance on full data",
-                  "Always 1.0 on training data",
-                  "Apparent Brier score"),
-  `Corrected` = c("Honest estimate after removing optimism",
-                   "Honest estimate after removing optimism",
-                   "Degree of overfitting (< 1 means overfit)",
-                   "Honest Brier score"),
-  check.names = FALSE
-)
-kable(val.guide, caption = "Guide to key validate() output") |>
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
-```
-
--   The `optimism` column is the difference between `training` and `test` performance across bootstrap samples
-
-    -   Large optimism indicates the model is overfitting the data
-
-    -   The `index.corrected` = `index.orig` $-$ `optimism` gives the honest estimate
-
-## Calibration with `calibrate()`
-
-Calibration asks: when the model predicts a 30% probability of smoking, do approximately 30% of such patients actually smoke?
-
-```{r, fig.cap="Bootstrap calibration plot for the smoking prediction model", cache=TRUE}
-cal <- calibrate(f, B = 300)
-plot(cal, main = "Bootstrap Calibration: Smoking Prediction Model")
-```
-
--   The calibration plot shows predicted probability (x-axis) versus observed event rate (y-axis)
-
-    -   A well-calibrated model follows the 45-degree line
-
-    -   The gray region shows the confidence band from bootstrap resampling
-
-    -   Departures from the line indicate systematic over- or under-prediction at certain risk levels
-
-## Summary: Discrimination vs. Calibration
-
--   **Discrimination** tells you whether the model can *rank* patients correctly (measured by the C-statistic)
-
--   **Calibration** tells you whether the predicted *probabilities* are accurate (measured by the calibration slope and calibration plot)
-
--   A model can have good discrimination but poor calibration (or vice versa). Both matter for clinical use.
-
--   The bootstrap provides a principled way to estimate both quantities honestly, correcting for the optimism inherent in evaluating a model on its training data

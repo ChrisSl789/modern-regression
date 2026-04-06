@@ -9,8 +9,6 @@ library(rms)
 library(ggplot2)
 library(splines)
 library(lspline)
-library(lmtest)
-library(sandwich)
 library(car)
 library(kableExtra)
 library(plotrix)
@@ -321,7 +319,7 @@ kable(res1_df, digits=1,
 ```{r}
 carot$dose.factor <- factor(carot$dose)
 m.factor <- lm(carot3 ~ dose.factor + carot0, data=carot)
-coeftest(m.factor, vcov=sandwich)
+summary(m.factor)
 ```
 
 ```{r}
@@ -346,7 +344,7 @@ linearHypothesis(m.factor, c("dose.factor15",
                        "dose.factor30",
                        "dose.factor45",
                        "dose.factor60"),
-                 vcov=sandwich(m.factor))
+                 )
 ```
 
 -   We would have had the same fitted values (and thus inference) if we had decided to drop a different dose group
@@ -357,13 +355,13 @@ linearHypothesis(m.factor, c("dose.factor15",
 carot$dose.new <- relevel(carot$dose.factor, ref="60")
 
 m2.factor <- lm(carot3 ~ dose.new + carot0, data=carot)
-coeftest(m2.factor, vcov=sandwich)
+summary(m2.factor)
 
 linearHypothesis(m2.factor, c("dose.new0",
                        "dose.new15",
                        "dose.new30",
                        "dose.new45"),
-                 vcov=sandwich(m2.factor))
+                 )
 
 ```
 
@@ -385,7 +383,7 @@ linearHypothesis(m2.factor, c("dose.new0",
 
 ```{r}
 m3.factor <- lm(carot3 ~ -1 + dose.factor + carot0, data=carot)
-coeftest(m3.factor, vcov=sandwich)
+summary(m3.factor)
 ```
 
 -   Correspondence of the no-intercept model compared to previous models
@@ -415,7 +413,7 @@ linearHypothesis(m3.factor, c("dose.factor0=dose.factor15",
                               "dose.factor0=dose.factor30",
                               "dose.factor0=dose.factor45",
                               "dose.factor0=dose.factor60"),
-                 vcov=sandwich(m3.factor))
+                 )
 ```
 
 ### Binary dose: Placebo versus Active
@@ -434,7 +432,7 @@ linearHypothesis(m3.factor, c("dose.factor0=dose.factor15",
 carot$trt <- (carot$dose>0)+0
 
 m.trt <- lm(carot3 ~ trt + carot0, data=carot)
-coeftest(m.trt, vcov=sandwich(m.trt))
+summary(m.trt)
 ```
 
 ```{r}
@@ -458,7 +456,7 @@ legend("topleft", c("Fitted", "Group Means"), pch=c("X","O"), lty=c(NA,1), bty="
 
 ```{r}
 m.cont <- lm(carot3 ~ dose + carot0, data=carot)
-coeftest(m.cont, vcov=sandwich(m.cont))
+summary(m.cont)
 ```
 
 -   To test the treatment effect, could either use the `test` command for dose or use the output directly as we are only testing one parameter
@@ -482,7 +480,7 @@ legend("topleft", c("Fitted", "Group Means"), pch=c("X","O"), lty=c(NA,1), bty="
 
 ```{r}
 m.poly <- lm(carot3 ~ poly(dose,2) + carot0, data=carot)
-coeftest(m.poly, vcov=sandwich(m.poly))
+summary(m.poly)
 ```
 
 ```{r}
@@ -503,7 +501,7 @@ legend("topleft", c("Fitted", "Group Means"), pch=c("X","O"), lty=c(NA,1), bty="
 ```{r}
 linearHypothesis(m.poly, c("poly(dose, 2)1",
                            "poly(dose, 2)2"),
-                 vcov=sandwich(m.poly))
+                 )
 ```
 
 ### Highest order polynomial models versus ANOVA
@@ -518,13 +516,13 @@ linearHypothesis(m.poly, c("poly(dose, 2)1",
 
 ```{r}
 m.poly4 <- lm(carot3 ~ poly(dose, 4, raw=TRUE) + carot0, data=carot)
-coeftest(m.poly4, vcov=sandwich)
+summary(m.poly4)
 ```
 
 -   Compare to the ANOVA model — same fit statistics (R-squared, Root MSE, F-statistic)
 
 ```{r}
-coeftest(m.factor, vcov=sandwich)
+summary(m.factor)
 ```
 
 ### Threshold at 0 and Linear Term
@@ -545,7 +543,7 @@ coeftest(m.factor, vcov=sandwich)
 
 ```{r}
 m.thres <- lm(carot3 ~ trt + dose + carot0, data=carot)
-coeftest(m.thres, vcov=sandwich)
+summary(m.thres)
 ```
 
 ```{r}
@@ -578,7 +576,7 @@ legend("topleft", c("Fitted", "Group Means"), pch=c("X","O"), lty=c(NA,1), bty="
     -   There is a multiple comparison issue here, but many people are comfortable doing this 'step down' test after they have already tested from any treatment effect
 
 ```{r}
-linearHypothesis(m.thres, c("trt", "dose"), vcov=sandwich(m.thres))
+linearHypothesis(m.thres, c("trt", "dose"))
 ```
 
 ### Summary comparison of models
