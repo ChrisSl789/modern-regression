@@ -240,6 +240,7 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
     -   Use logistic regression to obtain estimates and CI
 
+
 -   Assumptions are the same as for inference for predictions discussed above, with the key addition that the regression model must accurately describe the relationship across groups
 
 ### Point estimates
@@ -390,7 +391,7 @@ data.frame(
 
 -   Given age, height, and sex, predict a new subject's FEV
 
-    -   Use linear regression to obtain estimates and CI
+    -   Use linear regression to obtain estimates and prediction interval
 
 ### Assumptions
 
@@ -1129,7 +1130,7 @@ legend("bottomright",
 
 -   Fit a multivariable logistic regression model using these covariates in a training sample
 
-    -   Training sample will contain 60% of the observation in the current study
+    -   Training sample will contain 60% of the observations in the current study
 
     -   Develop a model on the training sample, see how well it fits in the validation sample (the remaining 40% of the data)
 
@@ -1286,7 +1287,7 @@ plot(roc.multi, col="blue", lwd=2,
 
     -   Use backwards stepwise selection to find a simpler model
 
-        -   Harrell: Remove predictor if $\chi^2 > 2$ ($p > 0.16$)
+        -   Harrell: Remove predictor if $\chi^2 < 2$ ($p > 0.16$)
 
     -   Will use *all data* to fit model
 
