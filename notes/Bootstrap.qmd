@@ -29,7 +29,7 @@ In the beta carotene trial, subjects were randomly assigned to one of five dose 
 
 This has two important consequences:
 
-1.  **Standard errors**: Classical (model-based) standard errors are appropriate when $X$ is fixed. Robust (sandwich) standard errors are designed to protect against misspecification of the variance function when $X$ is random and observed, but they do not improve on classical SEs when $X$ is fixed by design. In Lectures 12 and 13, we used classical SEs for this reason.
+1.  **Standard errors**: Classical (model-based) standard errors are appropriate when $X$ is fixed and the variance model is correctly specified. Robust (sandwich) standard errors protect against heteroscedasticity, but when $X$ is fixed by design and the model is correctly specified, they offer no improvement over classical SEs — they simply lose efficiency. In Lectures 12 and 13, we used classical SEs for this reason.
 
 2.  **Bootstrap scheme**: The standard "pairs" bootstrap (resampling entire rows of data) implicitly treats $X$ as random — each bootstrap sample may have different numbers of subjects per dose group. For a designed experiment with fixed $X$, we should instead use a bootstrap that conditions on the design.
 
