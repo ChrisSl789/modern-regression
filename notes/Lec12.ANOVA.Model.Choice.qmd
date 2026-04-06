@@ -343,8 +343,7 @@ legend("topleft", c("Fitted", "Group Means"), pch=c("X","O"), bty="n")
 linearHypothesis(m.factor, c("dose.factor15",
                        "dose.factor30",
                        "dose.factor45",
-                       "dose.factor60"),
-                 )
+                       "dose.factor60"))
 ```
 
 -   We would have had the same fitted values (and thus inference) if we had decided to drop a different dose group
@@ -360,8 +359,7 @@ summary(m2.factor)
 linearHypothesis(m2.factor, c("dose.new0",
                        "dose.new15",
                        "dose.new30",
-                       "dose.new45"),
-                 )
+                       "dose.new45"))
 
 ```
 
@@ -412,8 +410,7 @@ summary(m3.factor)
 linearHypothesis(m3.factor, c("dose.factor0=dose.factor15",
                               "dose.factor0=dose.factor30",
                               "dose.factor0=dose.factor45",
-                              "dose.factor0=dose.factor60"),
-                 )
+                              "dose.factor0=dose.factor60"))
 ```
 
 ### Binary dose: Placebo versus Active
@@ -459,7 +456,7 @@ m.cont <- lm(carot3 ~ dose + carot0, data=carot)
 summary(m.cont)
 ```
 
--   To test the treatment effect, could either use the `test` command for dose or use the output directly as we are only testing one parameter
+-   To test the treatment effect, we can use the partial t-test from the output directly as we are only testing one parameter
 
 ```{r}
 m3 <- lm(carot3 ~ dose, data=carot)
@@ -492,16 +489,15 @@ points(seq(0,60, by=15), predict(m4, newdata=data.frame(dose=seq(0,60, by=15))),
 legend("topleft", c("Fitted", "Group Means"), pch=c("X","O"), lty=c(NA,1), bty="n")
 ```
 
--   The partial t-test for dosesqr can be interpreted as a test for linear dose response
+-   The partial t-test for the quadratic term can be interpreted as a test for departure from a linear dose response
 
-    -   It is highly significant, suggesting departure from linearity
+    -   It is highly significant, suggesting the relationship is not purely linear
 
 -   To test the treatment effect, we need to test the two dose covariates
 
 ```{r}
 linearHypothesis(m.poly, c("poly(dose, 2)1",
-                           "poly(dose, 2)2"),
-                 )
+                           "poly(dose, 2)2"))
 ```
 
 ### Highest order polynomial models versus ANOVA
@@ -565,11 +561,11 @@ legend("topleft", c("Fitted", "Group Means"), pch=c("X","O"), lty=c(NA,1), bty="
 
     -   ... we will declare an effect of treatment
 
--   The partial t-test for the `trt` term can be used to test for linear dose response
+-   The partial t-test for the `trt` term tests whether there is a jump from placebo to the active dose groups (the threshold effect)
 
-    -   Here, it is highly significantly different from 0, indicating that just a linear model is not adequate
+    -   Here, it is highly significantly different from 0, indicating a large initial effect of treatment
 
--   The partial t-test for the `dose` term can be interpreted as a test for any added effect above the lowest dose
+-   The partial t-test for the `dose` term tests whether there is an additional linear trend among the active dose groups
 
     -   It is significantly different from 0 ($p = 0.011$)
 
