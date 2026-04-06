@@ -1,7 +1,6 @@
 ---
 title: "Bootstrap Applications in Regression"
-subtitle: "Supplementary Notes"
-name: Bootstrap.Supplement.qmd
+name: Bootstrap.qmd
 ---
 
 ```{r setup, message=FALSE, warning=FALSE}
@@ -15,14 +14,14 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
 # Introduction
 
-These notes supplement the bootstrap lecture, which is the primary reference for bootstrap methodology including the theoretical foundations, bias correction, and confidence interval construction. The purpose of these supplementary notes is to:
+These notes accompany the bootstrap lecture, which covers bootstrap methodology including the theoretical foundations, bias correction, and confidence interval construction. Here, we apply bootstrap methods to prediction problems from Lecture 13:
 
 - Revisit the beta carotene example from Lecture 13 and compute **bootstrap confidence intervals for marginal means**
 - Compare the precision of unadjusted group means vs. ANCOVA marginal means using bootstrap CIs
 - Carry out **bootstrap validation** of the logistic regression model for predicting smoking status (the `lrm()` case study from Lecture 13)
 - Demonstrate the `validate()` and `calibrate()` functions from the `rms` package
 
-Students should read the bootstrap lecture notes first and treat these notes as a companion that applies bootstrap methods to prediction problems introduced in Lecture 13.
+Students should read the bootstrap lecture notes first for the theoretical background.
 
 # Bootstrap CIs for Marginal Means
 

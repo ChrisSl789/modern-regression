@@ -826,7 +826,7 @@ marginal <- do.call(rbind, lapply(dose.levels, function(d) {
 marginal$type <- "ANCOVA Marginal"
 ```
 
--   Computing confidence intervals for marginal means requires methods beyond classical regression formulas, since the marginal mean is an average of predictions across the baseline distribution. We will return to this using the **bootstrap** in the supplementary notes for the bootstrap lecture.
+-   Computing confidence intervals for marginal means requires methods beyond classical regression formulas, since the marginal mean is an average of predictions across the baseline distribution. We will return to this using the **bootstrap** in the bootstrap lecture notes.
 
 ```{r, fig.width=10, fig.height=6, fig.cap="Three approaches to estimating the dose-response: unadjusted means (with CIs), ANCOVA conditional predictions at low and high baseline (with CIs), and ANCOVA marginal means (point estimates only)"}
 plot(NULL, xlim = c(-3, 63), ylim = c(-200, 2800),
@@ -882,7 +882,7 @@ sprintf("Correlation between baseline and 9-month plasma levels: %.3f", rho)
 sprintf("Theoretical variance reduction factor: 1 - rho^2 = %.3f", 1 - rho^2)
 ```
 
--   We will quantify the precision gain more precisely in the bootstrap supplementary notes, where we can compute CIs for both the unadjusted and marginal means and compare their widths directly
+-   We will quantify the precision gain more precisely in the bootstrap lecture notes, where we can compute CIs for both the unadjusted and marginal means and compare their widths directly
 
 ## Prediction of Binary Measurements
 
@@ -1381,7 +1381,7 @@ anova(f)
 
     -   A model can have good discrimination but poor calibration (or vice versa). Both matter for clinical use.
 
-    -   We will carry out the bootstrap validation of this model — including `validate()` and `calibrate()` — in the supplementary notes for the bootstrap lecture, after the methodology has been formally introduced.
+    -   We will carry out the bootstrap validation of this model — including `validate()` and `calibrate()` — in the bootstrap lecture notes, after the methodology has been formally introduced.
 
 ## Summary
 
@@ -1409,4 +1409,4 @@ anova(f)
 
     -   Marginal means answer the population-level question; conditional means answer the individual-level question
 
--   **Model validation** (discrimination + calibration via bootstrapping) is essential before deploying predictions clinically — this will be the focus of the bootstrap supplementary notes
+-   **Model validation** (discrimination + calibration via bootstrapping) is essential before deploying predictions clinically — this will be the focus of the bootstrap lecture notes
