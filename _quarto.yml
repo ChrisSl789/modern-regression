@@ -64,6 +64,7 @@ website:
             text: "Missing Data"
           - href: notes/Set14.pdf
             text: "The Bootstrap"
+          - href: notes/Bootstrap.qmd
       - section: "Labs"
         contents: 
           - href: labs/quarto-intro.qmd
