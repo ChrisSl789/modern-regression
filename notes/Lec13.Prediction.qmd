@@ -7,8 +7,6 @@ name: Lec13.Prediction.qmd
 ```{r}
 library(rms)
 library(ggplot2)
-library(lmtest)
-library(sandwich)
 library(kableExtra)
 library(pROC)
 tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
@@ -36,37 +34,33 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
 ### Uses of Regression
 
--   Cluster Analysis
+-   Other uses of regression beyond association and prediction
 
-    -   Focuses on identifying observations (covariates) with similar characteristics
+    -   Most of this course focuses on quantifying associations and making inferences
 
-        -   Interest lies in finding clusters that are more (or less) likely to have some outcome of interest
+    -   Prediction is the focus of this lecture
 
-    -   Divide a population into subgroups based on patterns of similar measurement
+    -   But regression-based thinking extends to many other areas, including:
 
-        -   Clustering can be done by considering one variable (univariable) or multiple variables (multivariable)
+        -   **Joint modeling**: Simultaneously modeling a longitudinal outcome and a time-to-event outcome
 
-        -   Number of clusters can be known or unknown
+            -   e.g. Modeling repeated PSA measurements and time to cancer recurrence together
 
-    -   Examples
+            -   Accounts for the dependence between the longitudinal trajectory and the event process
 
-        -   Microarrays
+        -   **Latent variable and mixture models**: Identifying unobserved subgroups or constructs
 
-        -   fMRI
+            -   e.g. Latent class growth models to find distinct trajectories of disease progression
 
-        -   "Small $n$, large $p$" (few subjects, many predictors)
+            -   Structural equation models relating observed measurements to latent constructs
 
-    -   Statistical techniques
+        -   **Clustering and classification**: Dividing populations into subgroups based on patterns of covariates
 
-        -   Stepwise regression
+            -   Regression trees, random forests, and other machine learning approaches
 
-        -   Regression trees
+            -   "Small $n$, large $p$" problems (few subjects, many predictors)
 
-        -   Other data-driven model building approaches
-
-        -   Getting valid inference (i.e. reliable p-values, unbiased parameter estimates) particularly challenging
-
-            -   Area of active research in Biostatistics
+        -   Getting valid inference in these settings is particularly challenging and is an area of active research in Biostatistics
 
 -   Quantifying and comparing distributions
 
@@ -134,7 +128,7 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
         -   Measure true creatinine clearance
 
-        -   Measure age, gender, weight, height, blood makers, urinary markers, etc.
+        -   Measure age, gender, weight, height, blood markers, urinary markers, etc.
 
         -   Fit a (data driven?) regression model to predict true creatinine clearance
 
@@ -246,31 +240,18 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
     -   Use logistic regression to obtain estimates and CI
 
--   Assumptions
 
-    -   Independence (between clusters for robust SE)
-
-    -   Variance approximated by the model (relaxed for robust SE)
-
-    -   Regression model accurately describes the relationship of summary measures across groups
-
-    -   Sufficient sample sizes for asymptotic distributions of parameters to be a good approximation
+-   Assumptions are the same as for inference for predictions discussed above, with the key addition that the regression model must accurately describe the relationship across groups
 
 ### Point estimates
 
 -   Point estimates obtained by substitution of predictor values into the estimated regression equation
 
-    -   $E[\textrm{Chol} | \textrm{Age}] = 200 + 0.33 \times \textrm{Age}$
+    -   For linear regression: substitute covariate values and compute the fitted value directly
 
-        -   Expected cholesterol for 50 year old is $200 + 0.33 \times 50 = 216.5$
+    -   For logistic regression: compute the linear predictor (log-odds), then transform to odds or probability
 
-    -   $\textrm{logodds}(\textrm{Survival} | \textrm{Age}) = -0.1365 - 0.007899 \times \textrm{Age}$
-
-        -   Expected log-odds of Survival for a 50 year old is $-0.1365 - 0.007899 \times 50 = -0.53$
-
-        -   Expected odds $= e^{-.53} = 0.59$
-
-        -   Expected probability $= 0.37$
+    -   We demonstrate both below with the FEV data
 
 ### Interval estimates
 
@@ -278,7 +259,7 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
     -   We generally find a confidence interval for the transformed quantity, and then back transform to the desired quantity
 
-        -   For logistic regression, calculate the CI for the log odds, the transform to odds or probability
+        -   For logistic regression, calculate the CI for the log odds, then transform to odds or probability
 
 -   Statistical criteria for determining the "best" estimate
 
@@ -339,6 +320,8 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
         -   See `help(predict)` for more details and options
 
 ### Example: Predicting geometric mean FEV and odds of smoking
+
+-   This is the **continuous prediction** case (analogous to the creatinine clearance example) and the **binary discrimination** case (analogous to the low birth weight example) from the overview
 
 ```{r}
 fev <- read.csv(file="data/FEV.csv")
@@ -408,25 +391,21 @@ data.frame(
 
 -   Given age, height, and sex, predict a new subject's FEV
 
-    -   Use linear regression to obtain estimates and CI
+    -   Use linear regression to obtain estimates and prediction interval
 
 ### Assumptions
 
--   Necessary assumptions to predict individual observations
+-   Predicting individual observations requires **stronger assumptions** than predicting summary measures
 
-    -   Independence (between clusters for robust SE)
+    -   All the assumptions for predicting means, plus:
 
-    -   Variance approximated by the model (NOT relaxed for robust SE)
+    -   Variance approximated by the model — **NOT** relaxed for robust SE
 
-    -   Regression model accurately describes the relationship of summary measures across groups
-
-    -   Shape of the distribution the same in each group
+    -   Shape of the distribution must be the same in each group (e.g., Normality)
 
         -   Transformation of the outcome may be very useful
 
-    -   Sufficient sample sizes for asymptotic distributions of parameters to be a good approximation
-
--   Assumptions are very strong
+-   These assumptions are very strong
 
     -   Consequently, we do not have many methods that provide robust inference
 
@@ -448,13 +427,7 @@ data.frame(
 
 ### Point and interval estimates for Normal data
 
--   Point estimates obtained by substitution into the estimated regression equation
-
-    -   $E[\textrm{Chol} | \textrm{Age}] = 200 + 0.33 \times \textrm{Age}$
-
-        -   Expected cholesterol for 50 year old is $200 + 0.33 \times 50 = 216.5$
-
-    -   When we substitute in age values, it provides an estimate of the forecast cholesterol
+-   Point estimates are obtained by the same substitution as for summary measures — but the interpretation changes: we are now forecasting a single individual's value, not a group mean
 
 -   Interval estimates
 
@@ -468,7 +441,7 @@ data.frame(
 
             -   Additional variability about the sample mean; "within group standard deviation"
 
-            -   Estimating this sources of variability is where the additional Normality assumption is key
+            -   Estimating this source of variability is where the additional Normality assumption is key
 
     -   Formulas for the prediction interval
 
@@ -501,6 +474,8 @@ data.frame(
     -   Be careful that you understand exactly what is going on if you are interested in making predictions
 
 ### Example: Prediction interval for FEV
+
+-   This is the **interval prediction** case (analogous to establishing normal ranges of PSA from the overview)
 
 -   Using the same FEV model, compare the confidence interval for the mean with the prediction interval for an individual
 
@@ -559,23 +534,356 @@ data.frame(
 
 ### Mathematics of Prediction Intervals
 
--   Basic ideas behind prediction intervals
+#### Recap: Simple linear regression (single predictor)
 
 -   Model: $Y_i | X_i \sim N(\beta_0 + \beta_1 X_i, \sigma^2)$
 
--   Alternative specification: $Y_i | X_i = \beta_0 + \beta_1 X_i + \epsilon_i$
+-   Alternative specification: $Y_i | X_i = \beta_0 + \beta_1 X_i + \epsilon_i$, where $\epsilon_i \sim N(0, \sigma^2)$
 
-    -   $\epsilon_i \sim N(0, \sigma^2)$
+-   Estimated mean: $\hat{\beta}_0 + \hat{\beta}_1 X_h \sim N\left(\beta_0 + \beta_1 X_h, \sigma^2 V\right)$
 
--   Estimated mean: $\hat{\beta}_0 + \hat{\beta}_1 X_i \sim N\left(\beta_0 + \beta_1 X_i, \sigma^2 V\right)$
-
--   Predicted value of individual observation: $\hat{\beta}_0 + \hat{\beta}_1 X_i + \epsilon_i \sim N\left(\beta_0 + \beta_1 X_i, \sigma^2 (1 + V)\right)$
+-   Predicted value of individual observation: $\hat{\beta}_0 + \hat{\beta}_1 X_h + \epsilon_h \sim N\left(\beta_0 + \beta_1 X_h, \sigma^2 (1 + V)\right)$
 
     -   $V = \frac{1}{n} + \frac{(X_h - \overline{X})^2}{\sum_{i=1}^n (X_i - \overline{X})^2}$
 
     -   $X_h$ is the chosen value of the covariate (e.g. age==10)
 
     -   Note: As $n \rightarrow \infty, V \rightarrow 0$
+
+#### Multivariable model (matrix notation)
+
+-   For $p$ predictors, the linear regression model in matrix form is
+
+$$\mathbf{Y} = \mathbf{X} \boldsymbol{\beta} + \boldsymbol{\epsilon}, \quad \boldsymbol{\epsilon} \sim N(\mathbf{0}, \sigma^2 \mathbf{I})$$
+
+where $\mathbf{Y}$ is the $n \times 1$ response vector, $\mathbf{X}$ is the $n \times (p+1)$ design matrix (including intercept column), and $\boldsymbol{\beta}$ is the $(p+1) \times 1$ parameter vector
+
+-   The OLS estimator is $\hat{\boldsymbol{\beta}} = (\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\mathbf{Y}$
+
+-   For a new observation with covariate vector $\mathbf{x}_h$ (a $1 \times (p+1)$ row vector including a 1 for the intercept):
+
+-   **Confidence interval for the mean response** (prediction of summary measure)
+
+    -   $\hat{y}_h = \mathbf{x}_h \hat{\boldsymbol{\beta}}$
+
+    -   $\textrm{Var}(\hat{y}_h) = \sigma^2 \mathbf{x}_h (\mathbf{X}'\mathbf{X})^{-1} \mathbf{x}_h'$
+
+    -   $\textrm{se}_\textrm{fit} = \hat{\sigma} \sqrt{\mathbf{x}_h (\mathbf{X}'\mathbf{X})^{-1} \mathbf{x}_h'}$
+
+    -   CI: $\hat{y}_h \pm t_{n-p-1, \alpha/2} \times \textrm{se}_\textrm{fit}$
+
+-   **Prediction interval for a new individual observation**
+
+    -   The new observation is $Y_h = \mathbf{x}_h \boldsymbol{\beta} + \epsilon_h$
+
+    -   $\textrm{Var}(\hat{y}_h - Y_h) = \sigma^2 \left(1 + \mathbf{x}_h (\mathbf{X}'\mathbf{X})^{-1} \mathbf{x}_h'\right)$
+
+    -   $\textrm{se}_\textrm{pred} = \hat{\sigma} \sqrt{1 + \mathbf{x}_h (\mathbf{X}'\mathbf{X})^{-1} \mathbf{x}_h'}$
+
+    -   PI: $\hat{y}_h \pm t_{n-p-1, \alpha/2} \times \textrm{se}_\textrm{pred}$
+
+-   Note: $\textrm{se}_\textrm{pred}^2 = \textrm{se}_\textrm{fit}^2 + \hat{\sigma}^2$, exactly the decomposition we demonstrated earlier
+
+-   Note: As $n \rightarrow \infty$, $\mathbf{x}_h (\mathbf{X}'\mathbf{X})^{-1} \mathbf{x}_h' \rightarrow 0$ and the prediction interval width approaches $\pm t \times \hat{\sigma}$ (the irreducible within-group variability)
+
+#### Verification using matrix algebra in R
+
+-   We can carry out these calculations by hand using the FEV model and verify they match `predict()`
+
+```{r}
+# Design matrix and estimated coefficients from the log(FEV) model
+X <- model.matrix(m.fev)
+beta.hat <- coef(m.fev)
+sigma.hat <- summary(m.fev)$sigma
+n <- nrow(X)
+p <- ncol(X) - 1  # number of predictors (excluding intercept)
+
+# New observation: age=10, height=66
+xh <- matrix(c(1, 66, 10), nrow=1)  # [intercept, height, age]
+colnames(xh) <- names(beta.hat)
+```
+
+```{r}
+# Compute (X'X)^{-1}
+XtX.inv <- solve(t(X) %*% X)
+
+# Fitted value
+yhat <- as.numeric(xh %*% beta.hat)
+
+# Variance of the fitted value: sigma^2 * xh (X'X)^{-1} xh'
+V <- as.numeric(xh %*% XtX.inv %*% t(xh))
+se.fit.manual <- sigma.hat * sqrt(V)
+
+# Variance of prediction: sigma^2 * (1 + xh (X'X)^{-1} xh')
+se.pred.manual <- sigma.hat * sqrt(1 + V)
+
+# Critical value
+crit <- qt(0.975, df = n - p - 1)
+
+# Confidence interval for mean (on log scale)
+ci.manual <- yhat + c(-1, 1) * crit * se.fit.manual
+
+# Prediction interval for individual (on log scale)
+pi.manual <- yhat + c(-1, 1) * crit * se.pred.manual
+```
+
+```{r}
+# Compare to predict() output
+pred.ci <- predict(m.fev, newdata=newdata, interval="confidence")
+pred.pi <- predict(m.fev, newdata=newdata, interval="prediction")
+pred.se <- predict(m.fev, newdata=newdata, se.fit=TRUE)
+
+comparison <- data.frame(
+  Quantity = c("Fitted value", "SE(fit)", "SE(pred)",
+               "CI lower", "CI upper", "PI lower", "PI upper"),
+  `Matrix Algebra` = c(yhat, se.fit.manual, se.pred.manual,
+                        ci.manual[1], ci.manual[2],
+                        pi.manual[1], pi.manual[2]),
+  `predict()` = c(pred.ci[,"fit"], pred.se$se.fit,
+                   sqrt(pred.se$se.fit^2 + sigma.hat^2),
+                   pred.ci[,"lwr"], pred.ci[,"upr"],
+                   pred.pi[,"lwr"], pred.pi[,"upr"]),
+  check.names = FALSE
+)
+
+kable(comparison, digits=6,
+      caption = "Verification: matrix algebra vs predict() (log FEV scale, age=10, height=66)") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width=FALSE)
+```
+
+-   The matrix algebra calculations match `predict()` exactly
+
+-   This confirms that `predict()` is computing $\mathbf{x}_h (\mathbf{X}'\mathbf{X})^{-1} \mathbf{x}_h'$ internally
+
+-   Back-transforming to the FEV scale (exponentiating), these correspond to the geometric mean CI and prediction interval we computed earlier
+
+## Prediction in the Beta Carotene Trial
+
+-   In Lecture 12, we compared several models for the dose-response relationship in the beta carotene trial
+
+-   Now we examine how model choice affects the predictions themselves, and how adjusting for baseline affects precision
+
+### How model choice affects predictions
+
+-   We refit the models from Lecture 12 and compare their predicted means and confidence intervals at each dose level
+
+```{r}
+carot <- stata.get("data/carot.dta")
+carot$trt <- (carot$dose > 0) + 0
+dose.levels <- c(0, 15, 30, 45, 60)
+newdose <- data.frame(dose = dose.levels, carot0 = mean(carot$carot0),
+                       trt = (dose.levels > 0) + 0)
+
+# Fit the models (all adjusted for baseline)
+m.anova  <- lm(carot3 ~ factor(dose) + carot0, data = carot)
+m.linear <- lm(carot3 ~ dose + carot0, data = carot)
+m.quad   <- lm(carot3 ~ poly(dose, 2) + carot0, data = carot)
+m.dichot <- lm(carot3 ~ trt + carot0, data = carot)
+m.thres  <- lm(carot3 ~ trt + dose + carot0, data = carot)
+```
+
+```{r}
+# Predicted means and CIs from each model
+get_preds <- function(model, nd) {
+  p <- predict(model, newdata = nd, interval = "confidence")
+  data.frame(dose = nd$dose, fit = p[,"fit"], lwr = p[,"lwr"], upr = p[,"upr"])
+}
+
+pred.anova  <- get_preds(m.anova,  newdose)
+pred.linear <- get_preds(m.linear, newdose)
+pred.quad   <- get_preds(m.quad,   newdose)
+pred.dichot <- get_preds(m.dichot, newdose)
+pred.thres  <- get_preds(m.thres,  newdose)
+```
+
+```{r, fig.width=10, fig.height=6, fig.cap="Predicted mean plasma beta-carotene (with 95% CI) by dose, for five different models. All models adjust for baseline and predictions are at the mean baseline value."}
+# Colors and labels for each model
+cols <- c("black", "blue", "red", "darkgreen", "purple")
+names <- c("ANOVA", "Linear", "Quadratic", "Dichotomized", "Threshold + Linear")
+preds <- list(pred.anova, pred.linear, pred.quad, pred.dichot, pred.thres)
+offsets <- c(-1.2, -0.6, 0, 0.6, 1.2)
+
+plot(NULL, xlim = c(-3, 63), ylim = c(-200, 2800),
+     xlab = "Dose (mg/day)", ylab = "Predicted Plasma Beta-Carotene",
+     main = "Model Choice Affects Predictions")
+
+for(i in 1:5) {
+  d <- preds[[i]]
+  x <- d$dose + offsets[i]
+  arrows(x, d$lwr, x, d$upr, angle = 90, code = 3, length = 0.04,
+         col = cols[i], lwd = 1.5)
+  points(x, d$fit, pch = 19, col = cols[i], cex = 1.2)
+  lines(d$dose + offsets[i], d$fit, col = cols[i], lwd = 1.5, lty = i)
+}
+
+legend("topleft", names, col = cols, pch = 19, lwd = 1.5, lty = 1:5,
+       bty = "n", cex = 0.9)
+```
+
+-   Key observations:
+
+    -   The ANOVA model fits each dose group independently — widest CIs, but no risk of misspecifying the dose-response shape
+
+    -   The linear model borrows strength across dose groups — narrower CIs, but the predictions are biased if the true relationship is not linear
+
+    -   The more parsimonious models (dichotomized, linear) have narrower CIs at each dose level, but may miss important features of the dose-response
+
+    -   The threshold + linear model captures both the jump from placebo to active and the linear trend among active doses — a good compromise
+
+```{r}
+# Compare CI widths across models at each dose level
+ci_widths <- data.frame(
+  Dose = dose.levels,
+  ANOVA = pred.anova$upr - pred.anova$lwr,
+  Linear = pred.linear$upr - pred.linear$lwr,
+  Quadratic = pred.quad$upr - pred.quad$lwr,
+  Dichotomized = pred.dichot$upr - pred.dichot$lwr,
+  `Threshold + Linear` = pred.thres$upr - pred.thres$lwr,
+  check.names = FALSE
+)
+kable(ci_widths, digits = 0,
+      caption = "95% CI width by model and dose level (at mean baseline)") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+### Adjusting for baseline: conditional and marginal predictions
+
+-   In the beta carotene trial, we can form predictions three ways:
+
+    1.  **Unadjusted group means**: The sample mean at each dose level, ignoring baseline entirely (marginal over baseline)
+
+    2.  **ANCOVA conditional predictions**: Predicted 9-month level for a patient at a *specific* baseline value
+
+    3.  **ANCOVA marginal means**: Predicted 9-month level at each dose, averaged over the observed distribution of baseline values (marginal over baseline, but leveraging the baseline-outcome correlation for precision)
+
+-   Because this is a randomized trial, baseline should be balanced across dose groups
+
+```{r}
+# Descriptive: baseline beta-carotene by dose group
+baseline_by_dose <- aggregate(carot0 ~ dose, data = carot,
+  FUN = function(x) c(n = length(x), mean = mean(x), sd = sd(x)))
+baseline_df <- data.frame(Dose = baseline_by_dose$dose, baseline_by_dose$carot0,
+                           check.names = FALSE)
+kable(baseline_df, digits = 1,
+      col.names = c("Dose", "N", "Mean Baseline", "SD Baseline"),
+      caption = "Baseline plasma beta-carotene by dose group") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+-   Baseline means are similar across groups, as expected from randomization
+
+-   We will use the threshold + linear model from Lecture 12 as our preferred model
+
+```{r}
+# 1. Unadjusted group means
+m.unadj <- lm(carot3 ~ factor(dose), data = carot)
+pred.unadj <- predict(m.unadj, newdata = data.frame(dose = dose.levels),
+                       se.fit = TRUE)
+crit.unadj <- qt(0.975, m.unadj$df.residual)
+
+unadj <- data.frame(
+  dose = dose.levels,
+  fit = pred.unadj$fit,
+  lwr = pred.unadj$fit - crit.unadj * pred.unadj$se.fit,
+  upr = pred.unadj$fit + crit.unadj * pred.unadj$se.fit,
+  type = "Unadjusted"
+)
+```
+
+```{r}
+# 2. ANCOVA conditional predictions at specific baseline values
+crit.thres <- qt(0.975, m.thres$df.residual)
+
+# Low baseline (25th percentile) and high baseline (75th percentile)
+q25 <- quantile(carot$carot0, 0.25)
+q75 <- quantile(carot$carot0, 0.75)
+
+nd.low  <- data.frame(dose = dose.levels, carot0 = q25,
+                       trt = (dose.levels > 0) + 0)
+nd.high <- data.frame(dose = dose.levels, carot0 = q75,
+                       trt = (dose.levels > 0) + 0)
+
+pred.low  <- predict(m.thres, newdata = nd.low,  interval = "confidence")
+pred.high <- predict(m.thres, newdata = nd.high, interval = "confidence")
+
+cond.low <- data.frame(dose = dose.levels, pred.low,
+                        type = sprintf("Conditional (baseline = %.0f)", q25),
+                        check.names = FALSE)
+cond.high <- data.frame(dose = dose.levels, pred.high,
+                         type = sprintf("Conditional (baseline = %.0f)", q75),
+                         check.names = FALSE)
+```
+
+```{r}
+# 3. ANCOVA marginal means: average predictions over observed baseline distribution
+# For each dose level, predict for every subject using their actual baseline,
+# then average across subjects
+marginal <- do.call(rbind, lapply(dose.levels, function(d) {
+  nd <- data.frame(dose = d, carot0 = carot$carot0,
+                   trt = (d > 0) + 0)
+  preds <- predict(m.thres, newdata = nd)
+  data.frame(dose = d, fit = mean(preds))
+}))
+marginal$type <- "ANCOVA Marginal"
+```
+
+-   Computing confidence intervals for marginal means requires methods beyond classical regression formulas, since the marginal mean is an average of predictions across the baseline distribution. We will return to this using the **bootstrap** in the bootstrap lecture notes.
+
+```{r, fig.width=10, fig.height=6, fig.cap="Three approaches to estimating the dose-response: unadjusted means (with CIs), ANCOVA conditional predictions at low and high baseline (with CIs), and ANCOVA marginal means (point estimates only)"}
+plot(NULL, xlim = c(-3, 63), ylim = c(-200, 2800),
+     xlab = "Dose (mg/day)", ylab = "Plasma Beta-Carotene at 9 Months",
+     main = "Unadjusted, Conditional, and Marginal Predictions")
+
+# Unadjusted
+arrows(unadj$dose - 1, unadj$lwr, unadj$dose - 1, unadj$upr,
+       angle = 90, code = 3, length = 0.04, col = "gray50", lwd = 2)
+points(unadj$dose - 1, unadj$fit, pch = 19, col = "gray50", cex = 1.5)
+
+# Conditional: low baseline
+arrows(cond.low$dose - 0.3, cond.low$lwr, cond.low$dose - 0.3, cond.low$upr,
+       angle = 90, code = 3, length = 0.04, col = "steelblue", lwd = 2)
+points(cond.low$dose - 0.3, cond.low$fit, pch = 17, col = "steelblue", cex = 1.3)
+
+# Conditional: high baseline
+arrows(cond.high$dose + 0.3, cond.high$lwr, cond.high$dose + 0.3, cond.high$upr,
+       angle = 90, code = 3, length = 0.04, col = "coral", lwd = 2)
+points(cond.high$dose + 0.3, cond.high$fit, pch = 17, col = "coral", cex = 1.3)
+
+# Marginal (point estimates only — CIs require bootstrap, covered later)
+points(marginal$dose + 1, marginal$fit, pch = 15, col = "darkgreen", cex = 1.5)
+
+legend("topleft",
+  c("Unadjusted group means",
+    sprintf("Conditional (baseline = %.0f, Q1)", q25),
+    sprintf("Conditional (baseline = %.0f, Q3)", q75),
+    "ANCOVA marginal means (point est.)"),
+  col = c("gray50", "steelblue", "coral", "darkgreen"),
+  pch = c(19, 17, 17, 15), lwd = 2, bty = "n", cex = 0.9)
+```
+
+-   Key observations:
+
+    -   The **unadjusted means** and **ANCOVA marginal means** estimate the same quantity — the population-average plasma level at each dose — and are very similar because randomization balanced baseline across groups
+
+    -   The **conditional predictions** shift vertically depending on the baseline value: patients with higher baseline beta-carotene have higher predicted 9-month levels
+
+    -   The conditional predictions at any specific baseline value have narrower CIs than the unadjusted means — this is the precision gain from ANCOVA
+
+### Precision gain from ANCOVA
+
+-   The precision gain from ANCOVA depends on the correlation between baseline and 9-month plasma levels ($\rho$)
+
+    -   Recall from Lecture 12: the variance of the ANCOVA estimator is proportional to $\sigma^2(1 - \rho^2)/n$, compared to $\sigma^2/n$ for the unadjusted estimator
+
+    -   Stronger baseline-outcome correlation means greater precision gain from adjustment
+
+```{r}
+rho <- cor(carot$carot0, carot$carot3)
+sprintf("Correlation between baseline and 9-month plasma levels: %.3f", rho)
+sprintf("Theoretical variance reduction factor: 1 - rho^2 = %.3f", 1 - rho^2)
+```
+
+-   We will quantify the precision gain more precisely in the bootstrap lecture notes, where we can compute CIs for both the unadjusted and marginal means and compare their widths directly
 
 ## Prediction of Binary Measurements
 
@@ -621,52 +929,6 @@ data.frame(
 
         -   Predicted Value Negative: $\textrm{Pr}(D^- | T^-)$
 
-### Stepwise model building
-
--   Old method for considering a large number of covariates that might possibly be predictive of an outcome
-
-    -   "If stepwise model building had been proposed today, it would not have passed peer review"
-
--   Available in all software as an automated tool, but should not be used
-
--   Avoid recreating the stepwise approach when building your own models manually
-
--   Major caveats
-
-    -   Overfits your dataset
-
-    -   P-values are not true p-values; they are very anti-conservative
-
-    -   You will often obtain different models if you use "forward" or "backward" stepwise regression
-
-    -   Ignores confounding effects (a variable could be an important confounder, but itself not be statistically significant in the model)
-
-    -   Without clustering certain predictors, may throw out covariates to make non-sensical model
-
-        -   Suppose race/ethnicity is coded as White, Black, Hispanic, Other
-
-        -   Want to model as 3 dummy variables
-
-        -   Stepwise may throw out one of your dummy variables, keep the rest
-
-        -   Pairwise significance would also be highly dependent on reference group chosen by analyst
-
--   Two flavors of stepwise model building
-
-    -   Start with no covariates: "Forward" stepwise regression
-
-    -   Start with all covariates: "Backward" stepwise regression
-
--   Stepwise procedure proceeds by adding or removing covariates from the model base on the corresponding partial $t$ or $Z$ test
-
-    -   Must pre-specify a "P to enter" and "P to remove"
-
-    -   To avoid infinite loops, P to enter must be less than P to remove
-
-    -   E.g. Add a variable to the model if $p < 0.05$, but only remove a variable from the model if $p > 0.10$
-
-    -   Repeat the process until you arrive at a final model
-
 ### ROC Curves
 
 -   Receiver operating characteristic (ROC) curves plot the sensitivity against the false positive rate (e.g. 1 - specificity)
@@ -706,43 +968,82 @@ fev$risk.score <- predict(m.demo, type="response")
 
 # Compute the full ROC curve
 roc.demo <- roc(fev$smoker, fev$risk.score, quiet=TRUE)
-```
 
-```{r, fig.height=6, fig.width=12, fig.cap="Stepping through cutpoints: each row shows how a threshold on the risk score (left) maps to a point on the ROC curve (right)"}
-cutpoints <- c(0.70, 0.50, 0.30, 0.15, 0.05)
-
-par(mfrow=c(length(cutpoints), 2), mar=c(4, 4, 3, 1))
-
-for(cp in cutpoints) {
-  # Compute sensitivity and specificity at this cutpoint
-  pred.pos <- fev$risk.score >= cp
-  sens <- sum(pred.pos & fev$smoker == 1) / sum(fev$smoker == 1)
-  spec <- sum(!pred.pos & fev$smoker == 0) / sum(fev$smoker == 0)
+# Helper function for paired cutpoint display
+plot_cutpoint <- function(cp, risk.score, outcome, roc.obj) {
+  pred.pos <- risk.score >= cp
+  sens <- sum(pred.pos & outcome == 1) / sum(outcome == 1)
+  spec <- sum(!pred.pos & outcome == 0) / sum(outcome == 0)
   fpr <- 1 - spec
 
+  par(mfrow=c(1, 2), mar=c(4, 4, 3, 1))
+
   # Left panel: Box plots with cutpoint line
-  boxplot(risk.score ~ smoker, data=fev, horizontal=FALSE,
+  boxplot(risk.score ~ outcome, horizontal=FALSE,
           names=c("Non-smoker (D-)", "Smoker (D+)"),
           ylab="Predicted Risk Score", col=c("lightblue","lightsalmon"),
           main=sprintf("Cutpoint c = %.2f", cp), ylim=c(0,1))
-  abline(h=cp, col="red", lwd=2, lty=2)
-
-  # Shade the regions above the cutpoint
-  text(0.6, cp + 0.04, sprintf("c = %.2f", cp), col="red", cex=0.9, font=2)
+  abline(h=cp, col="red", lwd=2.5, lty=2)
+  text(0.6, cp + 0.04, sprintf("c = %.2f", cp), col="red", cex=1.1, font=2)
 
   # Right panel: ROC curve with highlighted point
-  plot(1 - roc.demo$specificities, roc.demo$sensitivities,
+  plot(1 - roc.obj$specificities, roc.obj$sensitivities,
        type="l", lwd=2, col="gray40",
        xlab="False Positive Rate (1 - Specificity)",
        ylab="Sensitivity",
-       main=sprintf("Sens = %.0f%%  Spec = %.0f%%", 100*sens, 100*spec),
+       main=sprintf("Sens = %.0f%%    Spec = %.0f%%", 100*sens, 100*spec),
        xlim=c(0,1), ylim=c(0,1))
   abline(0, 1, col="gray70", lty=3)
-  points(fpr, sens, col="red", pch=19, cex=2.5)
-  text(fpr + 0.08, sens - 0.06,
-       sprintf("(%.2f, %.2f)", fpr, sens), col="red", cex=0.9, font=2)
+  points(fpr, sens, col="red", pch=19, cex=3)
+  text(fpr + 0.10, sens - 0.07,
+       sprintf("(%.2f, %.2f)", fpr, sens), col="red", cex=1.1, font=2)
 }
 ```
+
+::: {.panel-tabset}
+
+#### c = 0.70
+
+```{r, fig.height=5, fig.width=10}
+plot_cutpoint(0.70, fev$risk.score, fev$smoker, roc.demo)
+```
+
+Very high cutpoint: almost no one is classified positive. High specificity, very low sensitivity.
+
+#### c = 0.50
+
+```{r, fig.height=5, fig.width=10}
+plot_cutpoint(0.50, fev$risk.score, fev$smoker, roc.demo)
+```
+
+Still a high cutpoint for this dataset. Starting to capture some true positives.
+
+#### c = 0.30
+
+```{r, fig.height=5, fig.width=10}
+plot_cutpoint(0.30, fev$risk.score, fev$smoker, roc.demo)
+```
+
+A moderate cutpoint. Sensitivity is improving but false positives are increasing.
+
+#### c = 0.15
+
+```{r, fig.height=5, fig.width=10}
+plot_cutpoint(0.15, fev$risk.score, fev$smoker, roc.demo)
+```
+
+A lower cutpoint. Capturing most true positives, but at the cost of more false positives.
+
+#### c = 0.05
+
+```{r, fig.height=5, fig.width=10}
+plot_cutpoint(0.05, fev$risk.score, fev$smoker, roc.demo)
+```
+
+Very low cutpoint: nearly everyone is classified positive. High sensitivity, very low specificity.
+
+:::
+
 
 -   Key observations:
 
@@ -760,34 +1061,23 @@ for(cp in cutpoints) {
 
 -   Will compare the ROC curves
 
-    -   Often done use the area under the curve (AUC)
+    -   Often summarized using the area under the curve (AUC), also called the C-statistic
 
-    -   Model with higher AUC is better
-
-    -   A null model (not predictive of outcome) will have area of 0.50
+    -   A null model (not predictive of outcome) will have AUC of 0.50
 
     -   Maximum AUC is 1.0
-
--   Approach in R
-
-    -   Fit the logistic regression model using `glm()`
-
-    -   Use the `pROC` package for ROC curves and AUC comparison
 
 ```{r}
 # Fit two models: height alone vs age alone
 m.height <- glm(smoker ~ height, data=fev, family=binomial)
 m.age <- glm(smoker ~ age, data=fev, family=binomial)
-```
 
-```{r}
 # Compute ROC curves
 roc.height <- roc(fev$smoker, predict(m.height, type="response"), quiet=TRUE)
 roc.age <- roc(fev$smoker, predict(m.age, type="response"), quiet=TRUE)
 ```
 
 ```{r, fig.cap="ROC curves: Age vs Height as predictors of smoking"}
-# Plot both ROC curves
 plot(roc.height, col="blue", lwd=2, main="ROC Comparison: Age vs Height")
 plot(roc.age, col="red", lwd=2, add=TRUE)
 legend("bottomright",
@@ -796,16 +1086,43 @@ legend("bottomright",
        col=c("blue", "red"), lwd=2, bty="n")
 ```
 
-```{r}
-# Formal test comparing AUC
-roc.test(roc.height, roc.age)
-```
-
--   Age has a significantly larger AUC than Height ($p < 0.001$)
+-   Age has a visibly higher AUC than height
 
 -   For any given false positive rate, the sensitivity is higher for age
 
     -   Predicted value positive would also always be higher
+
+#### A note on formal tests comparing C-statistics
+
+-   You may encounter formal hypothesis tests comparing two AUC values (e.g., DeLong test via `roc.test()` in `pROC`)
+
+    -   These are commonly recommended by AI assistants and found in online tutorials
+
+-   However, these tests have serious problems and should generally be avoided
+
+    -   The C-statistic is an **insensitive** measure of predictive accuracy — large improvements in a model can produce tiny changes in C
+
+    -   Comparing two C-statistics is even less informative — differences are often clinically meaningless even when statistically significant
+
+    -   With large sample sizes, trivially small differences become "significant"
+
+    -   The test tells you nothing about *where* the model improves or for *whom*
+
+-   Frank Harrell has written extensively about this (see *Regression Modeling Strategies*):
+
+    -   "It is a bad idea to use a test comparing two C-statistics to decide if one model is better than another."
+
+    -   The C-statistic is useful as a **descriptive measure** of a single model's discriminative ability, not as a basis for model comparison
+
+-   Better approaches for comparing models:
+
+    -   Likelihood ratio tests (for nested models)
+
+    -   AIC/BIC for comparing model fit
+
+    -   Calibration assessment (does the model get the probabilities right?)
+
+    -   Net reclassification improvement (NRI) if you must compare at specific thresholds — though this has its own issues
 
 ### Example 2: Multiple predictors of smoking
 
@@ -813,7 +1130,7 @@ roc.test(roc.height, roc.age)
 
 -   Fit a multivariable logistic regression model using these covariates in a training sample
 
-    -   Training sample will contain 60% of the observation in the current study
+    -   Training sample will contain 60% of the observations in the current study
 
     -   Develop a model on the training sample, see how well it fits in the validation sample (the remaining 40% of the data)
 
@@ -884,7 +1201,7 @@ plot(roc.multi, col="blue", lwd=2,
 
     -   Harrell FE Jr, Lee KL, Mark DB. Multivariable prognostic models: issues in developing models, evaluating assumptions and adequacy, and measuring and reducing errors. Statistics in Medicine. 15(4): 361-87, Feb 1996
 
-    -   A "Tutorial is Biostatistics" (frequently appears in Statistics in Medicine)
+    -   A "Tutorial in Biostatistics" (frequently appears in Statistics in Medicine)
 
 -   From abstract of paper
 
@@ -914,9 +1231,55 @@ plot(roc.multi, col="blue", lwd=2,
 
         -   If you do not use the outcome at this stage, your statistical inference is preserved
 
-        -   Correlations among predictors: Variable clustering, principle components analysis
+        -   Correlations among predictors: Variable clustering, principal components analysis
 
         -   Scientifically meaningful summary measures
+
+#### A note on stepwise model building
+
+-   Old method for considering a large number of covariates that might possibly be predictive of an outcome
+
+    -   "If stepwise model building had been proposed today, it would not have passed peer review"
+
+-   Available in all software as an automated tool, but should not be used
+
+-   Avoid recreating the stepwise approach when building your own models manually
+
+-   Major caveats
+
+    -   Overfits your dataset
+
+    -   P-values are not true p-values; they are very anti-conservative
+
+    -   You will often obtain different models if you use "forward" or "backward" stepwise regression
+
+    -   Ignores confounding effects (a variable could be an important confounder, but itself not be statistically significant in the model)
+
+    -   Without clustering certain predictors, may throw out covariates to make non-sensical model
+
+        -   Suppose race/ethnicity is coded as White, Black, Hispanic, Other
+
+        -   Want to model as 3 dummy variables
+
+        -   Stepwise may throw out one of your dummy variables, keep the rest
+
+        -   Pairwise significance would also be highly dependent on reference group chosen by analyst
+
+-   Two flavors of stepwise model building
+
+    -   Start with no covariates: "Forward" stepwise regression
+
+    -   Start with all covariates: "Backward" stepwise regression
+
+-   Stepwise procedure proceeds by adding or removing covariates from the model based on the corresponding partial $t$ or $Z$ test
+
+    -   Must pre-specify a "P to enter" and "P to remove"
+
+    -   To avoid infinite loops, P to enter must be less than P to remove
+
+    -   E.g. Add a variable to the model if $p < 0.05$, but only remove a variable from the model if $p > 0.10$
+
+    -   Repeat the process until you arrive at a final model
 
 -   Step 3: Fit the model and ...
 
@@ -924,7 +1287,7 @@ plot(roc.multi, col="blue", lwd=2,
 
     -   Use backwards stepwise selection to find a simpler model
 
-        -   Harrell: Remove predictor if $\chi^2 > 2$ ($p > 0.16$)
+        -   Harrell: Remove predictor if $\chi^2 < 2$ ($p > 0.16$)
 
     -   Will use *all data* to fit model
 
@@ -944,69 +1307,152 @@ plot(roc.multi, col="blue", lwd=2,
 
         -   Brier score: Average squared deviation between predicted probability of event and observed outcome. A lower score represents higher accuracy.
 
-#### Case Study using lrm() in R
+#### Case Study: Predicting smoking using lrm()
 
--   Logistic regression model using simulated data
+-   We will apply the Harrell framework to the FEV/smoking data we have been using throughout this lecture
 
-    -   Main effects: sex, cholesterol (splines), age (polynomial), and blood pressure (linear)
+-   **Step 1: Consider the dataset**
 
-    -   Interactions: sex with cholesterol
+    -   Outcome: smoking status (binary)
 
-    -   (5 predictors maximum)
+    -   Available predictors: age, height, sex, FEV
+
+    -   How many predictors can we afford?
 
 ```{r}
-# Simulate a dataset for the case study
-set.seed(123)
-n.sim <- 1000
-sim.data <- data.frame(
-  sex = factor(sample(c("female","male"), n.sim, replace=TRUE)),
-  cholesterol = rnorm(n.sim, 200, 40),
-  age = round(rnorm(n.sim, 50, 12)),
-  blood.pressure = rnorm(n.sim, 130, 20)
-)
+# Number of events (smokers) determines model complexity budget
+n.events <- sum(fev$smoker)
+n.total <- nrow(fev)
 
-# Generate binary outcome with known relationships
-lp <- with(sim.data, -2 + 0.1*(age-50) - 0.0008*(age-50)^2 +
-             0.005*(cholesterol-200)*(sex=="male") + 0.002*rnorm(n.sim))
-sim.data$y <- rbinom(n.sim, 1, plogis(lp))
+data.frame(
+  `Total N` = n.total,
+  `N smokers (events)` = n.events,
+  `Event rate` = sprintf("%.1f%%", 100 * n.events / n.total),
+  `Max predictors (m/10)` = floor(n.events / 10),
+  check.names = FALSE
+) |>
+  kable(caption = "Sample size considerations for model complexity") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
 
-# Fit the model using lrm from rms package
-dd <- datadist(sim.data)
-options(datadist="dd")
+-   **Step 2: Data reduction** — With only 4 candidate predictors and a reasonable number of events, we can include all predictors without formal data reduction
 
-f <- lrm(y ~ sex*rcs(cholesterol) + pol(age,2) + blood.pressure,
-         data=sim.data, x=TRUE, y=TRUE)
+    -   We will allow age and height to have nonlinear effects using restricted cubic splines
+
+    -   We will consider a sex interaction with age (biological plausibility: smoking uptake patterns may differ by sex)
+
+-   **Step 3: Fit the model** using `lrm()` from the `rms` package
+
+    -   `lrm()` provides richer output than `glm()`: discrimination indexes (C-statistic), likelihood ratio tests, and integration with `validate()` and `calibrate()`
+
+```{r}
+dd <- datadist(fev)
+options(datadist = "dd")
+
+f <- lrm(smoker ~ sex * rcs(age, 4) + rcs(height, 4) + fev,
+         data = fev, x = TRUE, y = TRUE)
 f
 ```
 
--   Validation using bootstrap with backwards stepwise regression
+-   The model summary from `lrm()` provides several useful quantities
 
-    -   Different bootstrap samples will remove different covariates
+    -   **C-statistic**: A measure of discrimination (0.5 = coin flip, 1.0 = perfect)
 
-    -   Indicates which covariates were included for each sample
+    -   **Brier score**: Average squared deviation between predicted probability and observed outcome (lower is better)
 
-    -   Estimates of discrimination indexes
+    -   **$R^2$**: Nagelkerke $R^2$, a pseudo-$R^2$ measure
+
+-   We can visualize the ANOVA-like decomposition of the model
+
+```{r}
+anova(f)
+```
+
+-   **Step 4: Evaluate the model** using bootstrap validation
+
+    -   We fit the model using *all* the data (no train/test split)
+
+    -   Bootstrap cross-validation provides a nearly unbiased estimate of how well the model will perform on new data
+
+    -   The `optimism` column reveals how much we are overfitting
 
 ```{r, cache=TRUE}
-v <- validate(f, B=150, bw=TRUE, rule="p", sls=.1, type="individual")
+v <- validate(f, B=300)
 v
 ```
 
--   Key output to focus on:
+-   Key rows in the `validate()` output:
 
-    -   `index.orig`: Discrimination index in the original sample
-
-    -   `index.corrected`: Optimism-corrected index (more honest estimate of performance)
-
-    -   `optimism`: Difference between training and test performance (measure of overfitting)
-
-```{r, fig.cap="Calibration plot for the logistic regression model"}
-cal <- calibrate(f, B=150)
-plot(cal, main="Bootstrap Calibration")
+```{r}
+val.guide <- data.frame(
+  Index = c("Dxy", "R2", "Slope", "B"),
+  Description = c(
+    "Somers' Dxy rank correlation (C = 0.5 + Dxy/2)",
+    "Nagelkerke R-squared",
+    "Calibration slope (1.0 = perfectly calibrated)",
+    "Brier score (lower is better)"
+  ),
+  `Original` = c("Apparent performance on full data",
+                  "Apparent performance on full data",
+                  "Always 1.0 on training data",
+                  "Apparent Brier score"),
+  `Corrected` = c("Honest estimate after removing optimism",
+                   "Honest estimate after removing optimism",
+                   "Degree of overfitting (< 1 means overfit)",
+                   "Honest Brier score"),
+  check.names = FALSE
+)
+kable(val.guide, caption="Guide to key validate() output") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width=FALSE)
 ```
 
--   The calibration plot shows how well predicted probabilities match observed event rates
+-   The `optimism` column is the difference between `training` and `test` performance across bootstrap samples
+
+    -   Large optimism indicates the model is overfitting the data
+
+    -   The `index.corrected` = `index.orig` $-$ `optimism` gives the honest estimate
+
+-   Calibration: Does the model get the probabilities right?
+
+```{r, fig.cap="Bootstrap calibration plot for the smoking prediction model", cache=TRUE}
+cal <- calibrate(f, B=300)
+plot(cal, main="Bootstrap Calibration: Smoking Prediction Model")
+```
+
+-   The calibration plot shows predicted probability (x-axis) versus observed event rate (y-axis)
 
     -   A well-calibrated model follows the 45-degree line
 
-    -   Departures from the line indicate systematic over- or under-prediction
+    -   The gray region shows the confidence band from bootstrap resampling
+
+    -   Departures from the line indicate systematic over- or under-prediction at certain risk levels
+
+-   Summary: Discrimination tells you whether the model can *rank* patients correctly; calibration tells you whether the predicted *probabilities* are accurate. A model can have good discrimination but poor calibration (or vice versa). Both matter for clinical use.
+
+## Summary
+
+-   The choice of model (Lecture 12) directly affects the quality of predictions — bias from oversimplification vs. imprecision from overparameterization
+
+-   **Prediction of summary measures** (means, probabilities):
+
+    -   Confidence intervals quantify uncertainty about the population quantity
+
+    -   For multivariable models, the matrix expression $\text{se}_{\text{fit}}^2 = x_h (X'X)^{-1} x_h' \cdot \text{MSE}$ makes the dependence on the design explicit
+
+-   **Prediction of individual observations**:
+
+    -   Prediction intervals are always wider: $\text{se}_{\text{pred}}^2 = \text{se}_{\text{fit}}^2 + \text{MSE}$
+
+    -   The irreducible error ($\text{MSE}$) dominates in most practical settings
+
+-   **Classification and discrimination** for binary outcomes:
+
+    -   The ROC curve and C-statistic summarize a model's ability to rank subjects by risk
+
+    -   Formal comparison of C-statistics across models is problematic; focus on whether discrimination is adequate for the clinical purpose
+
+-   **ANCOVA predictions** can be conditional (at specific covariate values) or marginal (averaged over the observed distribution)
+
+    -   Marginal means answer the population-level question; conditional means answer the individual-level question
+
+-   **Model validation** (discrimination + calibration via bootstrapping) is essential before deploying predictions clinically

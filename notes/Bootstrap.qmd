@@ -1,0 +1,251 @@
+---
+title: "Bootstrap Applications in Regression"
+name: Bootstrap.qmd
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+library(Hmisc)
+library(ggplot2)
+library(knitr)
+library(kableExtra)
+tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
+```
+
+# Introduction
+
+These notes accompany [Set14.pdf](Set14.pdf), which covers bootstrap methodology including the theoretical foundations, bias correction, and confidence interval construction. Here, we apply bootstrap methods to prediction problems from Lecture 13:
+
+- Compute **bootstrap confidence intervals for marginal means** in the beta carotene trial
+- Compare the precision of unadjusted group means vs. ANCOVA marginal means using bootstrap CIs
+- Discuss the choice of bootstrap scheme when predictors are **fixed by design** (as in a clinical trial with pre-specified dose levels)
+
+Students should read [Set14.pdf](Set14.pdf) first for the theoretical background.
+
+# Fixed vs. Random Predictors and the Bootstrap
+
+## Why the distinction matters
+
+In the beta carotene trial, subjects were randomly assigned to one of five dose levels (0, 15, 30, 45, or 60 mg/day). The dose levels and the number of subjects per dose were determined by the study design — they are **fixed**, not randomly sampled from a population.
+
+This has two important consequences:
+
+1.  **Standard errors**: Classical (model-based) standard errors are appropriate when $X$ is fixed and the variance model is correctly specified. Robust (sandwich) standard errors protect against heteroscedasticity, but when $X$ is fixed by design and the model is correctly specified, they offer no improvement over classical SEs — they simply lose efficiency. In Lectures 12 and 13, we used classical SEs for this reason.
+
+2.  **Bootstrap scheme**: The standard "pairs" bootstrap (resampling entire rows of data) implicitly treats $X$ as random — each bootstrap sample may have different numbers of subjects per dose group. For a designed experiment with fixed $X$, we should instead use a bootstrap that conditions on the design.
+
+## Two bootstrap approaches for fixed X
+
+**Stratified bootstrap**: Resample subjects *within* each dose group, preserving the group sample sizes exactly. This respects the fixed-$X$ design directly.
+
+**Residual bootstrap**: Fit the model, extract residuals, resample the residuals, and construct new responses $y^* = \hat{y} + e^*$. This conditions on $X$ by keeping the predictor values fixed and only resampling the noise.
+
+We demonstrate both below and compare the results.
+
+# Bootstrap CIs for Marginal Means
+
+## Setup: Beta Carotene Trial
+
+In Lecture 13, we estimated marginal means (population-average predicted plasma beta-carotene at 9 months) for each dose group using the ANCOVA model with a threshold + linear parameterization. The marginal mean at dose $d$ is:
+
+$$
+\hat{\mu}_{\text{marg}}(d) = \frac{1}{n} \sum_{i=1}^{n} \hat{y}_i(d, x_{0i})
+$$
+
+where $x_{0i}$ is subject $i$'s observed baseline value. Because this is an average of predictions over the empirical distribution of baseline values, classical standard error formulas (which apply to linear functions of $\hat{\beta}$) do not directly apply. The bootstrap provides a straightforward solution.
+
+```{r}
+carot <- Hmisc::stata.get("data/carot.dta")
+dose.levels <- sort(unique(carot$dose))
+
+# Threshold + linear model from Lecture 12/13
+carot$trt <- (carot$dose > 0) + 0
+m.thres <- lm(carot3 ~ trt + dose + carot0, data = carot)
+
+# Unadjusted model for comparison
+m.unadj <- lm(carot3 ~ factor(dose), data = carot)
+```
+
+## Approach 1: Stratified Bootstrap
+
+We resample subjects with replacement *within each dose group*, so that every bootstrap sample has the same number of subjects per dose as the original study.
+
+```{r, cache=TRUE}
+set.seed(42)
+B <- 2000
+
+# Indices for each dose group
+dose.idx <- split(seq_len(nrow(carot)), carot$dose)
+
+boot.marginal.strat <- matrix(NA, nrow = B, ncol = length(dose.levels))
+boot.unadj.strat    <- matrix(NA, nrow = B, ncol = length(dose.levels))
+
+for(b in 1:B) {
+  # Resample within each dose group
+  idx <- unlist(lapply(dose.idx, function(ii) sample(ii, replace = TRUE)))
+  boot.dat <- carot[idx, ]
+
+  # Marginal means from ANCOVA
+  m.b <- lm(carot3 ~ trt + dose + carot0, data = boot.dat)
+  for(j in seq_along(dose.levels)) {
+    nd <- data.frame(dose = dose.levels[j],
+                     carot0 = carot$carot0,
+                     trt = (dose.levels[j] > 0) + 0)
+    boot.marginal.strat[b, j] <- mean(predict(m.b, newdata = nd))
+  }
+
+  # Unadjusted group means
+  m.u <- lm(carot3 ~ factor(dose), data = boot.dat)
+  for(j in seq_along(dose.levels)) {
+    nd.u <- data.frame(dose = dose.levels[j])
+    boot.unadj.strat[b, j] <- predict(m.u, newdata = nd.u)
+  }
+}
+```
+
+## Approach 2: Residual Bootstrap
+
+We keep the original predictor values fixed and resample only the residuals.
+
+```{r, cache=TRUE}
+set.seed(42)
+
+# Residuals from the fitted models
+resid.thres <- residuals(m.thres)
+resid.unadj <- residuals(m.unadj)
+fitted.thres <- fitted(m.thres)
+fitted.unadj <- fitted(m.unadj)
+
+boot.marginal.resid <- matrix(NA, nrow = B, ncol = length(dose.levels))
+boot.unadj.resid    <- matrix(NA, nrow = B, ncol = length(dose.levels))
+
+for(b in 1:B) {
+  # Resample residuals and construct new responses
+  e.star.thres <- sample(resid.thres, replace = TRUE)
+  e.star.unadj <- sample(resid.unadj, replace = TRUE)
+
+  boot.dat <- carot
+  boot.dat$carot3.thres <- fitted.thres + e.star.thres
+  boot.dat$carot3.unadj <- fitted.unadj + e.star.unadj
+
+  # ANCOVA marginal means
+  m.b <- lm(carot3.thres ~ trt + dose + carot0, data = boot.dat)
+  for(j in seq_along(dose.levels)) {
+    nd <- data.frame(dose = dose.levels[j],
+                     carot0 = carot$carot0,
+                     trt = (dose.levels[j] > 0) + 0)
+    boot.marginal.resid[b, j] <- mean(predict(m.b, newdata = nd))
+  }
+
+  # Unadjusted group means
+  m.u <- lm(carot3.unadj ~ factor(dose), data = boot.dat)
+  for(j in seq_along(dose.levels)) {
+    nd.u <- data.frame(dose = dose.levels[j])
+    boot.unadj.resid[b, j] <- predict(m.u, newdata = nd.u)
+  }
+}
+```
+
+## Comparing the Two Approaches
+
+```{r}
+# Point estimates (same for both approaches)
+marginal.pts <- sapply(dose.levels, function(d) {
+  nd <- data.frame(dose = d, carot0 = carot$carot0, trt = (d > 0) + 0)
+  mean(predict(m.thres, newdata = nd))
+})
+unadj.pts <- predict(m.unadj, newdata = data.frame(dose = dose.levels))
+
+# CIs from both approaches
+ci.marg.strat <- data.frame(
+  Lower = apply(boot.marginal.strat, 2, quantile, 0.025),
+  Upper = apply(boot.marginal.strat, 2, quantile, 0.975))
+ci.marg.resid <- data.frame(
+  Lower = apply(boot.marginal.resid, 2, quantile, 0.025),
+  Upper = apply(boot.marginal.resid, 2, quantile, 0.975))
+
+comparison <- data.frame(
+  Dose = dose.levels,
+  Estimate = round(marginal.pts, 1),
+  `Stratified CI` = sprintf("(%.1f, %.1f)", ci.marg.strat$Lower, ci.marg.strat$Upper),
+  `Residual CI` = sprintf("(%.1f, %.1f)", ci.marg.resid$Lower, ci.marg.resid$Upper),
+  `Strat Width` = round(ci.marg.strat$Upper - ci.marg.strat$Lower, 1),
+  `Resid Width` = round(ci.marg.resid$Upper - ci.marg.resid$Lower, 1),
+  check.names = FALSE
+)
+
+kable(comparison,
+      caption = "ANCOVA marginal means: stratified vs. residual bootstrap 95% CIs") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+-   Both approaches condition on $X$ (the dose design) and should give similar results
+
+-   The residual bootstrap assumes the residuals are exchangeable (approximately equal variance across groups). If there is substantial heteroscedasticity, the stratified bootstrap is more robust
+
+-   For the remainder of this analysis, we use the stratified bootstrap results
+
+## Precision Comparison: Unadjusted vs. ANCOVA Marginal
+
+In Lecture 13, we noted that the theoretical variance reduction from ANCOVA is proportional to $(1 - \rho^2)$. We can now verify this empirically by comparing bootstrap CI widths.
+
+```{r}
+# Unadjusted CIs (from stratified bootstrap)
+unadj.ci <- data.frame(
+  Dose = dose.levels,
+  Estimate = as.numeric(unadj.pts),
+  Lower = apply(boot.unadj.strat, 2, quantile, 0.025),
+  Upper = apply(boot.unadj.strat, 2, quantile, 0.975)
+)
+
+# Marginal CIs (from stratified bootstrap)
+marginal.ci <- data.frame(
+  Dose = dose.levels,
+  Estimate = marginal.pts,
+  Lower = ci.marg.strat$Lower,
+  Upper = ci.marg.strat$Upper
+)
+
+# Side-by-side comparison
+precision <- data.frame(
+  Dose = dose.levels,
+  `Unadjusted Width` = unadj.ci$Upper - unadj.ci$Lower,
+  `Marginal Width` = marginal.ci$Upper - marginal.ci$Lower,
+  check.names = FALSE
+)
+precision$`Ratio (Marginal / Unadj)` <- precision$`Marginal Width` /
+  precision$`Unadjusted Width`
+
+kable(precision, digits = c(0, 1, 1, 3),
+      caption = "Bootstrap 95% CI widths: unadjusted vs. ANCOVA marginal means") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+```{r}
+rho <- cor(carot$carot0, carot$carot3)
+sprintf("Baseline-outcome correlation: rho = %.3f", rho)
+sprintf("Theoretical CI width ratio: sqrt(1 - rho^2) = %.3f", sqrt(1 - rho^2))
+```
+
+-   The empirical CI width ratio should be close to $\sqrt{1 - \rho^2}$, the theoretical standard error reduction factor from ANCOVA
+
+-   The marginal means and unadjusted means estimate the same population quantity (the average outcome at each dose), but the ANCOVA-based marginal means are more precise because they leverage the baseline-outcome correlation
+
+```{r, fig.width=10, fig.height=6, fig.cap="Unadjusted group means (gray) vs. ANCOVA marginal means (green) with bootstrap 95% CIs. Both estimate the same quantity; the marginal means are more precise."}
+plot(NULL, xlim = c(-3, 63), ylim = c(-200, 2800),
+     xlab = "Dose (mg/day)", ylab = "Plasma Beta-Carotene at 9 Months",
+     main = "Precision Gain from ANCOVA: Bootstrap CIs")
+
+# Unadjusted
+arrows(unadj.ci$Dose - 0.8, unadj.ci$Lower, unadj.ci$Dose - 0.8, unadj.ci$Upper,
+       angle = 90, code = 3, length = 0.04, col = "gray50", lwd = 2)
+points(unadj.ci$Dose - 0.8, unadj.ci$Estimate, pch = 19, col = "gray50", cex = 1.5)
+
+# ANCOVA marginal
+arrows(marginal.ci$Dose + 0.8, marginal.ci$Lower, marginal.ci$Dose + 0.8, marginal.ci$Upper,
+       angle = 90, code = 3, length = 0.04, col = "darkgreen", lwd = 2)
+points(marginal.ci$Dose + 0.8, marginal.ci$Estimate, pch = 15, col = "darkgreen", cex = 1.5)
+
+legend("topleft",
+  c("Unadjusted group means", "ANCOVA marginal means"),
+  col = c("gray50", "darkgreen"), pch = c(19, 15), lwd = 2, bty = "n")
+```

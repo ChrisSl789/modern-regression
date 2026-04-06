@@ -9,8 +9,6 @@ library(rms)
 library(ggplot2)
 library(splines)
 library(lspline)
-library(lmtest)
-library(sandwich)
 library(car)
 library(kableExtra)
 library(plotrix)
@@ -300,11 +298,9 @@ kable(res1_df, digits=1,
 
 -   Predicted values
 
-    -   After computing a regression command, Stata will provide predicted values for each case
+    -   After fitting a regression model, the `predict` function will provide predicted values for each case
 
         -   Mathematically, this is just the intercept plus the regression parameters multiplied by the covariates for each case
-
-        -   Stata command: `predict varname`
 
 ### ANOVA analysis
 
@@ -323,7 +319,7 @@ kable(res1_df, digits=1,
 ```{r}
 carot$dose.factor <- factor(carot$dose)
 m.factor <- lm(carot3 ~ dose.factor + carot0, data=carot)
-coeftest(m.factor, vcov=sandwich)
+summary(m.factor)
 ```
 
 ```{r}
@@ -341,16 +337,13 @@ legend("topleft", c("Fitted", "Group Means"), pch=c("X","O"), bty="n")
 
 -   Testing for the dose effect
 
-    -   We must use the `testparm` command (or `test`) because the model includes the baseline measurement
-
-    -   `testparm` is similar to `test`, but allows testing multiple parameters using wildcards
+    -   We must use `linearHypothesis` to jointly test the dose coefficients because the model includes the baseline measurement
 
 ```{r}
 linearHypothesis(m.factor, c("dose.factor15",
                        "dose.factor30",
                        "dose.factor45",
-                       "dose.factor60"),
-                 vcov=sandwich(m.factor))
+                       "dose.factor60"))
 ```
 
 -   We would have had the same fitted values (and thus inference) if we had decided to drop a different dose group
@@ -361,13 +354,12 @@ linearHypothesis(m.factor, c("dose.factor15",
 carot$dose.new <- relevel(carot$dose.factor, ref="60")
 
 m2.factor <- lm(carot3 ~ dose.new + carot0, data=carot)
-coeftest(m2.factor, vcov=sandwich)
+summary(m2.factor)
 
 linearHypothesis(m2.factor, c("dose.new0",
                        "dose.new15",
                        "dose.new30",
-                       "dose.new45"),
-                 vcov=sandwich(m2.factor))
+                       "dose.new45"))
 
 ```
 
@@ -389,7 +381,7 @@ linearHypothesis(m2.factor, c("dose.new0",
 
 ```{r}
 m3.factor <- lm(carot3 ~ -1 + dose.factor + carot0, data=carot)
-coeftest(m3.factor, vcov=sandwich)
+summary(m3.factor)
 ```
 
 -   Correspondence of the no-intercept model compared to previous models
@@ -418,8 +410,7 @@ coeftest(m3.factor, vcov=sandwich)
 linearHypothesis(m3.factor, c("dose.factor0=dose.factor15",
                               "dose.factor0=dose.factor30",
                               "dose.factor0=dose.factor45",
-                              "dose.factor0=dose.factor60"),
-                 vcov=sandwich(m3.factor))
+                              "dose.factor0=dose.factor60"))
 ```
 
 ### Binary dose: Placebo versus Active
@@ -438,7 +429,7 @@ linearHypothesis(m3.factor, c("dose.factor0=dose.factor15",
 carot$trt <- (carot$dose>0)+0
 
 m.trt <- lm(carot3 ~ trt + carot0, data=carot)
-coeftest(m.trt, vcov=sandwich(m.trt))
+summary(m.trt)
 ```
 
 ```{r}
@@ -462,10 +453,10 @@ legend("topleft", c("Fitted", "Group Means"), pch=c("X","O"), lty=c(NA,1), bty="
 
 ```{r}
 m.cont <- lm(carot3 ~ dose + carot0, data=carot)
-coeftest(m.cont, vcov=sandwich(m.cont))
+summary(m.cont)
 ```
 
--   To test the treatment effect, could either use the `test` command for dose or use the output directly as we are only testing one parameter
+-   To test the treatment effect, we can use the partial t-test from the output directly as we are only testing one parameter
 
 ```{r}
 m3 <- lm(carot3 ~ dose, data=carot)
@@ -486,7 +477,7 @@ legend("topleft", c("Fitted", "Group Means"), pch=c("X","O"), lty=c(NA,1), bty="
 
 ```{r}
 m.poly <- lm(carot3 ~ poly(dose,2) + carot0, data=carot)
-coeftest(m.poly, vcov=sandwich(m.poly))
+summary(m.poly)
 ```
 
 ```{r}
@@ -498,16 +489,15 @@ points(seq(0,60, by=15), predict(m4, newdata=data.frame(dose=seq(0,60, by=15))),
 legend("topleft", c("Fitted", "Group Means"), pch=c("X","O"), lty=c(NA,1), bty="n")
 ```
 
--   The partial t-test for dosesqr can be interpreted as a test for linear dose response
+-   The partial t-test for the quadratic term can be interpreted as a test for departure from a linear dose response
 
-    -   It is highly significant, suggesting departure from linearity
+    -   It is highly significant, suggesting the relationship is not purely linear
 
 -   To test the treatment effect, we need to test the two dose covariates
 
 ```{r}
 linearHypothesis(m.poly, c("poly(dose, 2)1",
-                           "poly(dose, 2)2"),
-                 vcov=sandwich(m.poly))
+                           "poly(dose, 2)2"))
 ```
 
 ### Highest order polynomial models versus ANOVA
@@ -522,13 +512,13 @@ linearHypothesis(m.poly, c("poly(dose, 2)1",
 
 ```{r}
 m.poly4 <- lm(carot3 ~ poly(dose, 4, raw=TRUE) + carot0, data=carot)
-coeftest(m.poly4, vcov=sandwich)
+summary(m.poly4)
 ```
 
 -   Compare to the ANOVA model — same fit statistics (R-squared, Root MSE, F-statistic)
 
 ```{r}
-coeftest(m.factor, vcov=sandwich)
+summary(m.factor)
 ```
 
 ### Threshold at 0 and Linear Term
@@ -549,7 +539,7 @@ coeftest(m.factor, vcov=sandwich)
 
 ```{r}
 m.thres <- lm(carot3 ~ trt + dose + carot0, data=carot)
-coeftest(m.thres, vcov=sandwich)
+summary(m.thres)
 ```
 
 ```{r}
@@ -571,18 +561,18 @@ legend("topleft", c("Fitted", "Group Means"), pch=c("X","O"), lty=c(NA,1), bty="
 
     -   ... we will declare an effect of treatment
 
--   The partial t-test for the `trt` term can be used to test for linear dose response
+-   The partial t-test for the `trt` term tests whether there is a jump from placebo to the active dose groups (the threshold effect)
 
-    -   Here, it is highly significantly different from 0, indicating that just a linear model is not adequate
+    -   Here, it is highly significantly different from 0, indicating a large initial effect of treatment
 
--   The partial t-test for the `dose` term can be interpreted as a test for any added effect above the lowest dose
+-   The partial t-test for the `dose` term tests whether there is an additional linear trend among the active dose groups
 
     -   It is significantly different from 0 ($p = 0.011$)
 
     -   There is a multiple comparison issue here, but many people are comfortable doing this 'step down' test after they have already tested from any treatment effect
 
 ```{r}
-linearHypothesis(m.thres, c("trt", "dose"), vcov=sandwich(m.thres))
+linearHypothesis(m.thres, c("trt", "dose"))
 ```
 
 ### Summary comparison of models
@@ -664,14 +654,14 @@ kable(comp_table, digits=c(0, 0, 0, 3, 1, 1),
 
 -   Next, fit each of the five models (linear, quadratic, ANOVA, dichotomized, and dichotomized plus linear)
 
--   Repeat the process 1000 times (representing 1000 studies)
+-   Repeat the process 5000 times (representing 5000 studies)
 
     -   Calculate how often each model rejects the null hypothesis of a dose effect
 
 ```{r, cache=TRUE}
 set.seed(80)
 
-reps <- 1000
+reps <- 5000
 n <- length(carot$carot3)
 p.vals <- matrix(NA, nrow=reps, ncol=5)
 colnames(p.vals) <- c("ANOVA", "Linear", "Quadratic", "Dichotomized", "Dichot + Linear")
@@ -724,7 +714,7 @@ kable(sim_results, digits=3,
 
         -   In fact, the tests will be correlated
 
-    -   How many of the 1000 simulated trials had at least one model with a $p$-value $< 0.05$?
+    -   How many of the 5000 simulated trials had at least one model with a $p$-value $< 0.05$?
 
 ```{r}
 p.hat <- mean(apply(p.vals < 0.05, 1, any))
