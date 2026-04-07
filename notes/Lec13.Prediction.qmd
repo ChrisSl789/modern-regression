@@ -1215,6 +1215,12 @@ plot(roc.multi, col="blue", lwd=2,
 
     -   e.g. if event rate is $10\%$ and $n=200$ then $m=20$; only $2$ potential predictors
 
+-   It is inefficient to separate data into training and validation sets
+
+    -  Would be better to train on the whole dataset and still obtain unbiased estimates of what the estiamtes would be in another dataset
+    
+    -  Idea: Use bootstrap samples to estimate optimism in training dataset
+
 -   Step 1: Consider your dataset
 
     -   Missing data (imputation?)
@@ -1337,9 +1343,10 @@ data.frame(
 
 -   **Step 2: Data reduction** — With only 4 candidate predictors and a reasonable number of events, we can include all predictors without formal data reduction
 
-    -   We will allow age and height to have nonlinear effects using restricted cubic splines
+    -   We will allow age and height to have nonlinear effects using restricted cubic splines (2 d.f. each), sex (1 d.f.), and untransformed FEV (1 d.f.)
+    
+    -   Limit is on the total degrees of freedom used for all predictors (that is, we specify a model with at most 6 d.f.)
 
-    -   We will consider a sex interaction with age (biological plausibility: smoking uptake patterns may differ by sex)
 
 -   **Step 3: Fit the model** using `lrm()` from the `rms` package
 
@@ -1349,16 +1356,21 @@ data.frame(
 dd <- datadist(fev)
 options(datadist = "dd")
 
-f <- lrm(smoker ~ sex * rcs(age, 4) + rcs(height, 4) + fev,
+f <- lrm(smoker ~ sex  + rcs(age, 3) + rcs(height, 3) + fev,
          data = fev, x = TRUE, y = TRUE)
-f
 ```
+
+```{r}
+# 4/7/26: Print output without using html for now; there is a (temporary?) bug with html printing
+print(f)
+```
+
 
 -   The model summary from `lrm()` provides several useful quantities
 
-    -   **C-statistic**: A measure of discrimination (0.5 = coin flip, 1.0 = perfect)
+    -   **C-statistic**: A measure of discrimination (0.5 = coin flip, 1.0 = perfect).  Probability that a randomly selected case (smoker) has a higher risk score than a randomly selected control (non-smoker)
 
-    -   **Brier score**: Average squared deviation between predicted probability and observed outcome (lower is better)
+    -   **Brier score**: Average squared deviation between predicted probability and observed outcome (lower is better).  The Brier score is a proper scoring rule (the C-statistic is not)
 
     -   **$R^2$**: Nagelkerke $R^2$, a pseudo-$R^2$ measure
 
@@ -1431,7 +1443,7 @@ plot(cal, main="Bootstrap Calibration: Smoking Prediction Model")
 
 ## Summary
 
--   The choice of model (Lecture 12) directly affects the quality of predictions — bias from oversimplification vs. imprecision from overparameterization
+-   The choice of model (Lecture 12) directly affects the quality of predictions. There is a tradeoff of bias from oversimplification vs. imprecision from overparameterization (everything in statistics is a variance-bias tradeoff)
 
 -   **Prediction of summary measures** (means, probabilities):
 
