@@ -97,6 +97,8 @@ website:
           - href: supplemental/Baseline_Change_MACH.pdf
             text: Change from baseline and precision
           - href: notes/log-transform-interpretations.qmd
+          - href: notes/PracticeQuestions.qmd
+            text: "Practice Questions"
       - section: "Statcomp2"
         contents:
           - href: https://statcomp2.app.vumc.org/modern-regression/
