@@ -1,145 +1,141 @@
 ---
 title: "Practice Questions: Multinomial, Ordinal, Poisson, flexible modeling, Boostrap"
+number-sections: false
 ---
 
 These are optional practice problems. I won't post solutions, but I'm happy to work through any of them with you in office hours or in class.
 
-Section 1: Categorical Data Models, Multinomial/Ordinal Regression, and Log-Linear Models
+## Section 1: Categorical Data Models, Multinomial/Ordinal Regression, and Log-Linear Models
 
 1.1 Logistic and Log-Linear Models in a 2×2 Table
 
-Consider a binary outcome $Y$ and a binary predictor $X$, summarized in a 2×2 contingency table.
+* Consider a binary outcome $Y$ and a binary predictor $X$, summarized in a 2×2 contingency table.  Write down a logistic regression model for $Y$ as a function of $X$, and explain how this model can be used to describe the association between $X$ and $Y$.
 
-Write down a logistic regression model for $Y$ as a function of $X$, and explain how this model can be used to describe the association between $X$ and $Y$.
+* Write down a log-linear model for the same 2×2 table, including the interaction term. Show mathematically that in the logistic regression model, $e^{\beta_1}$ is the odds ratio.
 
-Write down a log-linear model for the same 2×2 table, including the interaction term.
+* Show mathematically that in the log-linear model, $e^{\gamma_{11}}$ is the odds ratio.
 
-Show mathematically that in the logistic regression model, $e^{\beta_1}$ is the odds ratio.
-
-Show mathematically that in the log-linear model, $e^{\gamma_{11}}$ is the odds ratio.
-
-Use these derivations to demonstrate the equivalence between $\beta_1$ and $\gamma_{11}$ in this simple setting.
+* Use these derivations to demonstrate the equivalence between $\beta_1$ and $\gamma_{11}$ in this simple setting.
 
 1.2 Extension to Larger Contingency Tables
 
 Now extend the ideas from the 2×2 table to more general settings. In each part below, state the coding scheme (reference categories) you are using, since the correspondence between coefficients and interaction terms depends on it.
 
-Suppose $X$ is a categorical predictor with levels 0, 1, and 2, while $Y$ remains binary. This gives a 3×2 contingency table. Explain how the equivalence between regression coefficients and log-linear interaction terms extends to this setting.
+* Suppose $X$ is a categorical predictor with levels 0, 1, and 2, while $Y$ remains binary. This gives a 3×2 contingency table. Explain how the equivalence between regression coefficients and log-linear interaction terms extends to this setting.
 
-Suppose instead that $Y$ is multinomial with levels 0, 1, and 2, while $X$ is binary. Describe how the corresponding multinomial logistic regression model relates to the associated log-linear model.
+* Suppose instead that $Y$ is multinomial with levels 0, 1, and 2, while $X$ is binary. Describe how the corresponding multinomial logistic regression model relates to the associated log-linear model.
 
-Finally, consider the case where both $X$ and $Y$ have three levels, giving a 3×3 contingency table. Explain how the log-linear interaction terms $\gamma_{ij}$ correspond to the appropriate regression coefficients in the logistic or multinomial logistic model.
+* Finally, consider the case where both $X$ and $Y$ have three levels, giving a 3×3 contingency table. Explain how the log-linear interaction terms $\gamma_{ij}$ correspond to the appropriate regression coefficients in the logistic or multinomial logistic model.
 
-In each of these settings, identify which regression coefficients correspond to which log-linear interaction terms, and explain the logic of the correspondence.
+* In each of these settings, identify which regression coefficients correspond to which log-linear interaction terms, and explain the logic of the correspondence.
 
 1.3 Ordinal Regression and the Proportional Odds Model
 
 Consider an ordinal outcome $Y$ with three ordered categories and a binary predictor $X$, summarized in a 3×2 contingency table.
 
-Propose cell counts for the 3×2 table that satisfy the proportional odds assumption exactly, and for which $X$ and $Y$ are not independent.
+* Propose cell counts for the 3×2 table that satisfy the proportional odds assumption exactly, and for which $X$ and $Y$ are not independent.
 
-Explain what restrictions the proportional odds assumption places on the cell counts.
+* Explain what restrictions the proportional odds assumption places on the cell counts.
 
-Explain why there are infinitely many valid tables that satisfy the proportional odds assumption.
+* Explain why there are infinitely many valid tables that satisfy the proportional odds assumption.
 
-Give an example of how a table could fail to satisfy the proportional odds assumption.
+* Give an example of how a table could fail to satisfy the proportional odds assumption.
 
 1.4 Extension: Proportional Odds with a Continuous Predictor
 
-Now suppose the predictor $X$ is continuous rather than binary.
+* Now suppose the predictor $X$ is continuous rather than binary.
 
-Explain what it would mean for the proportional odds assumption to hold exactly when $X$ is continuous.
+* Explain what it would mean for the proportional odds assumption to hold exactly when $X$ is continuous.
 
-Why does the continuous nature of $X$ make exact proportional odds much more restrictive than in the binary-predictor case?
+* Why does the continuous nature of $X$ make exact proportional odds much more restrictive than in the binary-predictor case?
 
-In what sense is it essentially unrealistic for proportional odds to hold perfectly across all values of a continuous predictor?
+* In what sense is it essentially unrealistic for proportional odds to hold perfectly across all values of a continuous predictor?
 
-Briefly discuss what this tells us about the role of proportional odds as a modeling assumption in practice.
+* Briefly discuss what this tells us about the role of proportional odds as a modeling assumption in practice.
 
-Section 2: Flexible Modeling of Continuous Predictors
+## Section 2: Flexible Modeling of Continuous Predictors
 
 Consider an observational study in which individuals may receive one of three treatment levels: control, low dose, or high dose. Let the outcome be a health outcome of interest, and suppose that age is a confounder because it is associated with both treatment assignment and the outcome.
 
 2.1 Modeling Dose Categorically and Age Flexibly
 
-In this first setting, treat dose as a categorical predictor with three levels.
+In this first setting, treat dose as a categorical predictor with three levels. Write down a regression model in which dose is represented using indicator variables and age is included as an adjustment variable.
 
-Write down a regression model in which dose is represented using indicator variables and age is included as an adjustment variable.
+* What are the scientific advantages and disadvantages of modeling dose categorically in this setting?
 
-What are the scientific advantages and disadvantages of modeling dose categorically in this setting?
+* What are the statistical advantages and disadvantages of modeling dose categorically in this setting?
 
-What are the statistical advantages and disadvantages of modeling dose categorically in this setting?
+* Compare modeling age with a simple linear term versus a spline-based term.
 
-Compare modeling age with a simple linear term versus a spline-based term.
+* What are the scientific considerations in choosing a linear versus spline-based model for age?
 
-What are the scientific considerations in choosing a linear versus spline-based model for age?
+* What are the statistical considerations in choosing a linear versus spline-based model for age?
 
-What are the statistical considerations in choosing a linear versus spline-based model for age?
-
-Why might the modeling strategy for a predictor of primary interest differ from the modeling strategy for a confounder?
+* Why might the modeling strategy for a predictor of primary interest differ from the modeling strategy for a confounder?
 
 2.2 Modeling Dose as a Continuous Predictor
 
 Now suppose dose is measured on a continuous scale, such as mg/kg.
 
-Discuss the scientific and statistical considerations of modeling dose with a simple linear term.
+* Discuss the scientific and statistical considerations of modeling dose with a simple linear term.
 
-Discuss the scientific and statistical considerations of modeling dose using linear splines.
+* Discuss the scientific and statistical considerations of modeling dose using linear splines.
 
-Discuss the scientific and statistical considerations of modeling dose using restricted cubic splines.
+* Discuss the scientific and statistical considerations of modeling dose using restricted cubic splines.
 
-Discuss the scientific and statistical considerations of transforming dose, for example by using $\log(\text{dose})$.
+* Discuss the scientific and statistical considerations of transforming dose, for example by using $\log(\text{dose})$.
 
-Compare these modeling choices in terms of interpretability, flexibility, and plausibility in an observational study.
+* Compare these modeling choices in terms of interpretability, flexibility, and plausibility in an observational study.
 
-Under what circumstances might one approach be preferred over another?
+* Under what circumstances might one approach be preferred over another?
 
-Section 3: Bootstrapping, Confidence Intervals, Correlation, and Regression
+## Section 3: Bootstrapping, Confidence Intervals, Correlation, and Regression
 
-Consider a dataset containing measurements of rainfall and crop yield.
+Consider a dataset containing measurements of rainfall and crop yield.  The data consist of yearly measures taken in the British isles of rainfall totals and wheat yields.  Rather than drought being the concern, the hypothesis is that too much rain can wash nutrients out of the soil and decrease the yield.  The dataset (shaw.csv) is available in the Box folder.
 
 3.1 Correlation and Variance-Stabilizing Transformations
 
-Let $r$ denote the sample correlation coefficient.
+Let $\rho$ denote the sample (Pearson) correlation coefficient. The sample correlation, $\hat{\rho}$ is the MLE, so it will be asymptotically Normal.
 
-State the asymptotic distribution of the sample correlation coefficient.
+$$
+\sqrt{n}\,(\hat{\rho} - \rho)\;\xrightarrow{d}\; \mathcal{N}\!\left(0,\,(1-\rho^2)^2\right)
+$$
 
-Show that the Fisher $Z$ transformation, $$ Z = \frac{1}{2}\log\left(\frac{1+r}{1-r}\right), $$ is a variance-stabilizing transformation for the correlation coefficient.
 
-Explain why variance stabilization is useful for inference.
+* Show that the Fisher $Z$ transformation, $$ Z = \frac{1}{2}\log\left(\frac{1+r}{1-r}\right), $$ is a variance-stabilizing transformation for the correlation coefficient.  Find its asymptotic distribution
+
+* Explain why variance stabilization is useful for applied inference
 
 3.2 Confidence Intervals for the Correlation Coefficient
 
-Using the rainfall and crop-yield data, construct and compare confidence intervals for the population correlation coefficient using the following three approaches:
+* Using the rainfall and crop-yield data (shaw.csv), construct and compare confidence intervals for the population correlation coefficient using the following three approaches:
 
-A confidence interval based on asymptotic normality of the sample correlation coefficient.
+* A confidence interval based on asymptotic normality of the sample correlation coefficient.
 
-A confidence interval based on the Fisher $Z$ transformation.
+* A confidence interval based on the Fisher $Z$ transformation.
 
-A bootstrap confidence interval.
+* A bootstrap confidence interval.
 
 Then answer the following:
 
-How do the three intervals differ?
+* How do the three intervals differ?
 
-In what situations might one method be preferred over another?
+* In what situations might one method be preferred over another?
 
-What features of the sampling distribution of the correlation coefficient make these comparisons important?
+* What features of the sampling distribution of the correlation coefficient make these comparisons important?
 
 3.3 Connections Between Correlation and Simple Linear Regression
 
-Now fit a simple linear regression model with crop yield as the outcome and rainfall as the predictor.
+* Now fit a simple linear regression model with crop yield as the outcome and rainfall as the predictor.
 
-Explain the relationship between the sample correlation coefficient and the estimated slope in simple linear regression.
+* Explain the relationship between the sample correlation coefficient and the estimated slope in simple linear regression.
 
-If a confidence interval is constructed for the regression slope, how does that relate to inference about the correlation coefficient?
+* If a confidence interval is constructed for the regression slope, how does that relate to inference about the correlation coefficient?
 
-Explain the relationship between the correlation coefficient and $R^2$ in simple linear regression.
+* Explain the relationship between the correlation coefficient and $R^2$ in simple linear regression.
 
-Interpret the fitted slope in the context of rainfall and crop yield.
+* Interpret the fitted slope in the context of rainfall and crop yield.
 
-What assumptions are required for the usual interpretation and inference in this regression model?
+* What assumptions are required for the usual interpretation and inference in this regression model?  In particular, what is the role of independence in the correlation and regression analysis, and is it reasonable in this setting?
 
-In particular, what is the role of independence in correlation and regression analysis, and is it reasonable in this setting?
-
-Briefly explain how these ideas tie together into a unified view of correlation, regression slope, and explained variation.
+* Briefly explain how these ideas tie together into a unified view of correlation, regression slope, and explained variation.

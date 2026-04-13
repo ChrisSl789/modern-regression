@@ -121,17 +121,65 @@ d2.long %>%
 #| fig-width: 7
 #| fig-height: 4.5
 
+
+library(dplyr)
+library(ggplot2)
+
+# Pick the first 10 subjects
+highlight_ids <- d2.long %>%
+  filter(!is.na(a1c)) %>%
+  distinct(studyid) %>%
+  slice_head(n = 10) %>%
+  pull(studyid)
+
 d2.long %>%
   filter(!is.na(a1c)) %>%
+  mutate(
+    highlight = if_else(studyid %in% highlight_ids,
+                        as.character(studyid),
+                        "Other")
+  ) %>%
   ggplot(aes(x = time, y = a1c, group = studyid)) +
-  geom_line(alpha = 0.25) +
-  geom_point(alpha = 0.3, size = 1) +
-  stat_summary(aes(group = 1), fun = mean, geom = "line",
-               color = "firebrick", linewidth = 1.2) +
+
+  ## background subjects
+  geom_line(
+    data = ~ filter(.x, highlight == "Other"),
+    color = "grey70", alpha = 0.25
+  ) +
+  geom_point(
+    data = ~ filter(.x, highlight == "Other"),
+    color = "grey70", alpha = 0.3, size = 1
+  ) +
+
+  ## highlighted subjects
+  geom_line(
+    data = ~ filter(.x, highlight != "Other"),
+    aes(color = highlight),
+    linewidth = 1
+  ) +
+  geom_point(
+    data = ~ filter(.x, highlight != "Other"),
+    aes(color = highlight),
+    size = 1.5
+  ) +
+
+  ## mean trajectory
+  stat_summary(
+    aes(group = 1),
+    fun = mean,
+    geom = "line",
+    color = "firebrick",
+    linewidth = 1.2
+  ) +
+
   scale_x_continuous(breaks = c(0, 6, 12)) +
-  labs(x = "Months from baseline", y = "A1C (%)",
-       title = "A1C trajectories, one line per teen",
-       subtitle = "Red line: mean A1C at each visit") +
+  labs(
+    x = "Months from baseline",
+    y = "A1C (%)",
+    title = "A1C trajectories, one line per teen",
+    subtitle = "Colored lines: 10 selected teens; Red line: mean A1C"
+  ) +
+  guides(color = guide_legend(title = "Study ID")) +
   theme_minimal()
 ```
 
@@ -147,7 +195,7 @@ d2.long %>%
     - The structure of the violation is also the opportunity
     - Knowing how observations are dependent is what lets us model it (or robustly account for it)
 - Assumption 3: Variance structure
-    - Plausible but not the binding constraint here
+    - Difficult to tell from these plots
 - Consequence of ignoring clustering
     - Variance of $\hat\beta$ is mis-estimated
     - For between-subject covariates with multiple measurements per subject, naive SEs are typically too small
@@ -209,15 +257,15 @@ $$
     - A1C is on its native scale (modeling additive changes in mean A1C, not fold changes in a geometric mean)
         - A1C is clinically interpreted in absolute percentage points
     - PANAS enters as a single linear term (a first-order trend, the same default we use for any continuous predictor without a scientific reason for curvature)
-    - Time enters as a factor (a modeling choice, not just notation)
-- The random intercept $b_i$ is what acknowledges within-subject correlation
+    - Time enters as a factor (another modeling choice)
+- The random intercept $b_i$ is what acknowledges within-subject correlation (new piece)
     - Two A1C values from the same teen share the same $b_i$
     - They are more alike than two values from different teens
     - The induced within-subject correlation is $\tau^2 / (\tau^2 + \sigma^2)$ (the intraclass correlation)
     - This is a consequence of the model, not a separate assumption
 - The PANAS-by-time interaction terms ($\beta_4$ and $\beta_5$) let the slope of A1C on PANAS differ across visits
     - This is effect modification in the same sense we have used it all semester
-    - "Does PANAS predict A1C differently at different visits" is structurally the same kind of question as "does treatment work differently in subgroups"
+    - "Does the association of PANAS with A1C differ across visits" is structurally the same kind of question as "does treatment work differently in subgroups"
     - Recovers the question the original cross-sectional analyses were trying to answer
     - But now estimated jointly from one coherent model that uses all the data
 
@@ -254,48 +302,74 @@ summary(fit.a1c.cs)
     - 12 months ($I_{12} = 1$): $\hat\beta_1 + \hat\beta_5$
 - Variance of a linear combination
     - For example, the 6-month slope:
+
 $$
-\text{Var}(\hat\beta_1 + \hat\beta_4) =
-\text{Var}(\hat\beta_1) + \text{Var}(\hat\beta_4)
+\textrm{Var}(\hat\beta_1 + \hat\beta_4) =
+\textrm{Var}(\hat\beta_1) + \textrm{Var}(\hat\beta_4)
 + 2\,\text{Cov}(\hat\beta_1, \hat\beta_4)
 $$
     - Same formula we have used all semester for slopes from interaction models
-    - The only thing that changes is which variance-covariance matrix we plug in
-    - In OLS we used $\hat\sigma^2 (X'X)^{-1}$
-    - Here we will use a cluster-robust sandwich matrix instead
 
-## A decision point: defend the model, or buy insurance
+    - The only thing that changes is which variance-covariance matrix we plug in
+
+    - In OLS, we used $\sigma^2 (X^\top X)^{-1}$.  Here we will use a cluster-robust sandwich matrix instead
+
+## A decision point: defend the model's assumptions, or relax assumptions
 
 - The LMM gives valid inference *if* its assumptions are correct
+
     - Normal random effects
+
     - Normal residuals
+
     - Correctly specified covariance structure (compound symmetry from the random intercept)
+
     - Homoscedastic residuals on the right scale
+
 - Two principled responses
+
     - Path A: defend the model
+
         - Diagnose the random-effect distribution
+
         - Check whether a richer covariance structure or random slopes are needed
+
         - Refine until you trust the model
+
         - Right move when you care about subject-specific predictions or efficiency really matters
-    - Path B: buy insurance with cluster-robust standard errors
+
+    - Path B: relax assumptions with cluster-robust standard errors
+
         - Keep the LMM's mean structure
+
         - Compute SEs using a sandwich estimator that does not require the covariance to be correctly specified
+
         - Give up some efficiency in exchange for inference under much weaker assumptions
+
 - These paths are not exclusive
+
     - Common strategy is to layer robust SEs on top of an LMM
+
     - This is what the PANAS analysis does
+
 - This is the same conceptual move you saw earlier in the semester for heteroscedasticity
+
     - There you replaced the OLS variance with a robust, heteroscedasticity-consistent (HC) estimator
+
     - Here you replace it with a cluster-robust (CR) sandwich
-    - Same idea (let the data tell you the variance) applied to Assumption 2 instead of Assumption 3
 
 ### CR2 with Satterthwaite degrees of freedom
 
+
 - We use the CR2 bias-reduced linearization estimator (Pustejovsky and Tipton, 2018)
+
     - Implemented in the `clubSandwich` package
+
     - Together with Satterthwaite small-sample degrees of freedom
-    - CR2 is the cluster-robust analog of HC2/HC3 for heteroscedasticity
-    - Performs well when the number of clusters is moderate (about 196 teens here)
+
+    - CR2 is the cluster-robust analog of the robust estimates for heteroscedasticity we have been using
+
+    - Performs well when the number of clusters is moderate (about 196 teens here) 
 
 ```{r cr2}
 ct.unadj <- coef_test(fit.a1c.cs, vcov = "CR2", test = "Satterthwaite")
@@ -328,12 +402,83 @@ est <- as.numeric(L %*% b)
 se  <- sqrt(diag(L %*% V.cr2 %*% t(L)))
 ```
 
-- The bookkeeping is mechanical
-- The point is the structure of the calculation
+- Same structure to the calculation
     - Slope at each time point is $L\hat\beta$
     - Standard error is $\sqrt{LVL'}$
     - Same linear combination machinery used for any earlier interaction model
     - Only thing that changed is the choice of $V$
+
+### Time-specific slopes of A1C on baseline PANAS positive
+
+```{r}
+#| label: tbl-a1c-unadj-slopes
+#| tbl-cap: Estimated slope of A1C on baseline PANAS positive at each time point (unadjusted)
+
+# Contrasts for slope at each time point
+# Model: a1c ~ panas.teen.pos + time.f6 + time.f12 + panas.teen.pos:time.f6 + panas.teen.pos:time.f12
+# Slope at baseline = beta_panas
+# Slope at 6mo = beta_panas + beta_panas:time.f6
+# Slope at 12mo = beta_panas + beta_panas:time.f12
+
+K <- rbind(
+  "Baseline" = c(0, 1, 0, 0, 0, 0),
+  "6 Months" = c(0, 1, 0, 0, 1, 0),
+  "12 Months" = c(0, 1, 0, 0, 0, 1)
+)
+
+# Robust coefficient-level tests (CR2 with Satterthwaite df)
+coef_test(fit.a1c.cs, vcov = "CR2", test = "Satterthwaite")
+```
+
+The table above shows robust inference for each model coefficient. The
+time-specific slopes of A1C on PANAS are linear combinations of these
+coefficients:
+
+- **Baseline**: `panas.teen.pos`
+- **6 Months**: `panas.teen.pos` + `panas.teen.pos:time.f6`
+- **12 Months**: `panas.teen.pos` + `panas.teen.pos:time.f12`
+
+```{r}
+#| label: tbl-a1c-unadj-slopes-robust
+#| tbl-cap: Time-specific slopes of A1C on PANAS positive (robust CR2 inference)
+
+# CR2 robust variance-covariance matrix
+V <- vcovCR(fit.a1c.cs, type = "CR2")
+
+# Point estimates and SEs for each linear combination
+est   <- as.numeric(K %*% fixef(fit.a1c.cs))
+se    <- sqrt(diag(K %*% V %*% t(K)))
+
+# Satterthwaite df via Wald_test (HTZ)
+K.list <- lapply(1:nrow(K), function(i) K[i, , drop = FALSE])
+names(K.list) <- rownames(K)
+wald <- Wald_test(fit.a1c.cs,
+                  constraints = K.list,
+                  vcov = "CR2",
+                  test = "HTZ")
+
+df <- sapply(wald, function(x) x$df_denom)
+t.val <- est / se
+p.val <- 2 * pt(-abs(t.val), df = df)
+
+slopes.tbl <- data.frame(
+  `Time`     = rownames(K),
+  Estimate   = round(est, 4),
+  SE         = round(se, 4),
+  df         = round(df, 1),
+  `Lower 95% CI` = round(est - qt(0.975, df) * se, 4),
+  `Upper 95% CI` = round(est + qt(0.975, df) * se, 4),
+  `p-value`  = ifelse(p.val < 0.001, "<0.001", round(p.val, 3)),
+  check.names = FALSE
+)
+
+knitr::kable(slopes.tbl, row.names = FALSE)
+```
+
+::: {.callout-important}
+## Key finding
+In the unadjusted model, the estimated slope of A1C on baseline PANAS positive affect is negative at all three time points, suggesting that higher positive affect at baseline is associated with lower A1C values. The slope represents the expected change in A1C (%-points) for each one-unit increase in baseline PANAS positive score, holding time constant. These estimates should be interpreted cautiously as they do not account for potential confounders such as age, sex, or negative affect.
+:::
 
 ### A joint test for the overall PANAS effect
 
@@ -393,12 +538,289 @@ fit.a1c.adj <- lmer(
 ct.adj <- coef_test(fit.a1c.adj, vcov = "CR2", test = "Satterthwaite")
 ```
 
-- Combined results table is reproduced in the consulting report
-    - PANAS slopes per 10-point increase, at each visit, for both models
-    - Covariate effects shown only for the adjusted model
-    - See the consulting report for the full table-construction code
 
-## Tying it back to the main assumptions for associations
+
+### Robust Wald test for overall PANAS positive association (adjusted)
+
+```{r}
+#| label: a1c-adj-wald
+
+# Identify coefficient indices for PANAS positive terms
+coef.names.adj <- names(fixef(fit.a1c.adj))
+panas.idx <- which(grepl("panas.teen.pos", coef.names.adj))
+
+Wald_test(fit.a1c.adj,
+          constraints = constrain_zero(panas.idx),
+          vcov = "CR2")
+```
+
+### Time-specific slopes of A1C on baseline PANAS positive (adjusted)
+
+```{r}
+#| label: tbl-a1c-adj-slopes
+#| tbl-cap: Estimated slope of A1C on baseline PANAS positive at each time point (adjusted)
+
+# Robust coefficient-level tests
+coef_test(fit.a1c.adj, vcov = "CR2", test = "Satterthwaite")
+```
+
+```{r}
+#| label: tbl-a1c-adj-slopes-robust
+#| tbl-cap: Time-specific slopes of A1C on PANAS positive (adjusted, robust CR2 inference)
+
+# Build contrast matrix — need to identify correct positions
+# Coefficients: (Intercept), panas.teen.pos, time.f6, time.f12,
+#               panas.teen.neg, age_child, Female,
+#               panas.teen.pos:time.f6, panas.teen.pos:time.f12
+n.coef.adj <- length(fixef(fit.a1c.adj))
+K.adj <- matrix(0, nrow = 3, ncol = n.coef.adj)
+rownames(K.adj) <- c("Baseline", "6 Months", "12 Months")
+
+# panas.teen.pos index
+pp.idx <- which(coef.names.adj == "panas.teen.pos")
+int6.idx <- which(coef.names.adj == "panas.teen.pos:time.f6")
+int12.idx <- which(coef.names.adj == "panas.teen.pos:time.f12")
+
+# Baseline slope = beta_panas
+K.adj[1, pp.idx] <- 1
+# 6-month slope = beta_panas + beta_panas:time.f6
+K.adj[2, pp.idx] <- 1
+K.adj[2, int6.idx] <- 1
+# 12-month slope = beta_panas + beta_panas:time.f12
+K.adj[3, pp.idx] <- 1
+K.adj[3, int12.idx] <- 1
+
+# CR2 robust variance-covariance matrix
+V.adj <- vcovCR(fit.a1c.adj, type = "CR2")
+
+# Point estimates and SEs
+est.adj <- as.numeric(K.adj %*% fixef(fit.a1c.adj))
+se.adj  <- sqrt(diag(K.adj %*% V.adj %*% t(K.adj)))
+
+# Satterthwaite df via Wald_test (HTZ)
+K.adj.list <- lapply(1:nrow(K.adj), function(i) K.adj[i, , drop = FALSE])
+names(K.adj.list) <- rownames(K.adj)
+wald.adj <- Wald_test(fit.a1c.adj,
+                      constraints = K.adj.list,
+                      vcov = "CR2",
+                      test = "HTZ")
+
+df.adj <- sapply(wald.adj, function(x) x$df_denom)
+t.val.adj <- est.adj / se.adj
+p.val.adj <- 2 * pt(-abs(t.val.adj), df = df.adj)
+
+slopes.adj.tbl <- data.frame(
+  `Time`     = rownames(K.adj),
+  Estimate   = round(est.adj, 4),
+  SE         = round(se.adj, 4),
+  df         = round(df.adj, 1),
+  `Lower 95% CI` = round(est.adj - qt(0.975, df.adj) * se.adj, 4),
+  `Upper 95% CI` = round(est.adj + qt(0.975, df.adj) * se.adj, 4),
+  `p-value`  = ifelse(p.val.adj < 0.001, "<0.001", round(p.val.adj, 3)),
+  check.names = FALSE
+)
+
+knitr::kable(slopes.adj.tbl, row.names = FALSE)
+```
+
+::: {.callout-important}
+## Key finding (adjusted)
+After adjusting for negative affect (PANAS negative), age, and sex, the time-specific slopes of A1C on baseline PANAS positive affect represent the independent association of positive affect with A1C, beyond what is explained by the covariates. A negative slope indicates that higher baseline positive affect is associated with lower A1C at that time point, controlling for confounders.
+:::
+
+
+### Combined results: unadjusted and adjusted models
+
+@tbl-a1c-combined presents the estimated associations between baseline PANAS
+positive affect and A1C from linear mixed effects models with a compound
+symmetry working correlation structure. All inference uses CR2 cluster-robust
+sandwich standard errors with Satterthwaite degrees of freedom, providing valid
+inference regardless of whether the assumed covariance structure is correctly
+specified.
+
+The time-specific slopes of A1C on PANAS positive affect represent the expected
+change in A1C (%-points) associated with a 10-point increase in baseline PANAS
+positive score at each assessment period. Because the model includes a
+time-by-PANAS interaction, the association between PANAS positive and A1C is
+allowed to differ across the three time points (baseline, 6 months, and 12
+months). Each slope is a linear combination of model coefficients: the main
+effect of PANAS positive at baseline, and the sum of the main effect and the
+relevant interaction term at 6 and 12 months. The unadjusted model includes
+only PANAS positive, time, and their interaction. The adjusted model
+additionally controls for baseline PANAS negative affect, age, and sex.
+
+The PANAS negative affect coefficient in the adjusted model is similarly scaled
+to a 10-point increase. Age represents the effect of a one-year increase in age
+at baseline. The Female coefficient represents the mean difference in A1C for
+females compared to males, holding other covariates constant.
+
+```{r}
+#| label: tbl-a1c-combined
+#| tbl-cap: Association between baseline PANAS positive affect and A1C — unadjusted and adjusted linear mixed effects models
+
+library(kableExtra)
+
+
+n.subj.unadj <- length(unique(d2.long$studyid[!is.na(d2.long$a1c) & !is.na(d2.long$panas.teen.pos)]))
+n.subj.adj   <- length(unique(d2.adj$studyid))
+
+n.unadj <- d2.long %>%
+  filter(!is.na(a1c) & !is.na(panas.teen.pos)) %>%
+  group_by(time.f) %>%
+  summarise(n_unadj = n(), .groups = "drop")
+n.adj <- d2.adj %>%
+  group_by(time.f) %>%
+  summarise(n_adj = n(), .groups = "drop")
+
+
+# --- Helper to format estimate (95% CI) ---
+fmt_est <- function(est, lo, hi) {
+  paste0(sprintf("%.2f", est), " (", sprintf("%.2f", lo), ", ", sprintf("%.2f", hi), ")")
+}
+
+fmt_p <- function(p) {
+  ifelse(p < 0.001, "&lt;0.001", sprintf("%.3f", p))
+}
+
+# Scaling factor for PANAS variables
+panas.scale <- 10
+
+# ============================================================
+# UNADJUSTED: time-specific slopes (already computed: est, se, df from K)
+# Scale slopes by 10
+# ============================================================
+est.unadj.s  <- est * panas.scale
+se.unadj.s   <- se * panas.scale
+lo.unadj     <- est.unadj.s - qt(0.975, df) * se.unadj.s
+hi.unadj     <- est.unadj.s + qt(0.975, df) * se.unadj.s
+t.unadj      <- est.unadj.s / se.unadj.s
+p.unadj      <- 2 * pt(-abs(t.unadj), df = df)
+
+unadj.rows <- data.frame(
+  Variable = paste0("\u00a0\u00a0\u00a0", c("Baseline", "6 Months", "12 Months")),
+  Unadj = fmt_est(est.unadj.s, lo.unadj, hi.unadj),
+  Unadj_p = fmt_p(p.unadj),
+  stringsAsFactors = FALSE
+)
+
+# ============================================================
+# ADJUSTED: time-specific slopes (already computed: est.adj, se.adj, df.adj)
+# Scale slopes by 10
+# ============================================================
+est.adj.s  <- est.adj * panas.scale
+se.adj.s   <- se.adj * panas.scale
+lo.adj     <- est.adj.s - qt(0.975, df.adj) * se.adj.s
+hi.adj     <- est.adj.s + qt(0.975, df.adj) * se.adj.s
+t.adj.s    <- est.adj.s / se.adj.s
+p.adj.s    <- 2 * pt(-abs(t.adj.s), df = df.adj)
+
+adj.slope.rows <- data.frame(
+  Variable = paste0("\u00a0\u00a0\u00a0", c("Baseline", "6 Months", "12 Months")),
+  Adj = fmt_est(est.adj.s, lo.adj, hi.adj),
+  Adj_p = fmt_p(p.adj.s),
+  stringsAsFactors = FALSE
+)
+
+# ============================================================
+# ADJUSTED: covariate coefficients from coef_test
+# ============================================================
+ct.adj <- coef_test(fit.a1c.adj, vcov = "CR2", test = "Satterthwaite")
+
+# Identify the degrees-of-freedom column (name varies across clubSandwich versions)
+df.col <- grep("df", names(ct.adj), value = TRUE)[1]
+
+# Extract PANAS negative (scale by 10), age_child, Female
+cov.names <- c("panas.teen.neg", "age_child", "Female")
+cov.labels <- c("PANAS negative affect\u1D47", "Age (years)", "Female")
+
+cov.rows.adj <- data.frame(Variable = character(), Adj = character(), Adj_p = character(),
+                            stringsAsFactors = FALSE)
+
+for (i in seq_along(cov.names)) {
+  idx <- which(rownames(ct.adj) == cov.names[i])
+  b <- as.numeric(ct.adj[idx, "beta"])
+  s <- as.numeric(ct.adj[idx, "SE"])
+  d <- as.numeric(ct.adj[idx, df.col])
+
+  # Scale PANAS negative by 10
+  if (cov.names[i] == "panas.teen.neg") {
+    b <- b * panas.scale
+    s <- s * panas.scale
+  }
+
+  lo.c <- b - qt(0.975, d) * s
+  hi.c <- b + qt(0.975, d) * s
+  p.c  <- 2 * pt(-abs(b / s), df = d)
+
+  cov.rows.adj <- rbind(cov.rows.adj, data.frame(
+    Variable = cov.labels[i],
+    Adj = fmt_est(b, lo.c, hi.c),
+    Adj_p = fmt_p(p.c),
+    stringsAsFactors = FALSE
+  ))
+}
+
+# ============================================================
+# Assemble the full table
+# ============================================================
+
+# Header row for PANAS positive slopes
+hdr.panas <- data.frame(
+  Variable = "PANAS positive affect\u1D43",
+  Unadj = "", Unadj_p = "", Adj = "", Adj_p = "",
+  stringsAsFactors = FALSE
+)
+
+# Slope rows — merge unadjusted and adjusted
+slope.combined <- data.frame(
+  Variable = unadj.rows$Variable,
+  Unadj = unadj.rows$Unadj,
+  Unadj_p = unadj.rows$Unadj_p,
+  Adj = adj.slope.rows$Adj,
+  Adj_p = adj.slope.rows$Adj_p,
+  stringsAsFactors = FALSE
+)
+
+# Covariate rows (unadjusted columns are "—")
+cov.combined <- data.frame(
+  Variable = cov.rows.adj$Variable,
+  Unadj = "\u2014",
+  Unadj_p = "\u2014",
+  Adj = cov.rows.adj$Adj,
+  Adj_p = cov.rows.adj$Adj_p,
+  stringsAsFactors = FALSE
+)
+
+# Sample size row
+n.row <- data.frame(
+  Variable = "N (subjects / observations)",
+  Unadj = paste0(n.subj.unadj, " / ", sum(n.unadj$n_unadj)),
+  Unadj_p = "",
+  Adj = paste0(n.subj.adj, " / ", sum(n.adj$n_adj)),
+  Adj_p = "",
+  stringsAsFactors = FALSE
+)
+
+tbl.final <- rbind(hdr.panas, slope.combined, cov.combined, n.row)
+names(tbl.final) <- c("Variable", "Estimate (95% CI)", "p-value",
+                       "Estimate (95% CI) ", "p-value ")
+
+kbl(tbl.final, row.names = FALSE, escape = FALSE, align = c("l", "c", "c", "c", "c")) %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE) %>%
+  add_header_above(c(" " = 1, "Unadjusted" = 2, "Adjusted" = 2))
+```
+
+::: {.table-notes}
+*ᵃ* Per 10-point increase in baseline PANAS positive affect. Time-specific slopes are linear combinations of model coefficients: the main effect at baseline, and the main effect plus the relevant interaction term at 6 and 12 months.
+\
+*ᵇ* Per 10-point increase in baseline PANAS negative affect.
+\
+*ᶜ* All models use compound symmetry (random intercept) as the working correlation structure. Inference uses CR2 cluster-robust standard errors with Satterthwaite degrees of freedom.
+\
+CI = confidence interval. PANAS = Positive and Negative Affect Schedule.
+:::
+
+## Revisiting the main assumptions for associations
 
 - Assumption 1 (approximate Normality of $\hat\beta$)
     - Still in force
@@ -416,7 +838,7 @@ ct.adj <- coef_test(fit.a1c.adj, vcov = "CR2", test = "Satterthwaite")
 - Still have three main assumptions for inference about associations
     - What changed is the menu of tools available for answering them
 
-## Old ideas in a new model
+## Applicationg of fundamental ideas in a new model
 
 - Worth pausing to enumerate every modeling and inferential choice in this analysis that you have already seen earlier in the semester
 - The point of this lecture is not that you learned a new model
@@ -424,14 +846,14 @@ ct.adj <- coef_test(fit.a1c.adj, vcov = "CR2", test = "Satterthwaite")
 
 ### Choices about the mean structure
 
-- A1C on its native scale
+- A1C (outcome) on its native scale
     - Modeling additive changes in mean A1C (not fold changes in a geometric mean)
     - A1C is clinically interpreted in absolute percentage points
-- PANAS as a single linear term
+- PANAS (predictor of interest) as a single linear term
     - First-order trend in the predictor
     - Default whenever there is no scientific reason to expect curvature
     - Often most powerful for detecting associations
-- Time as a categorical factor
+- Time (effect modifier) as a categorical factor
     - Main reason is the effect modification
     - With time as a factor, the three time-specific PANAS slopes are estimated independently of each other
     - With time continuous, the PANAS-by-time interaction would force the PANAS slope to evolve in a parametric way across time (e.g., linearly increasing or decreasing)
@@ -460,10 +882,8 @@ ct.adj <- coef_test(fit.a1c.adj, vcov = "CR2", test = "Satterthwaite")
 - Approximate Normality of $\hat\beta$
     - Basis for confidence intervals and tests
     - Justified by sample size, not by Normality of the data
-    - Assumption 1 of the Big Three
 - Robust (sandwich) standard errors
     - Cluster version of the heteroscedasticity-robust SE idea you saw earlier
-    - Same idea applied to Assumption 2 instead of Assumption 3
 - Joint Wald tests
     - For "is this predictor associated with the outcome at all"
     - Same logic as partial $F$-tests for sets of coefficients in ordinary regression
@@ -485,17 +905,17 @@ ct.adj <- coef_test(fit.a1c.adj, vcov = "CR2", test = "Satterthwaite")
     - Richer working correlations buy efficiency
 - Random slopes and other elaborations of the covariance structure
     - Matter most when subject-specific trajectories vary substantially
-- Comparing covariance structures (compound symmetry vs. AR(1) vs. unstructured)
+- Comparing covariance structures (e.g. compound symmetry vs. AR(1) vs. unstructured)
     - Published analysis did this
-    - Punchline was that the choice mattered less for inference once CR2 SEs were in use
-- Missing data
+    - Here the choice mattered less for inference once CR2 SEs were in use
+- Missing data assumptions
     - Handled here under a missing-at-random assumption with listwise deletion within each model
 - Extensions to non-continuous outcomes
     - Every regression model from earlier in the semester has a correlated-data analog built on the same logic
     - Logistic, ordinal, parametric survival
     - Random effects become generalized linear mixed models
     - Marginal approaches become GEE for binary or count data
-    - Cluster-robust sandwich generalizes the same way
+- (And much more)
 
 ## Summary
 

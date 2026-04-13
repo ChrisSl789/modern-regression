@@ -196,23 +196,25 @@ tryCatch(source('pander_registry.R'), error = function(e) invisible(e))
 
     -   Independence of response measurements within identified clusters
 
-    -   Have appropriately modeled the within group variance
+    -   Have appropriately modeled the within group variance ($\textm{Var}(Y|X)$)
+    
+        -   "Approrately modeled" depends on the regression model
 
-        -   Linear regression: Equal variance across groups
+        -   Linear regression: Equal variance across groups ($\textm{Var}(Y|X) = \sigma^2$)
 
-        -   Other regressions: Appropriate mean-variance relationship
+        -   Other regressions: Appropriate mean-variance relationship (e.g. $\textm{Var}(Y|X) = p*(1-p)$ in logistic regression)
 
             -   Lack of model fit may lead to poor estimate of the variance
 
     -   Sample size is large enough so that parameter estimates approximately follow a Normal distribution
 
--   Necessary assumptions for first order trends using robust standard errors
+-   Necessary assumptions for associations, including first order trends, using robust standard errors
 
     -   Independence of response measurements within identified clusters
 
-    -   (Robust standard errors accounts for heteroscedasticity in large samples)
+    -   In linear regression, Robust standard errors accounts for heteroscedasticity in large samples
 
-        -   Lack of model fit leads to conservative inference due to mixing systematic and random error
+        -   Lack of model fit for a first order trend leads to conservative inference due to mixing systematic and random error
 
     -   Sample size is large enough so that parameter estimates approximately follow a Normal distribution
 
