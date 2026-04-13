@@ -61,8 +61,9 @@ website:
           - href: notes/Lec13.Prediction.qmd
           - href: notes/Bootstrap.qmd
           - href: notes/BayesDiagnostics.qmd
-          - href: notes/Set13.pdf
+          - href: notes/multiple-imputation-r-biostats.qmd
             text: "Missing Data"
+          - href: notes/Lec14CorrelatedContinuous.qmd
       - section: "Labs"
         contents: 
           - href: labs/quarto-intro.qmd
@@ -96,6 +97,8 @@ website:
           - href: supplemental/Baseline_Change_MACH.pdf
             text: Change from baseline and precision
           - href: notes/log-transform-interpretations.qmd
+          - href: notes/PracticeQuestions.qmd
+            text: "Practice Questions"
       - section: "Statcomp2"
         contents:
           - href: https://statcomp2.app.vumc.org/modern-regression/

@@ -15,7 +15,7 @@ library(kableExtra)
 
 # Introduction
 
-These notes supplement the primary lecture notes on missing data, which cover the conceptual foundations of missing data mechanisms (MCAR, MAR, MNAR), the limitations of ad hoc methods, inverse probability weighting, and multiple imputation. The purpose of these supplementary notes is to:
+These notes supplement the primary lecture notes on missing data ([Set13.pdf](Set13.pdf)), which cover the conceptual foundations of missing data mechanisms (MCAR, MAR, MNAR), the limitations of ad hoc methods, inverse probability weighting, and multiple imputation. The purpose of these supplementary notes is to:
 
 -   Provide a synthetic dataset that illustrates common missingness patterns encountered in clinical research
 -   Demonstrate the consequences of ad hoc missing data methods through direct comparison
