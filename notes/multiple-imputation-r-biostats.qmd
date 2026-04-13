@@ -1,0 +1,747 @@
+---
+title: "Multiple Imputation in R"
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+library(mice)
+library(naniar)
+library(VIM)
+library(sandwich)
+library(lmtest)
+library(ggplot2)
+library(knitr)
+library(kableExtra)
+```
+
+# Introduction
+
+These notes supplement the primary lecture notes on missing data, which cover the conceptual foundations of missing data mechanisms (MCAR, MAR, MNAR), the limitations of ad hoc methods, inverse probability weighting, and multiple imputation. The purpose of these supplementary notes is to:
+
+-   Provide a synthetic dataset that illustrates common missingness patterns encountered in clinical research
+-   Demonstrate the consequences of ad hoc missing data methods through direct comparison
+-   Implement inverse probability weighting as a principled alternative
+-   Walk through multiple imputation using the `mice` package, including diagnostics and convergence assessment
+-   Introduce the `Hmisc`/`rms` approach to multiple imputation
+-   Discuss practical considerations for applied work
+
+# Setup and Data
+
+## A Synthetic Clinical Trial Dataset
+
+-   We construct a synthetic dataset loosely modeled on a randomized trial of a blood pressure medication
+-   The dataset contains 500 subjects with:
+    -   `treatment`: Randomized treatment assignment (0 = placebo, 1 = active)
+    -   `age`: Age in years (continuous)
+    -   `sex`: Sex (0 = male, 1 = female)
+    -   `bmi`: Body mass index at baseline (continuous)
+    -   `sbp_base`: Systolic blood pressure at baseline (continuous)
+    -   `sbp_6mo`: Systolic blood pressure at 6 months (continuous, the primary outcome)
+    -   `side_effects`: Whether the subject reported side effects (binary)
+-   Missingness is introduced in `sbp_6mo` and `bmi` with different mechanisms:
+    -   `sbp_6mo` is more likely to be missing when subjects have higher baseline SBP and are on active treatment (simulating dropout due to side effects or perceived lack of efficacy). This is MAR
+    -   `bmi` is missing completely at random in a small fraction of subjects. This is MCAR
+
+```{r synthetic-data}
+set.seed(2024)
+n <- 500
+
+## Generate complete data
+treatment   <- rbinom(n, 1, 0.5)
+age         <- round(rnorm(n, mean = 55, sd = 10), 1)
+sex         <- rbinom(n, 1, 0.45)
+bmi         <- round(rnorm(n, mean = 28, sd = 5), 1)
+sbp_base    <- round(rnorm(n, mean = 145, sd = 15), 0)
+side_effects <- rbinom(n, 1, plogis(-2 + 0.8 * treatment + 0.01 * sbp_base))
+
+## True treatment effect: -8 mmHg reduction in SBP at 6 months
+sbp_6mo <- round(sbp_base - 8 * treatment + 0.3 * (age - 55) +
+                   0.4 * (bmi - 28) + rnorm(n, 0, 10), 0)
+
+dat_complete <- data.frame(treatment, age, sex, bmi, sbp_base,
+                           side_effects, sbp_6mo)
+
+## Introduce MAR missingness in sbp_6mo
+## Higher baseline SBP and active treatment increase probability of dropout
+prob_miss_sbp <- plogis(-3 + 0.015 * sbp_base + 0.6 * treatment +
+                          0.5 * side_effects)
+miss_sbp <- rbinom(n, 1, prob_miss_sbp)
+
+## Introduce MCAR missingness in bmi (10% completely at random)
+miss_bmi <- rbinom(n, 1, 0.10)
+
+## Create the analysis dataset with missing values
+dat <- dat_complete
+dat$sbp_6mo[miss_sbp == 1] <- NA
+dat$bmi[miss_bmi == 1]     <- NA
+
+summary(dat)
+```
+
+-   We retain `dat_complete` so we can compare methods against the "truth" later
+-   In practice, we never have `dat_complete`. This is the advantage of a simulation exercise
+
+```{r miss-rates}
+## Missingness rates
+colMeans(is.na(dat)) |> round(3)
+```
+
+# Exploring and Characterizing Missingness
+
+-   Before choosing a method for handling missing data, we must understand the pattern and potential mechanism of missingness
+-   Key questions:
+    -   Which variables are missing and how much?
+    -   Do the missing values co-occur?
+    -   Do the observed characteristics of subjects with and without missing data differ?
+    -   Is there evidence against MCAR?
+
+## Missing Data Patterns
+
+```{r md-pattern}
+md.pattern(dat, rotate.names = TRUE)
+```
+
+-   Each row is a unique pattern of observed (1) and missing (0) values
+-   The left margin counts the number of observations with each pattern
+-   The bottom margin counts the total number of missing values per variable
+
+## Visualizing Missingness
+
+-   `vis_miss()` provides a heatmap of the full dataset, showing where missing values occur
+
+```{r vis-miss, fig.width=8, fig.height=5}
+vis_miss(dat, sort_miss = TRUE)
+```
+
+-   `gg_miss_var()` shows the number and percentage of missing values per variable
+
+```{r miss-var, fig.width=6, fig.height=4}
+gg_miss_var(dat, show_pct = TRUE)
+```
+
+-   `gg_miss_upset()` displays the intersection of missingness across variables
+    -   Useful for understanding whether missingness in different variables tends to co-occur
+
+```{r miss-upset, fig.width=8, fig.height=4}
+gg_miss_upset(dat)
+```
+
+## Comparing Observed Characteristics by Missingness Status
+
+-   If subjects with missing `sbp_6mo` differ systematically from those with observed `sbp_6mo`, the data are likely not MCAR
+-   We can examine this by comparing baseline characteristics across missingness groups
+
+```{r compare-groups}
+dat$miss_sbp <- factor(is.na(dat$sbp_6mo),
+                       levels = c(FALSE, TRUE),
+                       labels = c("Observed", "Missing"))
+
+## Compare baseline characteristics
+aggregate(cbind(age, sbp_base, side_effects) ~ miss_sbp + treatment,
+          data = dat, FUN = mean) |>
+  kable(digits = 2) |>
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+
+-   If baseline SBP or treatment assignment differs between observed and missing groups, this is evidence against MCAR (but consistent with MAR)
+
+## Little's MCAR Test
+
+-   Little's test is a formal test of the MCAR assumption
+    -   $H_0$: The data are MCAR
+    -   $H_1$: The data are not MCAR
+-   Rejection of $H_0$ suggests the data are not MCAR, but does not distinguish between MAR and MNAR
+
+```{r mcar-test}
+mcar_test(dat[, c("age", "sex", "bmi", "sbp_base",
+                   "treatment", "side_effects", "sbp_6mo")])
+```
+
+-   A small $p$-value provides evidence against MCAR
+-   Note that failure to reject does not confirm MCAR. The test has limited power, especially with small samples or few missing data patterns
+
+## Margin Plots
+
+-   `VIM::marginplot()` provides a bivariate view of missingness
+    -   The main panel shows the scatterplot for complete cases
+    -   The margins show the distribution of each variable when the other is missing
+
+```{r margin-plot, fig.width=7, fig.height=6}
+marginplot(dat[, c("sbp_base", "sbp_6mo")],
+           col  = c("blue", "red", "orange"),
+           pch  = 20)
+```
+
+-   If the marginal distributions (red) differ from the complete cases (blue), this suggests the missingness in one variable is related to the values of the other
+
+```{r cleanup-miss-indicator}
+## Remove the missingness indicator (not needed for analysis)
+dat$miss_sbp <- NULL
+```
+
+# Ad Hoc Methods: A Demonstration
+
+-   The primary notes describe several ad hoc approaches to handling missing data and their limitations
+-   Here we implement the most common ones on our synthetic data and compare the results to the *truth* (the complete data analysis)
+-   This makes the theoretical critique concrete
+
+## The True Treatment Effect
+
+-   Because we simulated the data, we know the true treatment effect and can compute the "gold standard" analysis on the complete data
+
+```{r true-effect}
+## Analysis on the full (no missingness) data
+fit_true <- lm(sbp_6mo ~ treatment + age + sex + bmi + sbp_base, data = dat_complete)
+coef(summary(fit_true))["treatment", ] |> round(4)
+```
+
+## Complete Case Analysis
+
+-   Discard all observations with any missing values and analyze only the complete cases
+-   This is the default behavior of most R modeling functions
+
+```{r complete-case}
+fit_cc <- lm(sbp_6mo ~ treatment + age + sex + bmi + sbp_base, data = dat)
+coef(summary(fit_cc))["treatment", ] |> round(4)
+```
+
+-   Compare the treatment effect estimate to the truth
+-   Note also the change in sample size:
+
+```{r cc-n}
+nobs(fit_cc)
+```
+
+-   Complete case analysis:
+    -   Reduces sample size and precision
+    -   Can be biased when data are not MCAR
+    -   In our example, dropout depends on treatment and baseline SBP, so MCAR does not hold and the treatment effect estimate may be biased
+
+## Last Observation Carried Forward (LOCF)
+
+-   LOCF assumes that the missing 6-month SBP equals the baseline SBP
+    -   This is a strong and often implausible assumption
+    -   It implies no change over time for subjects with missing data
+
+```{r locf}
+dat_locf <- dat
+dat_locf$sbp_6mo[is.na(dat_locf$sbp_6mo)] <-
+  dat_locf$sbp_base[is.na(dat_locf$sbp_6mo)]
+
+fit_locf <- lm(sbp_6mo ~ treatment + age + sex + bmi + sbp_base, data = dat_locf)
+coef(summary(fit_locf))["treatment", ] |> round(4)
+```
+
+-   LOCF typically attenuates the treatment effect because it assumes dropouts experienced no benefit (or harm) from treatment
+-   The standard errors do not account for the fact that many "observed" values are actually carried forward. They are too small, giving a false sense of precision
+
+## Mean Imputation
+
+-   Replace missing `sbp_6mo` with the overall mean of the observed values
+-   This preserves the sample mean but distorts the variance, correlations, and regression relationships
+
+```{r mean-impute}
+dat_mean <- dat
+dat_mean$sbp_6mo[is.na(dat_mean$sbp_6mo)] <- mean(dat$sbp_6mo, na.rm = TRUE)
+
+fit_mean <- lm(sbp_6mo ~ treatment + age + sex + bmi + sbp_base, data = dat_mean)
+coef(summary(fit_mean))["treatment", ] |> round(4)
+```
+
+-   Mean imputation:
+    -   Biases regression coefficients toward zero (attenuates associations)
+    -   Underestimates variance because imputed values have no variability
+    -   Produces artificially narrow confidence intervals
+
+## Comparison of Ad Hoc Methods
+
+```{r adhoc-compare}
+results <- data.frame(
+  Method    = c("Truth (complete data)", "Complete case",
+                "LOCF", "Mean imputation"),
+  Estimate  = c(coef(fit_true)["treatment"],
+                coef(fit_cc)["treatment"],
+                coef(fit_locf)["treatment"],
+                coef(fit_mean)["treatment"]),
+  SE        = c(coef(summary(fit_true))["treatment", "Std. Error"],
+                coef(summary(fit_cc))["treatment", "Std. Error"],
+                coef(summary(fit_locf))["treatment", "Std. Error"],
+                coef(summary(fit_mean))["treatment", "Std. Error"]),
+  N         = c(nobs(fit_true), nobs(fit_cc), nobs(fit_locf), nobs(fit_mean))
+)
+
+results |>
+  kable(digits = 4, row.names = FALSE) |>
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+
+-   The degree of bias and efficiency loss varies by method, but all ad hoc approaches share a common weakness: they do not properly account for the uncertainty introduced by missing data
+
+# Inverse Probability Weighting
+
+## Overview
+
+-   Inverse probability weighting (IPW) is a principled approach for handling MAR data
+-   The idea:
+    -   Estimate the probability that each observation is *observed* (i.e., not missing) given the observed covariates
+    -   Weight each observed subject by the inverse of their observation probability
+    -   Subjects who are observed but "similar to" subjects who dropped out receive higher weights, compensating for the missing data
+-   IPW requires a *missingness model*, typically a logistic regression predicting the probability of being observed
+
+## Implementation
+
+-   Step 1: Fit a logistic regression model for the probability of observing `sbp_6mo`
+
+```{r ipw-model}
+## Missingness model: predict P(observed)
+miss_model <- glm(is.na(sbp_6mo) ~ treatment + age + sex + sbp_base + side_effects,
+                  data = dat, family = binomial)
+summary(miss_model)
+```
+
+```{r ipw-weights}
+## Predicted probability of being observed
+p_obs <- 1 - predict(miss_model, type = "response")
+
+## Inverse probability weights (only for observed subjects)
+dat$ipw <- ifelse(!is.na(dat$sbp_6mo), 1 / p_obs, NA)
+
+## Examine the distribution of weights
+summary(dat$ipw[!is.na(dat$sbp_6mo)])
+```
+
+-   Very large weights indicate subjects who were unlikely to be observed but were. These can make IPW estimates unstable
+-   A common diagnostic is to check whether any weights are extremely large relative to the rest
+
+```{r ipw-weight-dist, fig.width=6, fig.height=4}
+ggplot(dat[!is.na(dat$sbp_6mo), ], aes(x = ipw)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "white") +
+  labs(x = "Inverse Probability Weight", y = "Count",
+       title = "Distribution of IPW Weights") +
+  theme_minimal(base_size = 14)
+```
+
+-   Step 2: Fit the analysis model using the IPW weights
+
+```{r ipw-fit}
+fit_ipw <- lm(sbp_6mo ~ treatment + age + sex + bmi + sbp_base,
+              data = dat, weights = ipw)
+coef(summary(fit_ipw))["treatment", ] |> round(4)
+```
+
+-   The standard errors from a weighted `lm()` are not fully correct for IPW. They do not account for the estimation of the weights
+-   Two approaches to obtaining more appropriate standard errors:
+    -   Robust (sandwich) standard errors via the `sandwich` package
+    -   Bootstrap standard errors that re-estimate *both* the weights and the analysis model in each replicate
+
+### Sandwich Standard Errors
+
+-   The sandwich (Huber-White) estimator provides heteroscedasticity-consistent standard errors
+-   In the IPW context, this accounts for the heterogeneous variance introduced by weighting but does *not* fully account for uncertainty in the weight estimation step
+    -   It is an improvement over the naive model-based SE, but still an approximation
+
+```{r ipw-sandwich}
+## Robust (HC1) standard errors
+ipw_robust <- coeftest(fit_ipw, vcov = vcovHC(fit_ipw, type = "HC1"))
+ipw_robust["treatment", ] |> round(4)
+```
+
+### Bootstrap Standard Errors
+
+-   The bootstrap re-estimates the entire IPW procedure (missingness model $\rightarrow$ weights $\rightarrow$ analysis model) on each resampled dataset
+-   This correctly propagates the uncertainty from the weight estimation step into the standard errors
+
+```{r ipw-bootstrap}
+set.seed(12345)
+n_boot <- 1000
+
+boot_ests <- numeric(n_boot)
+for (b in seq_len(n_boot)) {
+  ## Resample with replacement
+  idx <- sample(seq_len(nrow(dat)), replace = TRUE)
+  dat_b <- dat[idx, ]
+
+  ## Re-estimate the missingness model
+  miss_b <- glm(is.na(sbp_6mo) ~ treatment + age + sex + sbp_base + side_effects,
+                data = dat_b, family = binomial)
+  p_obs_b <- 1 - predict(miss_b, type = "response")
+
+  ## Compute weights (observed subjects only)
+  dat_b$ipw_b <- ifelse(!is.na(dat_b$sbp_6mo), 1 / p_obs_b, NA)
+
+  ## Fit the weighted analysis model
+  fit_b <- lm(sbp_6mo ~ treatment + age + sex + bmi + sbp_base,
+              data = dat_b, weights = ipw_b)
+  boot_ests[b] <- coef(fit_b)["treatment"]
+}
+
+## Bootstrap SE is the standard deviation of the bootstrap estimates
+se_boot <- sd(boot_ests)
+se_boot |> round(4)
+```
+
+### Comparing IPW Standard Errors
+
+```{r ipw-se-compare}
+data.frame(
+  SE_Method = c("Naive (model-based)", "Sandwich (HC1)", "Bootstrap"),
+  SE        = c(coef(summary(fit_ipw))["treatment", "Std. Error"],
+                ipw_robust["treatment", "Std. Error"],
+                se_boot)
+) |>
+  kable(digits = 4, row.names = FALSE) |>
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+
+-   The naive SE ignores both the heterogeneous weighting and the uncertainty in weight estimation
+-   The sandwich SE corrects for heterogeneous variance but not for estimated weights
+-   The bootstrap SE accounts for both sources of uncertainty and is generally preferred
+
+## Limitations of IPW
+
+-   IPW uses only the observed data. It does not fill in missing values
+-   If the missingness model is misspecified, the weights will be wrong and the estimates biased
+-   Extreme weights can make estimates unstable
+    -   Weight trimming or stabilized weights can help but introduce a different form of bias
+-   IPW is most useful when the outcome is missing but covariates are complete
+    -   When covariates are also missing, the approach becomes more complex
+
+```{r ipw-cleanup}
+## Remove the IPW column (not needed for subsequent analyses)
+dat$ipw <- NULL
+```
+
+# Multiple Imputation with `mice`
+
+## The MICE Algorithm
+
+-   Multiple Imputation by Chained Equations (MICE) is the most widely used MI framework
+-   The algorithm:
+    1.  Initialize missing values with simple imputations (e.g., random draws from observed values)
+    2.  For each variable with missing data, fit a regression model using all other variables as predictors and draw imputed values from the posterior predictive distribution
+    3.  Cycle through all variables with missing data. One complete cycle is one *iteration*
+    4.  Repeat for several iterations until the distributions stabilize (convergence)
+    5.  The result is one imputed dataset; repeat the entire process $m$ times to get $m$ imputed datasets
+-   Each imputed dataset is analyzed separately, and the results are combined using Rubin's rules
+
+## Running `mice()`
+
+```{r mice-basic}
+imp <- mice(dat, m = 20, maxit = 10, seed = 12345, print = FALSE)
+imp
+```
+
+-   `m = 20`: Create 20 imputed datasets
+    -   Modern guidance suggests $m$ should be at least as large as the percentage of incomplete cases
+-   `maxit = 10`: Run 10 iterations per imputation
+-   `print = FALSE`: Suppress iteration-by-iteration output
+
+## The Methods Vector
+
+-   The `method` vector specifies the imputation model for each variable
+-   `mice` chooses defaults based on variable type:
+    -   Continuous: `"pmm"` (predictive mean matching)
+    -   Binary: `"logreg"` (logistic regression)
+    -   Unordered categorical: `"polyreg"` (polytomous logistic regression)
+    -   Ordered categorical: `"polr"` (proportional odds model)
+-   Variables with no missing data have `""` (empty string). They are not imputed but are used as predictors
+
+```{r methods}
+imp$method
+```
+
+-   Predictive mean matching (PMM) is the default for continuous variables
+    -   PMM draws imputed values from the observed data, so imputations are always within the range of observed values
+    -   This is more robust to model misspecification than Bayesian linear regression (`"norm"`)
+-   To change a method:
+
+```{r change-method}
+## Example: switch bmi to Bayesian linear regression
+meth <- imp$method
+meth["bmi"] <- "norm"
+meth
+```
+
+## The Predictor Matrix
+
+-   The predictor matrix controls which variables are used to impute which
+    -   Rows = variable being imputed; Columns = predictors
+    -   1 = included as predictor; 0 = excluded
+    -   Diagonal is always 0 (a variable does not predict itself)
+
+```{r pred-matrix}
+imp$predictorMatrix
+```
+
+-   By default, every other variable is used as a predictor for each imputed variable
+-   To modify (e.g., exclude `side_effects` from the imputation model for `bmi`):
+
+```{r modify-pred}
+pred <- imp$predictorMatrix
+pred["bmi", "side_effects"] <- 0
+pred
+```
+
+-   An important practical point: the *outcome* (`sbp_6mo`) should be included as a predictor in the imputation model for covariates like `bmi`, even though `sbp_6mo` is not missing in those observations
+    -   Omitting the outcome from the imputation model biases the imputed covariate values and attenuates the association between the covariate and the outcome in subsequent analyses
+
+# Imputation Diagnostics
+
+-   After imputation, we evaluate whether the imputed values are plausible
+-   The goal is not to verify that imputations are "correct" (this is unknowable) but to check that they are *consistent with the observed data* under the MAR assumption
+-   Implausible imputations suggest model misspecification
+
+## Density Plots
+
+-   `densityplot()` overlays the density of observed values (blue) against the imputed values (red, one line per imputation)
+-   We want the imputed distributions to be broadly consistent with the observed distribution in location and shape
+
+```{r density-plot, fig.width=8, fig.height=4}
+densityplot(imp, ~ sbp_6mo + bmi)
+```
+
+-   Some differences between observed and imputed distributions are expected under MAR. If missingness depends on covariates, the imputed values may reasonably have a different distribution than the observed values
+-   What is concerning: implausible values (e.g., negative BMI), extreme skewness in imputations, or wildly different shapes across imputations
+
+## Strip Plots
+
+-   `stripplot()` shows individual imputed values alongside observed values
+    -   Imputation 0 = observed data; imputations 1 through $m$ = imputed values
+    -   Useful for spotting individual implausible imputations
+
+```{r strip-plot, fig.width=8, fig.height=4}
+stripplot(imp, sbp_6mo + bmi ~ .imp, pch = 20, cex = 0.8)
+```
+
+## Scatterplots
+
+-   `xyplot()` shows bivariate relationships, with observed and imputed values distinguished by color
+-   Check that imputed values respect the relationship between variables
+
+```{r xy-plot, fig.width=8, fig.height=6}
+xyplot(imp, sbp_6mo ~ sbp_base | .imp, pch = 20, cex = 0.6)
+```
+
+# Convergence
+
+-   MICE is an iterative algorithm, and convergence must be assessed
+-   At each iteration, the conditional models are re-estimated and imputed values updated
+-   After sufficient iterations, the distribution of imputed values should stabilize
+-   `plot()` applied to a `mids` object produces trace plots of the mean and standard deviation of imputed values across iterations, with one line per chain (imputation)
+
+```{r convergence, fig.width=8, fig.height=8}
+plot(imp)
+```
+
+-   What to look for:
+    -   **Good convergence**: Lines are freely intermingled with no systematic trend. The traces resemble white noise or "hairy caterpillars"
+    -   **Poor convergence**: Trends, drifts, or separation between chains
+-   If convergence appears poor, increase `maxit` and re-examine
+
+```{r convergence-long, fig.width=8, fig.height=8}
+## Run with more iterations to illustrate
+imp_long <- mice(dat, m = 20, maxit = 50, seed = 12345, print = FALSE)
+plot(imp_long)
+```
+
+# Analysis and Pooling
+
+## The MI Workflow
+
+-   The analysis of multiply imputed data proceeds in three steps:
+    1.  **Fit the analysis model** to each imputed dataset using `with()`
+    2.  **Pool the results** across imputations using `pool()`, which applies Rubin's rules
+    3.  **Summarize** the pooled results using `summary()`
+
+```{r mi-analysis}
+## Step 1: Fit the model to each imputed dataset
+fit_mi <- with(imp, lm(sbp_6mo ~ treatment + age + sex + bmi + sbp_base))
+
+## Step 2: Pool using Rubin's rules
+pooled <- pool(fit_mi)
+
+## Step 3: Summarize
+summary(pooled, conf.int = TRUE) |>
+  kable(digits = 4) |>
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+
+## Rubin's Rules
+
+-   The pooled estimate $\bar{Q}$ is the average of the $m$ individual estimates:
+    $$\bar{Q} = \frac{1}{m} \sum_{i=1}^{m} \hat{Q}_i$$
+-   The pooled variance combines within-imputation variance $\bar{U}$ and between-imputation variance $B$:
+    $$T = \bar{U} + \left(1 + \frac{1}{m}\right) B$$
+    where
+    $$\bar{U} = \frac{1}{m} \sum_{i=1}^{m} U_i, \qquad B = \frac{1}{m-1} \sum_{i=1}^{m} (\hat{Q}_i - \bar{Q})^2$$
+-   The factor $(1 + 1/m)$ accounts for using a finite number of imputations
+-   Inference is based on a $t$-distribution with degrees of freedom adjusted for the fraction of missing information
+
+## Fraction of Missing Information
+
+-   The fraction of missing information (FMI) quantifies how much the missing data contribute to the uncertainty of each parameter estimate
+    -   FMI near 0: The estimate is driven by observed data; missing data contribute little additional uncertainty
+    -   FMI near 1: Uncertainty is dominated by the missing data
+-   FMI is useful for assessing whether the number of imputations $m$ is sufficient
+
+```{r pool-details}
+pooled
+```
+
+## Comparison to Truth and Ad Hoc Methods
+
+```{r final-compare}
+results_all <- data.frame(
+  Method    = c("Truth (complete data)", "Complete case*",
+                "LOCF*", "Mean imputation*",
+                "IPW (naive SE)", "IPW (sandwich SE)", "IPW (bootstrap SE)",
+                "Multiple imputation"),
+  Estimate  = c(coef(fit_true)["treatment"],
+                coef(fit_cc)["treatment"],
+                coef(fit_locf)["treatment"],
+                coef(fit_mean)["treatment"],
+                coef(fit_ipw)["treatment"],
+                coef(fit_ipw)["treatment"],
+                coef(fit_ipw)["treatment"],
+                summary(pooled)$estimate[
+                  summary(pooled)$term == "treatment"]),
+  SE        = c(coef(summary(fit_true))["treatment", "Std. Error"],
+                coef(summary(fit_cc))["treatment", "Std. Error"],
+                coef(summary(fit_locf))["treatment", "Std. Error"],
+                coef(summary(fit_mean))["treatment", "Std. Error"],
+                coef(summary(fit_ipw))["treatment", "Std. Error"],
+                ipw_robust["treatment", "Std. Error"],
+                se_boot,
+                summary(pooled)$std.error[
+                  summary(pooled)$term == "treatment"])
+)
+
+results_all |>
+  kable(digits = 4, row.names = FALSE,
+        caption = "* denotes ad hoc method") |>
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+
+-   No method exactly recovers the true treatment effect. This is expected, since any method applied to a single dataset with missing values is working with less information than the complete data
+-   The ad hoc methods (complete case, LOCF, mean imputation) show varying degrees of attenuation in the point estimate, and their standard errors do not properly account for the information loss due to missingness
+    -   LOCF and mean imputation can produce artificially small SEs because they treat imputed values as if they were observed, giving a false sense of precision
+-   IPW and MI both produce point estimates closer to the truth
+    -   IPW standard errors are similar across the naive, sandwich, and bootstrap variants in this example because the weights are well-behaved and the missingness model is correctly specified. In practice, with higher missingness rates, more extreme weights, or a less well-specified missingness model, these can diverge substantially
+-   MI produces the smallest SE among the principled methods
+    -   IPW discards the incomplete observations and compensates by upweighting the observed cases. MI uses the predictive relationships among all variables to fill in the missing values, effectively borrowing strength from the observed covariates
+    -   This recovered information translates directly into tighter standard errors
+    -   The MI SE is still larger than the complete-data SE, which is correct. Rubin's rules appropriately inflate the SE to reflect the additional uncertainty introduced by imputation
+
+# The `Hmisc`/`rms` Approach
+
+-   The `Hmisc` package provides `aregImpute()`, an alternative imputation engine
+    -   Uses predictive mean matching with optional additive regression (restricted cubic splines and categorical variable transformations)
+    -   Automatically incorporates nonlinear relationships in the imputation model
+-   The `rms` package provides `fit.mult.impute()`, which fits an `rms` model (e.g., `ols`, `lrm`, `cph`) to the multiply imputed data and pools the results using Rubin's rules
+
+```{r hmisc-rms, message=FALSE, warning=FALSE}
+library(Hmisc)
+library(rms)
+
+set.seed(12345)
+areg_imp <- aregImpute(~ treatment + age + sex + bmi + sbp_base +
+                          side_effects + sbp_6mo,
+                        data = dat,
+                        n.impute = 20,
+                        nk = 3)
+
+areg_imp
+```
+
+```{r hmisc-fit}
+dd <- datadist(dat)
+options(datadist = "dd")
+
+fit_areg <- fit.mult.impute(sbp_6mo ~ treatment + age + sex + bmi + sbp_base,
+                            fitter = ols,
+                            xtrans = areg_imp,
+                            data = dat)
+
+fit_areg
+```
+
+-   `fit.mult.impute()` returns an `rms` fit object, so all standard `rms` tools apply:
+    -   `summary()` for effect estimates and confidence intervals
+    -   `anova()` for chunk tests
+    -   `Predict()` for adjusted predictions
+    -   `nomogram()` for clinical prediction tools
+
+# Practical Considerations
+
+## Number of Imputations
+
+-   The traditional recommendation of $m = 5$ imputations dates to an era when computation was expensive
+-   Modern guidance (e.g., White et al., 2011) suggests that $m$ should be at least as large as the percentage of incomplete cases
+    -   If 25% of observations have at least one missing value, use $m \geq 25$
+-   Too few imputations lead to:
+    -   Unstable pooled estimates (especially for $p$-values and confidence intervals)
+    -   Poor reproducibility across different random seeds
+-   With modern computing, there is little reason not to use $m = 20$ or more as a default
+
+## Auxiliary Variables
+
+-   Auxiliary variables are variables that are:
+    -   Predictive of the missing values, or
+    -   Predictive of the probability of missingness, or
+    -   Both
+-   Including auxiliary variables in the imputation model strengthens the plausibility of the MAR assumption and can improve the efficiency of MI estimates
+-   Auxiliary variables do not need to appear in the analysis model
+    -   For example, a lab value that predicts dropout but is not part of the scientific question can still be included in the imputation model
+-   Excluding relevant auxiliary variables is a common and consequential mistake
+    -   It weakens the MAR assumption and can introduce bias
+
+## Including the Outcome
+
+-   The outcome variable should always be included in the imputation model, even when only covariates are missing
+-   Omitting the outcome from the imputation model leads to imputed covariate values that do not reflect the covariate-outcome relationship
+    -   This attenuates regression coefficients in the analysis model
+-   This is counterintuitive because it feels like "using the outcome to predict covariates," but it is necessary for valid MI
+
+## Congeniality
+
+-   The imputation model should be at least as rich as the analysis model
+    -   If the analysis model includes an interaction (e.g., treatment $\times$ sex), the imputation model should include that interaction as well
+    -   If the analysis model includes nonlinear terms (e.g., restricted cubic splines for age), the imputation model should accommodate nonlinearity
+-   An imputation model that is less flexible than the analysis model is called *uncongenial*
+    -   Uncongeniality can bias the analysis results and invalidate the pooled standard errors
+-   In practice, it is safer to make the imputation model somewhat more flexible than the analysis model rather than less flexible
+
+## The MAR Assumption
+
+-   All of the MI methods described in these notes assume the data are MAR
+-   MAR means that the probability of missingness depends on observed data but not on the missing values themselves, after conditioning on the observed data
+-   MAR cannot be verified from the data
+    -   Little's MCAR test can reject MCAR, but it cannot distinguish MAR from MNAR
+    -   If MNAR holds, MI under MAR will generally produce biased estimates
+-   When MNAR is a concern, sensitivity analyses can assess how robust the conclusions are to departures from MAR
+    -   These methods require careful specification informed by domain knowledge about the mechanism of missingness
+
+## Parallel Computing
+
+-   For large datasets or complex imputation models, the MICE algorithm can be slow
+-   The `mice` package supports parallel computation via `futuremice()`, which distributes the $m$ imputations across multiple processor cores
+-   Each imputation is independent, so parallelization is straightforward
+
+```{r parallel, eval=FALSE}
+library(future)
+library(furrr)
+
+plan(multisession, workers = 4)
+imp_par <- futuremice(dat, m = 20, maxit = 10, seed = 12345, n.core = 4)
+```
+
+-   This is most beneficial when the dataset is large or the number of imputations is large (e.g., $m \geq 50$)
+-   For most biostatistical applications with moderate sample sizes, the sequential default is fast enough
+
+# References
+
+-   van Buuren, S. (2018). *Flexible Imputation of Missing Data* (2nd ed.). Chapman & Hall/CRC. Freely available at [https://stefvanbuuren.name/fimd/](https://stefvanbuuren.name/fimd/)
+-   van Buuren, S. and Groothuis-Oudshoorn, K. (2011). `mice`: Multivariate Imputation by Chained Equations in R. *Journal of Statistical Software*, 45(3), 1–67.
+-   Rubin, D. B. (1987). *Multiple Imputation for Nonresponse in Surveys*. New York: Wiley.
+-   White, I. R., Royston, P., and Wood, A. M. (2011). Multiple imputation using chained equations: Issues and guidance for practice. *Statistics in Medicine*, 30(4), 377–399.
+-   Carpenter, J. R. and Kenward, M. G. (2013). *Multiple Imputation and Its Application*. Wiley.
+-   Harrell, F. E. (2015). *Regression Modeling Strategies* (2nd ed.). Springer. See Chapter 3 for discussion of missing data and multiple imputation.
