@@ -24,7 +24,7 @@ library(kableExtra)
     - One new model (the linear mixed effects model)
     - One new inferential tool (cluster-robust standard errors)
     - Everything else carries over from earlier in the semester
-- Recall The Big Three assumptions for valid statistical inference about associations
+- Recall the three assumptions for valid statistical inference about associations
     1. Approximately Normal sampling distribution for the parameter estimates
     2. Independence of observations
     3. Variance assumption about observations within groups (classically homoscedasticity for linear regression, or the appropriate mean-variance realtionship for other logistic, Poisson, ordinal, and time-to-event models)
@@ -183,7 +183,7 @@ d2.long %>%
   theme_minimal()
 ```
 
-## Revisiting the Big Three in this setting
+## Revisiting the three assummptions for associations in this setting
 
 - Assumption 1: Approximate Normality of $\hat\beta$
     - Comfortable here
@@ -308,7 +308,8 @@ $$
 \textrm{Var}(\hat\beta_1) + \textrm{Var}(\hat\beta_4)
 + 2\,\text{Cov}(\hat\beta_1, \hat\beta_4)
 $$
-    - Same formula we have used all semester for slopes from interaction models
+
+- Same general formula we have used all semester for slopes from interaction models
 
     - The only thing that changes is which variance-covariance matrix we plug in
 
